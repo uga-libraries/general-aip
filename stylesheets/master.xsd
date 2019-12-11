@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:dc="http://purl.org/dc/terms/"
+           xmlns:premis="http://www.loc.gov/premis/v3"
+           elementFormDefault="qualified">
+
+<!--Purpose: validates the master.xml file produced from FITS-->
+
+    <!--imports rules for the two namespaces, Dublin Core and PREMIS-->
+    <xs:import namespace="http://purl.org/dc/terms/" schemaLocation="dc.xsd" />
+    <xs:import namespace="http://www.loc.gov/premis/v3" schemaLocation="premis.xsd" />
+       
+    <xs:element name="master">
+        <xs:complexType>
+            <xs:sequence>
+               <xs:element ref="dc:title" />
+                <xs:element ref="dc:rights" />
+                <xs:element name="aip">
+                    <xs:complexType>
+                        <xs:sequence><xs:element ref="premis:object" /></xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <!--if an aip only has one file, there is no filelist section-->
+                <xs:element name="filelist" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence><xs:element ref="premis:object" minOccurs="2" maxOccurs="unbounded" /></xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+      
+</xs:schema>

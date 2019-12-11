@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://purl.org/dc/terms/"
+	xmlns:dc="http://purl.org/dc/terms/"
+     elementFormDefault="qualified">
+
+<!--Purpose: validates the two Dublin Core elements in a master.xml file-->
+
+	<xs:element name="title">
+		<xs:simpleType>
+			<!--must have some content-->
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1" />
+			</xs:restriction>
+ 		</xs:simpleType>
+	</xs:element>
+
+	<xs:element name="rights">
+		<xs:simpleType>
+			<!--must use rightsstatement.org statement or creative commons license-->
+			<xs:restriction base="xs:anyURI">
+				<xs:pattern value="(http://rightsstatements.org/vocab/).+|(https://creativecommons.org/licenses/).+" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+
+
+</xs:schema>

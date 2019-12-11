@@ -1,5 +1,4 @@
 # General Workflow for AIPs
-# December 2019
 
 # Purpose and overview
 This is the general workflow to make archival information packages (aips) that are ready for ingest into the UGA Libraries' digital preservation system (ARCHive). The workflow organizes files, extracts and formats metadata, and packages the files. It may be used for any combination of file formats. More specialized workflows have been developed for audiovisual materials and web archives. 
@@ -42,7 +41,7 @@ department is used to match department identifier patterns. Otherwise, the workf
 8. Once all aips are created, uses md5deep to calculate the md5 for each packaged aip and saves it to a manifest, along with the filename. (aips.py)
 
 # Initial Author
-Adriane Hanson, Head of Digital Stewardship, 2019.
+Adriane Hanson, Head of Digital Stewardship, December 2019.
 
 # Acknowledgements
 These scripts were adapted from a set of two bash scripts that were used for making aips from 2017-October 2019 at UGA Libraries. (https://github.com/uga-libraries/aip-mac-bash-fits)

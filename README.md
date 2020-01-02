@@ -13,7 +13,8 @@ aips.py is the script that controls the workflow and calls the other scripts.
 aip-directory is the folder which contains all the folders to make into aips.
 department is used to match department identifier patterns. Otherwise, the workflow is the same for all departments.
 
-# Script usage: python3 /path/aips.py /path/aip-directory department
+# Script usage:
+python3 /path/aips.py /path/aip-directory department
 * aips.py is the script that controls the workflow and calls the other scripts.
 * aip-directory is the folder which contains all the folders to make into aips.
 * department is used to match department identifier patterns. Otherwise, the workflow is the same for all departments.

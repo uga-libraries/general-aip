@@ -128,7 +128,7 @@ for aip in os.listdir(aips_directory):
         subprocess.run(f'python3 "{aip_scripts}/package.py" "{aip_id}"', shell=True)
 
 
-# Makes a MD5 manifest of all aips the in this batch using md5deep.
+# Makes a MD5 manifest of all aips in this batch using md5deep.
 # The manifest is named manifest.txt and saved in the aips-to-ingest folder.
 # The manifest has one line per aip, formatted md5<tab>filename
 os.chdir('../aips-to-ingest')

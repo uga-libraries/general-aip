@@ -8,8 +8,8 @@ import sys
 
 #   fits is the path to the fits.sh file. Script tested with FITS 1.4.1.
 #   saxon is the path to the saxon jar file. Script tested with Saxon HE9-9-1-1J.
-#   aip scripts is the folder with the python scripts for this workflow.
-#   workflowdocs is the folder with stylesheets, xds, and perl script for this workflow.
+#   aip_scripts is the folder with the python and perl scripts for this workflow.
+#   stylesheets is the folder with stylesheets and xds for this workflow.
 
 fits = 'INSERT-PATH'
 saxon = 'INSERT-PATH'

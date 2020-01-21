@@ -1,7 +1,7 @@
 # General Workflow for AIPs
 
 # Purpose and overview
-This is the general workflow to make archival information packages (aips) that are ready for ingest into the UGA Libraries' digital preservation system (ARCHive). The workflow organizes files, extracts and formats metadata, and packages the files. It may be used for any combination of file formats. More specialized workflows have been developed for audiovisual materials and web archives. 
+This is the general workflow to make archival information packages (aips) that are ready for ingest into the UGA Libraries' digital preservation system (ARCHive). The workflow organizes files, extracts and formats metadata, and packages the files. It may be used for any combination of file formats. More specialized workflows have been developed for audiovisual materials (https://github.com/uga-libraries/av-aip_russell) and web archives. 
 
 # Script approach
 Each step of the workflow is in its own Python script. The script aips.py is used to iterate over the folders being made into aips, calling the script for each step in turn. Each aip is fully processed before the next one is started. This modular approach makes it easier to set up variations on the workflow by not running a step or substituting a different script for a step in aips.py. It also makes it easier to find and edit code since each script is small and has a clear purpose.

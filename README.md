@@ -6,14 +6,14 @@ This is the general workflow to make archival information packages (aips) that a
 # Script approach
 Each step of the workflow is in its own Python script. The script aips.py is used to iterate over the folders being made into aips, calling the script for each step in turn. Each aip is fully processed before the next one is started. This modular approach makes it easier to set up variations on the workflow by not running a step or substituting a different script for a step in aips.py. It also makes it easier to find and edit code since each script is small and has a clear purpose.
 
-# Error handling:
+# Error handling
 If a known error is encountered, such as failing a validation test or a regular expression does not find a match, the aip is moved to an error folder with the name of the error and the rest of the steps are skipped for that aip. 
 Script usage: python3 /path/aips.py /path/aip-directory department
 aips.py is the script that controls the workflow and calls the other scripts.
 aip-directory is the folder which contains all the folders to make into aips.
 department is used to match department identifier patterns. Otherwise, the workflow is the same for all departments.
 
-# Script usage:
+# Script usage
 python3 /path/aips.py /path/aip-directory department
 * aips.py is the script that controls the workflow and calls the other scripts.
 * aip-directory is the folder which contains all the folders to make into aips.
@@ -37,7 +37,7 @@ python3 /path/aips.py /path/aip-directory department
     * premis.xsd: in restriction pattern for objectIdentifierType (line 42)
 5. Change permission on the scripts so they are executable.
 
-# Workflow Details:
+# Workflow Details
 1. Deletes temporary files from anywhere within the aip folder because they cause errors with validating bags. (directory.py)
 2. Creates the aip directory. The aip folder has the naming convention aip-id_AIP Title and contains metadata and objects folders. The digital content is moved to the objects folder.  (directory.py)
 3. Extracts technical metadata from each file in the objects folder with FITS and saves the FITS xml to the metadata folder. 4. Copies the information from each xml file into one file named combined-fits.xml, also saved in the metadata folder. (fits.py)

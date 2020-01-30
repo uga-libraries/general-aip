@@ -25,6 +25,8 @@ python3 /path/aips.py /path/aip-directory department
 
 # Installation
 1. Install the dependencies (listed above). Saxon and md5deep may be come with your OS.
+
+
 2. Download the scripts and stylesheets folders and save to your computer.
 3. Update the file path variables (lines 14-17) in the aip_variables.py script for your local machine.
 4. Update the base uri in the stylesheets and premis.xsd to the base for your identifiers where it says "INSERT-URI".

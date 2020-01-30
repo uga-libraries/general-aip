@@ -37,12 +37,14 @@ python3 /path/aips.py /path/aip-directory department
 
 # Workflow Details
 1. Deletes temporary files from anywhere within the aip folder because they cause errors with validating bags. (directory.py)
+
+
 2. Creates the aip directory. The aip folder has the naming convention aip-id_AIP Title and contains metadata and objects folders. The digital content is moved to the objects folder.  (directory.py)
-3. Extracts technical metadata from each file in the objects folder with FITS and saves the FITS xml to the metadata folder. 4. Copies the information from each xml file into one file named combined-fits.xml, also saved in the metadata folder. (fits.py)
-5. Transforms the combined-fits xml into PREMIS metadata using Saxon and xslt stylesheets, which is saved as master.xml in the metadata folder. Verifies that the master.xml file meets UGA standards with xmllint and xsds. (master_xml.py)
-6. Uses bagit.py to bag each aip folder in place, making md5 and sha256 manifests. Validates the bag. (package.py)
-7. Uses the prepare_bag perl script to tar and zip a copy of the bag, which is saved in the aips-to-ingest folder. (package.py)
-8. Once all aips are created, uses md5deep to calculate the md5 for each packaged aip and saves it to a manifest, along with the filename. (aips.py)
+3. Extracts technical metadata from each file in the objects folder with FITS and saves the FITS xml to the metadata folder. Copies the information from each xml file into one file named combined-fits.xml, also saved in the metadata folder. (fits.py)
+4. Transforms the combined-fits xml into PREMIS metadata using Saxon and xslt stylesheets, which is saved as master.xml in the metadata folder. Verifies that the master.xml file meets UGA standards with xmllint and xsds. (master_xml.py)
+5. Uses bagit.py to bag each aip folder in place, making md5 and sha256 manifests. Validates the bag. (package.py)
+6. Uses the prepare_bag perl script to tar and zip a copy of the bag, which is saved in the aips-to-ingest folder. (package.py)
+7. Once all aips are created, uses md5deep to calculate the md5 for each packaged aip and saves it to a manifest, along with the filename. (aips.py)
 
 # Initial Author
 Adriane Hanson, Head of Digital Stewardship, December 2019.

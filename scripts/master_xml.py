@@ -16,6 +16,14 @@ aip = sys.argv[1]
 aip_title = sys.argv[2]
 department = sys.argv[3]
 
+# workflow is used to indicate if the files are websites so the warc format designation can be used.
+# It is passed as a parameter when running the stylesheets.
+# A default value is assigned if there is no 4th argument.
+if len(sys.argv) == 5:
+    workflow = sys.argv[4]
+else:
+    workflow = 'general'
+
 
 # Makes a simplified (cleaned) version of the combined fits xml with a stylesheet.
 # Simplifies the structure, makes element order consistent, and removes empty elements.
@@ -40,14 +48,14 @@ multifile_stylesheet = f'{stylesheets}/fits-to-master_multifile.xsl'
 master_xml = f'{aip}/metadata/{aip}_master.xml'
      
 if file_count == 1:
-    subprocess.run(f'java -cp {saxon} net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{singlefile_stylesheet}" -o:"{master_xml}" aip-id="{aip}" aip-title="{aip_title}" department="{department}"', shell=True)
+    subprocess.run(f'java -cp {saxon} net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{singlefile_stylesheet}" -o:"{master_xml}" aip-id="{aip}" aip-title="{aip_title}" department="{department}" workflow="{workflow}"', shell=True)
 
 elif file_count == 0:
     move_error('no_files', folder)
     exit()
 
 else:
-    subprocess.run(f'java -cp {saxon} net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{multifile_stylesheet}" -o:"{master_xml}" aip-id="{aip}" aip-title="{aip_title}" department="{department}"', shell=True)
+    subprocess.run(f'java -cp {saxon} net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{multifile_stylesheet}" -o:"{master_xml}" aip-id="{aip}" aip-title="{aip_title}" department="{department}" workflow="{workflow}"', shell=True)
 
    
 # Validates the master.xml file against the requirements of the UGA Libraries' digital preservation system (ARCHive).

@@ -14,12 +14,14 @@ python /path/general_aip.py /path/aip-directory
 * aip-directory is the folder which contains all the folders to make into AIPs.
 
 # Dependencies
-* Mac or Linux operating system
+md5deep and xmllint are pre-installed on some operating systems.
 * bagit.py (https://github.com/LibraryOfCongress/bagit-python)
 * FITS (https://projects.iq.harvard.edu/fits/downloads)
 * md5deep (https://github.com/jessek/hashdeep)
 * saxon9he (http://saxon.sourceforge.net/)
+* Strawberry Perl (Windows only) (http://strawberryperl.com/)
 * xmllint (http://xmlsoft.org/xmllint.html)
+* 7-Zip (Windows only) (https://www.7-zip.org/download.html)
 
 # Installation
 1. Install the dependencies (listed above).

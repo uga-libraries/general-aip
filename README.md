@@ -13,6 +13,8 @@ python /path/general_aip.py /path/aip-directory
 * general_aip.py is the script that implements the workflow.
 * aip-directory is the folder which contains all the folders to make into AIPs.
 
+The script has been tested in Windows 10 and Mac OS X.
+
 # Dependencies
 md5deep and xmllint are pre-installed on some operating systems.
 * bagit.py (https://github.com/LibraryOfCongress/bagit-python)

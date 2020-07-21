@@ -10,10 +10,9 @@ Each step of the workflow is in its own Python script. The script aips.py is use
 If a known error is encountered, such as failing a validation test or a regular expression does not find a match, the aip is moved to an error folder with the name of the error and the rest of the steps are skipped for that aip. 
 
 # Script usage
-python3 /path/aips.py /path/aip-directory department
-* aips.py is the script that controls the workflow and calls the other scripts.
-* aip-directory is the folder which contains all the folders to make into aips.
-* department is used to match department identifier patterns. Otherwise, the workflow is the same for all departments.
+python /path/general_aip.py /path/aip-directory
+* general_aip.py is the script that implements the workflow.
+* aip-directory is the folder which contains all the folders to make into AIPs.
 
 # Dependencies
 * Mac or Linux operating system

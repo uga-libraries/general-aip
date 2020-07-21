@@ -38,7 +38,7 @@ md5deep and xmllint are pre-installed on some operating systems.
 5. Change permission on the scripts so they are executable.
 
 # Workflow Details
-1. Extracts teh aip id, department, and aip title from the aip folder title.
+1. Extracts the aip id, department, and aip title from the aip folder title.
 
 
 2. Deletes temporary files from anywhere within the aip folder because they cause errors with validating bags.

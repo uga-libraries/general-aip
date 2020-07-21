@@ -4,10 +4,9 @@
 This is the general workflow to make archival information packages (AIPs) that are ready for ingest into the UGA Libraries' digital preservation system (ARCHive). The workflow organizes the files, extracts and formats metadata, and packages the files. It may be used for one or multiple files of any file format. More specialized workflows have been developed for [audiovisual materials](https://github.com/uga-libraries/av-aip_russell) and [web archives](https://github.com/uga-libraries/web-aip). 
 
 # Script approach
-Each step of the workflow is in its own Python script. The script aips.py is used to iterate over the folders being made into aips, calling the script for each step in turn. Each aip is fully processed before the next one is started. This modular approach makes it easier to set up variations on the workflow by not running a step or substituting a different script for a step in aips.py. It also makes it easier to find and edit code since each script is small and has a clear purpose.
+Each step of the workflow is in its own Python function. The functions are in a separate document (aip_functions.py) so that these can easily be used in other workflows as well. The general aip workflow is implemented by general_aip.py, which iterates over the folders being made into AIPs, calling the function for each step in turn. Each AIP is fully processed before the next one is started.
 
-# Error handling
-If a known error is encountered, such as failing a validation test or a regular expression does not find a match, the aip is moved to an error folder with the name of the error and the rest of the steps are skipped for that aip. 
+If a known error is encountered, such as failing a validation test or a regular expression does not find a match, the AIP is moved to an error folder with the name of the error and the rest of the steps are skipped for that AIP. A log is also created as the script runs which saves details about the errors. 
 
 # Script usage
 python /path/general_aip.py /path/aip-directory

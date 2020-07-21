@@ -135,8 +135,16 @@
 
     
     <!--Only copies these elements when apply-templates if they have a value.-->
-    <xsl:template match="version | filepath | size | md5checksum | valid | well-formed">
+    <xsl:template match="version | size | md5checksum | valid | well-formed">
         <xsl:if test=".[string()]"><xsl:copy-of select="." copy-namespaces="no" /></xsl:if>
+    </xsl:template>
+    
+    <!--Only copies filepath when apply-templates if it has a value.-->
+	<!--Replaces \ with / so any paths made by Windows match paths made by Linux (most common environment) for consistent file ids-->
+    <xsl:template match="filepath">
+    	<xsl:if test=".[string()]">
+    		<filepath xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output"><xsl:copy-of select="replace(.,'\\','/')" copy-namespaces="no" /></filepath>
+    	</xsl:if>
     </xsl:template>
 
 </xsl:stylesheet>

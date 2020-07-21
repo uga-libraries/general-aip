@@ -11,11 +11,11 @@ import xml.etree.ElementTree as ET
 # Constants with the absolute file paths for programs and files used by the functions.
 #   * fits: Mac/Linux use fits.sh, Windows use fits.bat
 #   * prepare_bag_script: Mac/Linux use prepare_bag, Windows use 7zprepare_bag.pl
-fits = 'C:\\Users\\amhan\\Documents\\Work_From_Home\\general-aip-master\\Fits\\fits-1.5.0\\fits.bat'
-saxon = 'C:\\Users\\amhan\\Documents\\Work_From_Home\\general-aip-master\\SaxonHE10-1J\\saxon-he-10.1.jar'
-md5deep = 'C:\\Users\\amhan\\Documents\\Work_From_Home\\general-aip-master\\md5deep-4.4\\md5deep64.exe'
-prepare_bag_script = 'C:\\Users\\amhan\\Documents\\Work_From_Home\\general-aip-master\\scripts\\7zprepare_bag.pl'
-stylesheets = 'C:\\Users\\amhan\\Documents\\Work_From_Home\\general-aip-master\\stylesheets'
+fits = 'INSERT-PATH'
+saxon = 'INSERT-PATH'
+md5deep = 'INSERT-PATH'
+prepare_bag_script = 'INSERT-PATH'
+stylesheets = 'INSERT-PATH'
 
 
 def log(log_path, log_item):

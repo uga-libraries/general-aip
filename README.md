@@ -26,7 +26,7 @@ md5deep and xmllint are pre-installed on some operating systems.
 * 7-Zip (Windows only) (https://www.7-zip.org/download.html)
 
 # Installation
-1. Install the dependencies (listed above).
+1. Install the dependencies (listed above). For Windows, add 7-Zip to your Windows System PATH. Go to View advanced system settings > Environment Variables > Path > Edit > New and add the 7-zip folder. 
 
 
 2. Download this repository and save to your computer.

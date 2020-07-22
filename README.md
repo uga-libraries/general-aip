@@ -16,7 +16,7 @@ python /path/general_aip.py /path/aip-directory
 The script has been tested in Windows 10 and Mac OS X.
 
 # Dependencies
-md5deep and xmllint are pre-installed on some operating systems.
+md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating systems. xmllint is also included with Strawberry Perl.
 * bagit.py (https://github.com/LibraryOfCongress/bagit-python)
 * FITS (https://projects.iq.harvard.edu/fits/downloads)
 * md5deep (https://github.com/jessek/hashdeep)

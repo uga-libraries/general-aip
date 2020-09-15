@@ -4,7 +4,7 @@
     <xsl:output method="xml" indent="yes" />
     <xsl:strip-space elements="*" />
     
-<!--Purpose: simplify FITS output to make it easier to make the master.xml file:-->
+<!--Purpose: simplify FITS output to make it easier to make the preservation.xml file:-->
 <!--    *Removes empty elements and sections that are not used.
         *Makes the order of children elements consistent.
         *Creates one FITS identity section for each version of a format
@@ -77,7 +77,7 @@
 
 
     <!--Adds structure to fileinfo with new elements creatingApplication and inhibitor.-->
-    <!--New elements are given the FITs namespace for easier XPaths when make master.xml-->
+    <!--New elements are given the FITs namespace for easier XPaths when make preservation.xml-->
     <!--Also makes the order of the child elements consistent.-->
     <xsl:template match="fileinfo">
         <fileinfo xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output">

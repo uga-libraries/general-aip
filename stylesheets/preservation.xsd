@@ -4,13 +4,13 @@
            xmlns:premis="http://www.loc.gov/premis/v3"
            elementFormDefault="qualified">
 
-<!--Purpose: validates the master.xml file produced from FITS-->
+<!--Purpose: validates the preservation.xml file produced from FITS-->
 
     <!--imports rules for the two namespaces, Dublin Core and PREMIS-->
     <xs:import namespace="http://purl.org/dc/terms/" schemaLocation="dc.xsd" />
     <xs:import namespace="http://www.loc.gov/premis/v3" schemaLocation="premis.xsd" />
        
-    <xs:element name="master">
+    <xs:element name="preservation">
         <xs:complexType>
             <xs:sequence>
                <xs:element ref="dc:title" />

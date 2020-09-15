@@ -4,7 +4,7 @@
 	xmlns:dc="http://purl.org/dc/terms/"
      elementFormDefault="qualified">
 
-<!--Purpose: validates the two Dublin Core elements in a master.xml file-->
+<!--Purpose: validates the two Dublin Core elements in a preservation.xml file-->
 
 	<xs:element name="title">
 		<xs:simpleType>

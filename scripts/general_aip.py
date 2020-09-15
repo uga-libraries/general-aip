@@ -19,7 +19,7 @@ Workflow Steps:
     6. Packages the AIP.
     7. When all AIPs are created (steps 1-5), makes a md5 manifest of the packaged AIPs.
 
-Script usage: python '/path/general_aip.py'
+Script usage: python '/path/general_aip.py' '/path/aips_directory'
 Depending on how Python is installed on the machine, may need to substitute python3 for python.
 
 This script has been tested on Windows 10 and Mac OS X (10.9.5).

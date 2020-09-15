@@ -1,2 +1,4 @@
 .idea
 scripts/_pycache_
+*.pyc
+scripts/configuration.py

@@ -30,10 +30,10 @@ md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating sys
 
 
 2. Download this repository and save to your computer.
-3. Update the file path variables (lines 14-18) in the aip_functions.py script with the paths for your local machine.
-4. Update the base uri in the stylesheets and premis.xsd to the base for your identifiers where it says "INSERT-URI".
-    * fits-to-master_multifile.xsl: in variable name="uri" (line 60)
-    * fits-to-master_singlefile.xsl: in variable name="uri" (line 66)
+3. Use the configuration_template.py to make a file named configuration.py with file path variables for your local machine.
+4. Update the base uri in the stylesheets and premis.xsd to the base for your identifiers where it says "INSERT-URI". For UGA, this is the URI for the ARCHive preservation system.
+    * fits-to-preservation_multifile.xsl: in variable name="uri" (line 60)
+    * fits-to-preservation_singlefile.xsl: in variable name="uri" (line 66)
     * premis.xsd: in restriction pattern for objectIdentifierType (line 42)
 5. Change permission on the scripts so they are executable.
 
@@ -44,7 +44,7 @@ md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating sys
 2. Deletes temporary files from anywhere within the AIP folder because they cause errors with validating bags.
 3. Creates the AIP directory structure. The AIP folder has the naming convention aip-id_AIP Title and contains metadata and objects folders. The digital content is moved to the objects folder.
 4. Extracts technical metadata from each file in the objects folder with FITS and saves the FITS xml to the metadata folder. Copies the information from each xml file into one file named combined-fits.xml, also saved in the metadata folder.
-5. Transforms the combined-fits xml into Dublin Core and PREMIS metadata using Saxon and xslt stylesheets, which is saved as master.xml in the metadata folder. Verifies that the master.xml file meets UGA standards with xmllint and xsds.
+5. Transforms the combined-fits xml into Dublin Core and PREMIS metadata using Saxon and xslt stylesheets, which is saved as preservation.xml in the metadata folder. Verifies that the preservation.xml file meets UGA standards with xmllint and xsds.
 6. Uses bagit to bag each AIP folder in place, making md5 and sha256 manifests. Validates the bag.
 7. Uses a perl script to tar and zip a copy of the bag, which is saved in the aips-to-ingest folder.
 8. Once all AIPs are created, uses md5deep to calculate the md5 for each packaged AIP and saves it to a manifest, along with the filename.

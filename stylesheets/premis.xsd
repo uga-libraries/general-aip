@@ -4,7 +4,7 @@
 	xmlns:premis="http://www.loc.gov/premis/v3"
  elementFormDefault="qualified">
 
-<!--Purpose: validates the PREMIS elements in a master.xml file-->
+<!--Purpose: validates the PREMIS elements in a preservation.xml file-->
 
 	<xs:element name="object">
 		<xs:complexType>
@@ -126,7 +126,7 @@
 				</xs:complexType>
 			</xs:element>
 			<!--known issue: it is not testing for if it has a format note with an identifying tool, just if it has a note, so it will incorrectly validate if there are only validation and well-formed format notes-->
-			<!--however, this is unlikely to happen as the stylesheets should give an empty formatNote tag if there is no identifying tool when the master.xml is made, which will correctly be invalid to alert staff to the problem-->
+			<!--however, this is unlikely to happen as the stylesheets should give an empty formatNote tag if there is no identifying tool when the preservation.xml is made, which will correctly be invalid to alert staff to the problem-->
 			<xs:element name="formatNote" type="premis:hasString" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>

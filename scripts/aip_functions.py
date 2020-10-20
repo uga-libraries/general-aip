@@ -1,4 +1,4 @@
-""" Constants and functions used to make AIPs from folders of digital objects that are then ready for ingest into the
+""" Functions used to make AIPs from folders of digital objects that are then ready for ingest into the
 UGA Libraries' digital preservation system (ARCHive). These are utilized by multiple scripts that create AIPs of
 different types."""
 
@@ -9,13 +9,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 # Constants with the absolute file paths for programs and files used by the functions.
-#   * fits: Mac/Linux use fits.sh, Windows use fits.bat
-#   * prepare_bag_script: Mac/Linux use prepare_bag, Windows use 7zprepare_bag.pl
-fits = 'INSERT-PATH'
-saxon = 'INSERT-PATH'
-md5deep = 'INSERT-PATH'
-prepare_bag_script = 'INSERT-PATH'
-stylesheets = 'INSERT-PATH'
+import configuration as c
 
 
 def log(log_path, log_item):
@@ -97,7 +91,7 @@ def extract_metadata(aip_id, aip_directory, log_path):
     combines the FITS output for every file in the AIP. """
 
     # Runs FITS on every file in the AIP's objects folder and saves the output to the AIP's metadata folder.
-    subprocess.run(f'"{fits}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"', shell=True)
+    subprocess.run(f'"{c.fits}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"', shell=True)
 
     # Renames the FITS output according to the UGA Libraries' metadata naming convention (filename_fits.xml).
     for item in os.listdir(f'{aip_id}/metadata'):
@@ -134,17 +128,17 @@ def extract_metadata(aip_id, aip_directory, log_path):
     combo_tree.write(f'{aip_id}/metadata/{aip_id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
 
 
-def make_masterxml(aip_id, aip_title, department, workflow, log_path):
-    """Creates PREMIS and Dublin Core metadata from the combined FITS XML and saves it as a file named master.xml
+def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
+    """Creates PREMIS and Dublin Core metadata from the combined FITS XML and saves it as a file named preservation.xml
     that meets the metadata requirements for the UGA Libraries' digital preservation system (ARCHive)."""
 
     # Makes a simplified (cleaned) version of the combined fits XML with a stylesheet so the XML is easier to aggregate.
     # Temporarily saves the file in the AIP's metadata folder. It is deleted at the end of the function.
     combined_fits = f'{aip_id}/metadata/{aip_id}_combined-fits.xml'
-    cleanup_stylesheet = f'{stylesheets}/fits-cleanup.xsl'
+    cleanup_stylesheet = f'{c.stylesheets}/fits-cleanup.xsl'
     cleaned_fits = f'{aip_id}/metadata/{aip_id}_cleaned-fits.xml'
     subprocess.run(
-        f'java -cp {saxon} net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
+        f'java -cp {c.saxon} net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
         shell=True)
 
     # Counts the number of files in the objects folder, since a different stylesheet is used for AIPs with one file.
@@ -155,9 +149,9 @@ def make_masterxml(aip_id, aip_title, department, workflow, log_path):
     # Selects the correct stylesheet for if the AIP has one file or multiple files. If there is not at least 1 file,
     # moves the AIP to an error folder and does not execute the rest of this function.
     if file_count == 1:
-        stylesheet = f'{stylesheets}/fits-to-master_singlefile.xsl'
+        stylesheet = f'{c.stylesheets}/fits-to-preservation_singlefile.xsl'
     elif file_count > 1:
-        stylesheet = f'{stylesheets}/fits-to-master_multifile.xsl'
+        stylesheet = f'{c.stylesheets}/fits-to-preservation_multifile.xsl'
     else:
         log(log_path, 'Stop processing. There are no objects in this AIP.')
         move_error('no_files', aip_id)
@@ -170,34 +164,34 @@ def make_masterxml(aip_id, aip_title, department, workflow, log_path):
     else:
         department = 'russell'
 
-    # Makes the master.xml file using a stylesheet and saves it to the AIP's metadata folder.
-    master_xml = f'{aip_id}/metadata/{aip_id}_master.xml'
+    # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
+    preservation_xml = f'{aip_id}/metadata/{aip_id}_preservation.xml'
     subprocess.run(
-        f'java -cp {saxon} net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{master_xml}" '
+        f'java -cp {c.saxon} net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" '
         f'aip-id="{aip_id}" aip-title="{aip_title}" department="{department}" workflow="{workflow}"',
         shell=True)
 
-    # Validates the master.xml file against the requirements of the UGA Libraries' digital preservation system
+    # Validates the preservation.xml file against the requirements of the UGA Libraries' digital preservation system
     # (ARCHive). If it is not valid, saves the validation error to the log, moves the AIP to an error folder,
     # and does not execute the rest of this function.
-    validation = subprocess.run(f'xmllint --noout -schema "{stylesheets}/master.xsd" "{master_xml}"',
+    validation = subprocess.run(f'xmllint --noout -schema "{c.stylesheets}/preservation.xsd" "{preservation_xml}"',
                                 stderr=subprocess.PIPE, shell=True)
     validation_result = str(validation.stderr)
 
-    # This error happens if the master.xml file was not made or is not in the expected location.
+    # This error happens if the preservation.xml file was not made or is not in the expected location.
     if 'failed to load' in validation_result:
-        log(log_path, f'Stop processing. Unable to find the master.xml file. Error:\n{validation_result}')
-        move_error('masterxml_not_found', aip_id)
+        log(log_path, f'Stop processing. Unable to find the preservation.xml file. Error:\n{validation_result}')
+        move_error('preservationxml_not_found', aip_id)
         return
 
-    # This error happens if the master.xml file does not meet the Libraries' requirements.
+    # This error happens if the preservation.xml file does not meet the Libraries' requirements.
     elif 'fails to validate' in validation_result:
-        log(log_path, f'Stop processing. The master.xml file is not valid. Error:\n{validation_result}')
-        move_error('masterxml_not_valid', aip_id)
+        log(log_path, f'Stop processing. The preservation.xml file is not valid. Error:\n{validation_result}')
+        move_error('preservationxml_not_valid', aip_id)
         return
 
-    # Copies the master.xml file to the preservation-xml folder for staff reference.
-    shutil.copy2(f'{aip_id}/metadata/{aip_id}_master.xml', '../preservation-xml')
+    # Copies the preservation.xml file to the preservation-xml folder for staff reference.
+    shutil.copy2(f'{aip_id}/metadata/{aip_id}_preservation.xml', '../preservation-xml')
 
     # Moves the combined-fits.xml file to the fits-xml folder for staff reference.
     os.replace(f'{aip_id}/metadata/{aip_id}_combined-fits.xml', f'../fits-xml/{aip_id}_combined-fits.xml')
@@ -228,7 +222,7 @@ def package(aip_id, log_path):
 
     # Tars and zips the AIP using a perl script and saves the packaged AIP in the aips-to-ingest folder.
     # The script also adds the uncompressed file size to the file name.
-    subprocess.run(f'perl "{prepare_bag_script}" "{aip_id}_bag" "../aips-to-ingest"', shell=True)
+    subprocess.run(f'perl "{c.prepare_bag_script}" "{aip_id}_bag" "../aips-to-ingest"', shell=True)
 
     # When the script for Windows is used, it saves both the tar version and tar.bzip2 version to the aips-to-ingest
     # folder. Deletes the tar only version.
@@ -248,7 +242,7 @@ def make_manifest():
     # Uses md5deep to calculate the MD5s for files with the specified department prefix and saves them to the manifest.
     # Tests if there are any files with that prefix before making the manifest so it does not make an empty manifest.
     if any(file.startswith('harg') for file in os.listdir('.')):
-        subprocess.run(f'{md5deep} -br harg* > manifest_hargrett.txt', shell=True)
+        subprocess.run(f'{c.md5deep} -br harg* > manifest_hargrett.txt', shell=True)
 
     if any(file.startswith('rbrl') for file in os.listdir('.')):
-        subprocess.run(f'{md5deep} -br rbrl* > manifest_russell.txt', shell=True)
+        subprocess.run(f'{c.md5deep} -br rbrl* > manifest_russell.txt', shell=True)

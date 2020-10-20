@@ -15,11 +15,11 @@ Workflow Steps:
     2. Deletes temporary files.
     3. Organizes folder contents into the UGA Libraries' AIP directory structure.
     4. Extracts technical metadata using FITS.
-    5. Converts technical metadata to Dublin Core and PREMIS (master.xml file).
+    5. Converts technical metadata to Dublin Core and PREMIS (preservation.xml file).
     6. Packages the AIP.
-    7. When all AIPs are created (steps 1-5), makes a md5 manifest of the packaged AIPs.
+    7. When all AIPs are created (steps 1-6), makes a md5 manifest of the packaged AIPs.
 
-Script usage: python '/path/general_aip.py'
+Script usage: python '/path/general_aip.py' '/path/aips_directory'
 Depending on how Python is installed on the machine, may need to substitute python3 for python.
 
 This script has been tested on Windows 10 and Mac OS X (10.9.5).
@@ -76,7 +76,7 @@ for aip_folder in os.listdir(aips_directory):
         continue
 
     # Renames the AIP folder to the AIP id. Only need the AIP title in the folder name to get the title for the
-    # master.xml file.
+    # preservation.xml file.
     os.replace(aip_folder, aip_id)
 
     # Deletes temporary files. Remove the log_path parameter to not include a list of deleted files in the log.
@@ -90,9 +90,9 @@ for aip_folder in os.listdir(aips_directory):
     if aip_id in os.listdir('.'):
         aip.extract_metadata(aip_id, aips_directory, log_path)
 
-    # Converts the technical metadata into Dublin Core and PREMIS (master.xml file) using xslt stylesheets.
+    # Converts the technical metadata into Dublin Core and PREMIS (preservation.xml file) using xslt stylesheets.
     if aip_id in os.listdir('.'):
-        aip.make_masterxml(aip_id, aip_title, department, 'general', log_path)
+        aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
 
     # Bags, tars, and zips the aip using bagit.py and a perl script.
     if aip_id in os.listdir('.'):

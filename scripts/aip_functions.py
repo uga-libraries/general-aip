@@ -1,4 +1,4 @@
-""" Constants and functions used to make AIPs from folders of digital objects that are then ready for ingest into the
+""" Functions used to make AIPs from folders of digital objects that are then ready for ingest into the
 UGA Libraries' digital preservation system (ARCHive). These are utilized by multiple scripts that create AIPs of
 different types."""
 

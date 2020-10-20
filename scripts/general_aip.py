@@ -17,7 +17,7 @@ Workflow Steps:
     4. Extracts technical metadata using FITS.
     5. Converts technical metadata to Dublin Core and PREMIS (preservation.xml file).
     6. Packages the AIP.
-    7. When all AIPs are created (steps 1-5), makes a md5 manifest of the packaged AIPs.
+    7. When all AIPs are created (steps 1-6), makes a md5 manifest of the packaged AIPs.
 
 Script usage: python '/path/general_aip.py' '/path/aips_directory'
 Depending on how Python is installed on the machine, may need to substitute python3 for python.

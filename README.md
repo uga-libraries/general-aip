@@ -46,7 +46,7 @@ md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating sys
 4. Extracts technical metadata from each file in the objects folder with FITS and saves the FITS xml to the metadata folder. Copies the information from each xml file into one file named combined-fits.xml, also saved in the metadata folder.
 5. Transforms the combined-fits xml into Dublin Core and PREMIS metadata using Saxon and xslt stylesheets, which is saved as preservation.xml in the metadata folder. Verifies that the preservation.xml file meets UGA standards with xmllint and xsds.
 6. Uses bagit to bag each AIP folder in place, making md5 and sha256 manifests. Validates the bag.
-7. Uses a perl script to tar and zip a copy of the bag, which is saved in the aips-to-ingest folder.
+7. Tars and zips a copy of the bag, which is saved in the aips-to-ingest folder.
 8. Once all AIPs are created, uses md5deep to calculate the md5 for each packaged AIP and saves it to a manifest, along with the filename.
 
 # Initial Author

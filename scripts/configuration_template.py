@@ -7,5 +7,4 @@
 fits = '/insert/path'
 saxon = '/insert/path'
 md5deep = '/insert/path'
-prepare_bag_script = '/insert/path'
 stylesheets = '/insert/path'

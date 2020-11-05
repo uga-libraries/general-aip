@@ -200,8 +200,8 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
     os.remove(f'{aip_id}/metadata/{aip_id}_cleaned-fits.xml')
 
 
-def package(aip_id, log_path):
-    """Bags, tars, and zips each AIP."""
+def bag(aip_id, log_path):
+    """Bags and validates the AIP. Adds _bag to the AIP folder name."""
 
     # Bags the AIP folder in place. Both md5 and sha256 checksums are generated to guard against tampering.
     bagit.make_bag(aip_id, checksums=['md5', 'sha256'])
@@ -210,25 +210,43 @@ def package(aip_id, log_path):
     new_aip_name = f'{aip_id}_bag'
     os.replace(aip_id, new_aip_name)
 
-    # Validates the bag. If it is not valid, saves the validation errors to the log, moves the AIP to an error folder,
-    # and does not execute the rest of this function.
+    # Validates the bag. If it is not valid, saves the validation errors to the log, moves the AIP to an error folder.
     new_bag = bagit.Bag(new_aip_name)
     try:
         new_bag.validate()
     except bagit.BagValidationError as e:
         log(log_path, f'Stop processing. Bag is not valid: \n{e}')
         move_error('bag_invalid', f'{aip_id}_bag')
-        return
 
-    # Tars and zips the AIP using a perl script and saves the packaged AIP in the aips-to-ingest folder.
-    # The script also adds the uncompressed file size to the file name.
-    subprocess.run(f'perl "{c.prepare_bag_script}" "{aip_id}_bag" "../aips-to-ingest"', shell=True)
 
-    # When the script for Windows is used, it saves both the tar version and tar.bzip2 version to the aips-to-ingest
-    # folder. Deletes the tar only version.
-    for file in os.listdir('../aips-to-ingest'):
-        if file.endswith('.tar'):
-            os.remove(f'../aips-to-ingest/{file}')
+def package(aip_id, aips_directory):
+    """Tars and zips the AIP."""
+    # TODO: this only works on Windows right now.
+    # TODO: make sure the directory gets changed back if there is an error at any step?
+
+    # Changes current directory to the folder for tarred/zipped outputs to avoid filepath errors with subprocess.run().
+    os.chdir('../aips-to-ingest')
+
+    # Makes a variable for the AIP folder name, which is reused a lot.
+    aip = f'{aip_id}_bag'
+
+    # Tars the file. Does not print the progress to the terminal (stdout), which is a lot of text.
+    subprocess.run(f'7z -ttar a "{aip}.tar" "{aips_directory}/{aip}"', stdout=subprocess.DEVNULL, shell=True)
+
+    # Gets the size of the tar file.
+    size = os.path.getsize(f'{aip}.tar')
+
+    # Renames the file to include the size.
+    os.replace(f'{aip}.tar', f'{aip}.{size}.tar')
+
+    # Zips (bz2) the tar file. Does not print the progress to the terminal (stdout), which is a lot of text.
+    subprocess.run(f'7z -tbzip2 a -aoa "{aip}.{size}.tar.bz2" "{aip}.{size}.tar"', stdout=subprocess.DEVNULL, shell=True)
+
+    # Deletes the tar version. Just want the tarred and zipped version.
+    os.remove(f'{aip}.{size}.tar')
+
+    # Changes current directory back to the aips directory for the script to run on the next AIP.
+    os.chdir(aips_directory)
 
 
 def make_manifest():

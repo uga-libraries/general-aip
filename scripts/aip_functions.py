@@ -157,11 +157,10 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
         move_error('no_files', aip_id)
         return
 
-    # Updates the department variable from the code used in the AIP id to the group name in ARCHive. The regular
-    # expression used to extract the department code from the AIP id ensures it is either harg or rbrl.
+    # Updates the department variable from the code used in the AIP id to the group name in ARCHive, if different.
     if department == 'harg':
         department = 'hargrett'
-    else:
+    elif department == 'rbrl':
         department = 'russell'
 
     # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
@@ -246,3 +245,5 @@ def make_manifest():
 
     if any(file.startswith('rbrl') for file in os.listdir('.')):
         subprocess.run(f'{c.md5deep} -br rbrl* > manifest_russell.txt', shell=True)
+
+    # TODO: add manifest for partner

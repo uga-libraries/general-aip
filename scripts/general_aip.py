@@ -79,27 +79,27 @@ for aip_folder in os.listdir(aips_directory):
 
     # If the folder name did not include a UGA department prefix, department is Partner.
     if department is None:
-        department = "Partner"
+        department = "partner"
 
-#     # Renames the AIP folder to the AIP id. Only need the AIP title in the folder name to get the title for the
-#     # preservation.xml file.
-#     os.replace(aip_folder, aip_id)
-#
-#     # Deletes temporary files. Remove the log_path parameter to not include a list of deleted files in the log.
-#     aip.delete_temp(aip_id, log_path)
-#
-#     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
-#     if aip_id in os.listdir('.'):
-#         aip.structure_directory(aip_id, log_path)
-#
-#     # Extracts technical metadata from the files using FITS.
-#     if aip_id in os.listdir('.'):
-#         aip.extract_metadata(aip_id, aips_directory, log_path)
-#
-#     # Converts the technical metadata into Dublin Core and PREMIS (preservation.xml file) using xslt stylesheets.
-#     if aip_id in os.listdir('.'):
-#         aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
-#
+    # Renames the AIP folder to the AIP id. Only need the AIP title in the folder name to get the title for the
+    # preservation.xml file.
+    os.replace(aip_folder, aip_id)
+
+    # Deletes temporary files. Remove the log_path parameter to not include a list of deleted files in the log.
+    aip.delete_temp(aip_id, log_path)
+
+    # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
+    if aip_id in os.listdir('.'):
+        aip.structure_directory(aip_id, log_path)
+
+    # Extracts technical metadata from the files using FITS.
+    if aip_id in os.listdir('.'):
+        aip.extract_metadata(aip_id, aips_directory, log_path)
+
+    # Converts the technical metadata into Dublin Core and PREMIS (preservation.xml file) using xslt stylesheets.
+    if aip_id in os.listdir('.'):
+        aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
+
 #     # Bags, tars, and zips the aip using bagit.py and a perl script.
 #     if aip_id in os.listdir('.'):
 #         aip.package(aip_id, log_path)

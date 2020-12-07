@@ -87,6 +87,16 @@
             </xsl:analyze-string>
         </xsl:if>
 
+        <!--Partner collection-id is formatted ####-->
+        <!--TODO: produces a blank-->
+        <xsl:if test="$department='partner'">
+            <xsl:analyze-string select="$aip-id" regex="^(\d{{4}})_\d{{3}}">
+                <xsl:matching-substring>
+                    <xsl:value-of select="regex-group(1)" />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
+        </xsl:if>
+
     </xsl:variable>
 
 
@@ -298,6 +308,7 @@ multiple possible formats or multiple possible created dates) all possible infor
     
     
     <!--aip relationship to collection: PREMIS 1.13 (required if applicable)-->
+    <!--TODO: work for a partner and how they want to do relationships-->
     <xsl:template name="relationship-collection">
         <!--Does not include the default number for web archives aips without a related collection.-->
         <xsl:if test="not($collection-id='harg-0000' or $collection-id='rbrl-000')">

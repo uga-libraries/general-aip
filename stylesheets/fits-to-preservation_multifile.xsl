@@ -51,12 +51,14 @@
     
     <!--The aip id, aip title, and department are given as arguments when running the xslt via the command line or script.-->
     <!--The workflow type is an optional fourth argument used to run additional code for websites-->
+    <!--PARTNER: CONFIRMED THAT GETTING EXPECTED AIP-ID AND DEPARTMENT PARAMETERS-->
     <xsl:param name="aip-id" required="yes" />
     <xsl:param name="aip-title" required="yes" />
     <xsl:param name="department" required="yes" />
     <xsl:param name="workflow" />
     
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
+    <!--PARTNER: THIS WORKS CORRECTLY-->
     <xsl:variable name="uri">INSERT-URI<xsl:value-of select="$department" /></xsl:variable>
          
     <!--$collection-id: gets the collection-id from the aip id.-->
@@ -81,6 +83,16 @@
             </xsl:analyze-string>
         </xsl:if>
 
+        <!--Partner collection-id is formatted ####-->
+        <!--TODO: THIS PRODUCES A BLANK FOR PARTNER-->
+        <xsl:if test="$department='partner'">
+            <xsl:analyze-string select="$aip-id" regex="^(\d{{4}})_\d{{3}}">
+                <xsl:matching-substring>
+                    <xsl:value-of select="regex-group(1)" />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
+        </xsl:if>
+
     </xsl:variable>
     
     <!--file-id: the portion of the file path beginning with the aip id.-->
@@ -96,6 +108,14 @@
         </xsl:if>
         <xsl:if test="$department='hargrett'">
             <xsl:analyze-string select="fileinfo/filepath" regex="harg-(ms|ua)?(\d{{2}}-)?\d{{4}}(er|-web-\d{{6}}-)\d{{4}}.*">
+                <xsl:matching-substring>
+                    <xsl:value-of select="." />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
+        </xsl:if>
+        <!--TODO: THIS PRODUCES A BLANK FOR PARTNER-->
+        <xsl:if test="$department='partner'">
+            <xsl:analyze-string select="fileinfo/filepath" regex="\d{{4}}_\d{{3}}.*">
                 <xsl:matching-substring>
                     <xsl:value-of select="." />
                 </xsl:matching-substring>
@@ -270,6 +290,7 @@
     
     
     <!--aip relationship to collection: PREMIS 1.13 (required if applicable).-->
+    <!--TODO: work for a partner for when they want a relationship-->
     <xsl:template name="relationship-collection">
         <!--Does not include the default number for web archives aips without a related collection.-->
         <xsl:if test="not($collection-id='harg-0000' or $collection-id='rbrl-000')">

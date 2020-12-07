@@ -32,7 +32,6 @@ import sys
 
 import aip_functions as aip
 
-
 # Assigns the script argument to the aips_directory variable and makes that the current directory.
 # Ends the script if it is missing or not a valid directory.
 try:
@@ -65,7 +64,10 @@ for aip_folder in os.listdir(aips_directory):
     print(f'\n>>>Processing {aip_folder} ({current_aip} of {total_aips}).')
 
     # Parses the AIP id, department, and AIP title from the folder name.
-    regex = re.match('^((harg|rbrl)[a-z0-9-]+)_(.*)', aip_folder)
+    #   * Prefix of harg or rbrl indicate a UGA department. Otherwise, department is "partner".
+    #   * AIP id is everything before the last underscore, include department if present.
+    #   * AIP title is everything after the last underscore.
+    regex = re.match('^((harg|rbrl)?[a-z0-9-_]+)_(?!.*_)(.*)', aip_folder)
     try:
         aip_id = regex.group(1)
         department = regex.group(2)
@@ -75,32 +77,35 @@ for aip_folder in os.listdir(aips_directory):
         aip.move_error('folder_name', aip_folder)
         continue
 
-    # Renames the AIP folder to the AIP id. Only need the AIP title in the folder name to get the title for the
-    # preservation.xml file.
-    os.replace(aip_folder, aip_id)
+    # If the folder name did not include a UGA department prefix, department is Partner.
+    if department is None:
+        department = "Partner"
 
-    # Deletes temporary files. Remove the log_path parameter to not include a list of deleted files in the log.
-    aip.delete_temp(aip_id, log_path)
-
-    # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
-    if aip_id in os.listdir('.'):
-        aip.structure_directory(aip_id, log_path)
-
-    # Extracts technical metadata from the files using FITS.
-    if aip_id in os.listdir('.'):
-        aip.extract_metadata(aip_id, aips_directory, log_path)
-
-    # Converts the technical metadata into Dublin Core and PREMIS (preservation.xml file) using xslt stylesheets.
-    if aip_id in os.listdir('.'):
-        aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
-
-    # Bags, tars, and zips the aip using bagit.py and a perl script.
-    if aip_id in os.listdir('.'):
-        aip.package(aip_id, log_path)
-
-# Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
-aip.make_manifest()
-
-# Adds date and time the script was completed to the log.
-aip.log(log_path, f'\nScript finished running at {datetime.datetime.today()}.')
-
+#     # Renames the AIP folder to the AIP id. Only need the AIP title in the folder name to get the title for the
+#     # preservation.xml file.
+#     os.replace(aip_folder, aip_id)
+#
+#     # Deletes temporary files. Remove the log_path parameter to not include a list of deleted files in the log.
+#     aip.delete_temp(aip_id, log_path)
+#
+#     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
+#     if aip_id in os.listdir('.'):
+#         aip.structure_directory(aip_id, log_path)
+#
+#     # Extracts technical metadata from the files using FITS.
+#     if aip_id in os.listdir('.'):
+#         aip.extract_metadata(aip_id, aips_directory, log_path)
+#
+#     # Converts the technical metadata into Dublin Core and PREMIS (preservation.xml file) using xslt stylesheets.
+#     if aip_id in os.listdir('.'):
+#         aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
+#
+#     # Bags, tars, and zips the aip using bagit.py and a perl script.
+#     if aip_id in os.listdir('.'):
+#         aip.package(aip_id, log_path)
+#
+# # Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
+# aip.make_manifest()
+#
+# # Adds date and time the script was completed to the log.
+# aip.log(log_path, f'\nScript finished running at {datetime.datetime.today()}.')

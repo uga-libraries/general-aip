@@ -163,15 +163,8 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
     elif department == 'rbrl':
         department = 'russell'
 
-    print("Variables right before making the preservationxml:", aip_id, aip_title, department, workflow)
-    print()
-
-
     # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
     preservation_xml = f'{aip_id}/metadata/{aip_id}_preservation.xml'
-    print("Command for making the preservationxml:")
-    print(f'java -cp {c.saxon} net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" '
-          f'aip-id="{aip_id}" aip-title="{aip_title}" department="{department}" workflow="{workflow}"')
     subprocess.run(
         f'java -cp {c.saxon} net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" '
         f'aip-id="{aip_id}" aip-title="{aip_title}" department="{department}" workflow="{workflow}"',
@@ -184,30 +177,26 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
                                 stderr=subprocess.PIPE, shell=True)
     validation_result = str(validation.stderr)
 
-    print()
-    print("Validation result:")
-    print(validation_result)
+    # This error happens if the preservation.xml file was not made or is not in the expected location.
+    if 'failed to load' in validation_result:
+        log(log_path, f'Stop processing. Unable to find the preservation.xml file. Error:\n{validation_result}')
+        move_error('preservationxml_not_found', aip_id)
+        return
 
-    # # This error happens if the preservation.xml file was not made or is not in the expected location.
-    # if 'failed to load' in validation_result:
-    #     log(log_path, f'Stop processing. Unable to find the preservation.xml file. Error:\n{validation_result}')
-    #     move_error('preservationxml_not_found', aip_id)
-    #     return
-    #
-    # # This error happens if the preservation.xml file does not meet the Libraries' requirements.
-    # elif 'fails to validate' in validation_result:
-    #     log(log_path, f'Stop processing. The preservation.xml file is not valid. Error:\n{validation_result}')
-    #     move_error('preservationxml_not_valid', aip_id)
-    #     return
-    #
-    # # Copies the preservation.xml file to the preservation-xml folder for staff reference.
-    # shutil.copy2(f'{aip_id}/metadata/{aip_id}_preservation.xml', '../preservation-xml')
-    #
-    # # Moves the combined-fits.xml file to the fits-xml folder for staff reference.
-    # os.replace(f'{aip_id}/metadata/{aip_id}_combined-fits.xml', f'../fits-xml/{aip_id}_combined-fits.xml')
-    #
-    # # Deletes the cleaned-fits.xml file because it is a temporary file.
-    # os.remove(f'{aip_id}/metadata/{aip_id}_cleaned-fits.xml')
+    # This error happens if the preservation.xml file does not meet the Libraries' requirements.
+    elif 'fails to validate' in validation_result:
+        log(log_path, f'Stop processing. The preservation.xml file is not valid. Error:\n{validation_result}')
+        move_error('preservationxml_not_valid', aip_id)
+        return
+
+    # Copies the preservation.xml file to the preservation-xml folder for staff reference.
+    shutil.copy2(f'{aip_id}/metadata/{aip_id}_preservation.xml', '../preservation-xml')
+
+    # Moves the combined-fits.xml file to the fits-xml folder for staff reference.
+    os.replace(f'{aip_id}/metadata/{aip_id}_combined-fits.xml', f'../fits-xml/{aip_id}_combined-fits.xml')
+
+    # Deletes the cleaned-fits.xml file because it is a temporary file.
+    os.remove(f'{aip_id}/metadata/{aip_id}_cleaned-fits.xml')
 
 
 def package(aip_id, log_path):

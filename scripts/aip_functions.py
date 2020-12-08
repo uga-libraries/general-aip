@@ -257,4 +257,6 @@ def make_manifest():
     if any(file.startswith('rbrl') for file in os.listdir('.')):
         subprocess.run(f'{c.md5deep} -br rbrl* > manifest_russell.txt', shell=True)
 
-    # TODO: add manifest for partner
+    # Uses md5deep to calculate the MD5s for all files, regardless of department, and saves to one manifest.
+    # Necessary to make the manifest for partners, which do not currently have a prefix to test for.
+    subprocess.run(f'{c.md5deep} -br *.zip > manifest.txt', shell=True)

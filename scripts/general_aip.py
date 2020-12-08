@@ -1,6 +1,6 @@
 """Purpose: Creates AIPs from folders of digital objects that are then ready for ingest into the UGA Libraries'
 digital preservation system (ARCHive). The AIPs may contain one or multiple files of any format. The script works
-with Hargrett and Russell library identifiers.
+with Hargrett and Russell library identifiers and Emory disk identifiers.
 
 All workflow steps are done for one AIP before processing begins on the next. If an anticipated error is encountered
 during processing, the AIP is moved to an error folder and the rest of the workflow steps are not executed for that
@@ -64,7 +64,7 @@ for aip_folder in os.listdir(aips_directory):
     print(f'\n>>>Processing {aip_folder} ({current_aip} of {total_aips}).')
 
     # Parses the AIP id, department, and AIP title from the folder name.
-    #   * Prefix of harg or rbrl indicate a UGA department. Otherwise, department is "partner".
+    #   * Prefix of harg or rbrl indicate a UGA department. Otherwise, department assigned after this.
     #   * AIP id is everything before the last underscore, include department if present.
     #   * AIP title is everything after the last underscore.
     regex = re.match('^((harg|rbrl)?[a-z0-9-_]+)_(?!.*_)(.*)', aip_folder)
@@ -77,7 +77,7 @@ for aip_folder in os.listdir(aips_directory):
         aip.move_error('folder_name', aip_folder)
         continue
 
-    # If the folder name did not include a UGA department prefix, department is Partner.
+    # If the folder name did not include a UGA department prefix, department is partner.
     if department is None:
         department = "partner"
 
@@ -100,12 +100,12 @@ for aip_folder in os.listdir(aips_directory):
     if aip_id in os.listdir('.'):
         aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
 
-#     # Bags, tars, and zips the aip using bagit.py and a perl script.
-#     if aip_id in os.listdir('.'):
-#         aip.package(aip_id, log_path)
-#
-# # Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
-# aip.make_manifest()
-#
-# # Adds date and time the script was completed to the log.
-# aip.log(log_path, f'\nScript finished running at {datetime.datetime.today()}.')
+    # Bags, tars, and zips the aip using bagit.py and a perl script.
+    if aip_id in os.listdir('.'):
+        aip.package(aip_id, log_path)
+
+# Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
+aip.make_manifest()
+
+# Adds date and time the script was completed to the log.
+aip.log(log_path, f'\nScript finished running at {datetime.datetime.today()}.')

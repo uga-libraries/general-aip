@@ -51,15 +51,13 @@
     
     <!--The aip id, aip title, and department are given as arguments when running the xslt via the command line or script.-->
     <!--The workflow type is an optional fourth argument used to run additional code for websites-->
-    <!--PARTNER: CONFIRMED THAT GETTING EXPECTED AIP-ID AND DEPARTMENT PARAMETERS-->
     <xsl:param name="aip-id" required="yes" />
     <xsl:param name="aip-title" required="yes" />
     <xsl:param name="department" required="yes" />
     <xsl:param name="workflow" />
     
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
-    <!--PARTNER: THIS WORKS CORRECTLY-->
-    <xsl:variable name="uri">INSERT-URI<xsl:value-of select="$department" /></xsl:variable>
+    <xsl:variable name="uri">INSERT-URI/<xsl:value-of select="$department" /></xsl:variable>
          
     <!--$collection-id: gets the collection-id from the aip id.-->
     <!--Uses department parameter to determine what pattern to match.-->
@@ -84,7 +82,6 @@
         </xsl:if>
 
         <!--Partner collection-id is formatted ####-->
-        <!--TODO: THIS PRODUCES A BLANK FOR PARTNER-->
         <xsl:if test="$department='partner'">
             <xsl:analyze-string select="$aip-id" regex="^(\d{{4}})_\d{{3}}">
                 <xsl:matching-substring>
@@ -113,7 +110,6 @@
                 </xsl:matching-substring>
             </xsl:analyze-string>
         </xsl:if>
-        <!--TODO: THIS PRODUCES A BLANK FOR PARTNER-->
         <xsl:if test="$department='partner'">
             <xsl:analyze-string select="fileinfo/filepath" regex="\d{{4}}_\d{{3}}.*">
                 <xsl:matching-substring>
@@ -239,7 +235,7 @@
     <!--aip creating application list: PREMIS 1.5.5 (optional): gets a unique list of applications.-->
     <xsl:template name="aip-unique-creating-application-list">
 
-        <!--Uniqueness is determed by application name and version.-->
+        <!--Uniqueness is determined by application name and version.-->
         <xsl:for-each-group select="//fileinfo/creatingApplication" group-by="concat(creatingApplicationName,creatingApplicationVersion)">
             <xsl:sort select="current-grouping-key()" />
 
@@ -290,7 +286,6 @@
     
     
     <!--aip relationship to collection: PREMIS 1.13 (required if applicable).-->
-    <!--TODO: work for a partner for when they want a relationship-->
     <xsl:template name="relationship-collection">
         <!--Does not include the default number for web archives aips without a related collection.-->
         <xsl:if test="not($collection-id='harg-0000' or $collection-id='rbrl-000')">
@@ -314,9 +309,10 @@
 <!--FILELIST SECTION TEMPLATES -->
 
 <!--Detailed information about each file in the aip. When tools generate conflicting information (i.e. 
-multiple possible formats or multiple possible created dates) all possible information is kept. -->    <!--..................................................................................................-->
+multiple possible formats or multiple possible created dates) all possible information is kept. -->
+    <!--..................................................................................................-->
 
-    <!--Creates the strcture for the premis:object for each file in the aip.-->
+    <!--Creates the structure for the premis:object for each file in the aip.-->
     <xsl:template match="fits">
         <premis:object>
             <xsl:call-template name="file-id" />
@@ -376,7 +372,7 @@ multiple possible formats or multiple possible created dates) all possible infor
 
         <premis:format>
 
-            <!--Format name, and verison if it has one.-->
+            <!--Format name, and version if it has one.-->
             <premis:formatDesignation>
                 <premis:formatName><xsl:value-of select="@format" /></premis:formatName>
                 <xsl:if test="version">

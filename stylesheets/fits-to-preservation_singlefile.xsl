@@ -63,7 +63,7 @@
     <xsl:param name="workflow" />
 
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
-    <xsl:variable name="uri">INSERT-URI<xsl:value-of select="$department" /></xsl:variable>
+    <xsl:variable name="uri">INSERT-URI/<xsl:value-of select="$department" /></xsl:variable>
         
     <!--$collection-id: gets the collection-id from the aip id.-->
     <!--Uses department parameter to determine what pattern to match.-->
@@ -88,14 +88,12 @@
         </xsl:if>
 
         <!--Partner collection-id is formatted ####-->
-        <!--TODO: produces a blank. Regex works in online tester and in kernow but switched to placeholder in case. This still does not run so it seems the problem is from the if test. The if code is copied exactly from working ones for hargrett and rbrl. Printed the department variable right before it is passed to the saxon command by the make_preservationxml function and it is partner. The group URI is made correctly, which includes partner. Put the collection variable and related object templates in kernow. Giving it the values for parameter and department, this correctly produces the partner collection. What am I missing?-->
         <xsl:if test="$department='partner'">
-            <xsl:text>Collection ID Placeholder</xsl:text>
-<!--            <xsl:analyze-string select="$aip-id" regex="^(\d{{4}})_\d{{3}}">-->
-<!--                <xsl:matching-substring>-->
-<!--                    <xsl:value-of select="regex-group(1)" />-->
-<!--                </xsl:matching-substring>-->
-<!--            </xsl:analyze-string>-->
+            <xsl:analyze-string select="$aip-id" regex="^(\d{{4}})_\d{{3}}">
+                <xsl:matching-substring>
+                    <xsl:value-of select="regex-group(1)" />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
         </xsl:if>
 
     </xsl:variable>
@@ -140,7 +138,7 @@ multiple possible formats or multiple possible created dates) all possible infor
 
         <premis:format>
 
-            <!--Format name, and verison if it has one.-->
+            <!--Format name, and version if it has one.-->
             <premis:formatDesignation>
                 <premis:formatName><xsl:value-of select="@format" /></premis:formatName>
                 <xsl:if test="version">
@@ -309,7 +307,6 @@ multiple possible formats or multiple possible created dates) all possible infor
     
     
     <!--aip relationship to collection: PREMIS 1.13 (required if applicable)-->
-    <!--TODO: work for a partner and how they want to do relationships-->
     <xsl:template name="relationship-collection">
         <!--Does not include the default number for web archives aips without a related collection.-->
         <xsl:if test="not($collection-id='harg-0000' or $collection-id='rbrl-000')">

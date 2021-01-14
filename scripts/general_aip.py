@@ -42,7 +42,7 @@ except (IndexError, FileNotFoundError):
     print('Script usage: python "/path/general_aip.py" "/path/aips-directory"')
     exit()
 
-# Starts a log for saving information about errors encountered while running the script. The log includes the date
+# Starts a in log for saving information about errors encountered while running the script. The log includes the date
 # and time the script starts for calculating how long it takes the script to run.
 log_path = f'../script_log_{datetime.date.today()}.txt'
 aip.log(log_path, f'Starting AIP script at {datetime.datetime.today()}')
@@ -51,6 +51,7 @@ aip.log(log_path, f'Starting AIP script at {datetime.datetime.today()}')
 aip.make_output_directories()
 
 # Starts counts for tracking script progress. Some steps are time consuming so this shows the script is not stuck.
+# If the AIPs directory already contains the output folders and log, the total will be too high.
 current_aip = 0
 total_aips = len(os.listdir(aips_directory))
 
@@ -59,7 +60,7 @@ total_aips = len(os.listdir(aips_directory))
 for aip_folder in os.listdir(aips_directory):
 
     # Skip output folders and log, if present from running the script previously.
-    if aip_folder == "aips-to-ingest" or aip_folder == "fits-xml" or aip_folder == "preservation-xml" or aip_folder.startswith("script_log"):
+    if aip_folder in ["aips-to-ingest", "fits-xml", "preservation-xml"] or aip_folder.startswith("script_log"):
         continue
 
     # Updates the current AIP number and displays the script progress.
@@ -68,10 +69,10 @@ for aip_folder in os.listdir(aips_directory):
     print(f'\n>>>Processing {aip_folder} ({current_aip} of {total_aips}).')
 
     # Parses the AIP id, department, and AIP title from the folder name.
-    #   * Prefix of harg or rbrl indicate a UGA department. Otherwise, department assigned after this.
+    #   * Prefix indicates the UGA department or partner institution.
     #   * AIP id is everything before the last underscore, include department if present.
     #   * AIP title is everything after the last underscore.
-    regex = re.match('^((harg|rbrl)?[a-z0-9-_]+)_(?!.*_)(.*)', aip_folder)
+    regex = re.match('^((harg|rbrl|emory)_[a-z0-9-_]+)_(?!.*_)(.*)', aip_folder)
     try:
         aip_id = regex.group(1)
         department = regex.group(2)
@@ -81,9 +82,10 @@ for aip_folder in os.listdir(aips_directory):
         aip.move_error('folder_name', aip_folder)
         continue
 
-    # If the folder name did not include a UGA department prefix, department is partner.
-    if department is None:
-        department = "partner"
+    # For Emory, removes the institution prefix from the aip id.
+    # Only UGA departments include the department code in the aip id.
+    if aip_id.startswith('emory'):
+        aip_id = aip_id[6:]
 
     # Renames the AIP folder to the AIP id. Only need the AIP title in the folder name to get the title for the
     # preservation.xml file.

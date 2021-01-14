@@ -82,8 +82,8 @@
         </xsl:if>
 
         <!--Partner collection-id is formatted ####-->
-        <xsl:if test="$department='partner'">
-            <xsl:analyze-string select="$aip-id" regex="^(\d{{4}})_\d{{3}}">
+        <xsl:if test="$department='emory'">
+            <xsl:analyze-string select="$aip-id" regex="^emory_(\d{{4}})_\d{{3}}">
                 <xsl:matching-substring>
                     <xsl:value-of select="regex-group(1)" />
                 </xsl:matching-substring>
@@ -110,7 +110,7 @@
                 </xsl:matching-substring>
             </xsl:analyze-string>
         </xsl:if>
-        <xsl:if test="$department='partner'">
+        <xsl:if test="$department='emory'">
             <xsl:analyze-string select="fileinfo/filepath" regex="\d{{4}}_\d{{3}}.*">
                 <xsl:matching-substring>
                     <xsl:value-of select="." />

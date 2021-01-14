@@ -238,7 +238,7 @@ def make_manifest():
     # Changes the current directory to the location of the packaged AIPs.
     os.chdir('../aips-to-ingest')
 
-    # Uses md5deep to calculate the MD5s for files with the specified department prefix and saves them to the manifest.
+    # Uses md5deep to calculate the MD5s for files with the specified prefix and saves them to the manifest.
     # Tests if there are any files with that prefix before making the manifest so it does not make an empty manifest.
     if any(file.startswith('harg') for file in os.listdir('.')):
         subprocess.run(f'{c.md5deep} -br harg* > manifest_hargrett.txt', shell=True)
@@ -246,6 +246,5 @@ def make_manifest():
     if any(file.startswith('rbrl') for file in os.listdir('.')):
         subprocess.run(f'{c.md5deep} -br rbrl* > manifest_russell.txt', shell=True)
 
-    # Uses md5deep to calculate the MD5s for all files, regardless of department, and saves to one manifest.
-    # Necessary to make the manifest for partners, which do not currently have a prefix to test for.
-    subprocess.run(f'{c.md5deep} -br *.zip > manifest.txt', shell=True)
+    if any(file.startswith('emory') for file in os.listdir('.')):
+        subprocess.run(f'{c.md5deep} -br emory* > manifest.txt', shell=True)

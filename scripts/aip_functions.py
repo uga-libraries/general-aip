@@ -230,6 +230,51 @@ def package(aip_id, log_path):
             os.remove(f'../aips-to-ingest/{file}')
 
 
+def package_alternative(aip_id, log_path):
+    """Bags, tars, and zips each AIP. Alternative that uses 7z directly instead of perl script.
+    Only works in Windows."""
+
+    # Bags the AIP folder in place. Both md5 and sha256 checksums are generated to guard against tampering.
+    bagit.make_bag(aip_id, checksums=['md5', 'sha256'])
+
+    # Renames the AIP folder to add _bag to the end of the folder name.
+    bag_name = f'{aip_id}_bag'
+    os.replace(aip_id, bag_name)
+
+    # Validates the bag. If it is not valid, saves the validation errors to the log, moves the AIP to an error folder,
+    # and does not execute the rest of this function.
+    new_bag = bagit.Bag(bag_name)
+    try:
+        new_bag.validate()
+    except bagit.BagValidationError as e:
+        log(log_path, f'Stop processing. Bag is not valid: \n{e}')
+        move_error('bag_invalid', f'{aip_id}_bag')
+        return
+
+    # Gets the size of the bag.
+    size = 0
+    for root, directory, files in os.walk(bag_name):
+        for file in files:
+            size += os.path.getsize(os.path.join(root, file))
+
+    # Tars the file. Does not print the progress to the terminal (stdout), which is a lot of text.
+    subprocess.run(f'7z -ttar a "{bag_name}.tar" "{bag_name}"', stdout=subprocess.DEVNULL, shell=True)
+
+    # Renames the file to include the size.
+    os.replace(f'{bag_name}.tar', f'{bag_name}.{size}.tar')
+
+    # Zips (bz2) the tar file. Does not print the progress to the terminal (stdout), which is a lot of text.
+    subprocess.run(f'7z -tbzip2 a -aoa "{bag_name}.{size}.tar.bz2" "{bag_name}.{size}.tar"', stdout=subprocess.DEVNULL,
+                   shell=True)
+
+    # Deletes the tar version. Just want the tarred and zipped version.
+    os.remove(f'{bag_name}.{size}.tar')
+
+    # Moves the tarred and zipped version to the aips-to-ingest folder.
+    path = os.path.join(f'../aips-to-ingest', f"{bag_name}.{size}.tar.bz2")
+    os.replace(f"{bag_name}.{size}.tar.bz2", path)
+
+
 def make_manifest():
     """Makes a MD5 manifest of all AIPs in this batch using md5deep. The manifest is named department_manifest.txt
     and saved in the aips-to-ingest folder. If AIPs for multiple departments are present in the same batch,

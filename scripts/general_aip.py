@@ -58,6 +58,10 @@ total_aips = len(os.listdir(aips_directory))
 # calling the function for the next step in case it was moved due to an error in the previous step.
 for aip_folder in os.listdir(aips_directory):
 
+    # Skip output folders and log, if present from running the script previously.
+    if aip_folder == "aips-to-ingest" or aip_folder == "fits-xml" or aip_folder == "preservation-xml" or aip_folder.startswith("script_log"):
+        continue
+
     # Updates the current AIP number and displays the script progress.
     current_aip += 1
     aip.log(log_path, f'\n>>>Processing {aip_folder} ({current_aip} of {total_aips}).')

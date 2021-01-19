@@ -4,6 +4,7 @@ different types."""
 
 import bagit
 import os
+import platform
 import shutil
 import subprocess
 import xml.etree.ElementTree as ET
@@ -91,7 +92,8 @@ def extract_metadata(aip_id, aip_directory, log_path):
     combines the FITS output for every file in the AIP. """
 
     # Runs FITS on every file in the AIP's objects folder and saves the output to the AIP's metadata folder.
-    subprocess.run(f'"{c.fits}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"', shell=True)
+    subprocess.run(f'"{c.fits}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"',
+                   shell=True)
 
     # Renames the FITS output according to the UGA Libraries' metadata naming convention (filename_fits.xml).
     for item in os.listdir(f'{aip_id}/metadata'):
@@ -221,7 +223,9 @@ def bag(aip_id, log_path):
 
 def package(aip_id, aips_directory):
     """Tars and zips the AIP. Saves the resulting packaged AIP in the aips-to-ingest folder."""
-    # TODO: this only works on Windows right now.
+
+    # Get operating system, since the tar and zip commands are different for Windows and Mac/Linux.
+    operating_system = platform.system()
 
     # Makes a variable for the AIP folder name, which is reused a lot.
     aip = f'{aip_id}_bag'
@@ -238,15 +242,23 @@ def package(aip_id, aips_directory):
             bag_size += os.path.getsize(f"{aip}/{file}")
     bag_size = int(bag_size)
 
-    # Tars the file. Does not print the progress to the terminal (stdout), which is a lot of text.
-    subprocess.run(f'7z -ttar a "{aip}.tar" "{aips_directory}/{aip}"', stdout=subprocess.DEVNULL, shell=True)
+    # Tars the file, using the command appropriate for the operating system.
+    if operating_system == "Windows":
+        # Does not print the progress to the terminal (stdout), which is a lot of text.
+        subprocess.run(f'7z -ttar a "{aip}.tar" "{aips_directory}/{aip}"', stdout=subprocess.DEVNULL, shell=True)
+    else:
+        subprocess.run(f'tar -cf "{aip}.tar" "{aips_directory}/{aip}"', shell=True)
 
     # Renames the file to include the size.
     os.replace(f'{aip}.tar', f'{aip}.{bag_size}.tar')
 
-    # Zips (bz2) the tar file. Does not print the progress to the terminal (stdout), which is a lot of text.
-    subprocess.run(f'7z -tbzip2 a -aoa "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"',
-                   stdout=subprocess.DEVNULL, shell=True)
+    # Zips (bz2) the tar file, using the command appropriate for the operating system.
+    if operating_system == "Windows":
+        # Does not print the progress to the terminal (stdout), which is a lot of text.
+        subprocess.run(f'7z -tbzip2 a -aoa "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"',
+                       stdout=subprocess.DEVNULL, shell=True)
+    else:
+        subprocess.run(f'bz2 "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"', shell=True)
 
     # Deletes the tar version. Just want the tarred and zipped version.
     os.remove(f'{aip}.{bag_size}.tar')

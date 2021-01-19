@@ -247,7 +247,7 @@ def package(aip_id, aips_directory):
         # Does not print the progress to the terminal (stdout), which is a lot of text.
         subprocess.run(f'7z -ttar a "{aip}.tar" "{aips_directory}/{aip}"', stdout=subprocess.DEVNULL, shell=True)
     else:
-        subprocess.run(f'tar -cf "{aip}.tar" "{aips_directory}/{aip}"', shell=True)
+        subprocess.run(f'tar -cf "{aip}.tar" "{aip}"', shell=True)
 
     # Renames the file to include the size.
     os.replace(f'{aip}.tar', f'{aip}.{bag_size}.tar')
@@ -258,10 +258,12 @@ def package(aip_id, aips_directory):
         subprocess.run(f'7z -tbzip2 a -aoa "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"',
                        stdout=subprocess.DEVNULL, shell=True)
     else:
-        subprocess.run(f'bz2 "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"', shell=True)
+        subprocess.run(f'bzip2 "{aip}.{bag_size}.tar"', shell=True)
 
     # Deletes the tar version. Just want the tarred and zipped version.
-    os.remove(f'{aip}.{bag_size}.tar')
+    # For Mac/Linux, the bzip2 command overwrites the tar file so this step is unnecessary.
+    if operating_system == "Windows":
+        os.remove(f'{aip}.{bag_size}.tar')
 
     # Moves the tarred and zipped version to the aips-to-ingest folder.
     path = os.path.join(f'../aips-to-ingest', f"{aip}.{bag_size}.tar.bz2")

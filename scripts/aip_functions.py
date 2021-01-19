@@ -220,12 +220,8 @@ def bag(aip_id, log_path):
 
 
 def package(aip_id, aips_directory):
-    """Tars and zips the AIP."""
+    """Tars and zips the AIP. Saves the resulting packaged AIP in the aips-to-ingest folder."""
     # TODO: this only works on Windows right now.
-    # TODO: make sure the directory gets changed back if there is an error at any step?
-
-    # Changes current directory to the folder for tarred/zipped outputs to avoid filepath errors with subprocess.run().
-    # os.chdir('../aips-to-ingest')
 
     # Makes a variable for the AIP folder name, which is reused a lot.
     aip = f'{aip_id}_bag'
@@ -255,8 +251,9 @@ def package(aip_id, aips_directory):
     # Deletes the tar version. Just want the tarred and zipped version.
     os.remove(f'{aip}.{bag_size}.tar')
 
-    # Changes current directory back to the aips directory for the script to run on the next AIP.
-    # os.chdir(aips_directory)
+    # Moves the tarred and zipped version to the aips-to-ingest folder.
+    path = os.path.join(f'../aips-to-ingest', f"{aip}.{bag_size}.tar.bz2")
+    os.replace(f"{aip}.{bag_size}.tar.bz2", path)
 
 
 def make_manifest():

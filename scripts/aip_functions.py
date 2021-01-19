@@ -225,28 +225,38 @@ def package(aip_id, aips_directory):
     # TODO: make sure the directory gets changed back if there is an error at any step?
 
     # Changes current directory to the folder for tarred/zipped outputs to avoid filepath errors with subprocess.run().
-    os.chdir('../aips-to-ingest')
+    # os.chdir('../aips-to-ingest')
 
     # Makes a variable for the AIP folder name, which is reused a lot.
     aip = f'{aip_id}_bag'
 
+    # Gets the total size of the bag: sum of the bag payload (data folder) from bag-info.txt and bag metadata files.
+    bag_size = 0
+    bag_info = open(f"{aip}/bag-info.txt", "r")
+    for line in bag_info:
+        if line.startswith("Payload-Oxum"):
+            payload = line.split()[1]
+            bag_size += float(payload)
+    for file in os.listdir(aip):
+        if file.endswith('.txt'):
+            bag_size += os.path.getsize(f"{aip}/{file}")
+    bag_size = int(bag_size)
+
     # Tars the file. Does not print the progress to the terminal (stdout), which is a lot of text.
     subprocess.run(f'7z -ttar a "{aip}.tar" "{aips_directory}/{aip}"', stdout=subprocess.DEVNULL, shell=True)
 
-    # Gets the size of the tar file.
-    size = os.path.getsize(f'{aip}.tar')
-
     # Renames the file to include the size.
-    os.replace(f'{aip}.tar', f'{aip}.{size}.tar')
+    os.replace(f'{aip}.tar', f'{aip}.{bag_size}.tar')
 
     # Zips (bz2) the tar file. Does not print the progress to the terminal (stdout), which is a lot of text.
-    subprocess.run(f'7z -tbzip2 a -aoa "{aip}.{size}.tar.bz2" "{aip}.{size}.tar"', stdout=subprocess.DEVNULL, shell=True)
+    subprocess.run(f'7z -tbzip2 a -aoa "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"',
+                   stdout=subprocess.DEVNULL, shell=True)
 
     # Deletes the tar version. Just want the tarred and zipped version.
-    os.remove(f'{aip}.{size}.tar')
+    os.remove(f'{aip}.{bag_size}.tar')
 
     # Changes current directory back to the aips directory for the script to run on the next AIP.
-    os.chdir(aips_directory)
+    # os.chdir(aips_directory)
 
 
 def make_manifest():

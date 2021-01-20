@@ -4,8 +4,8 @@
 
 # In a Windows environment, change the / to \\
 
-fits = '/insert/path'
-saxon = '/insert/path'
-md5deep = '/insert/path'
-prepare_bag_script = '/insert/path'
-stylesheets = '/insert/path'
+fits = 'C:/INSERT/PATH/Fits/fits-#.#.#/fits.EXT'
+saxon = 'C:/INSERT/PATH/SaxonHE#-#/saxon-he-#.#.jar'
+md5deep = 'C:/INSERT/PATH/md5deep-#.#/md5deep64.exe'
+prepare_bag_script = 'C:/INSERT/PATH/SCRIPTNAME'
+stylesheets = 'C:/INSERT/PATH/stylesheets'

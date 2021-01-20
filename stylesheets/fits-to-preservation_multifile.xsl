@@ -57,7 +57,7 @@
     <xsl:param name="workflow" />
     
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
-    <xsl:variable name="uri">INSERT-URI/<xsl:value-of select="$department" /></xsl:variable>
+    <xsl:variable name="uri">INSERT-URI-HERE/<xsl:value-of select="$department" /></xsl:variable>
          
     <!--$collection-id: gets the collection-id from the aip id.-->
     <!--Uses department parameter to determine what pattern to match.-->

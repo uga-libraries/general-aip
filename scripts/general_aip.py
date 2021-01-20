@@ -86,8 +86,11 @@ for aip_folder in os.listdir(aips_directory):
     # preservation.xml file.
     os.replace(aip_folder, aip_id)
 
-    # Deletes temporary files. Remove the log_path parameter to not include a list of deleted files in the log.
-    aip.delete_temp(aip_id, log_path)
+    # Deletes temporary files. For Emory AIPs, makes a log of deleted files which is saved in the metadata folder.
+    if department == "emory":
+        aip.delete_temp(aip_id, deletion_log=True)
+    else:
+        aip.delete_temp(aip_id)
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
     if aip_id in os.listdir('.'):
@@ -98,14 +101,12 @@ for aip_folder in os.listdir(aips_directory):
         aip.extract_metadata(aip_id, aips_directory, log_path)
 
     # Converts the technical metadata into Dublin Core and PREMIS (preservation.xml file) using xslt stylesheets.
-    # TODO: regex works in tester and xslt works in Kernow with these parameter values but with script has empty collection-id.
-    # Not the regex: it isn't selecting the emory ID pattern at all.
     if aip_id in os.listdir('.'):
         aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
 
     # Bags, tars, and zips the aip using bagit.py and a perl script.
     if aip_id in os.listdir('.'):
-        aip.package(aip_id, log_path)
+        aip.package_alternative(aip_id, log_path)
 
 # Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
 aip.make_manifest()

@@ -3,6 +3,7 @@ UGA Libraries' digital preservation system (ARCHive). These are utilized by mult
 different types."""
 
 import bagit
+import datetime
 import os
 import shutil
 import subprocess
@@ -39,21 +40,32 @@ def make_output_directories():
             os.mkdir(f'../{directory}')
 
 
-def delete_temp(aip_id, log_path=False):
+def delete_temp(aip_id, deletion_log=False):
     """Deletes temporary files of various types from anywhere within the AIP folder because they cause errors later in
     the workflow, especially with bag validation."""
 
     # List of files to be deleted where the filename can be matched in its entirely.
     delete = ['.DS_Store', '._.DS_Store', 'Thumbs.db']
 
+    # List of files that were deleted, to save to a log if desired.
+    deleted_files = []
+
     # Checks all files at any level in the AIP folder and deletes them if they match one of the criteria for
-    # being temporary. If a log path is provided, adds the file name to the log.
+    # being temporary. If a log is desired, adds the path of the deleted file to a list.
     for root, directories, files in os.walk(aip_id):
         for item in files:
             if item in delete or item.endswith('.tmp') or item.startswith('.'):
-                if log_path:
-                    log(log_path, f'Deleted temporary file: {root}/{item}')
-                os.remove(f'{root}/{item}')
+                if deletion_log:
+                    deleted_files.append(os.path.join(root, item))
+                os.remove(os.path.join(root, item))
+
+    # Creates the log in the AIP folder if a log is desired and any files were deleted.
+    # The log contains the path of every deleted file.
+    if len(deleted_files) > 0:
+        deleted_log = open(f"{aip_id}/Temporary_Files_Deleted_{datetime.datetime.today().date()}_del.txt", "w")
+        for file in deleted_files:
+            deleted_log.write(file + "\n")
+
 
 
 def structure_directory(aip_id, log_path):

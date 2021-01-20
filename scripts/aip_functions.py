@@ -67,7 +67,6 @@ def delete_temp(aip_id, deletion_log=False):
             deleted_log.write(file + "\n")
 
 
-
 def structure_directory(aip_id, log_path):
     """Makes the AIP directory structure (objects and metadata folder within the AIP folder) and moves the digital
     objects into the objects folder. If the digital objects are organized into folders, that directory structure is
@@ -96,6 +95,13 @@ def structure_directory(aip_id, log_path):
     except FileExistsError:
         log(log_path, 'Stop processing. Metadata folder already exists.')
         move_error('metadata_folder_exists', aip_id)
+
+    # If there is a deletion log in the objects folder, moves to the metadata folder.
+    # TODO: this is a temporary fix. Update function to sort into objects or metadata folder once have a complete list
+    #  of potential metadata files.
+    for item in os.listdir(f"{aip_id}/objects"):
+        if item.startswith("Temporary_Files_Deleted_") and item.endswith("_del.txt"):
+            os.replace(f'{aip_id}/objects/{item}', f'{aip_id}/metadata/{item}')
 
 
 def extract_metadata(aip_id, aip_directory, log_path):

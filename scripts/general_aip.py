@@ -106,7 +106,7 @@ for aip_folder in os.listdir(aips_directory):
 
     # Bags, tars, and zips the aip using bagit.py and a perl script.
     if aip_id in os.listdir('.'):
-        aip.package_alternative(aip_id, log_path)
+        aip.package(aip_id, log_path)
 
 # Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
 aip.make_manifest()

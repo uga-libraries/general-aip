@@ -4,6 +4,7 @@ different types."""
 
 import bagit
 import os
+import platform
 import shutil
 import subprocess
 import xml.etree.ElementTree as ET
@@ -91,7 +92,8 @@ def extract_metadata(aip_id, aip_directory, log_path):
     combines the FITS output for every file in the AIP. """
 
     # Runs FITS on every file in the AIP's objects folder and saves the output to the AIP's metadata folder.
-    subprocess.run(f'"{c.fits}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"', shell=True)
+    subprocess.run(f'"{c.fits}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"',
+                   shell=True)
 
     # Renames the FITS output according to the UGA Libraries' metadata naming convention (filename_fits.xml).
     for item in os.listdir(f'{aip_id}/metadata'):
@@ -200,8 +202,8 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
     os.remove(f'{aip_id}/metadata/{aip_id}_cleaned-fits.xml')
 
 
-def package(aip_id, log_path):
-    """Bags, tars, and zips each AIP."""
+def bag(aip_id, log_path):
+    """Bags and validates the AIP. Adds _bag to the AIP folder name."""
 
     # Bags the AIP folder in place. Both md5 and sha256 checksums are generated to guard against tampering.
     bagit.make_bag(aip_id, checksums=['md5', 'sha256'])
@@ -210,25 +212,62 @@ def package(aip_id, log_path):
     new_aip_name = f'{aip_id}_bag'
     os.replace(aip_id, new_aip_name)
 
-    # Validates the bag. If it is not valid, saves the validation errors to the log, moves the AIP to an error folder,
-    # and does not execute the rest of this function.
+    # Validates the bag. If it is not valid, saves the validation errors to the log, moves the AIP to an error folder.
     new_bag = bagit.Bag(new_aip_name)
     try:
         new_bag.validate()
     except bagit.BagValidationError as e:
         log(log_path, f'Stop processing. Bag is not valid: \n{e}')
         move_error('bag_invalid', f'{aip_id}_bag')
-        return
 
-    # Tars and zips the AIP using a perl script and saves the packaged AIP in the aips-to-ingest folder.
-    # The script also adds the uncompressed file size to the file name.
-    subprocess.run(f'perl "{c.prepare_bag_script}" "{aip_id}_bag" "../aips-to-ingest"', shell=True)
 
-    # When the script for Windows is used, it saves both the tar version and tar.bzip2 version to the aips-to-ingest
-    # folder. Deletes the tar only version.
-    for file in os.listdir('../aips-to-ingest'):
-        if file.endswith('.tar'):
-            os.remove(f'../aips-to-ingest/{file}')
+def package(aip_id, aips_directory):
+    """Tars and zips the AIP. Saves the resulting packaged AIP in the aips-to-ingest folder."""
+
+    # Get operating system, since the tar and zip commands are different for Windows and Mac/Linux.
+    operating_system = platform.system()
+
+    # Makes a variable for the AIP folder name, which is reused a lot.
+    aip = f'{aip_id}_bag'
+
+    # Gets the total size of the bag: sum of the bag payload (data folder) from bag-info.txt and bag metadata files.
+    bag_size = 0
+    bag_info = open(f"{aip}/bag-info.txt", "r")
+    for line in bag_info:
+        if line.startswith("Payload-Oxum"):
+            payload = line.split()[1]
+            bag_size += float(payload)
+    for file in os.listdir(aip):
+        if file.endswith('.txt'):
+            bag_size += os.path.getsize(f"{aip}/{file}")
+    bag_size = int(bag_size)
+
+    # Tars the file, using the command appropriate for the operating system.
+    if operating_system == "Windows":
+        # Does not print the progress to the terminal (stdout), which is a lot of text.
+        subprocess.run(f'7z -ttar a "{aip}.tar" "{aips_directory}/{aip}"', stdout=subprocess.DEVNULL, shell=True)
+    else:
+        subprocess.run(f'tar -cf "{aip}.tar" "{aip}"', shell=True)
+
+    # Renames the file to include the size.
+    os.replace(f'{aip}.tar', f'{aip}.{bag_size}.tar')
+
+    # Zips (bz2) the tar file, using the command appropriate for the operating system.
+    if operating_system == "Windows":
+        # Does not print the progress to the terminal (stdout), which is a lot of text.
+        subprocess.run(f'7z -tbzip2 a -aoa "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"',
+                       stdout=subprocess.DEVNULL, shell=True)
+    else:
+        subprocess.run(f'bzip2 "{aip}.{bag_size}.tar"', shell=True)
+
+    # Deletes the tar version. Just want the tarred and zipped version.
+    # For Mac/Linux, the bzip2 command overwrites the tar file so this step is unnecessary.
+    if operating_system == "Windows":
+        os.remove(f'{aip}.{bag_size}.tar')
+
+    # Moves the tarred and zipped version to the aips-to-ingest folder.
+    path = os.path.join(f'../aips-to-ingest', f"{aip}.{bag_size}.tar.bz2")
+    os.replace(f"{aip}.{bag_size}.tar.bz2", path)
 
 
 def make_manifest():

@@ -16,7 +16,7 @@ Workflow Steps:
     3. Organizes folder contents into the UGA Libraries' AIP directory structure.
     4. Extracts technical metadata using FITS.
     5. Converts technical metadata to Dublin Core and PREMIS (preservation.xml file).
-    6. Packages the AIP.
+    6. Packages the AIP (bag, tar, zip).
     7. When all AIPs are created (steps 1-6), makes a md5 manifest of the packaged AIPs.
 
 Script usage: python '/path/general_aip.py' '/path/aips_directory'
@@ -94,9 +94,13 @@ for aip_folder in os.listdir(aips_directory):
     if aip_id in os.listdir('.'):
         aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
 
-    # Bags, tars, and zips the aip using bagit.py and a perl script.
+    # Bags the AIP using bagit.
     if aip_id in os.listdir('.'):
-        aip.package(aip_id, log_path)
+        aip.bag(aip_id, log_path)
+
+    # Tars and zips (bz2) the AIP.
+    if f'{aip_id}_bag' in os.listdir('.'):
+        aip.package(aip_id, aips_directory)
 
 # Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
 aip.make_manifest()

@@ -82,11 +82,6 @@ for aip_folder in os.listdir(aips_directory):
         aip.move_error('folder_name', aip_folder)
         continue
 
-    # For Emory, removes the institution prefix from the aip id.
-    # Only UGA departments include the department code in the aip id.
-    if aip_id.startswith('emory'):
-        aip_id = aip_id[6:]
-
     # Renames the AIP folder to the AIP id. Only need the AIP title in the folder name to get the title for the
     # preservation.xml file.
     os.replace(aip_folder, aip_id)
@@ -103,6 +98,8 @@ for aip_folder in os.listdir(aips_directory):
         aip.extract_metadata(aip_id, aips_directory, log_path)
 
     # Converts the technical metadata into Dublin Core and PREMIS (preservation.xml file) using xslt stylesheets.
+    # TODO: regex works in tester and xslt works in Kernow with these parameter values but with script has empty collection-id.
+    # Not the regex: it isn't selecting the emory ID pattern at all.
     if aip_id in os.listdir('.'):
         aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
 

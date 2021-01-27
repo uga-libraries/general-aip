@@ -104,6 +104,39 @@ def structure_directory(aip_id, log_path):
             os.replace(f'{aip_id}/objects/{item}', f'{aip_id}/metadata/{item}')
 
 
+def structure_directory_with_metadata(aip_id, log_path):
+    """Makes the AIP directory structure (objects and metadata folders within the AIP folder) and moves the digital
+    objects into those folders. Anything not recognized as metadata is moved into the objects folder. If the digital
+    objects are organized into folders, that directory structure is maintained within the objects folder. """
+
+    # Makes the objects and metadata folders within the AIP folder, if they don't exist.
+    # If they do exist, moves the AIP to an error folder so the original directory structure is not altered.
+    try:
+        os.mkdir(f'{aip_id}/objects')
+    except FileExistsError:
+        log(log_path, "Stop processing. Objects folder already exists.")
+        move_error("objects_folder_exists", aip_id)
+        return
+    try:
+        os.mkdir(f"{aip_id}/metadata")
+    except FileExistsError:
+        log(log_path, "Stop processing. Metadata folder already exists.")
+        move_error("metadata_folder_exists", aip_id)
+        return
+
+    # Moves any metadata files, identified by their file names, to the metadata folder.
+    for item in os.listdir(aip_id):
+        if item.startswith("Temporary_Files_Deleted_") or item.startswith("EmoryMD"):
+            os.replace(f"{aip_id}/{item}", f"{aip_id}/metadata/{item}")
+
+    # Moves all remaining files and folders to the objects folder.
+    # The first level within the AIPs folder is now just the metadata folder and objects folder.
+    for item in os.listdir(aip_id):
+        if item == "metadata" or item == "objects":
+            continue
+        os.replace(f"{aip_id}/{item}", f"{aip_id}/objects/{item}")
+
+
 def extract_metadata(aip_id, aip_directory, log_path):
     """Extracts technical metadata from the files in the objects folder using FITS and creates a single XML file that
     combines the FITS output for every file in the AIP. """

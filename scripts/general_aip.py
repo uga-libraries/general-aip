@@ -94,9 +94,9 @@ for aip_folder in os.listdir(aips_directory):
         aip.delete_temp(aip_id)
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
-    # TODO: sort metadata files provided by Emory.
+    # TODO: I think UGA can use this too, but if not can keep both structuring functions and call based on department.
     if aip_id in os.listdir('.'):
-        aip.structure_directory(aip_id, log_path)
+        aip.structure_directory_with_metadata(aip_id, log_path)
 
     # Extracts technical metadata from the files using FITS.
     if aip_id in os.listdir('.'):
@@ -110,7 +110,7 @@ for aip_folder in os.listdir(aips_directory):
     # Bags, tars, and zips the aip using bagit.py and a perl script.
     # TODO: replace with script used in the main branch.
     if aip_id in os.listdir('.'):
-        aip.package(aip_id, log_path)
+        aip.package_alternative(aip_id, log_path)
 
 # Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
 aip.make_manifest()

@@ -36,6 +36,9 @@
                         <xsl:call-template name="aip-unique-inhibitors-list" />
                     </premis:objectCharacteristics>
                     <xsl:call-template name="relationship-collection" />
+                    <xsl:if test="$department='emory'">
+						<xsl:call-template name="relationship-repository" />
+					</xsl:if>
                 </premis:object>
             </aip>
             <filelist>
@@ -302,6 +305,28 @@
                 </premis:relatedObjectIdentifier>
             </premis:relationship>
         </xsl:if>
+    </xsl:template>
+
+
+    <!--aip relationship to repository: PREMIS 1.13 (required if applicable).-->
+	<!--Repository is the two letter code between "emory" and the collection number.-->
+    <xsl:template name="relationship-repository">
+		<premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+                <premis:relatedObjectIdentifierType>
+                    <xsl:value-of select="$uri" />
+                </premis:relatedObjectIdentifierType>
+                <premis:relatedObjectIdentifierValue>
+					<xsl:analyze-string select="$aip-id" regex="^emory_([a-z]{{2}})_\d{{2,4}}_\d{{2,4}}">
+						<xsl:matching-substring>
+							<xsl:value-of select="regex-group(1)" />
+						</xsl:matching-substring>
+					</xsl:analyze-string>
+                </premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+        </premis:relationship>
     </xsl:template>
 
 

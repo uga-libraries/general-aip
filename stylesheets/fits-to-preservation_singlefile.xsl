@@ -45,6 +45,9 @@
                         <xsl:apply-templates select="combined-fits/fits/fileinfo/inhibitor[inhibitorType]" />
                     </premis:objectCharacteristics>
                     <xsl:call-template name="relationship-collection" />
+                    <xsl:if test="$department='emory'">
+						<xsl:call-template name="relationship-repository" />
+					</xsl:if>
                 </premis:object>
             </aip>
         </preservation>

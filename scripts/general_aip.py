@@ -68,8 +68,7 @@ for aip_folder in os.listdir(aips_directory):
     aip.log(log_path, f'\n>>>Processing {aip_folder} ({current_aip} of {total_aips}).')
     print(f'\n>>>Processing {aip_folder} ({current_aip} of {total_aips}).')
 
-    # Parses the AIP id, department, and AIP title from the folder name.
-    # TODO: Emory updated id to emory_RP_2-4#_2-4#
+    # Parses the department, AIP id, and AIP title from the folder name.
     #   * Prefix indicates the UGA department or partner institution.
     #   * AIP id is everything before the last underscore, include department if present.
     #   * AIP title is everything after the last underscore.
@@ -94,16 +93,14 @@ for aip_folder in os.listdir(aips_directory):
         aip.delete_temp(aip_id)
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
-    # TODO: I think UGA can use this too, but if not can keep both structuring functions and call based on department.
     if aip_id in os.listdir('.'):
-        aip.structure_directory_with_metadata(aip_id, log_path)
+        aip.structure_directory(aip_id, log_path)
 
     # Extracts technical metadata from the files using FITS.
     if aip_id in os.listdir('.'):
         aip.extract_metadata(aip_id, aips_directory, log_path)
 
     # Converts the technical metadata into Dublin Core and PREMIS (preservation.xml file) using xslt stylesheets.
-    # TODO: work with new Emory id structure. Capture repository relationship.
     if aip_id in os.listdir('.'):
         aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
 

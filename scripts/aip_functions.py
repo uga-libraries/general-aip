@@ -68,43 +68,6 @@ def delete_temp(aip_id, deletion_log=False):
 
 
 def structure_directory(aip_id, log_path):
-    """Makes the AIP directory structure (objects and metadata folder within the AIP folder) and moves the digital
-    objects into the objects folder. If the digital objects are organized into folders, that directory structure is
-    maintained within the objects folder."""
-
-    # Makes the objects folder within the AIP folder, if it doesn't exist. If it does exist, moves the AIP to an
-    # error folder and does not execute the rest of this function so the original directory structure is not altered.
-    try:
-        os.mkdir(f'{aip_id}/objects')
-    except FileExistsError:
-        log(log_path, 'Stop processing. Objects folder already exists.')
-        move_error('objects_folder_exists', aip_id)
-        return
-
-    # Moves the contents of the AIP folder into the objects folder.
-    for item in os.listdir(aip_id):
-        if item == 'objects':
-            continue
-        os.replace(f'{aip_id}/{item}', f'{aip_id}/objects/{item}')
-
-    # Makes the metadata folder within the AIP folder, if it doesn't exist. If it does exist, moves the AIP to an
-    # error folder. If this happens, there was an error in the previous step when everything should have been moved
-    # to the objects folder.
-    try:
-        os.mkdir(f'{aip_id}/metadata')
-    except FileExistsError:
-        log(log_path, 'Stop processing. Metadata folder already exists.')
-        move_error('metadata_folder_exists', aip_id)
-
-    # If there is a deletion log in the objects folder, moves to the metadata folder.
-    # TODO: this is a temporary fix. Update function to sort into objects or metadata folder once have a complete list
-    #  of potential metadata files.
-    for item in os.listdir(f"{aip_id}/objects"):
-        if item.startswith("Temporary_Files_Deleted_") and item.endswith("_del.txt"):
-            os.replace(f'{aip_id}/objects/{item}', f'{aip_id}/metadata/{item}')
-
-
-def structure_directory_with_metadata(aip_id, log_path):
     """Makes the AIP directory structure (objects and metadata folders within the AIP folder) and moves the digital
     objects into those folders. Anything not recognized as metadata is moved into the objects folder. If the digital
     objects are organized into folders, that directory structure is maintained within the objects folder. """

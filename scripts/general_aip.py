@@ -104,10 +104,13 @@ for aip_folder in os.listdir(aips_directory):
     if aip_id in os.listdir('.'):
         aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
 
-    # Bags, tars, and zips the aip using bagit.py and a perl script.
-    # TODO: replace with script used in the main branch.
+    # Bags the AIP using bagit.
     if aip_id in os.listdir('.'):
-        aip.package_alternative(aip_id, log_path)
+        aip.bag(aip_id, log_path)
+
+    # Tars and zips (bz2) the AIP.
+    if f'{aip_id}_bag' in os.listdir('.'):
+        aip.package(aip_id, aips_directory)
 
 # Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
 aip.make_manifest()

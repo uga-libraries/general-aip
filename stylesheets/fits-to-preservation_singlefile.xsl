@@ -87,9 +87,9 @@
             </xsl:analyze-string>
         </xsl:if>
 
-        <!--Partner collection-id is formatted ####-->
+		<!--Emory collection-id is two to four digits, between the two letter repository code and object id.-->
         <xsl:if test="$department='emory'">
-            <xsl:analyze-string select="$aip-id" regex="^emory_(\d{{4}})_\d{{3}}">
+            <xsl:analyze-string select="$aip-id" regex="^emory_[a-z]{{2}}_(\d{{2,4}})_\d{{2,4}}">
                 <xsl:matching-substring>
                     <xsl:value-of select="regex-group(1)" />
                 </xsl:matching-substring>

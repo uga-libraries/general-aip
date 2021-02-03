@@ -63,15 +63,15 @@
     <xsl:param name="workflow" />
 
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
-    <xsl:variable name="uri">INSERT-URI<xsl:value-of select="$department" /></xsl:variable>
+    <xsl:variable name="uri">INSERT-URI/<xsl:value-of select="$department" /></xsl:variable>
         
     <!--$collection-id: gets the collection-id from the aip id.-->
     <!--Uses department parameter to determine what pattern to match.-->
     <xsl:variable name="collection-id">
  
-       <!--Russell collection-id is formatted rbrl-###-->
-        <xsl:if test="$department='russell'">
-            <xsl:analyze-string select="$aip-id" regex="^(rbrl-\d{{3}})">
+        <!--BMAC collection-id is a combination of lowercase letters, numbers, and dashes between the bmac_ and the next underscore.-->
+        <xsl:if test="$department='bmac'">
+            <xsl:analyze-string select="$aip-id" regex="^bmac_([a-z0-9-]+)_">
                 <xsl:matching-substring>
                     <xsl:value-of select="regex-group(1)" />
                 </xsl:matching-substring>
@@ -81,6 +81,15 @@
         <!--Hargrett collection-id is formatted harg-ms####, harg-ua####, harg-ua##-####, or harg-0000-->
         <xsl:if test="$department='hargrett'">
             <xsl:analyze-string select="$aip-id" regex="^(harg-(ms|ua)?(\d{{2}}-)?\d{{4}})">
+                <xsl:matching-substring>
+                    <xsl:value-of select="regex-group(1)" />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
+        </xsl:if>
+
+        <!--Russell collection-id is formatted rbrl-###-->
+        <xsl:if test="$department='russell'">
+            <xsl:analyze-string select="$aip-id" regex="^(rbrl-\d{{3}})">
                 <xsl:matching-substring>
                     <xsl:value-of select="regex-group(1)" />
                 </xsl:matching-substring>

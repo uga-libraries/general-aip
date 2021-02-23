@@ -19,7 +19,7 @@ The script has been tested in Windows 10 and Mac OS X.
 md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating systems. xmllint is also included with Strawberry Perl.
 * bagit.py (https://github.com/LibraryOfCongress/bagit-python). Follow install instructions in the README.
 * FITS (https://projects.iq.harvard.edu/fits/downloads)
-* md5deep (https://github.com/jessek/hashdeep)
+* md5deep (https://github.com/jessek/hashdeep/releases): download and unzip md5deep-4.4.zip
 * saxon9he (http://saxon.sourceforge.net/)
 * Strawberry Perl (Windows only) (http://strawberryperl.com/)
 * xmllint (http://xmlsoft.org/xmllint.html): documentation. Install is with Strawberry Perl.

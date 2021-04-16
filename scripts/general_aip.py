@@ -16,7 +16,7 @@ Workflow Steps:
     3. Organizes folder contents into the UGA Libraries' AIP directory structure.
     4. Extracts technical metadata using FITS.
     5. Converts technical metadata to Dublin Core and PREMIS (preservation.xml file).
-    6. Packages the AIP.
+    6. Packages the AIP (bag, tar, zip).
     7. When all AIPs are created (steps 1-6), makes a md5 manifest of the packaged AIPs.
 
 Script usage: python '/path/general_aip.py' '/path/aips_directory'

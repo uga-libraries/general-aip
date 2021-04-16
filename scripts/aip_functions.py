@@ -106,7 +106,8 @@ def extract_metadata(aip_id, aip_directory, log_path):
     combines the FITS output for every file in the AIP. """
 
     # Runs FITS on every file in the AIP's objects folder and saves the output to the AIP's metadata folder.
-    subprocess.run(f'"{c.fits}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"', shell=True)
+    subprocess.run(f'"{c.fits}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"',
+                   shell=True)
 
     # Renames the FITS output according to the UGA Libraries' metadata naming convention (filename_fits.xml).
     for item in os.listdir(f'{aip_id}/metadata'):

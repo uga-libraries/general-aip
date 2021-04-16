@@ -45,6 +45,9 @@
                         <xsl:apply-templates select="combined-fits/fits/fileinfo/inhibitor[inhibitorType]" />
                     </premis:objectCharacteristics>
                     <xsl:call-template name="relationship-collection" />
+                    <xsl:if test="$department='emory'">
+						<xsl:call-template name="relationship-repository" />
+					</xsl:if>
                 </premis:object>
             </aip>
         </preservation>
@@ -63,7 +66,7 @@
     <xsl:param name="workflow" />
 
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
-    <xsl:variable name="uri">INSERT-URI/<xsl:value-of select="$department" /></xsl:variable>
+    <xsl:variable name="uri">INSERT-URI-HERE/<xsl:value-of select="$department" /></xsl:variable>
         
     <!--$collection-id: gets the collection-id from the aip id.-->
     <!--Uses department parameter to determine what pattern to match.-->
@@ -81,6 +84,15 @@
         <!--Hargrett collection-id is formatted harg-ms####, harg-ua####, harg-ua##-####, or harg-0000-->
         <xsl:if test="$department='hargrett'">
             <xsl:analyze-string select="$aip-id" regex="^(harg-(ms|ua)?(\d{{2}}-)?\d{{4}})">
+                <xsl:matching-substring>
+                    <xsl:value-of select="regex-group(1)" />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
+        </xsl:if>
+
+		    <!--Emory collection-id is two to four digits, between the two letter repository code and object id.-->
+        <xsl:if test="$department='emory'">
+            <xsl:analyze-string select="$aip-id" regex="^emory_[a-z]{{2}}_(\d{{2,4}})_\d{{2,4}}">
                 <xsl:matching-substring>
                     <xsl:value-of select="regex-group(1)" />
                 </xsl:matching-substring>
@@ -138,7 +150,7 @@ multiple possible formats or multiple possible created dates) all possible infor
 
         <premis:format>
 
-            <!--Format name, and verison if it has one.-->
+            <!--Format name, and version if it has one.-->
             <premis:formatDesignation>
                 <premis:formatName><xsl:value-of select="@format" /></premis:formatName>
                 <xsl:if test="version">
@@ -323,6 +335,28 @@ multiple possible formats or multiple possible created dates) all possible infor
                 </premis:relatedObjectIdentifier>
             </premis:relationship>
         </xsl:if>
+    </xsl:template>
+
+
+    <!--aip relationship to repository: PREMIS 1.13 (required if applicable).-->
+	<!--Repository is the two letter code between "emory" and the collection number.-->
+    <xsl:template name="relationship-repository">
+		<premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+                <premis:relatedObjectIdentifierType>
+                    <xsl:value-of select="$uri" />
+                </premis:relatedObjectIdentifierType>
+                <premis:relatedObjectIdentifierValue>
+					<xsl:analyze-string select="$aip-id" regex="^emory_([a-z]{{2}})_\d{{2,4}}_\d{{2,4}}">
+						<xsl:matching-substring>
+							<xsl:value-of select="regex-group(1)" />
+						</xsl:matching-substring>
+					</xsl:analyze-string>
+                </premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+        </premis:relationship>
     </xsl:template>
     
 

@@ -36,6 +36,9 @@
                         <xsl:call-template name="aip-unique-inhibitors-list" />
                     </premis:objectCharacteristics>
                     <xsl:call-template name="relationship-collection" />
+                    <xsl:if test="$department='emory'">
+						<xsl:call-template name="relationship-repository" />
+					</xsl:if>
                 </premis:object>
             </aip>
             <filelist>
@@ -57,7 +60,9 @@
     <xsl:param name="workflow" />
     
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
-    <xsl:variable name="uri">INSERT-URI/<xsl:value-of select="$department" /></xsl:variable>
+    <xsl:variable name="uri">INSERT-URI-HERE/<xsl:value-of select="$department" /></xsl:variable>
+=======
+    <xsl:variable name="uri">INSERT-URI-HERE/<xsl:value-of select="$department" /></xsl:variable>
          
     <!--$collection-id: gets the collection-id from the aip id.-->
     <!--Uses department parameter to determine what pattern to match.-->
@@ -80,7 +85,14 @@
                 </xsl:matching-substring>
             </xsl:analyze-string>
         </xsl:if>
-
+		    <!--Emory collection-id is two to four digits, between the two letter repository code and object id.-->
+        <xsl:if test="$department='emory'">
+            <xsl:analyze-string select="$aip-id" regex="^emory_[a-z]{{2}}_(\d{{2,4}})_\d{{2,4}}">
+                <xsl:matching-substring>
+                    <xsl:value-of select="regex-group(1)" />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
+        </xsl:if>
         <!--Russell collection-id is formatted rbrl-###-->
         <xsl:if test="$department='russell'">
             <xsl:analyze-string select="$aip-id" regex="^(rbrl-\d{{3}})">
@@ -89,7 +101,6 @@
                 </xsl:matching-substring>
             </xsl:analyze-string>
         </xsl:if>
-
     </xsl:variable>
     
     <!--file-id: the portion of the file path beginning with the aip id.-->
@@ -105,6 +116,13 @@
         </xsl:if>
         <xsl:if test="$department='hargrett'">
             <xsl:analyze-string select="fileinfo/filepath" regex="harg-(ms|ua)?(\d{{2}}-)?\d{{4}}(er|-web-\d{{6}}-)\d{{4}}.*">
+                <xsl:matching-substring>
+                    <xsl:value-of select="." />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
+        </xsl:if>
+        <xsl:if test="$department='emory'">
+            <xsl:analyze-string select="fileinfo/filepath" regex="emory_[a-z]{{2}}_\d{{2,4}}_\d{{2,4}}.*">
                 <xsl:matching-substring>
                     <xsl:value-of select="." />
                 </xsl:matching-substring>
@@ -235,7 +253,7 @@
     <!--aip creating application list: PREMIS 1.5.5 (optional): gets a unique list of applications.-->
     <xsl:template name="aip-unique-creating-application-list">
 
-        <!--Uniqueness is determed by application name and version.-->
+        <!--Uniqueness is determined by application name and version.-->
         <xsl:for-each-group select="//fileinfo/creatingApplication" group-by="concat(creatingApplicationName,creatingApplicationVersion)">
             <xsl:sort select="current-grouping-key()" />
 
@@ -305,13 +323,36 @@
     </xsl:template>
 
 
+    <!--aip relationship to repository: PREMIS 1.13 (required if applicable).-->
+	<!--Repository is the two letter code between "emory" and the collection number.-->
+    <xsl:template name="relationship-repository">
+		<premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+                <premis:relatedObjectIdentifierType>
+                    <xsl:value-of select="$uri" />
+                </premis:relatedObjectIdentifierType>
+                <premis:relatedObjectIdentifierValue>
+					<xsl:analyze-string select="$aip-id" regex="^emory_([a-z]{{2}})_\d{{2,4}}_\d{{2,4}}">
+						<xsl:matching-substring>
+							<xsl:value-of select="regex-group(1)" />
+						</xsl:matching-substring>
+					</xsl:analyze-string>
+                </premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+        </premis:relationship>
+    </xsl:template>
+
+
 <!--..................................................................................................-->
 <!--FILELIST SECTION TEMPLATES -->
 
 <!--Detailed information about each file in the aip. When tools generate conflicting information (i.e. 
-multiple possible formats or multiple possible created dates) all possible information is kept. -->    <!--..................................................................................................-->
+multiple possible formats or multiple possible created dates) all possible information is kept. -->
+    <!--..................................................................................................-->
 
-    <!--Creates the strcture for the premis:object for each file in the aip.-->
+    <!--Creates the structure for the premis:object for each file in the aip.-->
     <xsl:template match="fits">
         <premis:object>
             <xsl:call-template name="file-id" />
@@ -371,7 +412,7 @@ multiple possible formats or multiple possible created dates) all possible infor
 
         <premis:format>
 
-            <!--Format name, and verison if it has one.-->
+            <!--Format name, and version if it has one.-->
             <premis:formatDesignation>
                 <premis:formatName><xsl:value-of select="@format" /></premis:formatName>
                 <xsl:if test="version">

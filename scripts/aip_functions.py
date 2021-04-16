@@ -3,6 +3,7 @@ UGA Libraries' digital preservation system (ARCHive). These are utilized by mult
 different types."""
 
 import bagit
+import datetime
 import os
 import platform
 import shutil
@@ -40,51 +41,64 @@ def make_output_directories():
             os.mkdir(f'../{directory}')
 
 
-def delete_temp(aip_id, log_path=False):
+def delete_temp(aip_id, deletion_log=False):
     """Deletes temporary files of various types from anywhere within the AIP folder because they cause errors later in
     the workflow, especially with bag validation."""
 
     # List of files to be deleted where the filename can be matched in its entirely.
     delete = ['.DS_Store', '._.DS_Store', 'Thumbs.db']
 
+    # List of files that were deleted, to save to a log if desired.
+    deleted_files = []
+
     # Checks all files at any level in the AIP folder and deletes them if they match one of the criteria for
-    # being temporary. If a log path is provided, adds the file name to the log.
+    # being temporary. If a log is desired, adds the path of the deleted file to a list.
     for root, directories, files in os.walk(aip_id):
         for item in files:
             if item in delete or item.endswith('.tmp') or item.startswith('.'):
-                if log_path:
-                    log(log_path, f'Deleted temporary file: {root}/{item}')
-                os.remove(f'{root}/{item}')
+                if deletion_log:
+                    deleted_files.append(os.path.join(root, item))
+                os.remove(os.path.join(root, item))
+
+    # Creates the log in the AIP folder if a log is desired and any files were deleted.
+    # The log contains the path of every deleted file.
+    if len(deleted_files) > 0:
+        deleted_log = open(f"{aip_id}/Temporary_Files_Deleted_{datetime.datetime.today().date()}_del.txt", "w")
+        for file in deleted_files:
+            deleted_log.write(file + "\n")
 
 
 def structure_directory(aip_id, log_path):
-    """Makes the AIP directory structure (objects and metadata folder within the AIP folder) and moves the digital
-    objects into the objects folder. If the digital objects are organized into folders, that directory structure is
-    maintained within the objects folder."""
+    """Makes the AIP directory structure (objects and metadata folders within the AIP folder) and moves the digital
+    objects into those folders. Anything not recognized as metadata is moved into the objects folder. If the digital
+    objects are organized into folders, that directory structure is maintained within the objects folder. """
 
-    # Makes the objects folder within the AIP folder, if it doesn't exist. If it does exist, moves the AIP to an
-    # error folder and does not execute the rest of this function so the original directory structure is not altered.
+    # Makes the objects and metadata folders within the AIP folder, if they don't exist.
+    # If they do exist, moves the AIP to an error folder so the original directory structure is not altered.
     try:
         os.mkdir(f'{aip_id}/objects')
     except FileExistsError:
-        log(log_path, 'Stop processing. Objects folder already exists.')
-        move_error('objects_folder_exists', aip_id)
+        log(log_path, "Stop processing. Objects folder already exists.")
+        move_error("objects_folder_exists", aip_id)
+        return
+    try:
+        os.mkdir(f"{aip_id}/metadata")
+    except FileExistsError:
+        log(log_path, "Stop processing. Metadata folder already exists.")
+        move_error("metadata_folder_exists", aip_id)
         return
 
-    # Moves the contents of the AIP folder into the objects folder.
+    # Moves any metadata files, identified by their file names, to the metadata folder.
     for item in os.listdir(aip_id):
-        if item == 'objects':
-            continue
-        os.replace(f'{aip_id}/{item}', f'{aip_id}/objects/{item}')
+        if item.startswith("Temporary_Files_Deleted_") or item.startswith("EmoryMD"):
+            os.replace(f"{aip_id}/{item}", f"{aip_id}/metadata/{item}")
 
-    # Makes the metadata folder within the AIP folder, if it doesn't exist. If it does exist, moves the AIP to an
-    # error folder. If this happens, there was an error in the previous step when everything should have been moved
-    # to the objects folder.
-    try:
-        os.mkdir(f'{aip_id}/metadata')
-    except FileExistsError:
-        log(log_path, 'Stop processing. Metadata folder already exists.')
-        move_error('metadata_folder_exists', aip_id)
+    # Moves all remaining files and folders to the objects folder.
+    # The first level within the AIPs folder is now just the metadata folder and objects folder.
+    for item in os.listdir(aip_id):
+        if item == "metadata" or item == "objects":
+            continue
+        os.replace(f"{aip_id}/{item}", f"{aip_id}/objects/{item}")
 
 
 def extract_metadata(aip_id, aip_directory, log_path):
@@ -159,8 +173,7 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
         move_error('no_files', aip_id)
         return
 
-    # Updates the department variable from the code used in the AIP id to the group name in ARCHive,
-    # for departments where the code and group name are different.
+    # Updates the department variable from the code used in the AIP id to the group name in ARCHive, if different.
     if department == 'harg':
         department = 'hargrett'
     elif department == 'rbrl':
@@ -278,10 +291,13 @@ def make_manifest():
     # Changes the current directory to the location of the packaged AIPs.
     os.chdir('../aips-to-ingest')
 
-    # Uses md5deep to calculate the MD5s for files with the specified department prefix and saves them to the manifest.
+    # Uses md5deep to calculate the MD5s for files with the specified prefix and saves them to the manifest.
     # Tests if there are any files with that prefix before making the manifest so it does not make an empty manifest.
     if any(file.startswith('harg') for file in os.listdir('.')):
         subprocess.run(f'{c.md5deep} -br harg* > manifest_hargrett.txt', shell=True)
 
     if any(file.startswith('rbrl') for file in os.listdir('.')):
         subprocess.run(f'{c.md5deep} -br rbrl* > manifest_russell.txt', shell=True)
+
+    if any(file.startswith('emory') for file in os.listdir('.')):
+        subprocess.run(f'{c.md5deep} -br emory* > manifest.txt', shell=True)

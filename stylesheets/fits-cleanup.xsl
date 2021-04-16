@@ -102,7 +102,7 @@
 
             <!--Makes a new element, inhibitor, for each tool.-->
             <!--Children are inhibitorType and inhibitorTarget, listed in that order.-->
-            <!--Only copies a child lement if it is not empty.-->
+            <!--Only copies a child element if it is not empty.-->
             <!--Known issue: if both elements for a tool are empty, get an empty inhibitor element.-->
             <xsl:for-each-group select="inhibitorType | inhibitorTarget" group-by="@toolname">
                 <inhibitor tool="{@toolname}" xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output">

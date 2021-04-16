@@ -1,6 +1,6 @@
 """Purpose: Creates AIPs from folders of digital objects that are then ready for ingest into the UGA Libraries'
 digital preservation system (ARCHive). The AIPs may contain one or multiple files of any format. The script works
-with Hargrett and Russell library identifiers.
+with Hargrett and Russell library identifiers and Emory disk identifiers.
 
 All workflow steps are done for one AIP before processing begins on the next. If an anticipated error is encountered
 during processing, the AIP is moved to an error folder and the rest of the workflow steps are not executed for that
@@ -32,7 +32,6 @@ import sys
 
 import aip_functions as aip
 
-
 # Assigns the script argument to the aips_directory variable and makes that the current directory.
 # Ends the script if it is missing or not a valid directory.
 try:
@@ -43,7 +42,7 @@ except (IndexError, FileNotFoundError):
     print('Script usage: python "/path/general_aip.py" "/path/aips-directory"')
     exit()
 
-# Starts a log for saving information about errors encountered while running the script. The log includes the date
+# Starts a in log for saving information about errors encountered while running the script. The log includes the date
 # and time the script starts for calculating how long it takes the script to run.
 log_path = f'../script_log_{datetime.date.today()}.txt'
 aip.log(log_path, f'Starting AIP script at {datetime.datetime.today()}')
@@ -52,6 +51,7 @@ aip.log(log_path, f'Starting AIP script at {datetime.datetime.today()}')
 aip.make_output_directories()
 
 # Starts counts for tracking script progress. Some steps are time consuming so this shows the script is not stuck.
+# If the AIPs directory already contains the output folders and log, the total will be too high.
 current_aip = 0
 total_aips = len(os.listdir(aips_directory))
 
@@ -59,13 +59,20 @@ total_aips = len(os.listdir(aips_directory))
 # calling the function for the next step in case it was moved due to an error in the previous step.
 for aip_folder in os.listdir(aips_directory):
 
+    # Skip output folders and log, if present from running the script previously.
+    if aip_folder in ["aips-to-ingest", "fits-xml", "preservation-xml"] or aip_folder.startswith("script_log"):
+        continue
+
     # Updates the current AIP number and displays the script progress.
     current_aip += 1
     aip.log(log_path, f'\n>>>Processing {aip_folder} ({current_aip} of {total_aips}).')
     print(f'\n>>>Processing {aip_folder} ({current_aip} of {total_aips}).')
 
-    # Parses the AIP id, department, and AIP title from the folder name.
-    regex = re.match('^((harg|rbrl)[a-z0-9-]+)_(.*)', aip_folder)
+    # Parses the department, AIP id, and AIP title from the folder name.
+    #   * Prefix indicates the UGA department or partner institution.
+    #   * AIP id is everything before the last underscore, include department if present.
+    #   * AIP title is everything after the last underscore.
+    regex = re.match('^((harg|rbrl|emory)_[a-z0-9-_]+)_(?!.*_)(.*)', aip_folder)
     try:
         aip_id = regex.group(1)
         department = regex.group(2)
@@ -79,8 +86,11 @@ for aip_folder in os.listdir(aips_directory):
     # preservation.xml file.
     os.replace(aip_folder, aip_id)
 
-    # Deletes temporary files. Remove the log_path parameter to not include a list of deleted files in the log.
-    aip.delete_temp(aip_id, log_path)
+    # Deletes temporary files. For Emory AIPs, makes a log of deleted files which is saved in the metadata folder.
+    if department == "emory":
+        aip.delete_temp(aip_id, deletion_log=True)
+    else:
+        aip.delete_temp(aip_id)
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
     if aip_id in os.listdir('.'):
@@ -107,4 +117,3 @@ aip.make_manifest()
 
 # Adds date and time the script was completed to the log.
 aip.log(log_path, f'\nScript finished running at {datetime.datetime.today()}.')
-

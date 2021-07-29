@@ -106,6 +106,11 @@ def extract_metadata(aip_id, aip_directory, log_path):
     combines the FITS output for every file in the AIP. """
 
     # Runs FITS on every file in the AIP's objects folder and saves the output to the AIP's metadata folder.
+    # TODO: catch error if FITS does not run.
+    #  In terminal, prints Error: Could not find or load main class edu.harvard.hul.ois.fits.Fits.
+    #  Happened when running the script with an AIPs directory that is on an external hard drive.
+    #  The function still makes combined-fits.xml, which just has the xml declaration and <combined-fits/>
+    #  The error will be caught when preservation.xml is not valid.
     subprocess.run(f'"{c.fits}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"',
                    shell=True)
 

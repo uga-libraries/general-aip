@@ -117,3 +117,4 @@ aip.make_manifest()
 
 # Adds date and time the script was completed to the log.
 aip.log(log_path, f'\nScript finished running at {datetime.datetime.today()}.')
+print("Script is finished running.")

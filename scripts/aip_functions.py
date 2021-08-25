@@ -106,6 +106,10 @@ def extract_metadata(aip_id, aip_directory, log_path):
     combines the FITS output for every file in the AIP. """
 
     # Runs FITS on every file in the AIP's objects folder and saves the output to the AIP's metadata folder.
+    # FITS output is named with the original file name. If there is more than one file anywhere within the 
+    # objects folder with the same name, FITS automatically adds a number to the duplicates, for example: 
+    # file.ext.fits.xml, file.ext-1.fits.xml, file.ext-2.fits.xml 
+    
     # TODO: catch error if FITS does not run.
     #  In terminal, prints Error: Could not find or load main class edu.harvard.hul.ois.fits.Fits.
     #  Happened when running the script with an AIPs directory that is on an external hard drive.

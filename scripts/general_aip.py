@@ -72,7 +72,7 @@ for aip_folder in os.listdir(aips_directory):
     #   * Prefix indicates the UGA department or partner institution.
     #   * AIP id is everything before the last underscore, include department if present.
     #   * AIP title is everything after the last underscore.
-    regex = re.match('^((harg|rbrl|emory)_[a-z0-9-_]+)_(?!.*_)(.*)', aip_folder)
+    regex = re.match('^((harg|rbrl|emory)[_|-][a-z0-9-_]+)_(?!.*_)(.*)', aip_folder)
     try:
         aip_id = regex.group(1)
         department = regex.group(2)

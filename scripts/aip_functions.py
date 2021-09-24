@@ -163,7 +163,7 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
     cleanup_stylesheet = f'{c.stylesheets}/fits-cleanup.xsl'
     cleaned_fits = f'{aip_id}/metadata/{aip_id}_cleaned-fits.xml'
     subprocess.run(
-        f'java -cp {c.saxon} net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
+        f'java -cp "{c.saxon}" net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
         shell=True)
 
     # Counts the number of files in the objects folder, since a different stylesheet is used for AIPs with one file.
@@ -191,7 +191,7 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
     # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
     preservation_xml = f'{aip_id}/metadata/{aip_id}_preservation.xml'
     subprocess.run(
-        f'java -cp {c.saxon} net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" '
+        f'java -cp "{c.saxon}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" '
         f'aip-id="{aip_id}" aip-title="{aip_title}" department="{department}" workflow="{workflow}"',
         shell=True)
 
@@ -303,10 +303,10 @@ def make_manifest():
     # Uses md5deep to calculate the MD5s for files with the specified prefix and saves them to the manifest.
     # Tests if there are any files with that prefix before making the manifest so it does not make an empty manifest.
     if any(file.startswith('harg') for file in os.listdir('.')):
-        subprocess.run(f'{c.md5deep} -br harg* > manifest_hargrett.txt', shell=True)
+        subprocess.run(f'"{c.md5deep}" -br harg* > manifest_hargrett.txt', shell=True)
 
     if any(file.startswith('rbrl') for file in os.listdir('.')):
-        subprocess.run(f'{c.md5deep} -br rbrl* > manifest_russell.txt', shell=True)
+        subprocess.run(f'"{c.md5deep}" -br rbrl* > manifest_russell.txt', shell=True)
 
     if any(file.startswith('emory') for file in os.listdir('.')):
-        subprocess.run(f'{c.md5deep} -br emory* > manifest.txt', shell=True)
+        subprocess.run(f'"{c.md5deep}" -br emory* > manifest.txt', shell=True)

@@ -41,7 +41,7 @@ try:
 except (IndexError, FileNotFoundError):
     print('Unable to run the script: AIPs directory argument is missing or invalid.')
     print('Script usage: python "/path/general_aip.py" "/path/aips-directory"')
-    exit()
+    sys.exit()
 
 # Starts a in log for saving information about errors encountered while running the script.
 # The log includes the script start time for calculating how long it takes the script to run.

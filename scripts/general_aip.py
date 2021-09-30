@@ -36,8 +36,8 @@ import aip_functions as aip
 # Assigns the script argument to the aips_directory variable and makes that the current directory.
 # Ends the script if it is missing or not a valid directory.
 try:
-    aips_directory = sys.argv[1]
-    os.chdir(aips_directory)
+    AIPS_DIRECTORY = sys.argv[1]
+    os.chdir(AIPS_DIRECTORY)
 except (IndexError, FileNotFoundError):
     print('Unable to run the script: AIPs directory argument is missing or invalid.')
     print('Script usage: python "/path/general_aip.py" "/path/aips-directory"')
@@ -45,8 +45,8 @@ except (IndexError, FileNotFoundError):
 
 # Starts a in log for saving information about errors encountered while running the script.
 # The log includes the script start time for calculating how long it takes the script to run.
-log_path = f'../script_log_{datetime.date.today()}.txt'
-aip.log(log_path, f'Starting AIP script at {datetime.datetime.today()}')
+LOG_PATH = f'../script_log_{datetime.date.today()}.txt'
+aip.log(LOG_PATH, f'Starting AIP script at {datetime.datetime.today()}')
 
 # Makes directories used to store script outputs in the same parent folder as the AIPs directory.
 aip.make_output_directories()
@@ -54,22 +54,22 @@ aip.make_output_directories()
 # Starts counts for tracking script progress.
 # Some steps are time consuming so this shows the script is not stuck.
 # If the AIPs directory already contains the output folders and log, the total will be too high.
-current_aip = 0
-total_aips = len(os.listdir(aips_directory))
+CURRENT_AIP = 0
+TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY))
 
 # Uses the aip functions to create AIPs for one folder at a time.
 # Checks if the AIP folder is still present before # calling the function for the next step
 # in case it was moved due to an error in the previous step.
-for aip_folder in os.listdir(aips_directory):
+for aip_folder in os.listdir(AIPS_DIRECTORY):
 
     # Skip output folders and log, if present from running the script previously.
     if aip_folder in ["aips-to-ingest", "fits-xml", "preservation-xml"] or aip_folder.startswith("script_log"):
         continue
 
     # Updates the current AIP number and displays the script progress.
-    current_aip += 1
-    aip.log(log_path, f'\n>>>Processing {aip_folder} ({current_aip} of {total_aips}).')
-    print(f'\n>>>Processing {aip_folder} ({current_aip} of {total_aips}).')
+    CURRENT_AIP += 1
+    aip.log(LOG_PATH, f'\n>>>Processing {aip_folder} ({CURRENT_AIP} of {TOTAL_AIPS}).')
+    print(f'\n>>>Processing {aip_folder} ({CURRENT_AIP} of {TOTAL_AIPS}).')
 
     # Parses the department, AIP id, and AIP title from the folder name.
     #   * Prefix indicates the UGA department or partner institution.
@@ -81,7 +81,7 @@ for aip_folder in os.listdir(aips_directory):
         department = regex.group(2)
         aip_title = regex.group(3)
     except AttributeError:
-        aip.log(log_path, 'Stop processing. Folder name not structured correctly.')
+        aip.log(LOG_PATH, 'Stop processing. Folder name not structured correctly.')
         aip.move_error('folder_name', aip_folder)
         continue
 
@@ -98,27 +98,27 @@ for aip_folder in os.listdir(aips_directory):
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
     if aip_id in os.listdir('.'):
-        aip.structure_directory(aip_id, log_path)
+        aip.structure_directory(aip_id, LOG_PATH)
 
     # Extracts technical metadata from the files using FITS.
     if aip_id in os.listdir('.'):
-        aip.extract_metadata(aip_id, aips_directory, log_path)
+        aip.extract_metadata(aip_id, AIPS_DIRECTORY, LOG_PATH)
 
     # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
     if aip_id in os.listdir('.'):
-        aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
+        aip.make_preservationxml(aip_id, aip_title, department, 'general', LOG_PATH)
 
     # Bags the AIP using bagit.
     if aip_id in os.listdir('.'):
-        aip.bag(aip_id, log_path)
+        aip.bag(aip_id, LOG_PATH)
 
     # Tars and zips (bz2) the AIP.
     if f'{aip_id}_bag' in os.listdir('.'):
-        aip.package(aip_id, aips_directory)
+        aip.package(aip_id, AIPS_DIRECTORY)
 
 # Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
 aip.make_manifest()
 
 # Adds date and time the script was completed to the log.
-aip.log(log_path, f'\nScript finished running at {datetime.datetime.today()}.')
+aip.log(LOG_PATH, f'\nScript finished running at {datetime.datetime.today()}.')
 print("Script is finished running.")

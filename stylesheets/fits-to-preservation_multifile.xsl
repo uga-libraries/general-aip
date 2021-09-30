@@ -25,6 +25,7 @@
                 <premis:object>
                     <xsl:call-template name="aip-object-id" />
                     <xsl:call-template name="aip-version" />
+                    <!--TO MERGE: Make objectCategory a template that uses $file-count-->
                     <premis:objectCategory>representation</premis:objectCategory>
                     <premis:objectCharacteristics>
                         <xsl:call-template name="aip-size" />
@@ -41,6 +42,7 @@
 					</xsl:if>
                 </premis:object>
             </aip>
+            <!--TO MERGE: Test if $file-count > 1 before doing filelist-->
             <filelist>
                 <xsl:apply-templates select="combined-fits/fits" />
             </filelist>
@@ -134,7 +136,8 @@
             </xsl:analyze-string>
         </xsl:if>
     </xsl:template>
-    
+
+    <!--TO MERGE: Make variable file-count that counts the number of fits in the combined-fits-->
     
 <!--.................................................................................................-->
 <!--AIP SECTION TEMPLATES -->
@@ -158,7 +161,8 @@
             <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
         </premis:objectIdentifier>
     </xsl:template>
-    
+
+    <!--TO MERGE: add tempalte object-category, lines 193-200 in russell av-->
     
     <!--aip size: PREMIS 1.5.3 (optional): sum of every file size in bytes, formatted as a number.-->
     <xsl:template name="aip-size">

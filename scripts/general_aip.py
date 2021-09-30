@@ -1,10 +1,11 @@
-"""Purpose: Creates AIPs from folders of digital objects that are then ready for ingest into the UGA Libraries'
-digital preservation system (ARCHive). The AIPs may contain one or multiple files of any format. The script works
-with Hargrett and Russell library identifiers and Emory disk identifiers.
+"""Purpose: Creates AIPs from folders of digital objects that are then ready for ingest into the
+UGA Libraries' digital preservation system (ARCHive). The AIPs may contain one or multiple files
+of any format. The script works with Hargrett and Russell library IDs and Emory disk IDs.
 
-All workflow steps are done for one AIP before processing begins on the next. If an anticipated error is encountered
-during processing, the AIP is moved to an error folder and the rest of the workflow steps are not executed for that
-AIP. A log is generated while the script runs to record which AIPs were processed and any errors encountered.
+All workflow steps are done for one AIP before processing begins on the next.
+If an anticipated error is encountered during processing, the AIP is moved to an error folder
+and the rest of the workflow steps are not executed for that AIP. A log is generated while
+the script runs to record which AIPs were processed and any errors encountered.
 
 Prior to running the script:
     1. The digital objects for each AIP should be in a folder named 'aip-id_AIP Title'
@@ -42,21 +43,23 @@ except (IndexError, FileNotFoundError):
     print('Script usage: python "/path/general_aip.py" "/path/aips-directory"')
     exit()
 
-# Starts a in log for saving information about errors encountered while running the script. The log includes the date
-# and time the script starts for calculating how long it takes the script to run.
+# Starts a in log for saving information about errors encountered while running the script.
+# The log includes the script start time for calculating how long it takes the script to run.
 log_path = f'../script_log_{datetime.date.today()}.txt'
 aip.log(log_path, f'Starting AIP script at {datetime.datetime.today()}')
 
 # Makes directories used to store script outputs in the same parent folder as the AIPs directory.
 aip.make_output_directories()
 
-# Starts counts for tracking script progress. Some steps are time consuming so this shows the script is not stuck.
+# Starts counts for tracking script progress.
+# Some steps are time consuming so this shows the script is not stuck.
 # If the AIPs directory already contains the output folders and log, the total will be too high.
 current_aip = 0
 total_aips = len(os.listdir(aips_directory))
 
-# Uses the aip functions to create AIPs for one folder at a time. Checks if the AIP folder is still present before
-# calling the function for the next step in case it was moved due to an error in the previous step.
+# Uses the aip functions to create AIPs for one folder at a time.
+# Checks if the AIP folder is still present before # calling the function for the next step
+# in case it was moved due to an error in the previous step.
 for aip_folder in os.listdir(aips_directory):
 
     # Skip output folders and log, if present from running the script previously.
@@ -82,11 +85,12 @@ for aip_folder in os.listdir(aips_directory):
         aip.move_error('folder_name', aip_folder)
         continue
 
-    # Renames the AIP folder to the AIP id. Only need the AIP title in the folder name to get the title for the
-    # preservation.xml file.
+    # Renames the AIP folder to the AIP ID.
+    # Only need the AIP title in the folder name to get the title for the preservation.xml file.
     os.replace(aip_folder, aip_id)
 
-    # Deletes temporary files. For Emory AIPs, makes a log of deleted files which is saved in the metadata folder.
+    # Deletes temporary files.
+    # For Emory AIPs, makes a log of deleted files which is saved in the metadata folder.
     if department == "emory":
         aip.delete_temp(aip_id, deletion_log=True)
     else:
@@ -100,7 +104,7 @@ for aip_folder in os.listdir(aips_directory):
     if aip_id in os.listdir('.'):
         aip.extract_metadata(aip_id, aips_directory, log_path)
 
-    # Converts the technical metadata into Dublin Core and PREMIS (preservation.xml file) using xslt stylesheets.
+    # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
     if aip_id in os.listdir('.'):
         aip.make_preservationxml(aip_id, aip_title, department, 'general', log_path)
 

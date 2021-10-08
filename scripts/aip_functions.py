@@ -111,7 +111,7 @@ def extract_metadata(aip_id, aip_directory, log_path):
     # The FITS output is named with the original file name. If there is more than one file anywhere
     # within the objects folder with the same name, FITS adds a number to the duplicates, for example:
     # file.ext.fits.xml, file.ext-1.fits.xml, file.ext-2.fits.xml
-    subprocess.run(f'"{c.fits}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"',
+    subprocess.run(f'"{c.FITS}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"',
                    shell=True)
 
     # Renames the FITS output to the UGA Libraries' metadata naming convention (filename_fits.xml).
@@ -157,10 +157,10 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
     # Makes a simplified version of the combined fits XML so the XML is easier to aggregate.
     # Saves the file in the AIP's metadata folder. It is deleted at the end of the function.
     combined_fits = f'{aip_id}/metadata/{aip_id}_combined-fits.xml'
-    cleanup_stylesheet = f'{c.stylesheets}/fits-cleanup.xsl'
+    cleanup_stylesheet = f'{c.STYLESHEETS}/fits-cleanup.xsl'
     cleaned_fits = f'{aip_id}/metadata/{aip_id}_cleaned-fits.xml'
     subprocess.run(
-        f'java -cp "{c.saxon}" net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
+        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
         shell=True)
 
     # Counts the number of files in the objects folder for selecting the right stylesheet.
@@ -172,9 +172,9 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
     # If there is not at least 1 file, moves the AIP to an error folder
     # and does not execute the rest of this function.
     if file_count == 1:
-        stylesheet = f'{c.stylesheets}/fits-to-preservation_singlefile.xsl'
+        stylesheet = f'{c.STYLESHEETS}/fits-to-preservation_singlefile.xsl'
     elif file_count > 1:
-        stylesheet = f'{c.stylesheets}/fits-to-preservation_multifile.xsl'
+        stylesheet = f'{c.STYLESHEETS}/fits-to-preservation_multifile.xsl'
     else:
         log(log_path, 'Stop processing. There are no objects in this AIP.')
         move_error('no_files', aip_id)
@@ -189,14 +189,14 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
     # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
     preservation_xml = f'{aip_id}/metadata/{aip_id}_preservation.xml'
     subprocess.run(
-        f'java -cp "{c.saxon}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" '
+        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" '
         f'aip-id="{aip_id}" aip-title="{aip_title}" department="{department}" workflow="{workflow}"',
         shell=True)
 
     # Validates the preservation.xml file against the requirements of ARCHive.
     # If it is not valid, saves the validation error to the log, moves the AIP to an error folder,
     # and does not execute the rest of this function.
-    validation = subprocess.run(f'xmllint --noout -schema "{c.stylesheets}/preservation.xsd" "{preservation_xml}"',
+    validation = subprocess.run(f'xmllint --noout -schema "{c.STYLESHEETS}/preservation.xsd" "{preservation_xml}"',
                                 stderr=subprocess.PIPE, shell=True)
     validation_result = str(validation.stderr)
 
@@ -306,10 +306,10 @@ def make_manifest():
     # and saves them to the manifest. Tests if there are any files with that prefix
     # before making the manifest so it does not make an empty manifest.
     if any(file.startswith('harg') for file in os.listdir('.')):
-        subprocess.run(f'"{c.md5deep}" -br harg* > manifest_hargrett.txt', shell=True)
+        subprocess.run(f'"{c.MD5DEEP}" -br harg* > manifest_hargrett.txt', shell=True)
 
     if any(file.startswith('rbrl') for file in os.listdir('.')):
-        subprocess.run(f'"{c.md5deep}" -br rbrl* > manifest_russell.txt', shell=True)
+        subprocess.run(f'"{c.MD5DEEP}" -br rbrl* > manifest_russell.txt', shell=True)
 
     if any(file.startswith('emory') for file in os.listdir('.')):
-        subprocess.run(f'"{c.md5deep}" -br emory* > manifest.txt', shell=True)
+        subprocess.run(f'"{c.MD5DEEP}" -br emory* > manifest.txt', shell=True)

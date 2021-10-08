@@ -179,23 +179,6 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
         f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
         shell=True)
 
-    # Counts the number of files in the objects folder for selecting the right stylesheet.
-    file_count = 0
-    for root, directories, files in os.walk(f'{aip_id}/objects'):
-        file_count += len(files)
-
-    # Selects the correct stylesheet for if the AIP has one file or multiple files.
-    # If there is not at least 1 file, moves the AIP to an error folder
-    # and does not execute the rest of this function.
-    if file_count == 1:
-        stylesheet = f'{c.STYLESHEETS}/fits-to-preservation_singlefile.xsl'
-    elif file_count > 1:
-        stylesheet = f'{c.STYLESHEETS}/fits-to-preservation_multifile.xsl'
-    else:
-        log(log_path, 'Stop processing. There are no objects in this AIP.')
-        move_error('no_files', aip_id)
-        return
-
     # Updates the department variable from the code used in the AIP id to the group name in ARCHive, if different.
     if department == 'harg':
         department = 'hargrett'
@@ -203,6 +186,7 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
         department = 'russell'
 
     # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
+    stylesheet = f'{c.STYLESHEETS}/fits-to-preservation.xsl'
     preservation_xml = f'{aip_id}/metadata/{aip_id}_preservation.xml'
     subprocess.run(
         f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" '

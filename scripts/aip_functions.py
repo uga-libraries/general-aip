@@ -31,6 +31,22 @@ def move_error(error_name, item):
     os.replace(item, f'../errors/{error_name}/{item}')
 
 
+def check_paths():
+    """Verifies all the paths from the configuration file are valid.
+    Returns a list of paths with errors or "no errors".
+    This avoids wasting processing time by doing earlier steps before the path error is encountered."""
+
+    errors = []
+    for path in (c.FITS, c.SAXON, c.MD5DEEP, c.STYLESHEETS):
+        if not os.path.exists(path):
+            errors.append(path)
+
+    if len(errors) == 0:
+        return "no errors"
+    else:
+        return errors
+
+
 def make_output_directories():
     """Makes the directories used to store script outputs, if they don't already exist,
     in the parent folder of the AIPs directory."""

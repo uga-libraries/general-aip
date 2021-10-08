@@ -55,6 +55,15 @@ if len(sys.argv) == 3:
         print('Script usage: python "/path/general_aip.py" "/path/aips-directory" [no-zip]')
         sys.exit()
 
+# Verifies all the paths from the configuration file are valid. If not, ends the script.
+valid_errors = aip.check_paths()
+if not valid_errors == "no errors":
+    print('The following path(s) in the configuration file are not correct:')
+    for error in valid_errors:
+        print(error)
+    print('Correct the configuration file and run the script again.')
+    sys.exit()
+
 # Starts a in log for saving information about errors encountered while running the script.
 # The log includes the script start time for calculating how long it takes the script to run.
 LOG_PATH = f'../script_log_{datetime.date.today()}.txt'

@@ -16,3 +16,7 @@ FITS = 'C:\\INSERT\\PATH\\fits.bat'
 SAXON = 'C:\\INSERT\\PATH\\saxon-he-#.#.jar'
 MD5DEEP = 'C:\\INSERT\\PATH\\md5deep64.exe'
 STYLESHEETS = 'C:\\INSERT\\PATH\\stylesheets'
+
+# Namespace for the AIP identifiers.
+# For UGA, this is the URI for the ARCHive.
+NAMESPACE = 'INSERT_NAMESPACE'

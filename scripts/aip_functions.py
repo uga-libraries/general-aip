@@ -206,7 +206,7 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
     preservation_xml = f'{aip_id}/metadata/{aip_id}_preservation.xml'
     subprocess.run(
         f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" '
-        f'aip-id="{aip_id}" aip-title="{aip_title}" department="{department}" workflow="{workflow}"',
+        f'aip-id="{aip_id}" aip-title="{aip_title}" department="{department}" workflow="{workflow}" ns={c.NAMESPACE}',
         shell=True)
 
     # Validates the preservation.xml file against the requirements of ARCHive.

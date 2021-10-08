@@ -60,9 +60,10 @@
     <xsl:param name="aip-title" required="yes" />
     <xsl:param name="department" required="yes" />
     <xsl:param name="workflow" />
+    <xsl:param name="ns" required="yes" />
     
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
-    <xsl:variable name="uri">INSERT-URI-HERE/<xsl:value-of select="$department" /></xsl:variable>
+    <xsl:variable name="uri"><xsl:value-of select="$ns" />/<xsl:value-of select="$department" /></xsl:variable>
          
     <!--$collection-id: gets the collection-id from the aip id.-->
     <!--Uses department parameter to determine what pattern to match.-->

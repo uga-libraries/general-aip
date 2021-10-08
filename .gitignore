@@ -1,5 +1,6 @@
 .idea
 pylint_output
 scripts/_pycache_
+pylint_output
 *.pyc
 scripts/configuration.py

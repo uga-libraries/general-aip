@@ -96,7 +96,7 @@ def structure_directory(aip_id, log_path):
     # Moves all remaining files and folders to the objects folder.
     # The first level within the AIPs folder is now just the metadata folder and objects folder.
     for item in os.listdir(aip_id):
-        if item == "metadata" or item == "objects":
+        if item in ("metadata", "objects"):
             continue
         os.replace(f"{aip_id}/{item}", f"{aip_id}/objects/{item}")
 
@@ -209,7 +209,7 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
         return
 
     # This error happens if the preservation.xml file does not meet the Libraries' requirements.
-    elif 'fails to validate' in validation_result:
+    if 'fails to validate' in validation_result:
         log(log_path, f'Stop processing. The preservation.xml file is not valid. Error:\n{validation_result}')
         move_error('preservationxml_not_valid', aip_id)
         return
@@ -238,8 +238,8 @@ def bag(aip_id, log_path):
     new_bag = bagit.Bag(new_aip_name)
     try:
         new_bag.validate()
-    except bagit.BagValidationError as e:
-        log(log_path, f'Stop processing. Bag is not valid: \n{e}')
+    except bagit.BagValidationError as errors:
+        log(log_path, f'Stop processing. Bag is not valid: \n{errors}')
         move_error('bag_invalid', f'{aip_id}_bag')
 
 

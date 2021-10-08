@@ -20,8 +20,9 @@ Workflow Steps:
     6. Packages the AIP (bag, tar, zip).
     7. When all AIPs are created (steps 1-6), makes a md5 manifest of the packaged AIPs.
 
-Script usage: python '/path/general_aip.py' '/path/aips_directory'
+Script usage: python '/path/general_aip.py' '/path/aips_directory' [no-zip]
 Depending on how Python is installed on the machine, may need to substitute python3 for python.
+Use the optional argument no-zip for batches of AIPs that should only be tarred.
 
 This script has been tested on Windows 10 and Mac OS X (10.9.5).
 """
@@ -33,15 +34,26 @@ import sys
 
 import aip_functions as aip
 
-# Assigns the script argument to the aips_directory variable and makes that the current directory.
+# Assigns the required script argument to the aips_directory variable and makes that the current directory.
 # Ends the script if it is missing or not a valid directory.
 try:
     AIPS_DIRECTORY = sys.argv[1]
     os.chdir(AIPS_DIRECTORY)
 except (IndexError, FileNotFoundError):
     print('Unable to run the script: AIPs directory argument is missing or invalid.')
-    print('Script usage: python "/path/general_aip.py" "/path/aips-directory"')
+    print('Script usage: python "/path/general_aip.py" "/path/aips-directory" [no-zip]')
     sys.exit()
+
+# If the optional script argument no-zip is present, updates the zip variable to False.
+# This is for AIPs that are larger when zipped and should only be tarred to save space and time.
+ZIP = True
+if len(sys.argv) == 3:
+    if sys.argv[2] == "no-zip":
+        ZIP = False
+    else:
+        print('Unexpected value for the second argument. If provided, should be "no-zip".')
+        print('Script usage: python "/path/general_aip.py" "/path/aips-directory" [no-zip]')
+        sys.exit()
 
 # Starts a in log for saving information about errors encountered while running the script.
 # The log includes the script start time for calculating how long it takes the script to run.
@@ -112,9 +124,9 @@ for aip_folder in os.listdir(AIPS_DIRECTORY):
     if aip_id in os.listdir('.'):
         aip.bag(aip_id, LOG_PATH)
 
-    # Tars and zips (bz2) the AIP.
+    # Tars the AIP and zips (bz2) the AIP if ZIP is True.
     if f'{aip_id}_bag' in os.listdir('.'):
-        aip.package(aip_id, AIPS_DIRECTORY)
+        aip.package(aip_id, AIPS_DIRECTORY, ZIP)
 
 # Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
 aip.make_manifest()

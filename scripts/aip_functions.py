@@ -242,7 +242,7 @@ def bag(aip_id, log_path):
         move_error('bag_invalid', f'{aip_id}_bag')
 
 
-def package(aip_id, aips_directory):
+def package(aip_id, aips_directory, zip):
     """Tars and zips the AIP. Saves the resulting packaged AIP in the aips-to-ingest folder."""
 
     # Get operating system, since the tar and zip commands are different for Windows and Mac/Linux.
@@ -274,22 +274,29 @@ def package(aip_id, aips_directory):
     # Renames the file to include the size.
     os.replace(f'{aip}.tar', f'{aip}.{bag_size}.tar')
 
+    # If the AIP should be zipped (if the value of zip is true),
     # Zips (bz2) the tar file, using the command appropriate for the operating system.
-    if operating_system == "Windows":
-        # Does not print the progress to the terminal (stdout), which is a lot of text.
-        subprocess.run(f'7z -tbzip2 a -aoa "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"',
-                       stdout=subprocess.DEVNULL, shell=True)
+    if zip is True:
+        if operating_system == "Windows":
+            # Does not print the progress to the terminal (stdout), which is a lot of text.
+            subprocess.run(f'7z -tbzip2 a -aoa "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"',
+                           stdout=subprocess.DEVNULL, shell=True)
+        else:
+            subprocess.run(f'bzip2 "{aip}.{bag_size}.tar"', shell=True)
+
+        # Deletes the tar version. Just want the tarred and zipped version.
+        # For Mac/Linux, the bzip2 command overwrites the tar file so this step is unnecessary.
+        if operating_system == "Windows":
+            os.remove(f'{aip}.{bag_size}.tar')
+
+        # Moves the tarred and zipped version to the aips-to-ingest folder.
+        path = os.path.join(f'../aips-to-ingest', f"{aip}.{bag_size}.tar.bz2")
+        os.replace(f"{aip}.{bag_size}.tar.bz2", path)
+
+    # If not zipping, moves the tarred version of the aip to the aips-to-ingest folder.
     else:
-        subprocess.run(f'bzip2 "{aip}.{bag_size}.tar"', shell=True)
-
-    # Deletes the tar version. Just want the tarred and zipped version.
-    # For Mac/Linux, the bzip2 command overwrites the tar file so this step is unnecessary.
-    if operating_system == "Windows":
-        os.remove(f'{aip}.{bag_size}.tar')
-
-    # Moves the tarred and zipped version to the aips-to-ingest folder.
-    path = os.path.join(f'../aips-to-ingest', f"{aip}.{bag_size}.tar.bz2")
-    os.replace(f"{aip}.{bag_size}.tar.bz2", path)
+        path = os.path.join(f'../aips-to-ingest', f"{aip}.{bag_size}.tar")
+        os.replace(f"{aip}.{bag_size}.tar", path)
 
 
 def make_manifest():

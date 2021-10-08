@@ -2,13 +2,13 @@
 UGA Libraries' digital preservation system (ARCHive). These are utilized by multiple scripts that create AIPs of
 different types."""
 
-import bagit
 import datetime
 import os
 import platform
 import shutil
 import subprocess
 import xml.etree.ElementTree as ET
+import bagit
 
 # Constants with the absolute file paths for programs and files used by the functions.
 import configuration as c

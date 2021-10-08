@@ -1,6 +1,6 @@
-""" Functions used to make AIPs from folders of digital objects that are then ready for ingest into the
-UGA Libraries' digital preservation system (ARCHive). These are utilized by multiple scripts that create AIPs of
-different types."""
+""" Functions used to make AIPs from folders of digital objects that are ready for ingest into the
+UGA Libraries' digital preservation system (ARCHive). These are utilized by multiple scripts that
+create AIPs of different types."""
 
 import datetime
 import os
@@ -22,8 +22,9 @@ def log(log_path, log_item):
 
 
 def move_error(error_name, item):
-    """Moves the AIP folder to an error folder, named with the error type, so the rest of the workflow steps are not
-    completed on it. Makes the error folder if it does not already exist prior to moving the AIP folder. """
+    """Moves the AIP folder to an error folder, named with the error type, so the rest of the
+    workflow steps are not completed on it. Makes the error folder if it does not already exist
+    prior to moving the AIP folder. """
 
     if not os.path.exists(f'../errors/{error_name}'):
         os.makedirs(f'../errors/{error_name}')
@@ -31,8 +32,8 @@ def move_error(error_name, item):
 
 
 def make_output_directories():
-    """Makes the directories used to store script outputs, if they don't already exist, in the parent folder of the AIPs
-    directory."""
+    """Makes the directories used to store script outputs, if they don't already exist,
+    in the parent folder of the AIPs directory."""
 
     directories = ['aips-to-ingest', 'fits-xml', 'preservation-xml']
 
@@ -42,8 +43,8 @@ def make_output_directories():
 
 
 def delete_temp(aip_id, deletion_log=False):
-    """Deletes temporary files of various types from anywhere within the AIP folder because they cause errors later in
-    the workflow, especially with bag validation."""
+    """Deletes temporary files of various types from anywhere within the AIP folder because
+    they cause errors later in the workflow, especially with bag validation."""
 
     # List of files to be deleted where the filename can be matched in its entirely.
     delete = ['.DS_Store', '._.DS_Store', 'Thumbs.db']
@@ -51,8 +52,8 @@ def delete_temp(aip_id, deletion_log=False):
     # List of files that were deleted, to save to a log if desired.
     deleted_files = []
 
-    # Checks all files at any level in the AIP folder and deletes them if they match one of the criteria for
-    # being temporary. If a log is desired, adds the path of the deleted file to a list.
+    # Checks all files at any level in the AIP folder and deletes them if they match one of the
+    # criteria for being temporary. If a log is desired, adds the path of the deleted file to a list.
     for root, directories, files in os.walk(aip_id):
         for item in files:
             if item in delete or item.endswith('.tmp') or item.startswith('.'):
@@ -69,12 +70,13 @@ def delete_temp(aip_id, deletion_log=False):
 
 
 def structure_directory(aip_id, log_path):
-    """Makes the AIP directory structure (objects and metadata folders within the AIP folder) and moves the digital
-    objects into those folders. Anything not recognized as metadata is moved into the objects folder. If the digital
-    objects are organized into folders, that directory structure is maintained within the objects folder. """
+    """Makes the AIP directory structure (objects and metadata folders within the AIP folder)
+    and moves the digital objects into those folders. Anything not recognized as metadata is
+    moved into the objects folder. If the digital objects are organized into folders, that
+    directory structure is maintained within the objects folder. """
 
     # Makes the objects and metadata folders within the AIP folder, if they don't exist.
-    # If they do exist, moves the AIP to an error folder so the original directory structure is not altered.
+    # Otherwise, moves the AIP to an error folder so the directory structure is not altered.
     try:
         os.mkdir(f'{aip_id}/objects')
     except FileExistsError:
@@ -102,23 +104,17 @@ def structure_directory(aip_id, log_path):
 
 
 def extract_metadata(aip_id, aip_directory, log_path):
-    """Extracts technical metadata from the files in the objects folder using FITS and creates a single XML file that
-    combines the FITS output for every file in the AIP. """
+    """Extracts technical metadata from the files in the objects folder using FITS and
+    creates a single XML file that combines the FITS output for every file in the AIP. """
 
-    # Runs FITS on every file in the AIP's objects folder and saves the output to the AIP's metadata folder.
-    # FITS output is named with the original file name. If there is more than one file anywhere within the 
-    # objects folder with the same name, FITS automatically adds a number to the duplicates, for example: 
-    # file.ext.fits.xml, file.ext-1.fits.xml, file.ext-2.fits.xml 
-    
-    # TODO: catch error if FITS does not run.
-    #  In terminal, prints Error: Could not find or load main class edu.harvard.hul.ois.fits.Fits.
-    #  Happened when running the script with an AIPs directory that is on an external hard drive.
-    #  The function still makes combined-fits.xml, which just has the xml declaration and <combined-fits/>
-    #  The error will be caught when preservation.xml is not valid.
+    # Runs FITS on the files in the AIP's objects folder and saves the output to it's metadata folder.
+    # The FITS output is named with the original file name. If there is more than one file anywhere
+    # within the objects folder with the same name, FITS adds a number to the duplicates, for example:
+    # file.ext.fits.xml, file.ext-1.fits.xml, file.ext-2.fits.xml
     subprocess.run(f'"{c.fits}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"',
                    shell=True)
 
-    # Renames the FITS output according to the UGA Libraries' metadata naming convention (filename_fits.xml).
+    # Renames the FITS output to the UGA Libraries' metadata naming convention (filename_fits.xml).
     for item in os.listdir(f'{aip_id}/metadata'):
         if item.endswith('.fits.xml'):
             new_name = item.replace('.fits', '_fits')
@@ -137,28 +133,29 @@ def extract_metadata(aip_id, aip_directory, log_path):
             # Makes Python aware of the FITS namespace.
             ET.register_namespace('', "http://hul.harvard.edu/ois/xml/ns/fits/fits_output")
 
-            # Gets the FITS element (and all its children) and makes it a child of the XML object's root, combined-fits.
-            # If there is an error, moves the AIP to an error folder and does not execute the rest of this function.
+            # Gets the FITS element and its children and makes it a child of the root, combined-fits.
             try:
                 tree = ET.parse(f'{aip_id}/metadata/{doc}')
                 root = tree.getroot()
                 combo_root.append(root)
-            # This error catches if the file is empty, is not XML, has invalid XML, or has the wrong namespace.
+            # Errors: the file is empty, is not XML, has invalid XML, or has the wrong namespace.
+            # Moves the AIP to an error folder and does not execute the rest of this function.
             except ET.ParseError:
                 log(log_path, 'Stop processing. Error combining FITS into one XML file.')
                 move_error('combining_fits', aip_id)
                 return
 
-    # Saves the combined-fits XML object to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
+    # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
     combo_tree.write(f'{aip_id}/metadata/{aip_id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
 
 
 def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
-    """Creates PREMIS and Dublin Core metadata from the combined FITS XML and saves it as a file named preservation.xml
-    that meets the metadata requirements for the UGA Libraries' digital preservation system (ARCHive)."""
+    """Creates PREMIS and Dublin Core metadata from the combined FITS XML and saves it as a file
+    named preservation.xml that meets the metadata requirements for the UGA Libraries' digital
+    preservation system (ARCHive)."""
 
-    # Makes a simplified (cleaned) version of the combined fits XML with a stylesheet so the XML is easier to aggregate.
-    # Temporarily saves the file in the AIP's metadata folder. It is deleted at the end of the function.
+    # Makes a simplified version of the combined fits XML so the XML is easier to aggregate.
+    # Saves the file in the AIP's metadata folder. It is deleted at the end of the function.
     combined_fits = f'{aip_id}/metadata/{aip_id}_combined-fits.xml'
     cleanup_stylesheet = f'{c.stylesheets}/fits-cleanup.xsl'
     cleaned_fits = f'{aip_id}/metadata/{aip_id}_cleaned-fits.xml'
@@ -166,13 +163,14 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
         f'java -cp "{c.saxon}" net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
         shell=True)
 
-    # Counts the number of files in the objects folder, since a different stylesheet is used for AIPs with one file.
+    # Counts the number of files in the objects folder for selecting the right stylesheet.
     file_count = 0
     for root, directories, files in os.walk(f'{aip_id}/objects'):
         file_count += len(files)
 
-    # Selects the correct stylesheet for if the AIP has one file or multiple files. If there is not at least 1 file,
-    # moves the AIP to an error folder and does not execute the rest of this function.
+    # Selects the correct stylesheet for if the AIP has one file or multiple files.
+    # If there is not at least 1 file, moves the AIP to an error folder
+    # and does not execute the rest of this function.
     if file_count == 1:
         stylesheet = f'{c.stylesheets}/fits-to-preservation_singlefile.xsl'
     elif file_count > 1:
@@ -195,14 +193,14 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
         f'aip-id="{aip_id}" aip-title="{aip_title}" department="{department}" workflow="{workflow}"',
         shell=True)
 
-    # Validates the preservation.xml file against the requirements of the UGA Libraries' digital preservation system
-    # (ARCHive). If it is not valid, saves the validation error to the log, moves the AIP to an error folder,
+    # Validates the preservation.xml file against the requirements of ARCHive.
+    # If it is not valid, saves the validation error to the log, moves the AIP to an error folder,
     # and does not execute the rest of this function.
     validation = subprocess.run(f'xmllint --noout -schema "{c.stylesheets}/preservation.xsd" "{preservation_xml}"',
                                 stderr=subprocess.PIPE, shell=True)
     validation_result = str(validation.stderr)
 
-    # This error happens if the preservation.xml file was not made or is not in the expected location.
+    # This error happens if the preservation.xml file was not made in the expected location.
     if 'failed to load' in validation_result:
         log(log_path, f'Stop processing. Unable to find the preservation.xml file. Error:\n{validation_result}')
         move_error('preservationxml_not_found', aip_id)
@@ -227,14 +225,15 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
 def bag(aip_id, log_path):
     """Bags and validates the AIP. Adds _bag to the AIP folder name."""
 
-    # Bags the AIP folder in place. Both md5 and sha256 checksums are generated to guard against tampering.
+    # Bags the AIP folder in place with md5 and sha256 checksums for extra security.
     bagit.make_bag(aip_id, checksums=['md5', 'sha256'])
 
     # Renames the AIP folder to add _bag to the end of the folder name.
     new_aip_name = f'{aip_id}_bag'
     os.replace(aip_id, new_aip_name)
 
-    # Validates the bag. If it is not valid, saves the validation errors to the log, moves the AIP to an error folder.
+    # Validates the bag.
+    # If it is not valid, saves the validation errors to the log, moves the AIP to an error folder.
     new_bag = bagit.Bag(new_aip_name)
     try:
         new_bag.validate()
@@ -252,7 +251,8 @@ def package(aip_id, aips_directory):
     # Makes a variable for the AIP folder name, which is reused a lot.
     aip = f'{aip_id}_bag'
 
-    # Gets the total size of the bag: sum of the bag payload (data folder) from bag-info.txt and bag metadata files.
+    # Gets the total size of the bag:
+    # sum of the bag payload (data folder) from bag-info.txt and the size of the bag metadata files.
     bag_size = 0
     bag_info = open(f"{aip}/bag-info.txt", "r")
     for line in bag_info:
@@ -293,15 +293,18 @@ def package(aip_id, aips_directory):
 
 
 def make_manifest():
-    """Makes a MD5 manifest of all AIPs in this batch using md5deep. The manifest is named department_manifest.txt
-    and saved in the aips-to-ingest folder. If AIPs for multiple departments are present in the same batch,
-    a separate manifest is made for each department. The manifest has one line per AIP, formatted md5<tab>filename"""
+    """Makes a MD5 manifest of all AIPs in this batch using md5deep.
+    The manifest is named department_manifest.txt and saved in the aips-to-ingest folder.
+    If AIPs for multiple departments are present in the same batch,
+    a separate manifest is made for each department.
+    The manifest has one line per AIP, formatted md5<tab>filename"""
 
     # Changes the current directory to the location of the packaged AIPs.
     os.chdir('../aips-to-ingest')
 
-    # Uses md5deep to calculate the MD5s for files with the specified prefix and saves them to the manifest.
-    # Tests if there are any files with that prefix before making the manifest so it does not make an empty manifest.
+    # Uses md5deep to calculate the MD5s for files with the specified prefix
+    # and saves them to the manifest. Tests if there are any files with that prefix
+    # before making the manifest so it does not make an empty manifest.
     if any(file.startswith('harg') for file in os.listdir('.')):
         subprocess.run(f'"{c.md5deep}" -br harg* > manifest_hargrett.txt', shell=True)
 

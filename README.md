@@ -9,9 +9,10 @@ Each step of the workflow is in its own Python function. The functions are in a 
 If a known error is encountered, such as failing a validation test or a regular expression does not find a match, the AIP is moved to an error folder with the name of the error and the rest of the steps are skipped for that AIP. A log is also created as the script runs which saves details about the errors. 
 
 # Script usage
-python /path/general_aip.py /path/aip-directory
+python /path/general_aip.py /path/aip-directory [no-zip]
 * general_aip.py is the script that implements the workflow.
 * aip-directory is the folder which contains all the folders to make into AIPs.
+* include no-zip if the script should only tar and not zip the AIP (for disk images).
 
 The script has been tested in Windows 10 and Mac OS X.
 

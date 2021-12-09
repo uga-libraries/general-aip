@@ -315,6 +315,9 @@ def make_manifest():
     if any(file.startswith('harg') for file in os.listdir('.')):
         subprocess.run(f'"{c.MD5DEEP}" -br harg* > manifest_hargrett.txt', shell=True)
 
+    if any(file.startswith('guan') for file in os.listdir('.')):
+        subprocess.run(f'"{c.MD5DEEP}" -br guan* > manifest_guan.txt', shell=True)
+        
     if any(file.startswith('rbrl') for file in os.listdir('.')):
         subprocess.run(f'"{c.MD5DEEP}" -br rbrl* > manifest_russell.txt', shell=True)
 

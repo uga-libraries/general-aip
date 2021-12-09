@@ -180,7 +180,7 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
         shell=True)
 
     # Updates the department variable from the code used in the AIP id to the group name in ARCHive, if different.
-    if department == 'harg':
+    if department == 'harg' or department == 'guan':
         department = 'hargrett'
     elif department == 'rbrl':
         department = 'russell'

@@ -165,7 +165,7 @@ def extract_metadata(aip_id, aip_directory, log_path):
     combo_tree.write(f'{aip_id}/metadata/{aip_id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
 
 
-def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
+def make_preservationxml(aip_id, collection_id, aip_title, department, workflow, log_path):
     """Creates PREMIS and Dublin Core metadata from the combined FITS XML and saves it as a file
     named preservation.xml that meets the metadata requirements for the UGA Libraries' digital
     preservation system (ARCHive)."""
@@ -179,19 +179,12 @@ def make_preservationxml(aip_id, aip_title, department, workflow, log_path):
         f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
         shell=True)
 
-    # Updates the department variable from the code used in the AIP id to the group name in ARCHive, if different.
-    if department == 'harg' or department == 'guan':
-        department = 'hargrett'
-    elif department == 'rbrl':
-        department = 'russell'
-
     # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
     stylesheet = f'{c.STYLESHEETS}/fits-to-preservation.xsl'
     preservation_xml = f'{aip_id}/metadata/{aip_id}_preservation.xml'
+    arguments = f'collection-id="{collection_id}" aip-id="{aip_id}" aip-title="{aip_title}" department="{department}" workflow="{workflow}" ns={c.NAMESPACE}'
     subprocess.run(
-        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" '
-        f'aip-id="{aip_id}" aip-title="{aip_title}" department="{department}" workflow="{workflow}" ns={c.NAMESPACE}',
-        shell=True)
+        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" {arguments}', shell=True)
 
     # Validates the preservation.xml file against the requirements of ARCHive.
     # If it is not valid, saves the validation error to the log, moves the AIP to an error folder,

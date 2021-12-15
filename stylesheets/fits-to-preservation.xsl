@@ -55,8 +55,10 @@
 <!--PARAMETER, VARIABLES, and REGEX-->
 <!--..................................................................................................-->
     
-    <!--The aip id, aip title, and department are given as arguments when running the xslt via the command line or script.-->
-    <!--The workflow type is an optional fourth argument used to run additional code for websites-->
+    <!--Several values are given as arguments when running the xslt via the command line or script.-->
+    <!--The workflow type is an optional argument used to run additional code for websites.-->
+    <!--The ns argument is the namespace for the unique identifiers.-->
+    <xsl:param name="collection-id" required="yes" />
     <xsl:param name="aip-id" required="yes" />
     <xsl:param name="aip-title" required="yes" />
     <xsl:param name="department" required="yes" />
@@ -66,45 +68,6 @@
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
     <xsl:variable name="uri"><xsl:value-of select="$ns" />/<xsl:value-of select="$department" /></xsl:variable>
          
-    <!--$collection-id: gets the collection-id from the aip id.-->
-    <!--Uses department parameter to determine what pattern to match.-->
-    <xsl:variable name="collection-id">
-
-        <!--BMAC collection-id is a combination of lowercase letters, numbers, and dashes between the bmac_ and the next underscore.-->
-        <xsl:if test="$department='bmac'">
-            <xsl:analyze-string select="$aip-id" regex="^bmac_([a-z0-9-]+)_">
-                <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1)" />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-
-        <!--Hargrett collection-id is formatted harg-ms####, harg-ua####, harg-ua##-####, or harg-0000-->
-        <xsl:if test="$department='hargrett'">
-            <xsl:analyze-string select="$aip-id" regex="^(harg-(ms|ua)?(\d{{2}}-)?\d{{4}})">
-                <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1)" />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-		    <!--Emory collection-id is two to four digits, between the two letter repository code and object id.-->
-        <xsl:if test="$department='emory'">
-            <xsl:analyze-string select="$aip-id" regex="^emory_[a-z]{{2}}_(\d{{2,4}})_\d{{2,4}}">
-                <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1)" />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-        <!--Russell collection-id is formatted rbrl-###-->
-        <xsl:if test="$department='russell'">
-            <xsl:analyze-string select="$aip-id" regex="^(rbrl-\d{{3}})">
-                <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1)" />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-    </xsl:variable>
-    
     <!--file-id: the portion of the file path beginning with the aip id.-->
     <!--Gets the file id from each instance of fits/fileinfo/filepath-->
     <!--Uses department parameter to determine what pattern to match.-->
@@ -117,7 +80,7 @@
             </xsl:analyze-string>
         </xsl:if>
         <xsl:if test="$department='hargrett'">
-            <xsl:analyze-string select="fileinfo/filepath" regex="harg-(ms|ua)?(\d{{2}}-)?\d{{4}}(er|-web-\d{{6}}-)\d{{4}}.*">
+            <xsl:analyze-string select="fileinfo/filepath" regex="(harg|guan)[-|_](ms|ua)?(\d{{2}}-)?([a-z]{{4}}_)?\d{{4}}(er|-web-\d{{6}}-|-)\d{{3,4}}.*">
                 <xsl:matching-substring>
                     <xsl:value-of select="." />
                 </xsl:matching-substring>

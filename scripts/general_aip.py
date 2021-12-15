@@ -123,18 +123,18 @@ with open(aip_metadata_csv) as open_aip:
         if aip_id in os.listdir('.'):
             aip.structure_directory(aip_id, LOG_PATH)
 
-#     # Extracts technical metadata from the files using FITS.
-#     if aip_id in os.listdir('.'):
-#         aip.extract_metadata(aip_id, AIPS_DIRECTORY, LOG_PATH)
-#
-#     # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
-#     if aip_id in os.listdir('.'):
-#         aip.make_preservationxml(aip_id, aip_title, department, 'general', LOG_PATH)
-#
-#     # Bags the AIP using bagit.
-#     if aip_id in os.listdir('.'):
-#         aip.bag(aip_id, LOG_PATH)
-#
+        # Extracts technical metadata from the files using FITS.
+        if aip_id in os.listdir('.'):
+            aip.extract_metadata(aip_id, AIPS_DIRECTORY, LOG_PATH)
+
+        # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
+        if aip_id in os.listdir('.'):
+            aip.make_preservationxml(aip_id, collection_id, title, department, 'general', LOG_PATH)
+
+        # Bags the AIP using bagit.
+        if aip_id in os.listdir('.'):
+            aip.bag(aip_id, LOG_PATH)
+
 #     # Tars the AIP and zips (bz2) the AIP if ZIP is True.
 #     if f'{aip_id}_bag' in os.listdir('.'):
 #         aip.package(aip_id, AIPS_DIRECTORY, ZIP)

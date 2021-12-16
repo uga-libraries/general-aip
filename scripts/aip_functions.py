@@ -235,8 +235,11 @@ def bag(aip_id, log_path):
         move_error('bag_invalid', f'{aip_id}_bag')
 
 
-def package(aip_id, aips_directory, zip):
-    """Tars and zips the AIP. Saves the resulting packaged AIP in the aips-to-ingest folder."""
+def package(aip_id, aips_directory, department, zip):
+    """Tars and zips the AIP. Saves the resulting packaged AIP in the aips-to-ingest folder.
+    Also uses md5 deep to calculate the MD5 for the AIP and adds it to the manifest for that department
+    in the aips-to-ingest folder. Each department has a separate manifest so AIPs for multiple departments
+    may be created simultaneously."""
 
     # Get operating system, since the tar and zip commands are different for Windows and Mac/Linux.
     operating_system = platform.system()
@@ -283,37 +286,21 @@ def package(aip_id, aips_directory, zip):
         if operating_system == "Windows":
             os.remove(f'{aip}.{bag_size}.tar')
 
+        # Calculates the MD5 of the tarred and zipped AIP and adds it to the manifest in the aips-to-ingest folder.
+        md5 = subprocess.run(f'"{c.MD5DEEP}" -br "{aip}.{bag_size}.tar.bz2"', stdout=subprocess.PIPE, shell=True)
+        manifest_path = os.path.join(f'../aips-to-ingest', f"manifest_{department}.txt")
+        with open(manifest_path, 'a', encoding='utf-8') as manifest_file:
+            manifest_file.write(md5.stdout.decode("UTF-8").rstrip("\n"))
+
         # Moves the tarred and zipped version to the aips-to-ingest folder.
         path = os.path.join(f'../aips-to-ingest', f"{aip}.{bag_size}.tar.bz2")
         os.replace(f"{aip}.{bag_size}.tar.bz2", path)
 
-    # If not zipping, moves the tarred version of the aip to the aips-to-ingest folder.
+    # If not zipping, calculates the MD5 of the tarred version of the aip and moves to the aips-to-ingest folder.
     else:
+        md5 = subprocess.run(f'"{c.MD5DEEP}" -br "{aip}.{bag_size}.tar"', stdout=subprocess.PIPE, shell=True)
+        manifest_path = os.path.join(f'../aips-to-ingest', f"manifest_{department}.txt")
+        with open(manifest_path, 'a', encoding='utf-8') as manifest_file:
+            manifest_file.write(md5.stdout.decode("UTF-8").rstrip("\n"))
         path = os.path.join(f'../aips-to-ingest', f"{aip}.{bag_size}.tar")
         os.replace(f"{aip}.{bag_size}.tar", path)
-
-
-def make_manifest():
-    """Makes a MD5 manifest of all AIPs in this batch using md5deep.
-    The manifest is named department_manifest.txt and saved in the aips-to-ingest folder.
-    If AIPs for multiple departments are present in the same batch,
-    a separate manifest is made for each department.
-    The manifest has one line per AIP, formatted md5<tab>filename"""
-
-    # Changes the current directory to the location of the packaged AIPs.
-    os.chdir('../aips-to-ingest')
-
-    # Uses md5deep to calculate the MD5s for files with the specified prefix
-    # and saves them to the manifest. Tests if there are any files with that prefix
-    # before making the manifest so it does not make an empty manifest.
-    if any(file.startswith('harg') for file in os.listdir('.')):
-        subprocess.run(f'"{c.MD5DEEP}" -br harg* > manifest_hargrett.txt', shell=True)
-
-    if any(file.startswith('guan') for file in os.listdir('.')):
-        subprocess.run(f'"{c.MD5DEEP}" -br guan* > manifest_guan.txt', shell=True)
-        
-    if any(file.startswith('rbrl') for file in os.listdir('.')):
-        subprocess.run(f'"{c.MD5DEEP}" -br rbrl* > manifest_russell.txt', shell=True)
-
-    if any(file.startswith('emory') for file in os.listdir('.')):
-        subprocess.run(f'"{c.MD5DEEP}" -br emory* > manifest.txt', shell=True)

@@ -30,7 +30,6 @@ This script has been tested on Windows 10 and Mac OS X (10.9.5).
 import csv
 import datetime
 import os
-import re
 import sys
 
 import aip_functions as aip
@@ -136,11 +135,9 @@ with open(aip_metadata_csv) as open_aip:
             aip.bag(aip_id, LOG_PATH)
 
         # Tars the AIP and zips (bz2) the AIP if ZIP is True.
+        # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
         if f'{aip_id}_bag' in os.listdir('.'):
-            aip.package(aip_id, AIPS_DIRECTORY, ZIP)
-
-# # Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
-# aip.make_manifest()
+            aip.package(aip_id, AIPS_DIRECTORY, department, ZIP)
 
 # Adds date and time the script was completed to the log.
 aip.log(LOG_PATH, f'\nScript finished running at {datetime.datetime.today()}.')

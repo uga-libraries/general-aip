@@ -260,7 +260,8 @@ def package(aip_id, aips_directory, zip):
     # Tars the file, using the command appropriate for the operating system.
     if operating_system == "Windows":
         # Does not print the progress to the terminal (stdout), which is a lot of text.
-        subprocess.run(f'7z -ttar a "{aip}.tar" "{aips_directory}/{aip}"', stdout=subprocess.DEVNULL, shell=True)
+        subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{aip}.tar" "{aips_directory}/{aip}"',
+                       stdout=subprocess.DEVNULL, shell=True)
     else:
         subprocess.run(f'tar -cf "{aip}.tar" "{aip}"', shell=True)
 
@@ -272,7 +273,7 @@ def package(aip_id, aips_directory, zip):
     if zip is True:
         if operating_system == "Windows":
             # Does not print the progress to the terminal (stdout), which is a lot of text.
-            subprocess.run(f'7z -tbzip2 a -aoa "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"',
+            subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -tbzip2 a -aoa "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"',
                            stdout=subprocess.DEVNULL, shell=True)
         else:
             subprocess.run(f'bzip2 "{aip}.{bag_size}.tar"', shell=True)

@@ -135,10 +135,10 @@ with open(aip_metadata_csv) as open_aip:
         if aip_id in os.listdir('.'):
             aip.bag(aip_id, LOG_PATH)
 
-#     # Tars the AIP and zips (bz2) the AIP if ZIP is True.
-#     if f'{aip_id}_bag' in os.listdir('.'):
-#         aip.package(aip_id, AIPS_DIRECTORY, ZIP)
-#
+        # Tars the AIP and zips (bz2) the AIP if ZIP is True.
+        if f'{aip_id}_bag' in os.listdir('.'):
+            aip.package(aip_id, AIPS_DIRECTORY, ZIP)
+
 # # Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
 # aip.make_manifest()
 

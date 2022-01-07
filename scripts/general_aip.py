@@ -168,7 +168,7 @@ for aip_row in read_metadata:
     # Tars the AIP and also zips (bz2) the AIP if ZIP is True.
     # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
     if f'{aip_id}_bag' in os.listdir('.'):
-        aip.package(aip_id, AIPS_DIRECTORY, department, ZIP)
+        aip.package_and_manifest(aip_id, AIPS_DIRECTORY, department, ZIP)
 
 # Closes the metadata CSV.
 open_metadata.close()

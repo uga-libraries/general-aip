@@ -235,7 +235,7 @@ def bag(aip_id, log_path):
         move_error('bag_invalid', f'{aip_id}_bag')
 
 
-def package(aip_id, aips_directory, department, to_zip):
+def package_and_manifest(aip_id, aips_directory, department, to_zip):
     """Tars and zips the AIP. Saves the resulting packaged AIP in the aips-to-ingest folder.
     Also uses md5 deep to calculate the MD5 for the AIP and adds it to the manifest for that department
     in the aips-to-ingest folder. Each department has a separate manifest so AIPs for multiple departments

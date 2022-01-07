@@ -91,9 +91,19 @@ TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY)) - 1
 open_metadata = open(aip_metadata_csv)
 read_metadata = csv.reader(open_metadata)
 
+# Verifies the metadata header row has the expected values (case insensitive).
+# If columns are not in the right order, it ends the script.
+header = next(read_metadata)
+header_lowercase = [name.lower() for name in header]
+if header_lowercase != ['department', 'collection', 'folder', 'aip_id', 'title']:
+    print("The columns in the metadata.csv are not in the required order.")
+    print("Required order: Department, Collection, Folder, AIP_ID, Title")
+    print(f"Current order:  {', '.join(header)}")
+    sys.exit()
+
 # Matches the number of rows in the metadata.csv (minus the header) to the number of folders in the AIPs directory.
 # If the two do not have the same number, it ends the script.
-row_count = sum(1 for row in read_metadata) - 1
+row_count = sum(1 for row in read_metadata)
 folder_count = len([name for name in os.listdir('.') if os.path.isdir(name)])
 
 if row_count != folder_count:

@@ -77,24 +77,12 @@ if not os.path.exists(aip_metadata_csv):
 open_metadata = open(aip_metadata_csv)
 read_metadata = csv.reader(open_metadata)
 
-# Verifies the metadata header row has the expected values (case insensitive).
-# If columns are not in the right order, it ends the script.
-header = next(read_metadata)
-header_lowercase = [name.lower() for name in header]
-if header_lowercase != ['department', 'collection', 'folder', 'aip_id', 'title']:
-    print("The columns in the metadata.csv are not in the required order.")
-    print("Required order: Department, Collection, Folder, AIP_ID, Title")
-    print(f"Current order:  {', '.join(header)}")
-    sys.exit()
-
-# Matches the number of rows in the metadata.csv (minus the header) to the number of folders in the AIPs directory.
-# If the two do not have the same number, it ends the script.
-row_count = sum(1 for row in read_metadata)
-folder_count = len([name for name in os.listdir('.') if os.path.isdir(name)])
-
-if row_count != folder_count:
-    print(f'There are {row_count} AIPs in the metadata.csv and {folder_count} folders in the AIPs directory.')
-    print('The metadata.csv needs to match the folders in the AIPs directory.')
+# Verifies the metadata header row has the expected values and matches the folders in the AIPs directory.
+# If there is an error, ends the script.
+metadata_errors = aip.check_metadata_csv(read_metadata)
+if not metadata_errors == "no_errors":
+    for error in metadata_errors:
+        print(error)
     sys.exit()
 
 # Starts a log for saving information about errors encountered while running the script.
@@ -135,12 +123,10 @@ for aip_row in read_metadata:
         aip.move_error('department_not_group', aip_folder)
         continue
 
-    # Renames the folder to the AIP ID. If the AIP folder is not found, starts the next AIP.
-    try:
+    # Renames the folder to the AIP ID.
+    # Already know from check_metadata_csv() that every AIP in the CSV is in the AIPs directory.
+    if aip_id in os.listdir('.'):
         os.replace(aip_folder, aip_id)
-    except FileNotFoundError:
-        aip.log(LOG_PATH, f'Unable to process. AIP folder is in metadata.csv but not the AIPs directory.')
-        continue
 
     # Deletes temporary files and makes a log of deleted files which is saved in the metadata folder.
     aip.delete_temp(aip_id, LOG_PATH)
@@ -175,4 +161,4 @@ open_metadata.close()
 
 # Adds date and time the script was completed to the log.
 aip.log(LOG_PATH, f'\nScript finished running at {datetime.datetime.today()}.')
-print("\nScript is finished running.")
+# print("\nScript is finished running.")

@@ -48,6 +48,60 @@ def check_paths():
         return errors
 
 
+def check_metadata_csv(read_metadata):
+    """Verifies that the columns are in the required order and that the AIP list in the CSV matches the folders in
+    the AIPs directory. Returns a list of errors or "no errors"."""
+
+    # Starts a list for all encountered errors, so all errors can be checked before returning a result.
+    errors = []
+
+    # Does a case insensitive comparison of the CSV header row with the required values.
+    # If columns are not in the right order, it saves the error.
+    header = next(read_metadata)
+    header_lowercase = [name.lower() for name in header]
+    if header_lowercase != ['department', 'collection', 'folder', 'aip_id', 'title']:
+        errors.append(f"The columns in the metadata.csv are not in the required order."
+                      f"\nRequired order: Department, Collection, Folder, AIP_ID, Title"
+                      f"\nCurrent order:  {', '.join(header)}\n")
+
+    # Gets the index position of the folder in case the columns were out of order.
+    # If there is not a folder column, returns the errors and skips the rest of the function.
+    try:
+        folder_index = header_lowercase.index("folder")
+    except ValueError:
+        errors.append("No column for Folder in metadata.csv. Could not compare to AIPs directory.")
+        return errors
+
+    # Makes a list of every folder name in the CSV.
+    csv_aip_list = []
+    for row in read_metadata:
+        csv_aip_list.append(row[folder_index])
+
+    # Makes a list of every folder name in the AIPs directory.
+    aips_directory_list = []
+    for item in os.listdir('.'):
+        if os.path.isdir(item):
+            aips_directory_list.append(item)
+
+    # Finds any AIPs that are only in the CSV and adds them to the error list.
+    just_csv = list(set(csv_aip_list) - set(aips_directory_list))
+    if len(just_csv) > 0:
+        for aip in just_csv:
+            errors.append(f"{aip} is in metadata.csv and missing from the AIPs directory.")
+
+    # Finds any AIPs that are only in the AIPs directory and adds them to the error list.
+    just_aip_dir = list(set(aips_directory_list) - set(csv_aip_list))
+    if len(just_aip_dir) > 0:
+        for aip in just_aip_dir:
+            errors.append(f"{aip} is in the AIPs directory and missing from metadata.csv.")
+
+    # If there are any errors, returns the list. Otherwise, returns "no_errors"
+    if len(errors) > 0:
+        return errors
+    else:
+        return "no_errors"
+
+
 def make_output_directories():
     """Makes the directories used to store script outputs, if they don't already exist,
     in the parent folder of the AIPs directory."""

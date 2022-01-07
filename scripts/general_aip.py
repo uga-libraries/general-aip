@@ -68,7 +68,8 @@ if not valid_errors == "no errors":
 # Verifies the required metadata CSV is present. If not, ends the script.
 aip_metadata_csv = os.path.join(AIPS_DIRECTORY, "metadata.csv")
 if not os.path.exists(aip_metadata_csv):
-    print('Unable to run the script: AIP metadata CSV is not in the AIPs directory.')
+    print('Unable to run the script: missing the required metadata file.')
+    print('To run the script, include a file named metadata.csv in the AIPs directory.')
     sys.exit()
 
 # Starts a log for saving information about errors encountered while running the script.
@@ -98,7 +99,7 @@ with open(aip_metadata_csv) as open_aip:
     for aip_row in read_aip:
 
         # Saves AIP metadata from the CSV to variables.
-        department, collection_id, aip_id, title = aip_row
+        department, collection_id, aip_folder, aip_id, title = aip_row
 
         # Updates the current AIP number and displays the script progress.
         CURRENT_AIP += 1
@@ -107,9 +108,9 @@ with open(aip_metadata_csv) as open_aip:
 
         # Renames the folder to the AIP ID. If the AIP folder is not found, starts the next AIP.
         try:
-            os.replace(title, aip_id)
+            os.replace(aip_folder, aip_id)
         except FileNotFoundError:
-            aip.log(LOG_PATH, f'AIP "{title}" is in metadata.csv but not in the AIPs directory.')
+            aip.log(LOG_PATH, f'AIP folder "{aip_folder}" is in metadata.csv but not in the AIPs directory.')
             continue
 
         # Deletes temporary files.

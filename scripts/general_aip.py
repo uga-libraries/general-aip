@@ -147,7 +147,7 @@ for aip_row in read_metadata:
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
     if aip_id in os.listdir('.'):
-        aip.structure_directory(aip_id, LOG_PATH)
+        aip.structure_directory(aip_id, department, LOG_PATH)
 
     # Extracts technical metadata from the files using FITS.
     if aip_id in os.listdir('.'):

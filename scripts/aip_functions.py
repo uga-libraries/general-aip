@@ -90,7 +90,7 @@ def delete_temp(aip_id, log_path):
         log(log_path, "Temporary files were deleted. See the log in the metadata folder for details.")
 
 
-def structure_directory(aip_id, log_path):
+def structure_directory(aip_id, department, log_path):
     """Makes the AIP directory structure (objects and metadata folders within the AIP folder)
     and moves the digital objects into those folders. Anything not recognized as metadata is
     moved into the objects folder. If the digital objects are organized into folders, that
@@ -111,9 +111,11 @@ def structure_directory(aip_id, log_path):
         move_error("metadata_folder_exists", aip_id)
         return
 
-    # Moves any metadata files, identified by their file names, to the metadata folder.
+    # Moves any metadata files, identified by their file names and department if not all use it, to the metadata folder.
     for item in os.listdir(aip_id):
-        if item.startswith("Files_Deleted_") or item.startswith("EmoryMD"):
+        if item.startswith("Files_Deleted_"):
+            os.replace(f"{aip_id}/{item}", f"{aip_id}/metadata/{item}")
+        if department == "emory" and item.startswith("EmoryMD"):
             os.replace(f"{aip_id}/{item}", f"{aip_id}/metadata/{item}")
 
     # Moves all remaining files and folders to the objects folder.

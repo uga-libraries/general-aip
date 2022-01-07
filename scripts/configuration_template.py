@@ -20,3 +20,7 @@ STYLESHEETS = 'C:\\INSERT\\PATH\\stylesheets'
 # Namespace for the AIP identifiers.
 # For UGA, this is the URI for the ARCHive.
 NAMESPACE = 'INSERT_NAMESPACE'
+
+# Department for AIP identifiers.
+# For UGA, this is the group codes for ARCHive
+GROUPS = ('INSERT_GROUP1', 'INSERT_GROUP2')

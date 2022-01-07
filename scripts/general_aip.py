@@ -34,6 +34,7 @@ import os
 import sys
 
 import aip_functions as aip
+import configuration as c
 
 # Assigns the required script argument to the aips_directory variable and makes that the current directory.
 # Ends the script if it is missing or not a valid directory.
@@ -128,11 +129,17 @@ for aip_row in read_metadata:
     aip.log(LOG_PATH, f'\n>>>Processing {aip_id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
     print(f'\n>>>Processing {aip_id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
 
+    # Verifies the department matches one of the required group codes. If not, starts, the next AIP.
+    if department not in c.GROUPS:
+        aip.log(LOG_PATH, f'Stop processing. Department in metadata.csv ({department}) is not an ARCHive group code.')
+        aip.move_error('department_not_group', aip_folder)
+        continue
+
     # Renames the folder to the AIP ID. If the AIP folder is not found, starts the next AIP.
     try:
         os.replace(aip_folder, aip_id)
     except FileNotFoundError:
-        aip.log(LOG_PATH, f'AIP folder "{aip_folder}" is in metadata.csv but not in the AIPs directory.')
+        aip.log(LOG_PATH, f'Unable to process. AIP folder is in metadata.csv but not the AIPs directory.')
         continue
 
     # Deletes temporary files.

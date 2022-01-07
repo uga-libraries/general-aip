@@ -32,6 +32,52 @@ def move_error(error_name, item):
     os.replace(item, f'../errors/{error_name}/{item}')
 
 
+def check_arguments(arguments):
+    """Verifies that all the arguments received are correct and calculates variables.
+    Returns the variables and a list of errors, if any."""
+
+    # Starts a list for all encountered errors, so all errors can be checked before returning a result.
+    errors = []
+
+    # Checks if arguments were given, besides the default of script name. If not, saves an error.
+    if len(arguments) == 1:
+        aips_directory = None
+        errors.append('AIPs directory argument is missing.')
+
+    # Assigns the required script argument to the aips_directory variable, if it is a valid directory.
+    # If not, saves an error.
+    if len(arguments) > 1:
+        if os.path.exists(arguments[1]):
+            aips_directory = arguments[1]
+        else:
+            aips_directory = None
+            errors.append('AIPs directory argument is not a valid directory.')
+
+    # If the optional script argument no-zip is present, assigns the zip variable to False. Otherwise, zip is True.
+    # no-zip is for AIPs that are larger when zipped and should only be tarred to save space and time.
+    if len(arguments) == 3:
+        if arguments[2] == "no-zip":
+            to_zip = False
+        else:
+            to_zip = None
+            errors.append('Unexpected value for the second argument. If provided, should be "no-zip".')
+    else:
+        to_zip = True
+
+    # Generates the path to the required metadata file and verifies it is present.
+    # Only tests if there is a value for aips_directory, which is part of the path.
+    if aips_directory:
+        aip_metadata_csv = os.path.join(aips_directory, "metadata.csv")
+        if not os.path.exists(aip_metadata_csv):
+            errors.append('Missing the required file metadata.csv in the AIPs directory.')
+    else:
+        aip_metadata_csv = None
+        errors.append('Cannot check for the metadata.csv in the AIPs directory because the AIPs directory has an error.')
+
+    # Return the variables and errors list
+    return aips_directory, to_zip, aip_metadata_csv, errors
+
+
 def check_paths():
     """Verifies all the paths from the configuration file are valid.
     Returns a list of paths with errors or "no errors".

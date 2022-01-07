@@ -36,26 +36,18 @@ import sys
 import aip_functions as aip
 import configuration as c
 
-# Assigns the required script argument to the aips_directory variable and makes that the current directory.
-# Ends the script if it is missing or not a valid directory.
-try:
-    AIPS_DIRECTORY = sys.argv[1]
-    os.chdir(AIPS_DIRECTORY)
-except (IndexError, FileNotFoundError):
-    print('Unable to run the script: AIPs directory argument is missing or invalid.')
-    print('Script usage: python "/path/general_aip.py" "/path/aips-directory" [no-zip]')
+# Verifies the script arguments are correct and calculates the associated variables.
+# If there are errors, ends the script.
+AIPS_DIRECTORY, ZIP, aip_metadata_csv, argument_errors = aip.check_arguments(sys.argv)
+if len(argument_errors) > 0:
+    print('The script cannot be run because of the following error(s):')
+    for error in argument_errors:
+        print("* " + error)
+    print('\nScript usage: python "/path/general_aip.py" "/path/aips-directory" [no-zip]')
     sys.exit()
 
-# If the optional script argument no-zip is present, updates the zip variable to False.
-# This is for AIPs that are larger when zipped and should only be tarred to save space and time.
-ZIP = True
-if len(sys.argv) == 3:
-    if sys.argv[2] == "no-zip":
-        ZIP = False
-    else:
-        print('Unexpected value for the second argument. If provided, should be "no-zip".')
-        print('Script usage: python "/path/general_aip.py" "/path/aips-directory" [no-zip]')
-        sys.exit()
+# Makes the current directory the AIPs directory
+os.chdir(AIPS_DIRECTORY)
 
 # Verifies all the paths from the configuration file are valid. If not, ends the script.
 valid_errors = aip.check_paths()
@@ -64,13 +56,6 @@ if not valid_errors == "no errors":
     for error in valid_errors:
         print(error)
     print('Correct the configuration file and run the script again.')
-    sys.exit()
-
-# Verifies the required metadata CSV is present. If not, ends the script.
-aip_metadata_csv = os.path.join(AIPS_DIRECTORY, "metadata.csv")
-if not os.path.exists(aip_metadata_csv):
-    print('Unable to run the script: missing the required metadata file.')
-    print('To run the script, include a file named metadata.csv in the AIPs directory.')
     sys.exit()
 
 # Reads the CSV with the AIP metadata.
@@ -125,7 +110,7 @@ for aip_row in read_metadata:
 
     # Renames the folder to the AIP ID.
     # Already know from check_metadata_csv() that every AIP in the CSV is in the AIPs directory.
-    if aip_id in os.listdir('.'):
+    if aip_folder in os.listdir('.'):
         os.replace(aip_folder, aip_id)
 
     # Deletes temporary files and makes a log of deleted files which is saved in the metadata folder.

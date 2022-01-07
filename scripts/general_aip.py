@@ -73,21 +73,6 @@ if not os.path.exists(aip_metadata_csv):
     print('To run the script, include a file named metadata.csv in the AIPs directory.')
     sys.exit()
 
-# Starts a log for saving information about errors encountered while running the script.
-# The log includes the script start time for calculating how long it takes the script to run.
-LOG_PATH = f'../script_log_{datetime.date.today()}.txt'
-aip.log(LOG_PATH, f'Starting AIP script at {datetime.datetime.today()}')
-
-# Makes directories used to store script outputs in the same parent folder as the AIPs directory.
-aip.make_output_directories()
-
-# Starts counts for tracking script progress.
-# Some steps are time consuming so this shows the script is not stuck.
-# Subtracts one from the count for the metadata file.
-# If the AIPs directory already contains the output folders and log, the total will be too high.
-CURRENT_AIP = 0
-TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY)) - 1
-
 # Reads the CSV with the AIP metadata.
 open_metadata = open(aip_metadata_csv)
 read_metadata = csv.reader(open_metadata)
@@ -111,6 +96,21 @@ if row_count != folder_count:
     print(f'There are {row_count} AIPs in the metadata.csv and {folder_count} folders in the AIPs directory.')
     print('The metadata.csv needs to match the folders in the AIPs directory.')
     sys.exit()
+
+# Starts a log for saving information about errors encountered while running the script.
+# The log includes the script start time for calculating how long it takes the script to run.
+LOG_PATH = f'../script_log_{datetime.date.today()}.txt'
+aip.log(LOG_PATH, f'Starting AIP script at {datetime.datetime.today()}')
+
+# Makes directories used to store script outputs in the same parent folder as the AIPs directory.
+aip.make_output_directories()
+
+# Starts counts for tracking script progress.
+# Some steps are time consuming so this shows the script is not stuck.
+# Subtracts one from the count for the metadata file.
+# If the AIPs directory already contains the output folders and log, the total will be too high.
+CURRENT_AIP = 0
+TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY)) - 1
 
 # Returns to the beginning of the CSV and skips the header
 open_metadata.seek(0)

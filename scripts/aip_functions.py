@@ -82,7 +82,7 @@ def delete_temp(aip_id, log_path):
     # Creates the log in the AIP folder if any files were deleted.
     # The log contains the path and filename of every deleted file.
     if len(deleted_files) > 0:
-        with open(f"{aip_id}/Files_Deleted_{datetime.datetime.today().date()}_del.csv", "w", newline="") as deleted_log:
+        with open(f"{aip_id}/{aip_id}_files-deleted_{datetime.datetime.today().date()}_del.csv", "w", newline="") as deleted_log:
             deleted_log_writer = csv.writer(deleted_log)
             deleted_log_writer.writerow(["Path", "File Name"])
             for file_data in deleted_files:
@@ -113,7 +113,7 @@ def structure_directory(aip_id, department, log_path):
 
     # Moves any metadata files, identified by their file names and department if not all use it, to the metadata folder.
     for item in os.listdir(aip_id):
-        if item.startswith("Files_Deleted_"):
+        if item.startswith(f"{aip_id}_files-deleted_"):
             os.replace(f"{aip_id}/{item}", f"{aip_id}/metadata/{item}")
         if department == "emory" and item.startswith("EmoryMD"):
             os.replace(f"{aip_id}/{item}", f"{aip_id}/metadata/{item}")
@@ -143,7 +143,7 @@ def extract_metadata(aip_id, aip_directory, log_path):
     if fits_output.stderr:
         with open(f"{aip_directory}/{aip_id}/metadata/{aip_id}_fits-tool-errors_fitserr.txt", "w") as fits_errors:
             fits_errors.write(fits_output.stderr.decode('utf-8'))
-    log(log_path, "At least one FITs tool had an error with this AIP. See the log in the metadata folder for details.")
+        log(log_path, "At least one FITs tool had an error with this AIP. See the log in the metadata folder for details.")
 
     # Renames the FITS output to the UGA Libraries' metadata naming convention (filename_fits.xml).
     for item in os.listdir(f'{aip_id}/metadata'):

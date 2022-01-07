@@ -87,59 +87,74 @@ aip.make_output_directories()
 CURRENT_AIP = 0
 TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY)) - 1
 
-# Reads the CSV with the AIP metadata and uses the AIP functions to create an AIP for each one on the list.
+# Reads the CSV with the AIP metadata.
+open_metadata = open(aip_metadata_csv)
+read_metadata = csv.reader(open_metadata)
+
+# Matches the number of rows in the metadata.csv (minus the header) to the number of folders in the AIPs directory.
+# If the two do not have the same number, it ends the script.
+row_count = sum(1 for row in read_metadata) - 1
+folder_count = len([name for name in os.listdir('.') if os.path.isdir(name)])
+
+if row_count != folder_count:
+    print(f'There are {row_count} AIPs in the metadata.csv and {folder_count} folders in the AIPs directory.')
+    print('The metadata.csv needs to match the folders in the AIPs directory.')
+    sys.exit()
+
+# Returns to the beginning of the CSV and skips the header
+open_metadata.seek(0)
+next(read_metadata)
+
+# Uses the AIP functions to create an AIP for each one in the metadata CSV.
 # Checks if the AIP folder is still present before calling the function for the next step
 # in case it was moved due to an error in the previous step.
-with open(aip_metadata_csv) as open_aip:
-    read_aip = csv.reader(open_aip)
+for aip_row in read_metadata:
 
-    # Skips the header.
-    next(read_aip)
+    # Saves AIP metadata from the CSV to variables.
+    department, collection_id, aip_folder, aip_id, title = aip_row
 
-    for aip_row in read_aip:
+    # Updates the current AIP number and displays the script progress.
+    CURRENT_AIP += 1
+    aip.log(LOG_PATH, f'\n>>>Processing {aip_id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
+    print(f'\n>>>Processing {aip_id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
 
-        # Saves AIP metadata from the CSV to variables.
-        department, collection_id, aip_folder, aip_id, title = aip_row
+    # Renames the folder to the AIP ID. If the AIP folder is not found, starts the next AIP.
+    try:
+        os.replace(aip_folder, aip_id)
+    except FileNotFoundError:
+        aip.log(LOG_PATH, f'AIP folder "{aip_folder}" is in metadata.csv but not in the AIPs directory.')
+        continue
 
-        # Updates the current AIP number and displays the script progress.
-        CURRENT_AIP += 1
-        aip.log(LOG_PATH, f'\n>>>Processing {aip_id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
-        print(f'\n>>>Processing {aip_id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
+    # Deletes temporary files.
+    # For Emory AIPs, makes a log of deleted files which is saved in the metadata folder.
+    if department == "emory":
+        aip.delete_temp(aip_id, deletion_log=True)
+    else:
+        aip.delete_temp(aip_id)
 
-        # Renames the folder to the AIP ID. If the AIP folder is not found, starts the next AIP.
-        try:
-            os.replace(aip_folder, aip_id)
-        except FileNotFoundError:
-            aip.log(LOG_PATH, f'AIP folder "{aip_folder}" is in metadata.csv but not in the AIPs directory.')
-            continue
+    # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
+    if aip_id in os.listdir('.'):
+        aip.structure_directory(aip_id, LOG_PATH)
 
-        # Deletes temporary files.
-        # For Emory AIPs, makes a log of deleted files which is saved in the metadata folder.
-        if department == "emory":
-            aip.delete_temp(aip_id, deletion_log=True)
-        else:
-            aip.delete_temp(aip_id)
+    # Extracts technical metadata from the files using FITS.
+    if aip_id in os.listdir('.'):
+        aip.extract_metadata(aip_id, AIPS_DIRECTORY, LOG_PATH)
 
-        # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
-        if aip_id in os.listdir('.'):
-            aip.structure_directory(aip_id, LOG_PATH)
+    # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
+    if aip_id in os.listdir('.'):
+        aip.make_preservationxml(aip_id, collection_id, title, department, 'general', LOG_PATH)
 
-        # Extracts technical metadata from the files using FITS.
-        if aip_id in os.listdir('.'):
-            aip.extract_metadata(aip_id, AIPS_DIRECTORY, LOG_PATH)
+    # Bags the AIP using bagit.
+    if aip_id in os.listdir('.'):
+        aip.bag(aip_id, LOG_PATH)
 
-        # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
-        if aip_id in os.listdir('.'):
-            aip.make_preservationxml(aip_id, collection_id, title, department, 'general', LOG_PATH)
+    # Tars the AIP and also zips (bz2) the AIP if ZIP is True.
+    # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
+    if f'{aip_id}_bag' in os.listdir('.'):
+        aip.package(aip_id, AIPS_DIRECTORY, department, ZIP)
 
-        # Bags the AIP using bagit.
-        if aip_id in os.listdir('.'):
-            aip.bag(aip_id, LOG_PATH)
-
-        # Tars the AIP and also zips (bz2) the AIP if ZIP is True.
-        # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
-        if f'{aip_id}_bag' in os.listdir('.'):
-            aip.package(aip_id, AIPS_DIRECTORY, department, ZIP)
+# Closes the metadata CSV.
+open_metadata.close()
 
 # Adds date and time the script was completed to the log.
 aip.log(LOG_PATH, f'\nScript finished running at {datetime.datetime.today()}.')

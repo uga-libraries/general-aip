@@ -2,6 +2,7 @@
 UGA Libraries' digital preservation system (ARCHive). These are utilized by multiple scripts that
 create AIPs of different types."""
 
+import csv
 import datetime
 import os
 import platform
@@ -58,9 +59,11 @@ def make_output_directories():
             os.mkdir(f'../{directory}')
 
 
-def delete_temp(aip_id, deletion_log=False):
-    """Deletes temporary files of various types from anywhere within the AIP folder because
-    they cause errors later in the workflow, especially with bag validation."""
+def delete_temp(aip_id, log_path):
+    """Deletes temporary files of various types from anywhere within the AIP folder because they cause errors later
+    in the workflow, especially with bag validation. Creates a log of the deleted files as a record of actions taken
+    on the AIP during processing. This is especially important if there are large files that result in a noticeable
+    change in size after making the AIP. """
 
     # List of files to be deleted where the filename can be matched in its entirely.
     delete = ['.DS_Store', '._.DS_Store', 'Thumbs.db']
@@ -73,16 +76,18 @@ def delete_temp(aip_id, deletion_log=False):
     for root, directories, files in os.walk(aip_id):
         for item in files:
             if item in delete or item.endswith('.tmp') or item.startswith('.'):
-                if deletion_log:
-                    deleted_files.append(os.path.join(root, item))
+                deleted_files.append([os.path.join(root, item), item])
                 os.remove(os.path.join(root, item))
 
-    # Creates the log in the AIP folder if a log is desired and any files were deleted.
-    # The log contains the path of every deleted file.
+    # Creates the log in the AIP folder if any files were deleted.
+    # The log contains the path and filename of every deleted file.
     if len(deleted_files) > 0:
-        deleted_log = open(f"{aip_id}/Temporary_Files_Deleted_{datetime.datetime.today().date()}_del.txt", "w")
-        for file in deleted_files:
-            deleted_log.write(file + "\n")
+        with open(f"{aip_id}/Files_Deleted_{datetime.datetime.today().date()}_del.csv", "w", newline="") as deleted_log:
+            deleted_log_writer = csv.writer(deleted_log)
+            deleted_log_writer.writerow(["Path", "File Name"])
+            for file_data in deleted_files:
+                deleted_log_writer.writerow(file_data)
+        log(log_path, "Temporary files were deleted. See the log in the metadata folder for details.")
 
 
 def structure_directory(aip_id, log_path):
@@ -108,7 +113,7 @@ def structure_directory(aip_id, log_path):
 
     # Moves any metadata files, identified by their file names, to the metadata folder.
     for item in os.listdir(aip_id):
-        if item.startswith("Temporary_Files_Deleted_") or item.startswith("EmoryMD"):
+        if item.startswith("Files_Deleted_") or item.startswith("EmoryMD"):
             os.replace(f"{aip_id}/{item}", f"{aip_id}/metadata/{item}")
 
     # Moves all remaining files and folders to the objects folder.
@@ -127,8 +132,16 @@ def extract_metadata(aip_id, aip_directory, log_path):
     # The FITS output is named with the original file name. If there is more than one file anywhere
     # within the objects folder with the same name, FITS adds a number to the duplicates, for example:
     # file.ext.fits.xml, file.ext-1.fits.xml, file.ext-2.fits.xml
-    subprocess.run(f'"{c.FITS}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"',
-                   shell=True)
+    fits_output = subprocess.run(
+        f'"{c.FITS}" -r -i "{aip_directory}/{aip_id}/objects" -o "{aip_directory}/{aip_id}/metadata"',
+        shell=True, stderr=subprocess.PIPE)
+
+    # If there were any tool error messages from FITS, saves those to a log in the AIP's metadata folder.
+    # Processing on the AIP continues, since typically other tools still work.
+    if fits_output.stderr:
+        with open(f"{aip_directory}/{aip_id}/metadata/{aip_id}_fits-tool-errors_fitserr.txt", "w") as fits_errors:
+            fits_errors.write(fits_output.stderr.decode('utf-8'))
+    log(log_path, "At least one FITs tool had an error with this AIP. See the log in the metadata folder for details.")
 
     # Renames the FITS output to the UGA Libraries' metadata naming convention (filename_fits.xml).
     for item in os.listdir(f'{aip_id}/metadata'):
@@ -184,7 +197,8 @@ def make_preservationxml(aip_id, collection_id, aip_title, department, workflow,
     preservation_xml = f'{aip_id}/metadata/{aip_id}_preservation.xml'
     arguments = f'collection-id="{collection_id}" aip-id="{aip_id}" aip-title="{aip_title}" department="{department}" workflow="{workflow}" ns={c.NAMESPACE}'
     subprocess.run(
-        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" {arguments}', shell=True)
+        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" {arguments}',
+        shell=True)
 
     # Validates the preservation.xml file against the requirements of ARCHive.
     # If it is not valid, saves the validation error to the log, moves the AIP to an error folder,
@@ -277,8 +291,9 @@ def package_and_manifest(aip_id, aips_directory, department, to_zip):
     if to_zip is True:
         if operating_system == "Windows":
             # Does not print the progress to the terminal (stdout), which is a lot of text.
-            subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -tbzip2 a -aoa "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"',
-                           stdout=subprocess.DEVNULL, shell=True)
+            subprocess.run(
+                f'"C:/Program Files/7-Zip/7z.exe" -tbzip2 a -aoa "{aip}.{bag_size}.tar.bz2" "{aip}.{bag_size}.tar"',
+                stdout=subprocess.DEVNULL, shell=True)
         else:
             subprocess.run(f'bzip2 "{aip}.{bag_size}.tar"', shell=True)
 

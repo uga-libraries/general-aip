@@ -142,12 +142,8 @@ for aip_row in read_metadata:
         aip.log(LOG_PATH, f'Unable to process. AIP folder is in metadata.csv but not the AIPs directory.')
         continue
 
-    # Deletes temporary files.
-    # For Emory AIPs, makes a log of deleted files which is saved in the metadata folder.
-    if department == "emory":
-        aip.delete_temp(aip_id, deletion_log=True)
-    else:
-        aip.delete_temp(aip_id)
+    # Deletes temporary files and makes a log of deleted files which is saved in the metadata folder.
+    aip.delete_temp(aip_id, LOG_PATH)
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
     if aip_id in os.listdir('.'):
@@ -169,6 +165,10 @@ for aip_row in read_metadata:
     # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
     if f'{aip_id}_bag' in os.listdir('.'):
         aip.package_and_manifest(aip_id, AIPS_DIRECTORY, department, ZIP)
+
+    # Logs that the AIP is complete. No anticipated errors were encountered.
+    if f'{aip_id}_bag' in os.listdir('.'):
+        aip.log(LOG_PATH, "Processing for this AIP is complete with no detected errors.")
 
 # Closes the metadata CSV.
 open_metadata.close()

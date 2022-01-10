@@ -16,21 +16,23 @@ import configuration as c
 
 
 class AIP:
-    def __init__(self, department, collection_id, folder_name, id, title, to_zip, size=None):
+    def __init__(self, department, collection_id, folder_name, id, title, to_zip):
         self.department = department
         self.collection_id = collection_id
         self.folder_name = folder_name
         self.id = id
         self.title = title
         self.to_zip = to_zip
-        self.size = size
+        self.size = None
+        self.log = [self.id]
 
 
-def log(log_path, log_item):
-    """Saves information about an error or event to its own line in a text file."""
+def log(log_row):
+    """Saves information about each step done on an AIP to a CSV file."""
 
-    with open(log_path, 'a', encoding='utf-8') as log_file:
-        log_file.write(f'{log_item}\n')
+    with open(f'../script_log_{datetime.date.today()}.csv', 'a', newline='') as log_file:
+        log_writer = csv.writer(log_file)
+        log_writer.writerow(log_row)
 
 
 def move_error(error_name, item):
@@ -170,7 +172,7 @@ def make_output_directories():
             os.mkdir(f'../{directory}')
 
 
-def delete_temp(aip, log_path):
+def delete_temp(aip):
     """Deletes temporary files of various types from anywhere within the AIP folder because they cause errors later
     in the workflow, especially with bag validation. Creates a log of the deleted files as a record of actions taken
     on the AIP during processing. This is especially important if there are large files that result in a noticeable
@@ -192,16 +194,19 @@ def delete_temp(aip, log_path):
 
     # Creates the log in the AIP folder if any files were deleted.
     # The log contains the path and filename of every deleted file.
+    # Adds event information for deletion to the script log.
     if len(deleted_files) > 0:
         with open(f"{aip.id}/{aip.id}_files-deleted_{datetime.datetime.today().date()}_del.csv", "w", newline="") as deleted_log:
             deleted_log_writer = csv.writer(deleted_log)
             deleted_log_writer.writerow(["Path", "File Name"])
             for file_data in deleted_files:
                 deleted_log_writer.writerow(file_data)
-        log(log_path, "Temporary files were deleted. See the log in the metadata folder for details.")
+        aip.log.append("Yes")
+    else:
+        aip.log.append("No")
 
 
-def structure_directory(aip, log_path):
+def structure_directory(aip):
     """Makes the AIP directory structure (objects and metadata folders within the AIP folder)
     and moves the digital objects into those folders. Anything not recognized as metadata is
     moved into the objects folder. If the digital objects are organized into folders, that
@@ -212,15 +217,19 @@ def structure_directory(aip, log_path):
     try:
         os.mkdir(f'{aip.id}/objects')
     except FileExistsError:
-        log(log_path, "Stop processing. Objects folder already exists.")
+        aip.log.extend(["Yes", "n/a", "n/a", "n/a", "n/a", "n/a", "n/a", "No: error"])
+        log(aip.log)
         move_error("objects_folder_exists", aip.id)
         return
     try:
         os.mkdir(f"{aip.id}/metadata")
     except FileExistsError:
-        log(log_path, "Stop processing. Metadata folder already exists.")
+        aip.log.extend(["No", "Yes", "n/a", "n/a", "n/a", "n/a", "n/a", "No: error"])
         move_error("metadata_folder_exists", aip.id)
         return
+
+    # Update log that no errors were found for objects or metadata folders.
+    aip.log.extend(["No", "No"])
 
     # Moves any metadata files, identified by their file names and department if not all use it, to the metadata folder.
     for item in os.listdir(aip.id):
@@ -237,7 +246,7 @@ def structure_directory(aip, log_path):
         os.replace(f"{aip.id}/{item}", f"{aip.id}/objects/{item}")
 
 
-def extract_metadata(aip, aip_directory, log_path):
+def extract_metadata(aip, aip_directory):
     """Extracts technical metadata from the files in the objects folder using FITS and
     creates a single XML file that combines the FITS output for every file in the AIP. """
 
@@ -254,7 +263,9 @@ def extract_metadata(aip, aip_directory, log_path):
     if fits_output.stderr:
         with open(f"{aip_directory}/{aip.id}/metadata/{aip.id}_fits-tool-errors_fitserr.txt", "w") as fits_errors:
             fits_errors.write(fits_output.stderr.decode('utf-8'))
-        log(log_path, "At least one FITs tool had an error with this AIP. See the log in the metadata folder for details.")
+        aip.log.append("Yes")
+    else:
+        aip.log.append("No")
 
     # Renames the FITS output to the UGA Libraries' metadata naming convention (filename_fits.xml).
     for item in os.listdir(f'{aip.id}/metadata'):
@@ -283,7 +294,8 @@ def extract_metadata(aip, aip_directory, log_path):
             # Errors: the file is empty, is not XML, has invalid XML, or has the wrong namespace.
             # Moves the AIP to an error folder and does not execute the rest of this function.
             except ET.ParseError:
-                log(log_path, 'Stop processing. Error combining FITS into one XML file.')
+                aip.log.extend(["No: couldn't combine FITS", "n/a", "n/a", "n/a", "No: error"])
+                log(aip.log)
                 move_error('combining_fits', aip.id)
                 return
 
@@ -291,7 +303,7 @@ def extract_metadata(aip, aip_directory, log_path):
     combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
 
 
-def make_preservationxml(aip, workflow, log_path):
+def make_preservationxml(aip, workflow):
     """Creates PREMIS and Dublin Core metadata from the combined FITS XML and saves it as a file
     named preservation.xml that meets the metadata requirements for the UGA Libraries' digital
     preservation system (ARCHive)."""
@@ -322,15 +334,21 @@ def make_preservationxml(aip, workflow, log_path):
 
     # This error happens if the preservation.xml file was not made in the expected location.
     if 'failed to load' in validation_result:
-        log(log_path, f'Stop processing. Unable to find the preservation.xml file. Error:\n{validation_result}')
+        aip.log.extend([validation_result, "n/a", "n/a", "n/a", "No: error"])
+        log(aip.log)
         move_error('preservationxml_not_found', aip.id)
         return
+    else:
+        aip.log.append("Yes")
 
     # This error happens if the preservation.xml file does not meet the Libraries' requirements.
     if 'fails to validate' in validation_result:
-        log(log_path, f'Stop processing. The preservation.xml file is not valid. Error:\n{validation_result}')
+        aip.log.extend([validation_result, "n/a", "n/a", "No: error"])
+        log(aip.log)
         move_error('preservationxml_not_valid', aip.id)
         return
+    else:
+        aip.log.append(f"Valid on {datetime.datetime.now()}")
 
     # Copies the preservation.xml file to the preservation-xml folder for staff reference.
     shutil.copy2(f'{aip.id}/metadata/{aip.id}_preservation.xml', '../preservation-xml')
@@ -342,7 +360,7 @@ def make_preservationxml(aip, workflow, log_path):
     os.remove(f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml')
 
 
-def bag(aip, log_path):
+def bag(aip):
     """Bags and validates the AIP. Adds _bag to the AIP folder name."""
 
     # Bags the AIP folder in place with md5 and sha256 checksums for extra security.
@@ -358,8 +376,11 @@ def bag(aip, log_path):
     try:
         new_bag.validate()
     except bagit.BagValidationError as errors:
-        log(log_path, f'Stop processing. Bag is not valid: \n{errors}')
+        aip.log.extend([errors, "n/a", "No: errors"])
+        log(aip.log)
         move_error('bag_invalid', f'{aip.id}_bag')
+
+    aip.log.append(f"Valid on {datetime.datetime.now()}")
 
 
 def package(aip, aips_directory):
@@ -426,6 +447,9 @@ def package(aip, aips_directory):
     else:
         path = os.path.join(f'../aips-to-ingest', f"{aip_bag}.{bag_size}.tar")
         os.replace(f"{aip_bag}.{bag_size}.tar", path)
+
+    # Still need to catch error of tar not made. For now, just always logging it is made.
+    aip.log.append("Yes")
 
 
 def manifest(aip):

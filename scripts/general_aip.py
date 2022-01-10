@@ -70,10 +70,10 @@ if not metadata_errors == "no_errors":
         print(error)
     sys.exit()
 
-# Starts a log for saving information about errors encountered while running the script.
-# The log includes the script start time for calculating how long it takes the script to run.
-LOG_PATH = f'../script_log_{datetime.date.today()}.txt'
-a.log(LOG_PATH, f'Starting AIP script at {datetime.datetime.today()}')
+# Starts a log for saving information about events and errors from running the script and adds a header row.
+a.log(['AIP ID', 'Department Correct', 'Deleted Temp Files', 'Error: Objects folder exists',
+       'Error: metadata folder exists', 'FITS Tool Errors', 'Preservation.xml Made', 'Preservation Valid', 'Bag Valid',
+       'Tar Made', 'Processing Complete'])
 
 # Makes directories used to store script outputs in the same parent folder as the AIPs directory.
 a.make_output_directories()
@@ -100,14 +100,16 @@ for aip_row in read_metadata:
 
     # Updates the current AIP number and displays the script progress.
     CURRENT_AIP += 1
-    a.log(LOG_PATH, f'\n>>>Processing {aip.id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
     print(f'\n>>>Processing {aip.id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
 
-    # Verifies the department matches one of the required group codes. If not, starts, the next AIP.
+    # Verifies the department matches one of the required group codes. If not, starts the next AIP.
     if aip.department not in c.GROUPS:
-        a.log(LOG_PATH, f'Stop processing. Department in metadata.csv ({aip.department}) is not an ARCHive group code.')
+        aip.log = [aip.id, 'No', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'No: error']
+        a.log(aip.log)
         a.move_error('department_not_group', aip.folder_name)
         continue
+    else:
+        aip.log.append("Yes")
 
     # Renames the folder to the AIP ID.
     # Already know from check_metadata_csv() that every AIP in the CSV is in the AIPs directory.
@@ -115,23 +117,23 @@ for aip_row in read_metadata:
         os.replace(aip.folder_name, aip.id)
 
     # Deletes temporary files and makes a log of deleted files which is saved in the metadata folder.
-    a.delete_temp(aip, LOG_PATH)
+    a.delete_temp(aip)
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
     if aip.id in os.listdir('.'):
-        a.structure_directory(aip, LOG_PATH)
+        a.structure_directory(aip)
 
     # Extracts technical metadata from the files using FITS.
     if aip.id in os.listdir('.'):
-        a.extract_metadata(aip, AIPS_DIRECTORY, LOG_PATH)
+        a.extract_metadata(aip, AIPS_DIRECTORY)
 
     # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
     if aip.id in os.listdir('.'):
-        a.make_preservationxml(aip, 'general', LOG_PATH)
+        a.make_preservationxml(aip, 'general')
 
     # Bags the AIP using bagit.
     if aip.id in os.listdir('.'):
-        a.bag(aip, LOG_PATH)
+        a.bag(aip)
 
     # Tars the AIP and also zips (bz2) the AIP if ZIP is True.
     # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
@@ -143,11 +145,10 @@ for aip_row in read_metadata:
 
     # Logs that the AIP is complete. No anticipated errors were encountered.
     if f'{aip.id}_bag' in os.listdir('.'):
-        a.log(LOG_PATH, "Processing for this AIP is complete with no detected errors.")
+        aip.log.append("Yes: No detected errors")
+        a.log(aip.log)
 
 # Closes the metadata CSV.
 open_metadata.close()
 
-# Adds date and time the script was completed to the log.
-a.log(LOG_PATH, f'\nScript finished running at {datetime.datetime.today()}.')
-# print("\nScript is finished running.")
+print("\nScript is finished running.")

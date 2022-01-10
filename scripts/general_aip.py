@@ -136,7 +136,10 @@ for aip_row in read_metadata:
     # Tars the AIP and also zips (bz2) the AIP if ZIP is True.
     # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
     if f'{aip.id}_bag' in os.listdir('.'):
-        a.package_and_manifest(aip, AIPS_DIRECTORY)
+        a.package(aip, AIPS_DIRECTORY)
+
+    if f'{aip.id}_bag' in os.listdir('.'):
+        a.manifest(aip)
 
     # Logs that the AIP is complete. No anticipated errors were encountered.
     if f'{aip.id}_bag' in os.listdir('.'):

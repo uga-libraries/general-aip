@@ -7,6 +7,10 @@ os.chdir("insert-path")
 for file in os.listdir('.'):
     output = subprocess.run(f'"{c.MD5DEEP}" -br "{file}"', stdout=subprocess.PIPE, shell=True)
 
+    # output.stdout examples:
+    # b'cc718d405152d09e307e14b283fa3e77  Anti-Oppressive Facilitation _ Making Meetings Awesome for Everyone_2014.pdf\r\n'
+    # b'4e43d17407a04e7a682e122a257a21ae  Digital Preservation Ethos_2021.pdf\r\n'
+
     # Blank line between each row.
     m0 = os.path.join(f"../aips-to-ingest", f"manifest_default.txt")
     with open(m0, 'a', encoding='utf-8') as m0file:

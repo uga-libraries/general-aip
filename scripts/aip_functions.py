@@ -453,19 +453,21 @@ def package(aip, aips_directory):
 
 
 def manifest(aip):
-    """Uses md5 deep to calculate the MD5 for the AIP and adds it to the manifest for that department
+    """Uses md5deep to calculate the MD5 for the AIP and adds it to the manifest for that department
     in the aips-to-ingest folder. Each department has a separate manifest so AIPs for multiple departments
     may be created simultaneously."""
 
     # Makes the path to the packaged AIP, which is different depending on if it is zipped or not.
     aip_path = os.path.join(f"../aips-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
-    if aip.to_zip == True:
+    if aip.to_zip is True:
         aip_path = aip_path + ".bz2"
 
     # Calculates the MD5 of the packaged AIP.
-    md5 = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"', stdout=subprocess.PIPE, shell=True)
+    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"', stdout=subprocess.PIPE, shell=True)
 
     # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.
+    # Initial output of md5deep is b'md5_value  filename.ext\r\n'
+    # Converts to a string and remove the \r linebreak to format the manifest text file as required by ARCHive.
     manifest_path = os.path.join(f"../aips-to-ingest", f"manifest_{aip.department}.txt")
     with open(manifest_path, 'a', encoding='utf-8') as manifest_file:
-        manifest_file.write(md5.stdout.decode("UTF-8").rstrip("\n"))
+        manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))

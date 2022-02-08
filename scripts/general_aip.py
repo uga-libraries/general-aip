@@ -8,12 +8,12 @@ and the rest of the workflow steps are not executed for that AIP. A log is gener
 the script runs to record which AIPs were processed and any errors encountered.
 
 Prior to running the script:
-    1. The digital objects for each AIP should be in a folder named with the AIP title.'
+    1. Make one folder per AIP with the digital objects for those AIPs.
     2. All folders to be made into AIPs should be in a single folder (the AIPs directory).
-    3. Make a file named metadata.csv in the AIPs directory with the department, collection id, AIP id, and title.
+    3. Make a file named metadata.csv in the AIPs directory. See README for what to include.
 
 Workflow Steps:
-    1. Extracts the department, collection id, AIP id, and title from metadata.csv.
+    1. Extracts the information about each AIP from metadata.csv.
     2. Deletes temporary files.
     3. Organizes folder contents into the UGA Libraries' AIP directory structure.
     4. Extracts technical metadata using FITS.

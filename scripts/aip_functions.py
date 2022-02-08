@@ -16,12 +16,13 @@ import configuration as c
 
 
 class AIP:
-    def __init__(self, department, collection_id, folder_name, id, title, to_zip):
+    def __init__(self, department, collection_id, folder_name, id, title, version, to_zip):
         self.department = department
         self.collection_id = collection_id
         self.folder_name = folder_name
         self.id = id
         self.title = title
+        self.version = version
         self.to_zip = to_zip
         self.size = None
         self.log = [self.id]
@@ -118,9 +119,9 @@ def check_metadata_csv(read_metadata):
     # If columns are not in the right order, it saves the error.
     header = next(read_metadata)
     header_lowercase = [name.lower() for name in header]
-    if header_lowercase != ['department', 'collection', 'folder', 'aip_id', 'title']:
+    if header_lowercase != ['department', 'collection', 'folder', 'aip_id', 'title', 'version']:
         errors.append(f"The columns in the metadata.csv are not in the required order."
-                      f"\nRequired order: Department, Collection, Folder, AIP_ID, Title"
+                      f"\nRequired order: Department, Collection, Folder, AIP_ID, Title, Version"
                       f"\nCurrent order:  {', '.join(header)}\n")
 
     # Gets the index position of the folder in case the columns were out of order.
@@ -320,7 +321,8 @@ def make_preservationxml(aip, workflow):
     # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
     stylesheet = f'{c.STYLESHEETS}/fits-to-preservation.xsl'
     preservation_xml = f'{aip.id}/metadata/{aip.id}_preservation.xml'
-    arguments = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" department="{aip.department}" workflow="{workflow}" ns={c.NAMESPACE}'
+    arguments = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
+                f'department="{aip.department}" version={aip.version} workflow="{workflow}" ns={c.NAMESPACE}'
     subprocess.run(
         f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" {arguments}',
         shell=True)

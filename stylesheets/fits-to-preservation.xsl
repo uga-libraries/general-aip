@@ -62,6 +62,7 @@
     <xsl:param name="aip-id" required="yes" />
     <xsl:param name="aip-title" required="yes" />
     <xsl:param name="department" required="yes" />
+    <xsl:param name="version" required="yes" />
     <xsl:param name="workflow" />
     <xsl:param name="ns" required="yes" />
     
@@ -126,7 +127,7 @@
     <xsl:template name="aip-version">
         <premis:objectIdentifier>
             <premis:objectIdentifierType><xsl:value-of select="$uri" />/<xsl:value-of select="$aip-id" /></premis:objectIdentifierType>
-            <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
+            <premis:objectIdentifierValue><xsl:value-of select="$version" /></premis:objectIdentifierValue>
         </premis:objectIdentifier>
     </xsl:template>
 

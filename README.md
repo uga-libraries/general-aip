@@ -20,12 +20,16 @@ The script has been tested in Windows 10 and Mac OS X.
 Create a file named metadata.csv in the AIPs directory. This contains required information about each of the AIPs to be included in this batch.
 
 
-The header row is formatted Department,Collection_ID,AIP_ID,Title
+The header row is formatted Department,Collection,Folder,AIP_ID,Title,Version
+
+
 For UGA, these values are:
 * Department: ARCHive group name
-* Collection_ID: collection identifier
+* Collection: collection identifier
+* Folder: the current folder name of the AIP folder
 * AIP_ID: AIP identifier
-* Title: AIP title, which is also the name of the folder in the AIPs directory
+* Title: AIP title
+* Version: AIP version number, which must be a whole number
 
 # Dependencies
 md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating systems. xmllint is also included with Strawberry Perl.
@@ -46,7 +50,7 @@ md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating sys
 4. Change permission on the scripts so they are executable.
 
 # Workflow Details
-1. Extracts the department, collection id, AIP id, and title from metadata.csv.
+1. Extracts the department, collection id, folder name, AIP id, title, and version from metadata.csv.
 
 
 2. Deletes temporary files from anywhere within the AIP folder because they cause errors with validating bags.

@@ -101,6 +101,13 @@
                 </xsl:matching-substring>
             </xsl:analyze-string>
         </xsl:if>
+        <xsl:if test="$department='test'">
+            <xsl:analyze-string select="fileinfo/filepath" regex="test-\d{{3}}-er-\d{{6}}.*">
+                <xsl:matching-substring>
+                    <xsl:value-of select="." />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
+        </xsl:if>
     </xsl:template>
 
     <!-- File count to use in testing when aips are treated differently if they have one or multiple files.-->

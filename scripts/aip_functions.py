@@ -301,10 +301,10 @@ def package(aip_id, aips_directory, zip):
 
 def make_manifest():
     """Makes a MD5 manifest of all AIPs in this batch using md5deep.
-    The manifest is named department_manifest.txt and saved in the aips-to-ingest folder.
+    The manifest has one line per AIP, formatted md5<tab>filename
     If AIPs for multiple departments are present in the same batch,
     a separate manifest is made for each department.
-    The manifest has one line per AIP, formatted md5<tab>filename"""
+    Each manifest is named manifest_department.txt and saved in the aips-to-ingest folder."""
 
     # Changes the current directory to the location of the packaged AIPs.
     os.chdir('../aips-to-ingest')
@@ -312,14 +312,6 @@ def make_manifest():
     # Uses md5deep to calculate the MD5s for files with the specified prefix
     # and saves them to the manifest. Tests if there are any files with that prefix
     # before making the manifest so it does not make an empty manifest.
-    if any(file.startswith('harg') for file in os.listdir('.')):
-        subprocess.run(f'"{c.MD5DEEP}" -br harg* > manifest_hargrett.txt', shell=True)
-
-    if any(file.startswith('guan') for file in os.listdir('.')):
-        subprocess.run(f'"{c.MD5DEEP}" -br guan* > manifest_guan.txt', shell=True)
-        
-    if any(file.startswith('rbrl') for file in os.listdir('.')):
-        subprocess.run(f'"{c.MD5DEEP}" -br rbrl* > manifest_russell.txt', shell=True)
-
-    if any(file.startswith('emory') for file in os.listdir('.')):
-        subprocess.run(f'"{c.MD5DEEP}" -br emory* > manifest.txt', shell=True)
+    for department in ('emory', 'guan', 'harg', 'magil', 'rbrl'):
+        if any(file.startswith(department) for file in os.listdir('.')):
+            subprocess.run(f'"{c.MD5DEEP}" -br {department}* > manifest_{department}.txt', shell=True)

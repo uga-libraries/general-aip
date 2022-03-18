@@ -35,7 +35,9 @@
                         <xsl:call-template name="aip-unique-creating-application-list" />
                         <xsl:call-template name="aip-unique-inhibitors-list" />
                     </premis:objectCharacteristics>
-                    <xsl:call-template name="relationship-collection" />
+                    <xsl:if test="not($department='magil')">
+                        <xsl:call-template name="relationship-collection" />
+                    </xsl:if>
                     <xsl:if test="$department='emory'">
 						<xsl:call-template name="relationship-repository" />
 					</xsl:if>

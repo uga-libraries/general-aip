@@ -71,7 +71,7 @@ if not metadata_errors == "no_errors":
     sys.exit()
 
 # Starts a log for saving information about events and errors from running the script and adds a header row.
-a.log(['AIP ID', 'Department Correct', 'Deleted Temp Files', 'Error: Objects folder exists',
+a.log(['Time Started', 'AIP ID', 'Department Correct', 'Deleted Temp Files', 'Error: Objects folder exists',
        'Error: metadata folder exists', 'FITS Tool Errors', 'Preservation.xml Made', 'Preservation Valid', 'Bag Valid',
        'Tar Made', 'Processing Complete'])
 
@@ -104,7 +104,7 @@ for aip_row in read_metadata:
 
     # Verifies the department matches one of the required group codes. If not, starts the next AIP.
     if aip.department not in c.GROUPS:
-        aip.log = [aip.id, 'No', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'No: error']
+        aip.log = [datetime.datetime.now(), aip.id, 'No', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'No: error']
         a.log(aip.log)
         a.move_error('department_not_group', aip.folder_name)
         continue

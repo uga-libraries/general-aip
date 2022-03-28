@@ -25,7 +25,7 @@ class AIP:
         self.version = version
         self.to_zip = to_zip
         self.size = None
-        self.log = [self.id]
+        self.log = [datetime.datetime.now(), self.id]
 
 
 def log(log_row):

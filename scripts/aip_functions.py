@@ -31,7 +31,7 @@ class AIP:
 def log(log_row):
     """Saves information about each step done on an AIP to a CSV file."""
 
-    with open(f'../script_log_{datetime.date.today()}.csv', 'a', newline='') as log_file:
+    with open(f'../general_aip_script_log.csv', 'a', newline='') as log_file:
         log_writer = csv.writer(log_file)
         log_writer.writerow(log_row)
 

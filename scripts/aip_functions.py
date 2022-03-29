@@ -32,21 +32,9 @@ def log(log_row):
     """Saves information about each step done on an AIP to a CSV file.
     Results are logged after each AIP either finishes processing or encounters an error."""
 
-    header_row = ['Time Started', 'AIP ID', 'Department Correct', 'Deleted Temp Files', 'Error: Objects folder exists',
-                  'Error: metadata folder exists', 'FITS Tool Errors', 'Preservation.xml Made', 'Preservation Valid',
-                  'Bag Valid', 'Tar Made', 'Processing Complete']
-
-    # If the log file has been started, adds the new row.
-    # If the log file hasn't been started, adds a header row before adding the new row.
-    if os.path.exists(os.path.join(os.pardir, 'general_aip_script_log.csv')):
-        with open('../general_aip_script_log.csv', 'a', newline='') as log_file:
-            log_writer = csv.writer(log_file)
-            log_writer.writerow(log_row)
-    else:
-        with open('../general_aip_script_log.csv', 'a', newline='') as log_file:
-            log_writer = csv.writer(log_file)
-            log_writer.writerow(header_row)
-            log_writer.writerow(log_row)
+    with open('../general_aip_script_log.csv', 'a', newline='') as log_file:
+        log_writer = csv.writer(log_file)
+        log_writer.writerow(log_row)
 
 
 def move_error(error_name, item):

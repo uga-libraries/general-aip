@@ -70,10 +70,12 @@ if not metadata_errors == "no_errors":
         print(error)
     sys.exit()
 
+# If there isn't already a log from running this script on a previous batch,
 # Starts a log for saving information about events and errors from running the script and adds a header row.
-a.log(['Time Started', 'AIP ID', 'Department Correct', 'Deleted Temp Files', 'Error: Objects folder exists',
-       'Error: metadata folder exists', 'FITS Tool Errors', 'Preservation.xml Made', 'Preservation Valid', 'Bag Valid',
-       'Tar Made', 'Processing Complete'])
+if not os.path.exists('../general_aip_script_log.csv'):
+    a.log(['Time Started', 'AIP ID', 'Department Correct', 'Deleted Temp Files', 'Error: Objects folder exists',
+           'Error: metadata folder exists', 'FITS Tool Errors', 'Preservation.xml Made', 'Preservation Valid',
+           'Bag Valid', 'Tar Made', 'Processing Complete'])
 
 # Makes directories used to store script outputs in the same parent folder as the AIPs directory.
 a.make_output_directories()

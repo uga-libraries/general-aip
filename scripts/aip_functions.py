@@ -359,11 +359,10 @@ def make_preservationxml(aip, workflow):
         shell=True)
 
     # Validates the preservation.xml file against the requirements of ARCHive.
-    # If it is not valid, saves the validation error to the log, moves the AIP to an error folder,
-    # and does not execute the rest of this function.
+    # If it is not valid, moves the AIP to an error folder and does not execute the rest of this function.
     validation = subprocess.run(f'xmllint --noout -schema "{c.STYLESHEETS}/preservation.xsd" "{preservation_xml}"',
                                 stderr=subprocess.PIPE, shell=True)
-    validation_result = str(validation.stderr)
+    validation_result = validation.stderr.decode('utf-8')
 
     # This error happens if the preservation.xml file was not made in the expected location.
     if 'failed to load' in validation_result:
@@ -376,11 +375,15 @@ def make_preservationxml(aip, workflow):
         aip.log["PresXML"] = "Successfully created preservation.xml"
 
     # This error happens if the preservation.xml file does not meet the Libraries' requirements.
+    # The validation output is saved to a file in the error folder for review.
     if 'fails to validate' in validation_result:
-        aip.log["PresValid"] = "Preservation.xml is not valid (see log in AIP folder)"
+        aip.log["PresValid"] = "Preservation.xml is not valid (see log in error folder)"
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
         move_error('preservationxml_not_valid', aip.id)
+        with open(f"../errors/preservationxml_not_valid/{aip.id}_presxml_validation.txt", "w") as validation_log:
+            for line in validation_result.split("\r"):
+                validation_log.write(line + "\n")
         return
     else:
         aip.log["PresValid"] = f"Preservation.xml valid on {datetime.datetime.now()}"

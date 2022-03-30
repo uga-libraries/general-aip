@@ -73,9 +73,7 @@ if not metadata_errors == "no_errors":
 # If there isn't already a log from running this script on a previous batch,
 # Starts a log for saving information about events and errors from running the script and adds a header row.
 if not os.path.exists('../general_aip_script_log.csv'):
-    a.log(['Time Started', 'AIP ID', 'Department Correct', 'Deleted Temp Files', 'Error: Objects folder exists',
-           'Error: metadata folder exists', 'FITS Tool Errors', 'Preservation.xml Made', 'Preservation Valid',
-           'Bag Valid', 'Tar Made', 'Processing Complete'])
+    a.log("header")
 
 # Makes directories used to store script outputs in the same parent folder as the AIPs directory.
 a.make_output_directories()
@@ -106,12 +104,13 @@ for aip_row in read_metadata:
 
     # Verifies the department matches one of the required group codes. If not, starts the next AIP.
     if aip.department not in c.GROUPS:
-        aip.log = [datetime.datetime.now(), aip.id, 'No', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'No: error']
+        aip.log["Department"] = f"Error: '{aip.department}' is not an ARCHive group"
+        aip.log["Complete"] = "Error during processing"
         a.log(aip.log)
         a.move_error('department_not_group', aip.folder_name)
         continue
     else:
-        aip.log.append("Yes")
+        aip.log["Department"] = "Department is permitted"
 
     # Renames the folder to the AIP ID.
     # Already know from check_metadata_csv() that every AIP in the CSV is in the AIPs directory.
@@ -147,7 +146,7 @@ for aip_row in read_metadata:
 
     # Logs that the AIP is complete. No anticipated errors were encountered.
     if f'{aip.id}_bag' in os.listdir('.'):
-        aip.log.append("Yes: No detected errors")
+        aip.log["Complete"] = "Successfully completed processing"
         a.log(aip.log)
 
 # Closes the metadata CSV.

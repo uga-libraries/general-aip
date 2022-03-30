@@ -26,13 +26,31 @@ class AIP:
         self.version = version
         self.to_zip = to_zip
         self.size = None
-        self.log = [datetime.datetime.now(), self.id]
+        self.log = {"Started": datetime.datetime.now(), "AIP": self.id, "Department": "n/a", "Deletions": "n/a",
+                    "ObjectsError": "n/a", "MetadataError": "n/a", "FITSTool": "n/a", "FITSError": "n/a",
+                    "PresXML": "n/a", "PresValid": "n/a", "BagValid": "n/a", "Package": "n/a", "Complete": "n/a"}
 
 
-def log(log_row):
+def log(log_data):
     """Saves information about each step done on an AIP to a CSV file.
-    Results are logged after each AIP either finishes processing or encounters an error."""
+    Information is stored in a dictionary after each step and saved to the log
+    after each AIP either finishes processing or encounters an error."""
 
+    # Formats the data for this row in the log CSV as a list.
+    # For the header, uses default values.
+    if log_data == "header":
+        log_row = ["Time Started", "AIP ID", "Department Correct", "Files Deleted", "Objects Folder",
+                   "Metadata Folder", "FITS Tool Errors", "FITS Combination Errors", "Preservation.xml Made",
+                   "Preservation.xml Valid", "Bag Valid", "Package Errors", "Processing Complete"]
+    # In all other cases, log_data is a dictionary, with one key per column in the log.
+    # Gets the value of each key in the desired order and adds to a list for saving to the log.
+    else:
+        log_row = [log_data["Started"], log_data["AIP"], log_data["Department"], log_data["Deletions"],
+                   log_data["ObjectsError"], log_data["MetadataError"], log_data["FITSTool"], log_data["FITSError"],
+                   log_data["PresXML"], log_data["PresValid"], log_data["BagValid"], log_data["Package"],
+                   log_data["Complete"]]
+
+    # Saves the data for the row to the log CSV.
     with open('../general_aip_script_log.csv', 'a', newline='') as log_file:
         log_writer = csv.writer(log_file)
         log_writer.writerow(log_row)
@@ -182,8 +200,7 @@ def delete_temp(aip):
     change in size after making the AIP. """
 
     # List of files to be deleted where the filename can be matched in its entirely.
-    # TODO: remove the test file from this list!
-    delete = ['.DS_Store', '._.DS_Store', 'Thumbs.db', 'test_delete.txt']
+    delete = ['.DS_Store', '._.DS_Store', 'Thumbs.db']
 
     # List of files that were deleted, to save to a log if desired.
     deleted_files = []
@@ -203,14 +220,15 @@ def delete_temp(aip):
     # The log contains the path, filename, size in bytes and date/time last modified of every deleted file.
     # Adds event information for deletion to the script log.
     if len(deleted_files) > 0:
-        with open(f"{aip.id}/{aip.id}_files-deleted_{datetime.datetime.today().date()}_del.csv", "w", newline="") as deleted_log:
+        filename = f"{aip.id}_files-deleted_{datetime.datetime.today().date()}_del.csv"
+        with open(f"{aip.id}/{filename}", "w", newline="") as deleted_log:
             deleted_log_writer = csv.writer(deleted_log)
             deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
             for file_data in deleted_files:
                 deleted_log_writer.writerow(file_data)
-        aip.log.append("Yes")
+        aip.log["Deletions"] = "File(s) deleted"
     else:
-        aip.log.append("No")
+        aip.log["Deletions"] = "No files deleted"
 
 
 def structure_directory(aip):
@@ -224,19 +242,22 @@ def structure_directory(aip):
     try:
         os.mkdir(f'{aip.id}/objects')
     except FileExistsError:
-        aip.log.extend(["Yes", "n/a", "n/a", "n/a", "n/a", "n/a", "n/a", "No: error"])
+        aip.log["ObjectsError"] = "Objects folder already exists in original files"
+        aip.log["Complete"] = "Error during processing."
         log(aip.log)
         move_error("objects_folder_exists", aip.id)
         return
     try:
         os.mkdir(f"{aip.id}/metadata")
     except FileExistsError:
-        aip.log.extend(["No", "Yes", "n/a", "n/a", "n/a", "n/a", "n/a", "No: error"])
+        aip.log["MetadataError"] = "Metadata folder already exists in original files"
+        aip.log["Complete"] = "Error during processing."
         move_error("metadata_folder_exists", aip.id)
         return
 
     # Update log that no errors were found for objects or metadata folders.
-    aip.log.extend(["No", "No"])
+    aip.log["ObjectsError"] = "Successfully created objects folder"
+    aip.log["MetadataError"] = "Successfully created metadata folder"
 
     # Moves any metadata files, identified by their file names and department if not all use it, to the metadata folder.
     for item in os.listdir(aip.id):
@@ -270,9 +291,9 @@ def extract_metadata(aip, aip_directory):
     if fits_output.stderr:
         with open(f"{aip_directory}/{aip.id}/metadata/{aip.id}_fits-tool-errors_fitserr.txt", "w") as fits_errors:
             fits_errors.write(fits_output.stderr.decode('utf-8'))
-        aip.log.append("Yes")
+        aip.log["FITSTool"] = "FITs tools generated errors (saved to metadata folder)"
     else:
-        aip.log.append("No")
+        aip.log["FITSTool"] = "No FITS tools errors"
 
     # Renames the FITS output to the UGA Libraries' metadata naming convention (filename_fits.xml).
     for item in os.listdir(f'{aip.id}/metadata'):
@@ -301,10 +322,14 @@ def extract_metadata(aip, aip_directory):
             # Errors: the file is empty, is not XML, has invalid XML, or has the wrong namespace.
             # Moves the AIP to an error folder and does not execute the rest of this function.
             except ET.ParseError:
-                aip.log.extend(["No: couldn't combine FITS", "n/a", "n/a", "n/a", "No: error"])
+                aip.log["FITSError"] = "Unable to create combined-fits.xml"
+                aip.log["Complete"] = "Error during processing."
                 log(aip.log)
                 move_error('combining_fits', aip.id)
                 return
+
+    # Updates the log for any without errors during FITS combination.
+    aip.log["FITSError"] = "Successfully created combined-fits.xml"
 
     # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
     combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
@@ -342,21 +367,23 @@ def make_preservationxml(aip, workflow):
 
     # This error happens if the preservation.xml file was not made in the expected location.
     if 'failed to load' in validation_result:
-        aip.log.extend([validation_result, "n/a", "n/a", "n/a", "No: error"])
+        aip.log["PresXML"] = "Preservation.xml was not created"
+        aip.log["Complete"] = "Error during processing."
         log(aip.log)
         move_error('preservationxml_not_found', aip.id)
         return
     else:
-        aip.log.append("Yes")
+        aip.log["PresXML"] = "Successfully created preservation.xml"
 
     # This error happens if the preservation.xml file does not meet the Libraries' requirements.
     if 'fails to validate' in validation_result:
-        aip.log.extend([validation_result, "n/a", "n/a", "No: error"])
+        aip.log["PresValid"] = "Preservation.xml is not valid (see log in AIP folder)"
+        aip.log["Complete"] = "Error during processing."
         log(aip.log)
         move_error('preservationxml_not_valid', aip.id)
         return
     else:
-        aip.log.append(f"Valid on {datetime.datetime.now()}")
+        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.datetime.now()}"
 
     # Copies the preservation.xml file to the preservation-xml folder for staff reference.
     shutil.copy2(f'{aip.id}/metadata/{aip.id}_preservation.xml', '../preservation-xml')
@@ -384,11 +411,12 @@ def bag(aip):
     try:
         new_bag.validate()
     except bagit.BagValidationError as errors:
-        aip.log.extend([errors, "n/a", "No: errors"])
+        aip.log["BagValid"] = "Bag not valid (see log in AIP folder)"
+        aip.log["Complete"] = "Error during processing."
         log(aip.log)
         move_error('bag_invalid', f'{aip.id}_bag')
 
-    aip.log.append(f"Valid on {datetime.datetime.now()}")
+    aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
 
 
 def package(aip, aips_directory):
@@ -457,7 +485,7 @@ def package(aip, aips_directory):
         os.replace(f"{aip_bag}.{bag_size}.tar", path)
 
     # Still need to catch error of tar not made. For now, just always logging it is made.
-    aip.log.append("Yes")
+    aip.log["Package"] = "Error handling TBD"
 
 
 def manifest(aip):

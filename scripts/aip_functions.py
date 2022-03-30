@@ -418,6 +418,13 @@ def bag(aip):
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
         move_error('bag_invalid', f'{aip.id}_bag')
+        with open(f"../errors/bag_invalid/{aip.id}_bag_validation.txt", "w") as validation_log:
+            if errors.details:
+                for error_type in errors.details:
+                    validation_log.write(str(error_type) + "\n")
+            else:
+                validation_log.write(str(errors))
+        return
 
     aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
 

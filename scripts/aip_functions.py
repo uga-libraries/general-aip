@@ -457,23 +457,22 @@ def package(aip, aips_directory):
 
     # Tars the file, using the command appropriate for the operating system.
     if operating_system == "Windows":
-        # Does not print the progress to the terminal (stdout), which is a lot of text.
-        subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{aip_bag}.tar" "{aips_directory}/{aip_bag}"',
-                       stdout=subprocess.DEVNULL, shell=True)
+        # Does not print the progress to the terminal (stdout), which is a lot of text. [subprocess.DEVNULL]
+        tar_output = subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{aip_bag}.tar" "{aips_directory}/aip_bag"',
+                       stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, shell=True)
     else:
         subprocess.run(f'tar -cf "{aip_bag}.tar" "{aip_bag}"', shell=True)
 
-    # Renames the file to include the size.
-    # If the tar wasn't made (which has happened), logs it and doesn't do the rest of this function.
-    # TODO: Couldn't figure out moving to an error folder - getting a permissions error.
-    try:
-        os.replace(f'{aip_bag}.tar', f'{aip_bag}.{bag_size}.tar')
-    except FileNotFoundError:
-        aip.log["Package"] = "Did not make a tar file"
+    if not tar_output.stderr == b'':
+        aip.log["Package"] = tar_output.stderr
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
+        #TODO: getting a permissions error from this command
         #move_error('no_tar', aip_bag)
         return
+
+    # Renames the file to include the size.
+    os.replace(f'{aip_bag}.tar', f'{aip_bag}.{bag_size}.tar')
 
     # Updates the size in the AIP object so it can be used by the manifest() function later.
     aip.size = bag_size

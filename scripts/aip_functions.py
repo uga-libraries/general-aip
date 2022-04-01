@@ -464,7 +464,16 @@ def package(aip, aips_directory):
         subprocess.run(f'tar -cf "{aip_bag}.tar" "{aip_bag}"', shell=True)
 
     # Renames the file to include the size.
-    os.replace(f'{aip_bag}.tar', f'{aip_bag}.{bag_size}.tar')
+    # If the tar wasn't made (which has happened), logs it and doesn't do the rest of this function.
+    # TODO: Couldn't figure out moving to an error folder - getting a permissions error.
+    try:
+        os.replace(f'{aip_bag}.tar', f'{aip_bag}.{bag_size}.tar')
+    except FileNotFoundError:
+        aip.log["Package"] = "Did not make a tar file"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        #move_error('no_tar', aip_bag)
+        return
 
     # Updates the size in the AIP object so it can be used by the manifest() function later.
     aip.size = bag_size
@@ -494,8 +503,8 @@ def package(aip, aips_directory):
         path = os.path.join(f'../aips-to-ingest', f"{aip_bag}.{bag_size}.tar")
         os.replace(f"{aip_bag}.{bag_size}.tar", path)
 
-    # Still need to catch error of tar not made. For now, just always logging it is made.
-    aip.log["Package"] = "Error handling TBD"
+    # Updates log with success.
+    aip.log["Package"] = "Successfully made package"
 
 
 def manifest(aip):

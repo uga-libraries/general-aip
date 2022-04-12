@@ -17,12 +17,12 @@ import configuration as c
 
 
 class AIP:
-    def __init__(self, directory, department, collection_id, folder_name, id, title, version, to_zip):
+    def __init__(self, directory, department, collection_id, folder_name, aip_id, title, version, to_zip):
         self.directory = directory
         self.department = department
         self.collection_id = collection_id
         self.folder_name = folder_name
-        self.id = id
+        self.id = aip_id
         self.title = title
         self.version = version
         self.to_zip = to_zip

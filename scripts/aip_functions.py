@@ -179,9 +179,9 @@ def check_metadata_csv(read_metadata):
     header = next(read_metadata)
     header_lowercase = [name.lower() for name in header]
     if header_lowercase != ['department', 'collection', 'folder', 'aip_id', 'title', 'version']:
-        errors.append(f"The columns in the metadata.csv are not in the required order."
-                      f"\nRequired order: Department, Collection, Folder, AIP_ID, Title, Version"
-                      f"\nCurrent order:  {', '.join(header)}\n")
+        errors.append(f"\nThe columns in the metadata.csv do not match the required values or order."
+                      f"\nRequired: Department, Collection, Folder, AIP_ID, Title, Version"
+                      f"\nCurrent:  {', '.join(header)}\n")
 
     # Gets the index position of the folder in case the columns were out of order.
     # If there is not a folder column, returns the errors and skips the rest of the function.
@@ -201,6 +201,14 @@ def check_metadata_csv(read_metadata):
     for item in os.listdir('.'):
         if os.path.isdir(item):
             aips_directory_list.append(item)
+
+    # Finds any folder names that are in the CSV more than once and adds them to the error list.
+    duplicates = [folder for folder in csv_aip_list if csv_aip_list.count(folder) > 1]
+    if len(duplicates) > 0:
+        unique_duplicates = list(set(duplicates))
+        unique_duplicates.sort()
+        for duplicate in unique_duplicates:
+            errors.append(f"{duplicate} is in the metadata.csv folder name column more than once.")
 
     # Finds any AIPs that are only in the CSV and adds them to the error list.
     just_csv = list(set(csv_aip_list) - set(aips_directory_list))

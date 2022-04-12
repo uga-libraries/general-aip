@@ -67,8 +67,10 @@ read_metadata = csv.reader(open_metadata)
 # If there is an error, ends the script.
 metadata_errors = a.check_metadata_csv(read_metadata)
 if not metadata_errors == "no_errors":
+    print('\nProblems detected with metadata.csv')
     for error in metadata_errors:
         print(error)
+    print('\nCorrect the metadata.csv and run the script again.')
     sys.exit()
 
 # If there isn't already a log from running this script on a previous batch,
@@ -115,8 +117,7 @@ for aip_row in read_metadata:
 
     # Renames the folder to the AIP ID.
     # Already know from check_metadata_csv() that every AIP in the CSV is in the AIPs directory.
-    if aip.folder_name in os.listdir('.'):
-        os.replace(aip.folder_name, aip.id)
+    os.replace(aip.folder_name, aip.id)
 
     # Deletes temporary files and makes a log of deleted files which is saved in the metadata folder.
     a.delete_temp(aip)

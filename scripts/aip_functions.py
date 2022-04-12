@@ -151,12 +151,12 @@ def check_configuration():
     # For the 2 variables where the value is not a path, check if the variable exists.
     # If not, add to the error list.
     try:
-        test = c.NAMESPACE
+        c.NAMESPACE
     except AttributeError:
         errors.append("NAMESPACE variable is missing from the configuration file.")
 
     try:
-        test = c.GROUPS
+        c.GROUPS
     except AttributeError:
         errors.append("GROUPS variable is missing from the configuration file.")
 

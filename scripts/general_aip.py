@@ -138,17 +138,13 @@ for aip_row in read_metadata:
         a.bag(aip)
 
     # Tars the AIP and also zips (bz2) the AIP if ZIP is True.
-    # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
     if f'{aip.id}_bag' in os.listdir('.'):
         a.package(aip)
 
+    # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
+    # If this is done successfully, also saves the log information to the log CSV.
     if f'{aip.id}_bag' in os.listdir('.'):
         a.manifest(aip)
-
-    # Logs that the AIP is complete. No anticipated errors were encountered.
-    if f'{aip.id}_bag' in os.listdir('.'):
-        aip.log["Complete"] = "Successfully completed processing"
-        a.log(aip.log)
 
 # Closes the metadata CSV.
 open_metadata.close()

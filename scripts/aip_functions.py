@@ -497,19 +497,18 @@ def package(aip):
     # Tars the file, using the command appropriate for the operating system.
     if operating_system == "Windows":
         # Does not print the progress to the terminal (stdout), which is a lot of text. [subprocess.DEVNULL]
-        tar_output = subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{aip_bag}.tar" "{aip.directory}/aip_bag"',
+        tar_output = subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{aip_bag}.tar" "{aip.directory}/{aip_bag}"',
                                     stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, shell=True)
     else:
         subprocess.run(f'tar -cf "{aip_bag}.tar" "{aip_bag}"', shell=True)
 
     # For Windows, checks for errors from 7z.
     # If there is an error, saves the error to the log and does not complete the rest of the function for this AIP.
+    # Cannot move it to an error folder because getting a permissions error.
     if operating_system == "Windows" and not tar_output.stderr == b'':
-        aip.log["Package"] = tar_output.stderr
+        aip.log["Package"] = f"Could not tar: {tar_output.stderr}"
         aip.log["Complete"] = "Error during processing."
-        #log(aip.log)
-        #TODO: getting a permissions error from this command
-        #move_error('no_tar', aip_bag)
+        log(aip.log)
         return
 
     # Renames the file to include the size.
@@ -557,6 +556,12 @@ def manifest(aip):
     if aip.to_zip is True:
         aip_path = aip_path + ".bz2"
 
+    # Checks if the tar/zip is present in the aips-to-ingest directory.
+    # If it isn't, due to errors from package(), does not complete the rest of the function.
+    # The error should already be in the log from package() but not currently able to move the bag to an error folder.
+    if not os.path.exists(aip_path):
+        return
+
     # Calculates the MD5 of the packaged AIP.
     md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"', stdout=subprocess.PIPE, shell=True)
 
@@ -566,3 +571,7 @@ def manifest(aip):
     manifest_path = os.path.join(f"../aips-to-ingest", f"manifest_{aip.department}.txt")
     with open(manifest_path, 'a', encoding='utf-8') as manifest_file:
         manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
+
+    # This is the last step, so logs that the AIP completed successfully.
+    aip.log["Complete"] = "Successfully completed processing"
+    log(aip.log)

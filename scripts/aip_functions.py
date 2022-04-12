@@ -17,7 +17,8 @@ import configuration as c
 
 
 class AIP:
-    def __init__(self, department, collection_id, folder_name, id, title, version, to_zip):
+    def __init__(self, directory, department, collection_id, folder_name, id, title, version, to_zip):
+        self.directory = directory
         self.department = department
         self.collection_id = collection_id
         self.folder_name = folder_name
@@ -312,7 +313,7 @@ def structure_directory(aip):
         os.replace(f"{aip.id}/{item}", f"{aip.id}/objects/{item}")
 
 
-def extract_metadata(aip, aip_directory):
+def extract_metadata(aip):
     """Extracts technical metadata from the files in the objects folder using FITS and
     creates a single XML file that combines the FITS output for every file in the AIP. """
 
@@ -321,13 +322,13 @@ def extract_metadata(aip, aip_directory):
     # within the objects folder with the same name, FITS adds a number to the duplicates, for example:
     # file.ext.fits.xml, file.ext-1.fits.xml, file.ext-2.fits.xml
     fits_output = subprocess.run(
-        f'"{c.FITS}" -r -i "{aip_directory}/{aip.id}/objects" -o "{aip_directory}/{aip.id}/metadata"',
+        f'"{c.FITS}" -r -i "{aip.directory}/{aip.id}/objects" -o "{aip.directory}/{aip.id}/metadata"',
         shell=True, stderr=subprocess.PIPE)
 
     # If there were any tool error messages from FITS, saves those to a log in the AIP's metadata folder.
     # Processing on the AIP continues, since typically other tools still work.
     if fits_output.stderr:
-        with open(f"{aip_directory}/{aip.id}/metadata/{aip.id}_fits-tool-errors_fitserr.txt", "w") as fits_errors:
+        with open(f"{aip.directory}/{aip.id}/metadata/{aip.id}_fits-tool-errors_fitserr.txt", "w") as fits_errors:
             fits_errors.write(fits_output.stderr.decode('utf-8'))
         aip.log["FITSTool"] = "FITs tools generated errors (saved to metadata folder)"
     else:
@@ -467,7 +468,7 @@ def bag(aip):
     aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
 
 
-def package(aip, aips_directory):
+def package(aip):
     """Tars and zips the AIP. Saves the resulting packaged AIP in the aips-to-ingest folder.
     Also uses md5 deep to calculate the MD5 for the AIP and adds it to the manifest for that department
     in the aips-to-ingest folder. Each department has a separate manifest so AIPs for multiple departments
@@ -496,8 +497,8 @@ def package(aip, aips_directory):
     # Tars the file, using the command appropriate for the operating system.
     if operating_system == "Windows":
         # Does not print the progress to the terminal (stdout), which is a lot of text. [subprocess.DEVNULL]
-        tar_output = subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{aip_bag}.tar" "{aips_directory}/aip_bag"',
-                       stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, shell=True)
+        tar_output = subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{aip_bag}.tar" "{aip.directory}/{aip_bag}"',
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, shell=True)
     else:
         subprocess.run(f'tar -cf "{aip_bag}.tar" "{aip_bag}"', shell=True)
 

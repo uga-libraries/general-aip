@@ -112,16 +112,54 @@ def check_arguments(arguments):
     return aips_directory, to_zip, aip_metadata_csv, errors
 
 
-def check_paths():
-    """Verifies all the paths from the configuration file are valid.
+def check_configuration():
+    """Verifies all the expected variables are in the configuration file and paths are valid if they are a path.
     Returns a list of paths with errors or "no errors".
     This avoids wasting processing time by doing earlier steps before the path error is encountered."""
 
     errors = []
-    for path in (c.FITS, c.SAXON, c.MD5DEEP, c.STYLESHEETS):
-        if not os.path.exists(path):
-            errors.append(path)
 
+    # For the 4 variables with a value that is a path, check if the variable exists.
+    # If so check if the path is valid.
+    # Either error (doesn't exist or not valid) is added to the errors list.
+
+    try:
+        if not os.path.exists(c.FITS):
+            errors.append(f"FITS path '{c.FITS}' is not correct.")
+    except AttributeError:
+        errors.append("FITS variable is missing from the configuration file.")
+
+    try:
+        if not os.path.exists(c.SAXON):
+            errors.append(f"SAXON path '{c.SAXON}' is not correct.")
+    except AttributeError:
+        errors.append("SAXON variable is missing from the configuration file.")
+
+    try:
+        if not os.path.exists(c.MD5DEEP):
+            errors.append(f"MD5DEEP path '{c.MD5DEEP}' is not correct.")
+    except AttributeError:
+        errors.append("MD5DEEP variable is missing from the configuration file.")
+
+    try:
+        if not os.path.exists(c.STYLESHEETS):
+            errors.append(f"STYLESHEETS path '{c.STYLESHEETS}' is not correct.")
+    except AttributeError:
+        errors.append("STYLESHEETS variable is missing from the configuration file.")
+
+    # For the 2 variables where the value is not a path, check if the variable exists.
+    # If not, add to the error list.
+    try:
+        test = c.NAMESPACE
+    except AttributeError:
+        errors.append("NAMESPACE variable is missing from the configuration file.")
+
+    try:
+        test = c.GROUPS
+    except AttributeError:
+        errors.append("GROUPS variable is missing from the configuration file.")
+
+    # If there were no errors, return the string "no errors". Otherwise, return the errors list.
     if len(errors) == 0:
         return "no errors"
     else:

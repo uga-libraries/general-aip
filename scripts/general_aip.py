@@ -49,13 +49,14 @@ if len(argument_errors) > 0:
 # Makes the current directory the AIPs directory
 os.chdir(AIPS_DIRECTORY)
 
-# Verifies all the paths from the configuration file are valid. If not, ends the script.
-valid_errors = a.check_paths()
-if not valid_errors == "no errors":
-    print('The following path(s) in the configuration file are not correct:')
-    for error in valid_errors:
+# Verifies all the variables from the configuration file are present and all the paths are valid.
+# If not, ends the script.
+configuration_errors = a.check_configuration()
+if not configuration_errors == "no errors":
+    print('\nProblems detected with configuration.py:')
+    for error in configuration_errors:
         print(error)
-    print('Correct the configuration file and run the script again.')
+    print('\nCorrect the configuration file and run the script again. Use configuration_template.py as a model.')
     sys.exit()
 
 # Reads the CSV with the AIP metadata.

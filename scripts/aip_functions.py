@@ -368,8 +368,8 @@ def extract_metadata(aip):
                 combo_root.append(root)
             # Errors: the file is empty, is not XML, has invalid XML, or has the wrong namespace.
             # Moves the AIP to an error folder and does not execute the rest of this function.
-            except ET.ParseError:
-                aip.log["FITSError"] = "Unable to create combined-fits.xml"
+            except ET.ParseError as error:
+                aip.log["FITSError"] = f"Unable to create combined-fits.xml: {error.msg}"
                 aip.log["Complete"] = "Error during processing."
                 log(aip.log)
                 move_error('combining_fits', aip.id)

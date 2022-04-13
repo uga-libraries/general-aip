@@ -74,7 +74,7 @@ if not metadata_errors == "no_errors":
     sys.exit()
 
 # If there isn't already a log from running this script on a previous batch,
-# Starts a log for saving information about events and errors from running the script and adds a header row.
+# starts a log for saving information about events and errors from running the script and adds a header row.
 if not os.path.exists('../general_aip_script_log.csv'):
     a.log("header")
 
@@ -84,24 +84,23 @@ a.make_output_directories()
 # Starts counts for tracking script progress.
 # Some steps are time consuming so this shows the script is not stuck.
 # Subtracts one from the count for the metadata file.
-# If the AIPs directory already contains the output folders and log, the total will be too high.
 CURRENT_AIP = 0
 TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY)) - 1
 
-# Returns to the beginning of the CSV and skips the header
+# Returns to the beginning of the CSV (the script is at the end because of checking it for errors) and skips the header.
 open_metadata.seek(0)
 next(read_metadata)
 
-# Uses the AIP functions to create an AIP for each one in the metadata CSV.
+# Uses the AIP functions to create an AIP for each folder in the metadata CSV.
 # Checks if the AIP folder is still present before calling the function for the next step
 # in case it was moved due to an error in the previous step.
 for aip_row in read_metadata:
 
-    # Makes an instance of the AIP class using metadata from the CSV.
+    # Makes an instance of the AIP class using metadata from the CSV and global variables.
     department, collection_id, aip_folder, aip_id, title, version = aip_row
     aip = a.AIP(AIPS_DIRECTORY, department, collection_id, aip_folder, aip_id, title, version, ZIP)
 
-    # Updates the current AIP number and displays the script progress.
+    # Updates the current AIP number and displays the script progress in the terminal.
     CURRENT_AIP += 1
     print(f'\n>>>Processing {aip.id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
 
@@ -116,13 +115,12 @@ for aip_row in read_metadata:
         aip.log["Department"] = "Department is permitted"
 
     # Renames the folder to the AIP ID.
-    # Already know from check_metadata_csv() that every AIP in the CSV is in the AIPs directory.
     os.replace(aip.folder_name, aip.id)
 
-    # Deletes temporary files and makes a log of deleted files which is saved in the metadata folder.
+    # Deletes any temporary files and makes a log of each deleted file.
     a.delete_temp(aip)
 
-    # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
+    # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure (objects and metadata).
     if aip.id in os.listdir('.'):
         a.structure_directory(aip)
 
@@ -138,12 +136,11 @@ for aip_row in read_metadata:
     if aip.id in os.listdir('.'):
         a.bag(aip)
 
-    # Tars the AIP and also zips (bz2) the AIP if ZIP is True.
+    # Tars the AIP and also zips (bz2) the AIP if ZIP (optional script argument) is True.
     if f'{aip.id}_bag' in os.listdir('.'):
         a.package(aip)
 
     # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
-    # If this is done successfully, also saves the log information to the log CSV.
     if f'{aip.id}_bag' in os.listdir('.'):
         a.manifest(aip)
 

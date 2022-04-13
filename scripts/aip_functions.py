@@ -369,7 +369,7 @@ def extract_metadata(aip):
             # Errors: the file is empty, is not XML, has invalid XML, or has the wrong namespace.
             # Moves the AIP to an error folder and does not execute the rest of this function.
             except ET.ParseError as error:
-                aip.log["FITSError"] = f"Unable to create combined-fits.xml: {error.msg}"
+                aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
                 aip.log["Complete"] = "Error during processing."
                 log(aip.log)
                 move_error('combining_fits', aip.id)
@@ -398,7 +398,7 @@ def make_preservationxml(aip, workflow):
 
     # If saxon has an error, moves the AIP to an error folder and does not execute the rest of this function.
     if cleaned_output.stderr:
-        aip.log["PresXML"] = f"Issue when creating cleaned FITS XML. Saxon error: {cleaned_output.stderr.decode('utf-8')}"
+        aip.log["PresXML"] = f"Issue when creating cleaned-fits.xml. Saxon error: {cleaned_output.stderr.decode('utf-8')}"
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
         move_error('cleaned_fits_saxon_error', aip.id)
@@ -415,7 +415,7 @@ def make_preservationxml(aip, workflow):
 
     # If saxon has an error, moves the AIP to an error folder and does not execute the rest of this function.
     if pres_output.stderr:
-        aip.log["PresXML"] = f"Issue when creating Preservation XML. Saxon error: {pres_output.stderr.decode('utf-8')}"
+        aip.log["PresXML"] = f"Issue when creating preservation.xml. Saxon error: {pres_output.stderr.decode('utf-8')}"
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
         move_error('pres_xml_saxon_error', aip.id)
@@ -430,7 +430,7 @@ def make_preservationxml(aip, workflow):
     # This error happens if the preservation.xml file was not made in the expected location.
     # It will probably not happen now that the script tests for saxon errors, but leaving just in case.
     if 'failed to load' in validation_result:
-        aip.log["PresXML"] = f"Preservation.xml was not created. Validation error: {validation_result}"
+        aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
         move_error('preservationxml_not_found', aip.id)
@@ -481,7 +481,7 @@ def bag(aip):
         aip.log["BagValid"] = "Bag not valid (see log in AIP folder)"
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
-        move_error('bag_invalid', f'{aip.id}_bag')
+        move_error('bag_not_valid', f'{aip.id}_bag')
         with open(f"../errors/bag_invalid/{aip.id}_bag_validation.txt", "w") as validation_log:
             if errors.details:
                 for error_type in errors.details:
@@ -531,7 +531,7 @@ def package(aip):
     # If there is an error, saves the error to the log and does not complete the rest of the function for this AIP.
     # Cannot move it to an error folder because getting a permissions error.
     if operating_system == "Windows" and not tar_output.stderr == b'':
-        aip.log["Package"] = f"Could not tar: {tar_output.stderr}"
+        aip.log["Package"] = f"Could not tar. 7zip error: {tar_output.stderr.decode('utf-8')}"
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
         return

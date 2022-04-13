@@ -160,11 +160,8 @@ def check_configuration():
     except AttributeError:
         errors.append("GROUPS variable is missing from the configuration file.")
 
-    # If there were no errors, return the string "no errors". Otherwise, return the errors list.
-    if len(errors) == 0:
-        return "no errors"
-    else:
-        return errors
+    # Returns the errors list. If there were no errors, it will be empty.
+    return errors
 
 
 def check_metadata_csv(read_metadata):

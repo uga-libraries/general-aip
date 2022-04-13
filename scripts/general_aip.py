@@ -31,9 +31,7 @@ This script has been tested on Windows 10 and Mac OS X (10.9.5).
 import csv
 import os
 import sys
-
 import aip_functions as a
-import configuration as c
 
 # Verifies the script arguments are correct and calculates the associated variables.
 # If there are errors, ends the script.
@@ -52,10 +50,10 @@ os.chdir(AIPS_DIRECTORY)
 # Verifies all the variables from the configuration file are present and all the paths are valid.
 # If not, ends the script.
 configuration_errors = a.check_configuration()
-if not configuration_errors == "no errors":
+if len(configuration_errors) > 0:
     print('\nProblems detected with configuration.py:')
     for error in configuration_errors:
-        print(error)
+        print("   * " + error)
     print('\nCorrect the configuration file and run the script again. Use configuration_template.py as a model.')
     sys.exit()
 

@@ -39,10 +39,11 @@ import configuration as c
 # If there are errors, ends the script.
 AIPS_DIRECTORY, ZIP, aip_metadata_csv, argument_errors = a.check_arguments(sys.argv)
 if len(argument_errors) > 0:
-    print('The script cannot be run because of the following error(s):')
+    print('\nProblems detected with the provided script arguments:')
     for error in argument_errors:
-        print("* " + error)
-    print('\nScript usage: python "/path/general_aip.py" "/path/aips-directory" [no-zip]')
+        print("   * " + error)
+    print('\nScript usage: python "path/general_aip.py" "path/aips-directory" [no-zip]')
+    print("Correct the script arguments and run the script again.")
     sys.exit()
 
 # Makes the current directory the AIPs directory

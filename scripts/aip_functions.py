@@ -181,9 +181,10 @@ def check_metadata_csv(read_metadata):
     header = next(read_metadata)
     header_lowercase = [name.lower() for name in header]
     if header_lowercase != ['department', 'collection', 'folder', 'aip_id', 'title', 'version']:
-        errors.append(f"\nThe columns in the metadata.csv do not match the required values or order."
-                      f"\nRequired: Department, Collection, Folder, AIP_ID, Title, Version"
-                      f"\nCurrent:  {', '.join(header)}\n")
+        errors.append("The columns in the metadata.csv do not match the required values or order.")
+        errors.append("Required: Department, Collection, Folder, AIP_ID, Title, Version")
+        errors.append(f"Current:  {', '.join(header)}")
+        errors.append("Since the columns are not correct, did not check the column values.")
         return errors
 
     # Makes a list of all values in the department and folder columns to use for testing.

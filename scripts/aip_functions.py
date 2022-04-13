@@ -168,33 +168,41 @@ def check_configuration():
 
 
 def check_metadata_csv(read_metadata):
-    """Verifies that the columns are in the required order and that the AIP list in the CSV matches the folders in
-    the AIPs directory. Returns a list of errors or "no errors"."""
+    """Verifies that the columns are in the required order. If so, verifies that the departments match ARCHive group
+    codes and that the AIP list in the CSV matches the folders in the AIPs directory.
+
+    Returns a list of errors or an empty list if there are no errors. """
 
     # Starts a list for all encountered errors, so all errors can be checked before returning a result.
     errors = []
 
     # Does a case insensitive comparison of the CSV header row with the required values.
-    # If columns are not in the right order, it saves the error.
+    # If the header is not correct, returns the error and does not test the column values.
     header = next(read_metadata)
     header_lowercase = [name.lower() for name in header]
     if header_lowercase != ['department', 'collection', 'folder', 'aip_id', 'title', 'version']:
         errors.append(f"\nThe columns in the metadata.csv do not match the required values or order."
                       f"\nRequired: Department, Collection, Folder, AIP_ID, Title, Version"
                       f"\nCurrent:  {', '.join(header)}\n")
-
-    # Gets the index position of the folder in case the columns were out of order.
-    # If there is not a folder column, returns the errors and skips the rest of the function.
-    try:
-        folder_index = header_lowercase.index("folder")
-    except ValueError:
-        errors.append("No column for Folder in metadata.csv. Could not compare to AIPs directory.")
         return errors
 
-    # Makes a list of every folder name in the CSV.
-    csv_aip_list = []
+    # Makes a list of all values in the department and folder columns to use for testing.
+    csv_dept_list = []
+    csv_folder_list = []
     for row in read_metadata:
-        csv_aip_list.append(row[folder_index])
+        csv_dept_list.append(row[0])
+        csv_folder_list.append(row[2])
+
+    # Tests the values in the department column.
+    # Makes a list of unique values in the column, checks it against the ARCHive groups in the configuration file,
+    # and saves any that don't match to the errors list.
+    unique_departments = list(set(csv_dept_list))
+    unique_departments.sort()
+    for department in unique_departments:
+        if department not in c.GROUPS:
+            errors.append(f"{department} is not an ARCHive group.")
+
+    # The rest of the function tests the folder names.
 
     # Makes a list of every folder name in the AIPs directory.
     aips_directory_list = []
@@ -203,30 +211,29 @@ def check_metadata_csv(read_metadata):
             aips_directory_list.append(item)
 
     # Finds any folder names that are in the CSV more than once and adds them to the error list.
-    duplicates = [folder for folder in csv_aip_list if csv_aip_list.count(folder) > 1]
+    duplicates = [folder for folder in csv_folder_list if csv_folder_list.count(folder) > 1]
     if len(duplicates) > 0:
         unique_duplicates = list(set(duplicates))
         unique_duplicates.sort()
         for duplicate in unique_duplicates:
-            errors.append(f"{duplicate} is in the metadata.csv folder name column more than once.")
+            errors.append(f"{duplicate} is in the metadata.csv folder column more than once.")
 
     # Finds any AIPs that are only in the CSV and adds them to the error list.
-    just_csv = list(set(csv_aip_list) - set(aips_directory_list))
+    just_csv = list(set(csv_folder_list) - set(aips_directory_list))
     if len(just_csv) > 0:
+        just_csv.sort()
         for aip in just_csv:
             errors.append(f"{aip} is in metadata.csv and missing from the AIPs directory.")
 
     # Finds any AIPs that are only in the AIPs directory and adds them to the error list.
-    just_aip_dir = list(set(aips_directory_list) - set(csv_aip_list))
+    just_aip_dir = list(set(aips_directory_list) - set(csv_folder_list))
     if len(just_aip_dir) > 0:
+        just_aip_dir.sort()
         for aip in just_aip_dir:
             errors.append(f"{aip} is in the AIPs directory and missing from metadata.csv.")
 
-    # If there are any errors, returns the list. Otherwise, returns "no_errors"
-    if len(errors) > 0:
-        return errors
-    else:
-        return "no_errors"
+    # Returns the errors list. If there were no errors, it will be empty.
+    return errors
 
 
 def make_output_directories():

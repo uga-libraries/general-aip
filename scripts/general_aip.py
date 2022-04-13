@@ -62,13 +62,13 @@ if not configuration_errors == "no errors":
 open_metadata = open(aip_metadata_csv)
 read_metadata = csv.reader(open_metadata)
 
-# Verifies the metadata header row has the expected values and matches the folders in the AIPs directory.
-# If there is an error, ends the script.
+# Verifies the metadata header row has the expected values, departments are all ARCHive groups, and the folders match
+# what is in the AIPs directory. If there are an errors, ends the script.
 metadata_errors = a.check_metadata_csv(read_metadata)
-if not metadata_errors == "no_errors":
-    print('\nProblems detected with metadata.csv')
+if len(metadata_errors) > 0:
+    print('\nProblems detected with metadata.csv:')
     for error in metadata_errors:
-        print(error)
+        print("   * " + error)
     print('\nCorrect the metadata.csv and run the script again.')
     sys.exit()
 
@@ -102,16 +102,6 @@ for aip_row in read_metadata:
     # Updates the current AIP number and displays the script progress in the terminal.
     CURRENT_AIP += 1
     print(f'\n>>>Processing {aip.id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
-
-    # Verifies the department matches one of the required group codes. If not, starts the next AIP.
-    if aip.department not in c.GROUPS:
-        aip.log["Department"] = f"Error: '{aip.department}' is not an ARCHive group"
-        aip.log["Complete"] = "Error during processing"
-        a.log(aip.log)
-        a.move_error('department_not_group', aip.folder_name)
-        continue
-    else:
-        aip.log["Department"] = "Department is permitted"
 
     # Renames the folder to the AIP ID.
     os.replace(aip.folder_name, aip.id)

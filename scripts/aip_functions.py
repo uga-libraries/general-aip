@@ -392,18 +392,34 @@ def make_preservationxml(aip, workflow):
     combined_fits = f'{aip.id}/metadata/{aip.id}_combined-fits.xml'
     cleanup_stylesheet = f'{c.STYLESHEETS}/fits-cleanup.xsl'
     cleaned_fits = f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml'
-    subprocess.run(
+    cleaned_output = subprocess.run(
         f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
-        shell=True)
+        stderr=subprocess.PIPE, shell=True)
+
+    # If saxon has an error, moves the AIP to an error folder and does not execute the rest of this function.
+    if cleaned_output.stderr:
+        aip.log["PresXML"] = f"Issue when creating cleaned FITS XML. Saxon error: {cleaned_output.stderr.decode('utf-8')}"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        move_error('cleaned_fits_saxon_error', aip.id)
+        return
 
     # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
     stylesheet = f'{c.STYLESHEETS}/fits-to-preservation.xsl'
     preservation_xml = f'{aip.id}/metadata/{aip.id}_preservation.xml'
     arguments = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
                 f'department="{aip.department}" version={aip.version} workflow="{workflow}" ns={c.NAMESPACE}'
-    subprocess.run(
+    pres_output = subprocess.run(
         f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" {arguments}',
-        shell=True)
+        stderr=subprocess.PIPE, shell=True)
+
+    # If saxon has an error, moves the AIP to an error folder and does not execute the rest of this function.
+    if pres_output.stderr:
+        aip.log["PresXML"] = f"Issue when creating Preservation XML. Saxon error: {pres_output.stderr.decode('utf-8')}"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        move_error('pres_xml_saxon_error', aip.id)
+        return
 
     # Validates the preservation.xml file against the requirements of ARCHive.
     # If it is not valid, moves the AIP to an error folder and does not execute the rest of this function.
@@ -412,8 +428,9 @@ def make_preservationxml(aip, workflow):
     validation_result = validation.stderr.decode('utf-8')
 
     # This error happens if the preservation.xml file was not made in the expected location.
+    # It will probably not happen now that the script tests for saxon errors, but leaving just in case.
     if 'failed to load' in validation_result:
-        aip.log["PresXML"] = "Preservation.xml was not created"
+        aip.log["PresXML"] = f"Preservation.xml was not created. Validation error: {validation_result}"
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
         move_error('preservationxml_not_found', aip.id)

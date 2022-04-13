@@ -29,7 +29,6 @@ This script has been tested on Windows 10 and Mac OS X (10.9.5).
 """
 
 import csv
-import datetime
 import os
 import sys
 

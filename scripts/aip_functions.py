@@ -304,6 +304,7 @@ def structure_directory(aip):
     except FileExistsError:
         aip.log["MetadataError"] = "Metadata folder already exists in original files"
         aip.log["Complete"] = "Error during processing."
+        log(aip.log)
         move_error("metadata_folder_exists", aip.id)
         return
 

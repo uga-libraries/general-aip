@@ -372,7 +372,7 @@ def extract_metadata(aip):
                 tree = ET.parse(f'{aip.id}/metadata/{doc}')
                 root = tree.getroot()
                 combo_root.append(root)
-            # Errors: the file is empty, is not XML, has invalid XML, or has the wrong namespace.
+            # Errors: the file is empty, is not XML, or has invalid XML.
             # Moves the AIP to an error folder and does not execute the rest of this function.
             except ET.ParseError as error:
                 aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"

@@ -120,3 +120,26 @@ for aip_row in read_metadata:
             a.package(aip)
         if f'{aip.id}_bag' in os.listdir('.'):
             a.manifest(aip)
+
+    # Use the second AIP to catch if a metadata folder already exists.
+    if CURRENT_AIP == 2:
+
+        # Produce error: add a folder named objects to the aip folder.
+        os.mkdir(f"{aip.id}/metadata")
+
+        # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure (objects and metadata).
+        # Should give an error.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+
+        # Remaining workflow steps. Should not run.
+        if aip.id in os.listdir('.'):
+            a.extract_metadata(aip)
+        if aip.id in os.listdir('.'):
+            a.make_preservationxml(aip, 'general')
+        if aip.id in os.listdir('.'):
+            a.bag(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)

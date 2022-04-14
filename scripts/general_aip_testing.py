@@ -11,8 +11,91 @@ Prior to running the script:
 
 import csv
 import os
+import subprocess
 import sys
+import xml.etree.ElementTree as ET
 import aip_functions as a
+import configuration as c
+
+# ----------------------------------------------------------------------------------------
+# Different versions of AIP functions that produce the required errors for testing.
+# ----------------------------------------------------------------------------------------
+
+
+def extract_metadata_error(aip, error_type):
+    """Extracts technical metadata from the files in the objects folder using FITS and creates a single XML file that
+    combines the FITS output for every file in the AIP. For testing, produces an error with the FITS files before
+    trying to combine them. """
+
+    # Runs FITS on the files in the AIP's objects folder and saves the output to it's metadata folder.
+    # The FITS output is named with the original file name. If there is more than one file anywhere
+    # within the objects folder with the same name, FITS adds a number to the duplicates, for example:
+    # file.ext.fits.xml, file.ext-1.fits.xml, file.ext-2.fits.xml
+    fits_output = subprocess.run(
+        f'"{c.FITS}" -r -i "{aip.directory}/{aip.id}/objects" -o "{aip.directory}/{aip.id}/metadata"',
+        shell=True, stderr=subprocess.PIPE)
+
+    # If there were any tool error messages from FITS, saves those to a log in the AIP's metadata folder.
+    # Processing on the AIP continues, since typically other tools still work.
+    if fits_output.stderr:
+        with open(f"{aip.directory}/{aip.id}/metadata/{aip.id}_fits-tool-errors_fitserr.txt", "w") as fits_errors:
+            fits_errors.write(fits_output.stderr.decode('utf-8'))
+        aip.log["FITSTool"] = "FITs tools generated errors (saved to metadata folder)"
+    else:
+        aip.log["FITSTool"] = "No FITS tools errors"
+
+    # Renames the FITS output to the UGA Libraries' metadata naming convention (filename_fits.xml).
+    for item in os.listdir(f'{aip.id}/metadata'):
+        if item.endswith('.fits.xml'):
+            new_name = item.replace('.fits', '_fits')
+            os.rename(f'{aip.id}/metadata/{item}', f'{aip.id}/metadata/{new_name}')
+            # Edits the FITS output to produce the required error.
+            if error_type == "empty":
+                with open(f'{aip.id}/metadata/{new_name}', "w"):
+                    pass
+            elif error_type == "not-xml":
+                with open(f'{aip.id}/metadata/{new_name}', "w") as file:
+                    file.write("Replacement text.")
+            elif error_type == "not-valid":
+                with open(f'{aip.id}/metadata/{new_name}', "r") as file:
+                    data = file.read()
+                    data = data.replace('<identification>', '<id>')
+                with open(f'{aip.id}/metadata/{new_name}', "w") as file:
+                    file.write(data)
+
+    # The rest of this function copies the FITS output into a single XML file.
+
+    # Makes a new XML object with the root element named combined-fits.
+    combo_tree = ET.ElementTree(ET.Element('combined-fits'))
+    combo_root = combo_tree.getroot()
+
+    # Gets each of the FITS documents in the AIP's metadata folder.
+    for doc in os.listdir(f'{aip.id}/metadata'):
+        if doc.endswith('_fits.xml'):
+
+            # Makes Python aware of the FITS namespace.
+            ET.register_namespace('', "http://hul.harvard.edu/ois/xml/ns/fits/fits_output")
+
+            # Gets the FITS element and its children and makes it a child of the root, combined-fits.
+            try:
+                tree = ET.parse(f'{aip.id}/metadata/{doc}')
+                root = tree.getroot()
+                combo_root.append(root)
+            # Errors: the file is empty, is not XML, has invalid XML, or has the wrong namespace.
+            # Moves the AIP to an error folder and does not execute the rest of this function.
+            except ET.ParseError as error:
+                aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
+                aip.log["Complete"] = "Error during processing."
+                a.log(aip.log)
+                a.move_error('combining_fits', aip.id)
+                return
+
+    # Updates the log for any without errors during FITS combination.
+    aip.log["FITSError"] = "Successfully created combined-fits.xml"
+
+    # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
+    combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
+
 
 # ---------------------------------------------------------------------------------------
 # THIS PART OF THE SCRIPT IS FOR TESTING SCRIPT INPUTS AND IS IDENTICAL TO general_aip.py
@@ -135,6 +218,72 @@ for aip_row in read_metadata:
         # Remaining workflow steps. Should not run.
         if aip.id in os.listdir('.'):
             a.extract_metadata(aip)
+        if aip.id in os.listdir('.'):
+            a.make_preservationxml(aip, 'general')
+        if aip.id in os.listdir('.'):
+            a.bag(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)
+
+    # TEST 3: a FITS file is empty.
+    if CURRENT_AIP == 3:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+
+        # Using a different version of this function which produces the error.
+        # It is has an extra parameter for the error to make, since there are 4 possible errors to catch.
+        if aip.id in os.listdir('.'):
+            extract_metadata_error(aip, "empty")
+
+        # Remaining workflow steps. Should not run.
+        if aip.id in os.listdir('.'):
+            a.make_preservationxml(aip, 'general')
+        if aip.id in os.listdir('.'):
+            a.bag(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)
+
+    # TEST 4: a FITS file is not XML.
+    if CURRENT_AIP == 4:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+
+        # Using a different version of this function which produces the error.
+        # It is has an extra parameter for the error to make, since there are 4 possible errors to catch.
+        if aip.id in os.listdir('.'):
+            extract_metadata_error(aip, "not-xml")
+
+        # Remaining workflow steps. Should not run.
+        if aip.id in os.listdir('.'):
+            a.make_preservationxml(aip, 'general')
+        if aip.id in os.listdir('.'):
+            a.bag(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)
+
+    # TEST 5: a FITS file is not valid XML.
+    if CURRENT_AIP == 5:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+
+        # Using a different version of this function which produces the error.
+        # It is has an extra parameter for the error to make, since there are 4 possible errors to catch.
+        if aip.id in os.listdir('.'):
+            extract_metadata_error(aip, "not-valid")
+
+        # Remaining workflow steps. Should not run.
         if aip.id in os.listdir('.'):
             a.make_preservationxml(aip, 'general')
         if aip.id in os.listdir('.'):

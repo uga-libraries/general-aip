@@ -126,6 +126,8 @@ def make_preservationxml_error(aip, workflow, error_type):
 
     # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
     stylesheet = f'{c.STYLESHEETS}/fits-to-preservation.xsl'
+    if error_type == "pres-saxon":
+        stylesheet = f'{c.STYLESHEETS}/error.xsl'
     preservation_xml = f'{aip.id}/metadata/{aip.id}_preservation.xml'
     arguments = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
                 f'department="{aip.department}" version={aip.version} workflow="{workflow}" ns={c.NAMESPACE}'
@@ -391,6 +393,28 @@ for aip_row in read_metadata:
         # It is has an extra parameter for the error to make, since there are 4 possible errors to catch.
         if aip.id in os.listdir('.'):
             make_preservationxml_error(aip, 'general', 'cleaned-fits')
+
+        # Remaining workflow steps. Should not run.
+        if aip.id in os.listdir('.'):
+            a.bag(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)
+
+    # TEST 7: Saxon error while making preservation.xml.
+    if CURRENT_AIP == 7:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+        if aip.id in os.listdir('.'):
+            a.extract_metadata(aip)
+
+        # Using a different version of this function which produces the error.
+        # It is has an extra parameter for the error to make, since there are 4 possible errors to catch.
+        if aip.id in os.listdir('.'):
+            make_preservationxml_error(aip, 'general', 'pres-saxon')
 
         # Remaining workflow steps. Should not run.
         if aip.id in os.listdir('.'):

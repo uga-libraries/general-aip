@@ -98,7 +98,7 @@ for aip_row in read_metadata:
     # Deletes any temporary files and makes a log of each deleted file.
     a.delete_temp(aip)
 
-    # Use the first AIP to catch if an objects folder already exists.
+    # TEST 1: an objects folder already exists.
     if CURRENT_AIP == 1:
 
         # Produce error: add a folder named objects to the aip folder.
@@ -121,10 +121,10 @@ for aip_row in read_metadata:
         if f'{aip.id}_bag' in os.listdir('.'):
             a.manifest(aip)
 
-    # Use the second AIP to catch if a metadata folder already exists.
+    # TEST 2: a metadata folder already exists.
     if CURRENT_AIP == 2:
 
-        # Produce error: add a folder named objects to the aip folder.
+        # Produce error: add a folder named metadata to the aip folder.
         os.mkdir(f"{aip.id}/metadata")
 
         # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure (objects and metadata).

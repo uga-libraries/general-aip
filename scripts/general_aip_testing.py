@@ -10,7 +10,9 @@ Prior to running the script:
 # Script usage: python '/path/general_aip.py' '/path/aips_directory'
 
 import csv
+import datetime
 import os
+import shutil
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -95,6 +97,89 @@ def extract_metadata_error(aip, error_type):
 
     # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
     combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
+
+
+def make_preservationxml_error(aip, workflow, error_type):
+    """Creates PREMIS and Dublin Core metadata from the combined FITS XML and saves it as a file
+    named preservation.xml that meets the metadata requirements for the UGA Libraries' digital
+    preservation system (ARCHive). For testing, produces an error with the FITS files before
+    trying to combine them. """
+
+    # Makes a simplified version of the combined fits XML so the XML is easier to aggregate.
+    # Saves the file in the AIP's metadata folder. It is deleted at the end of the function.
+    combined_fits = f'{aip.id}/metadata/{aip.id}_combined-fits.xml'
+    cleanup_stylesheet = f'{c.STYLESHEETS}/fits-cleanup.xsl'
+    if error_type == "cleaned-fits":
+        cleanup_stylesheet = f'{c.STYLESHEETS}/error.xsl'
+    cleaned_fits = f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml'
+    cleaned_output = subprocess.run(
+        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
+        stderr=subprocess.PIPE, shell=True)
+
+    # If saxon has an error, moves the AIP to an error folder and does not execute the rest of this function.
+    if cleaned_output.stderr:
+        aip.log["PresXML"] = f"Issue when creating cleaned-fits.xml. Saxon error: {cleaned_output.stderr.decode('utf-8')}"
+        aip.log["Complete"] = "Error during processing."
+        a.log(aip.log)
+        a.move_error('cleaned_fits_saxon_error', aip.id)
+        return
+
+    # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
+    stylesheet = f'{c.STYLESHEETS}/fits-to-preservation.xsl'
+    preservation_xml = f'{aip.id}/metadata/{aip.id}_preservation.xml'
+    arguments = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
+                f'department="{aip.department}" version={aip.version} workflow="{workflow}" ns={c.NAMESPACE}'
+    pres_output = subprocess.run(
+        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" {arguments}',
+        stderr=subprocess.PIPE, shell=True)
+
+    # If saxon has an error, moves the AIP to an error folder and does not execute the rest of this function.
+    if pres_output.stderr:
+        aip.log["PresXML"] = f"Issue when creating preservation.xml. Saxon error: {pres_output.stderr.decode('utf-8')}"
+        aip.log["Complete"] = "Error during processing."
+        a.log(aip.log)
+        a.move_error('pres_xml_saxon_error', aip.id)
+        return
+
+    # Validates the preservation.xml file against the requirements of ARCHive.
+    # If it is not valid, moves the AIP to an error folder and does not execute the rest of this function.
+    validation = subprocess.run(f'xmllint --noout -schema "{c.STYLESHEETS}/preservation.xsd" "{preservation_xml}"',
+                                stderr=subprocess.PIPE, shell=True)
+    validation_result = validation.stderr.decode('utf-8')
+
+    # This error happens if the preservation.xml file was not made in the expected location.
+    # It will probably not happen now that the script tests for saxon errors, but leaving just in case.
+    if 'failed to load' in validation_result:
+        aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
+        aip.log["Complete"] = "Error during processing."
+        a.log(aip.log)
+        a.move_error('preservationxml_not_found', aip.id)
+        return
+    else:
+        aip.log["PresXML"] = "Successfully created preservation.xml"
+
+    # This error happens if the preservation.xml file does not meet the Libraries' requirements.
+    # The validation output is saved to a file in the error folder for review.
+    if 'fails to validate' in validation_result:
+        aip.log["PresValid"] = "Preservation.xml is not valid (see log in error folder)"
+        aip.log["Complete"] = "Error during processing."
+        a.log(aip.log)
+        a.move_error('preservationxml_not_valid', aip.id)
+        with open(f"../errors/preservationxml_not_valid/{aip.id}_presxml_validation.txt", "w") as validation_log:
+            for line in validation_result.split("\r"):
+                validation_log.write(line + "\n")
+        return
+    else:
+        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.datetime.now()}"
+
+    # Copies the preservation.xml file to the preservation-xml folder for staff reference.
+    shutil.copy2(f'{aip.id}/metadata/{aip.id}_preservation.xml', '../preservation-xml')
+
+    # Moves the combined-fits.xml file to the fits-xml folder for staff reference.
+    os.replace(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', f'../fits-xml/{aip.id}_combined-fits.xml')
+
+    # Deletes the cleaned-fits.xml file because it is a temporary file.
+    os.remove(f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml')
 
 
 # ---------------------------------------------------------------------------------------
@@ -286,6 +371,28 @@ for aip_row in read_metadata:
         # Remaining workflow steps. Should not run.
         if aip.id in os.listdir('.'):
             a.make_preservationxml(aip, 'general')
+        if aip.id in os.listdir('.'):
+            a.bag(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)
+
+    # TEST 6: Saxon error while making cleaned-fits.xml.
+    if CURRENT_AIP == 6:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+        if aip.id in os.listdir('.'):
+            a.extract_metadata(aip)
+
+        # Using a different version of this function which produces the error.
+        # It is has an extra parameter for the error to make, since there are 4 possible errors to catch.
+        if aip.id in os.listdir('.'):
+            make_preservationxml_error(aip, 'general', 'cleaned-fits')
+
+        # Remaining workflow steps. Should not run.
         if aip.id in os.listdir('.'):
             a.bag(aip)
         if f'{aip.id}_bag' in os.listdir('.'):

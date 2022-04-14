@@ -35,7 +35,7 @@ os.chdir(AIPS_DIRECTORY)
 # Verifies all the variables from the configuration file are present and all the paths are valid.
 # If not, ends the script.
 configuration_errors = a.check_configuration()
-if not configuration_errors == "no errors":
+if len(configuration_errors) > 0:
     print('\nProblems detected with configuration.py:')
     for error in configuration_errors:
         print(error)
@@ -49,7 +49,7 @@ read_metadata = csv.reader(open_metadata)
 # Verifies the metadata header row has the expected values and matches the folders in the AIPs directory.
 # If there is an error, ends the script.
 metadata_errors = a.check_metadata_csv(read_metadata)
-if not metadata_errors == "no_errors":
+if len(metadata_errors) > 0:
     print('\nProblems detected with metadata.csv')
     for error in metadata_errors:
         print(error)
@@ -91,3 +91,32 @@ for aip_row in read_metadata:
     # Updates the current AIP number and displays the script progress in the terminal.
     CURRENT_AIP += 1
     print(f'\n>>>Processing {aip.id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
+
+    # Renames the folder to the AIP ID.
+    os.replace(aip.folder_name, aip.id)
+
+    # Deletes any temporary files and makes a log of each deleted file.
+    a.delete_temp(aip)
+
+    # Use the first AIP to catch if an objects folder already exists.
+    if CURRENT_AIP == 1:
+
+        # Produce error: add a folder named objects to the aip folder.
+        os.mkdir(f"{aip.id}/objects")
+
+        # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure (objects and metadata).
+        # Should give an error.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+
+        # Remaining workflow steps. Should not run.
+        if aip.id in os.listdir('.'):
+            a.extract_metadata(aip)
+        if aip.id in os.listdir('.'):
+            a.make_preservationxml(aip, 'general')
+        if aip.id in os.listdir('.'):
+            a.bag(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)

@@ -262,6 +262,83 @@ def bag_error(aip, error_type):
     aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
 
 
+def package_error(aip):
+    """Tars and zips the AIP. Saves the resulting packaged AIP in the aips-to-ingest folder.
+    For error testing, there is an error in the 7zip command for making the tar."""
+
+    # Get operating system, since the tar and zip commands are different for Windows and Mac/Linux.
+    operating_system = sys.platform
+
+    # Makes a variable for the AIP folder name, which is reused a lot.
+    aip_bag = f'{aip.id}_bag'
+
+    # Gets the total size of the bag:
+    # sum of the bag payload (data folder) from bag-info.txt and the size of the bag metadata files.
+    # It saves time to use the bag payload instead of recalculating the size of a large data folder.
+    bag_size = 0
+    bag_info = open(f"{aip_bag}/bag-info.txt", "r")
+    for line in bag_info:
+        if line.startswith("Payload-Oxum"):
+            payload = line.split()[1]
+            bag_size += float(payload)
+    for file in os.listdir(aip_bag):
+        if file.endswith('.txt'):
+            bag_size += os.path.getsize(f"{aip_bag}/{file}")
+    bag_size = int(bag_size)
+
+    # Tars the file, using the command appropriate for the operating system.
+    # To make the error, giving the wrong name for the AIP bag to be tarred.
+    if operating_system == "win32":
+        # Does not print the progress to the terminal (stdout), which is a lot of text. [subprocess.DEVNULL]
+        tar_output = subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{aip_bag}.tar" "{aip.directory}/aip_error_bag"',
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, shell=True)
+    else:
+        subprocess.run(f'tar -cf "{aip_bag}.tar" "{aip_bag}"', shell=True)
+
+    # For Windows, checks for errors from 7z.
+    # If there is an error, saves the error to the log and does not complete the rest of the function for this AIP.
+    # Cannot move it to an error folder because getting a permissions error.
+    if operating_system == "win32" and not tar_output.stderr == b'':
+        aip.log["Package"] = f"Could not tar. 7zip error: {tar_output.stderr.decode('utf-8')}"
+        aip.log["Complete"] = "Error during processing."
+        a.log(aip.log)
+        return
+
+    # Renames the file to include the size.
+    os.replace(f'{aip_bag}.tar', f'{aip_bag}.{bag_size}.tar')
+
+    # Updates the size in the AIP object so it can be used by the manifest() function later.
+    aip.size = bag_size
+
+    # If the AIP should be zipped (if the value of to_zip is true),
+    # Zips (bz2) the tar file, using the command appropriate for the operating system.
+    if aip.to_zip is True:
+        if operating_system == "win32":
+            # Does not print the progress to the terminal (stdout), which is a lot of text.
+            subprocess.run(
+                f'"C:/Program Files/7-Zip/7z.exe" -tbzip2 a -aoa "{aip_bag}.{bag_size}.tar.bz2" "{aip_bag}.{bag_size}.tar"',
+                stdout=subprocess.DEVNULL, shell=True)
+        else:
+            subprocess.run(f'bzip2 "{aip_bag}.{bag_size}.tar"', shell=True)
+
+        # Deletes the tar version. Just want the tarred and zipped version.
+        # For Mac/Linux, the bzip2 command overwrites the tar file so this step is unnecessary.
+        if operating_system == "win32":
+            os.remove(f'{aip_bag}.{bag_size}.tar')
+
+        # Moves the tarred and zipped version to the aips-to-ingest folder.
+        path = os.path.join(f'../aips-to-ingest', f"{aip_bag}.{bag_size}.tar.bz2")
+        os.replace(f"{aip_bag}.{bag_size}.tar.bz2", path)
+
+    # If not zipping, moves the tarred version to the aips-to-ingest folder.
+    else:
+        path = os.path.join(f'../aips-to-ingest', f"{aip_bag}.{bag_size}.tar")
+        os.replace(f"{aip_bag}.{bag_size}.tar", path)
+
+    # Updates log with success.
+    aip.log["Package"] = "Successfully made package"
+
+
 # ---------------------------------------------------------------------------------------
 # THIS PART OF THE SCRIPT IS FOR TESTING SCRIPT INPUTS AND IS IDENTICAL TO general_aip.py
 # IT MAKES SURE THERE ARE NO SETUP ERRORS BEFORE BEGINNING TO TEST THE DESIRED ERRORS
@@ -631,5 +708,26 @@ for aip_row in read_metadata:
         # Remaining workflow steps. Should not run.
         if f'{aip.id}_bag' in os.listdir('.'):
             a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)
+
+    # TEST 14: tar file is not made.
+    if CURRENT_AIP == 14:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+        if aip.id in os.listdir('.'):
+            a.extract_metadata(aip)
+        if aip.id in os.listdir('.'):
+            a.make_preservationxml(aip, 'general')
+        if aip.id in os.listdir('.'):
+            a.bag(aip)
+
+        # Using a different version of this function which produces the error.
+        if f'{aip.id}_bag' in os.listdir('.'):
+            package_error(aip)
+
+        # Remaining workflow steps.
         if f'{aip.id}_bag' in os.listdir('.'):
             a.manifest(aip)

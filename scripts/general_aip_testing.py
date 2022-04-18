@@ -234,6 +234,12 @@ def bag_error(aip, error_type):
             file.write(data)
     elif error_type == "manifest-missing":
         os.remove(f"{aip.id}_bag/manifest-sha256.txt")
+    elif error_type == "fixity-changed":
+        with open(f'{aip.id}_bag/manifest-md5.txt', "r") as file:
+            data = file.read()
+            data = data.replace('db68a6da2e69c91a11ae4a6b66964f59', 'xxxxxxxxxxxxxxxxxxxxxxxxx')
+        with open(f'{aip.id}_bag/manifest-md5.txt', "w") as file:
+            file.write(data)
 
     # Validates the bag.
     # If it is not valid, saves the validation errors to the log, moves the AIP to an error folder.
@@ -599,6 +605,28 @@ for aip_row in read_metadata:
         # It is has an extra parameter for the error to make, since there multiple errors to catch.
         if aip.id in os.listdir('.'):
             bag_error(aip, "manifest-missing")
+
+        # Remaining workflow steps. Should not run.
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)
+
+    # TEST 13: bag is not valid because fixity for a file has changed.
+    if CURRENT_AIP == 13:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+        if aip.id in os.listdir('.'):
+            a.extract_metadata(aip)
+        if aip.id in os.listdir('.'):
+            a.make_preservationxml(aip, 'general')
+
+        # Using a different version of this function which produces the error.
+        # It is has an extra parameter for the error to make, since there multiple errors to catch.
+        if aip.id in os.listdir('.'):
+            bag_error(aip, "fixity-changed")
 
         # Remaining workflow steps. Should not run.
         if f'{aip.id}_bag' in os.listdir('.'):

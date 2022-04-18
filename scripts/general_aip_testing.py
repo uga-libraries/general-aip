@@ -29,8 +29,8 @@ import configuration as c
 
 def extract_metadata_error(aip, error_type):
     """Extracts technical metadata from the files in the objects folder using FITS and creates a single XML file that
-    combines the FITS output for every file in the AIP. For testing, produces an error with the FITS files before
-    trying to combine them. """
+    combines the FITS output for every file in the AIP. For testing, produces an error of the requested error type
+    before trying to combine the FITS XML into a single file."""
 
     # Runs FITS on the files in the AIP's objects folder and saves the output to it's metadata folder.
     # The FITS output is named with the original file name. If there is more than one file anywhere
@@ -54,13 +54,16 @@ def extract_metadata_error(aip, error_type):
         if item.endswith('.fits.xml'):
             new_name = item.replace('.fits', '_fits')
             os.rename(f'{aip.id}/metadata/{item}', f'{aip.id}/metadata/{new_name}')
-            # Edits the FITS output to produce the required error.
+            # Edits every fits.xml file to produce the required error.
+            # Replaces the file with a blank file.
             if error_type == "empty":
                 with open(f'{aip.id}/metadata/{new_name}', "w"):
                     pass
+            # Replaces the contents of the file file with a line of text so it is no longer xml.
             elif error_type == "not-xml":
                 with open(f'{aip.id}/metadata/{new_name}', "w") as file:
                     file.write("Replacement text.")
+            # Replaces one of the XML tags with a different name so it has no closing tag and is not valid xml.
             elif error_type == "not-valid":
                 with open(f'{aip.id}/metadata/{new_name}', "r") as file:
                     data = file.read()
@@ -105,13 +108,14 @@ def extract_metadata_error(aip, error_type):
 def make_preservationxml_error(aip, workflow, error_type):
     """Creates PREMIS and Dublin Core metadata from the combined FITS XML and saves it as a file
     named preservation.xml that meets the metadata requirements for the UGA Libraries' digital
-    preservation system (ARCHive). For testing, produces an error with the FITS files before
-    trying to combine them. """
+    preservation system (ARCHive). For testing, produces an error of the request type right before the step
+    which should catch the error. """
 
     # Makes a simplified version of the combined fits XML so the XML is easier to aggregate.
     # Saves the file in the AIP's metadata folder. It is deleted at the end of the function.
     combined_fits = f'{aip.id}/metadata/{aip.id}_combined-fits.xml'
     cleanup_stylesheet = f'{c.STYLESHEETS}/fits-cleanup.xsl'
+    # Changes the path of the stylesheet to a file that doesn't exist so cleaned_output contains an error.
     if error_type == "cleaned-fits":
         cleanup_stylesheet = f'{c.STYLESHEETS}/error.xsl'
     cleaned_fits = f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml'
@@ -129,6 +133,7 @@ def make_preservationxml_error(aip, workflow, error_type):
 
     # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
     stylesheet = f'{c.STYLESHEETS}/fits-to-preservation.xsl'
+    # Changes the path of the stylesheet to a file that doesn't exist so pres_output contains an error.
     if error_type == "pres-saxon":
         stylesheet = f'{c.STYLESHEETS}/error.xsl'
     preservation_xml = f'{aip.id}/metadata/{aip.id}_preservation.xml'
@@ -146,11 +151,13 @@ def make_preservationxml_error(aip, workflow, error_type):
         a.move_error('pres_xml_saxon_error', aip.id)
         return
 
+    # Deletes the preservation.xml file so the validation step has the failed to load error.
     if error_type == "pres-xmllint":
         os.remove(preservation_xml)
 
-    # Replaces text in the preservation.xml to create all the types of validation errors:
-    # Empty element, element that doesn't match controlled vocabulary, element that should not repeat, missing element.
+    # Replaces text in the preservation.xml so the validation step has the failed to validate error.
+    # Includes all validation error types: empty element, element that doesn't match controlled vocabulary,
+    # element that should not repeat, missing element.
     if error_type == "validation":
         with open(f'{aip.id}/metadata/{aip.id}_preservation.xml', "r") as file:
             data = file.read()

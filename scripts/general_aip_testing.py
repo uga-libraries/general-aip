@@ -146,6 +146,21 @@ def make_preservationxml_error(aip, workflow, error_type):
     if error_type == "pres-xmllint":
         os.remove(preservation_xml)
 
+    # Replaces text in the preservation.xml to create all the types of validation errors:
+    # Empty element, element that doesn't match controlled vocabulary, element that should not repeat, missing element.
+    if error_type == "validation":
+        with open(f'{aip.id}/metadata/{aip.id}_preservation.xml', "r") as file:
+            data = file.read()
+            data = data.replace('<dc:title>Test AIP 9</dc:title>', '<dc:title></dc:title>')
+            data = data.replace('<premis:objectCategory>file</premis:objectCategory>',
+                                '<premis:objectCategory>ERROR</premis:objectCategory>')
+            data = data.replace('<premis:size>11</premis:size>',
+                                '<premis:size>11</premis:size><premis:size>ERROR</premis:size>')
+            data = data.replace('<premis:relatedObjectIdentifierValue>rbrl-000</premis:relatedObjectIdentifierValue>',
+                                '')
+        with open(f'{aip.id}/metadata/{aip.id}_preservation.xml', "w") as file:
+            file.write(data)
+
     # Validates the preservation.xml file against the requirements of ARCHive.
     # If it is not valid, moves the AIP to an error folder and does not execute the rest of this function.
     validation = subprocess.run(f'xmllint --noout -schema "{c.STYLESHEETS}/preservation.xsd" "{preservation_xml}"',
@@ -449,3 +464,24 @@ for aip_row in read_metadata:
         if f'{aip.id}_bag' in os.listdir('.'):
             a.manifest(aip)
 
+    # TEST 9: preservation.xml is not valid.
+    if CURRENT_AIP == 9:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+        if aip.id in os.listdir('.'):
+            a.extract_metadata(aip)
+
+        # Using a different version of this function which produces the error.
+        # It is has an extra parameter for the error to make, since there are 4 possible errors to catch.
+        if aip.id in os.listdir('.'):
+            make_preservationxml_error(aip, 'general', 'validation')
+
+        # Remaining workflow steps. Should not run.
+        if aip.id in os.listdir('.'):
+            a.bag(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)

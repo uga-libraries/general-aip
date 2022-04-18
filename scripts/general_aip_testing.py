@@ -16,6 +16,9 @@ import shutil
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
+
+import bagit
+
 import aip_functions as a
 import configuration as c
 
@@ -200,6 +203,42 @@ def make_preservationxml_error(aip, workflow, error_type):
 
     # Deletes the cleaned-fits.xml file because it is a temporary file.
     os.remove(f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml')
+
+
+def bag_error(aip, error_type):
+    """Bags and validates the AIP. Adds _bag to the AIP folder name.
+    For testing, creates an error in the bag (determined by error_type) before validating."""
+
+    # Bags the AIP folder in place with md5 and sha256 checksums for extra security.
+    bagit.make_bag(aip.id, checksums=['md5', 'sha256'])
+
+    # Renames the AIP folder to add _bag to the end of the folder name.
+    new_aip_name = f'{aip.id}_bag'
+    os.replace(aip.id, new_aip_name)
+
+    # Produces the error indicated by error_type.
+    if error_type == "file-missing":
+        os.remove(f"{aip.id}_bag/data/metadata/{aip.id}_preservation.xml")
+
+    # Validates the bag.
+    # If it is not valid, saves the validation errors to the log, moves the AIP to an error folder.
+    new_bag = bagit.Bag(new_aip_name)
+    try:
+        new_bag.validate()
+    except bagit.BagValidationError as errors:
+        aip.log["BagValid"] = "Bag not valid (see log in AIP folder)"
+        aip.log["Complete"] = "Error during processing."
+        a.log(aip.log)
+        a.move_error('bag_not_valid', f'{aip.id}_bag')
+        with open(f"../errors/bag_not_valid/{aip.id}_bag_validation.txt", "w") as validation_log:
+            if errors.details:
+                for error_type in errors.details:
+                    validation_log.write(str(error_type) + "\n")
+            else:
+                validation_log.write(str(errors))
+        return
+
+    aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
 
 
 # ---------------------------------------------------------------------------------------
@@ -481,6 +520,28 @@ for aip_row in read_metadata:
         # Remaining workflow steps. Should not run.
         if aip.id in os.listdir('.'):
             a.bag(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)
+
+    # TEST 10: bag is not valid because a file has been deleted.
+    if CURRENT_AIP == 10:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+        if aip.id in os.listdir('.'):
+            a.extract_metadata(aip)
+        if aip.id in os.listdir('.'):
+            a.make_preservationxml(aip, 'general')
+
+        # Using a different version of this function which produces the error.
+        # It is has an extra parameter for the error to make, since there multiple errors to catch.
+        if aip.id in os.listdir('.'):
+            bag_error(aip, "file-missing")
+
+        # Remaining workflow steps. Should not run.
         if f'{aip.id}_bag' in os.listdir('.'):
             a.package(aip)
         if f'{aip.id}_bag' in os.listdir('.'):

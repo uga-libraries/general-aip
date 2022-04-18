@@ -226,6 +226,12 @@ def bag_error(aip, error_type):
     # Produces the error indicated by error_type.
     if error_type == "file-missing":
         os.remove(f"{aip.id}_bag/data/metadata/{aip.id}_preservation.xml")
+    elif error_type == "file-changed":
+        with open(f'{aip.id}_bag/data/metadata/{aip.id}_preservation.xml', "r") as file:
+            data = file.read()
+            data = data.replace('<premis:size>11</premis:size>', '<premis:size>10</premis:size>')
+        with open(f'{aip.id}_bag/data/metadata/{aip.id}_preservation.xml', "w") as file:
+            file.write(data)
 
     # Validates the bag.
     # If it is not valid, saves the validation errors to the log, moves the AIP to an error folder.
@@ -547,6 +553,28 @@ for aip_row in read_metadata:
         # It is has an extra parameter for the error to make, since there multiple errors to catch.
         if aip.id in os.listdir('.'):
             bag_error(aip, "file-missing")
+
+        # Remaining workflow steps. Should not run.
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.manifest(aip)
+
+    # TEST 11: bag is not valid because a file has been changed.
+    if CURRENT_AIP == 11:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+        if aip.id in os.listdir('.'):
+            a.extract_metadata(aip)
+        if aip.id in os.listdir('.'):
+            a.make_preservationxml(aip, 'general')
+
+        # Using a different version of this function which produces the error.
+        # It is has an extra parameter for the error to make, since there multiple errors to catch.
+        if aip.id in os.listdir('.'):
+            bag_error(aip, "file-changed")
 
         # Remaining workflow steps. Should not run.
         if f'{aip.id}_bag' in os.listdir('.'):

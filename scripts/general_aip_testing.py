@@ -12,6 +12,7 @@ Prior to running the script:
 import csv
 import datetime
 import os
+import platform
 import shutil
 import subprocess
 import sys
@@ -267,7 +268,7 @@ def package_error(aip):
     For error testing, there is an error in the 7zip command for making the tar."""
 
     # Get operating system, since the tar and zip commands are different for Windows and Mac/Linux.
-    operating_system = sys.platform
+    operating_system = platform.system()
 
     # Makes a variable for the AIP folder name, which is reused a lot.
     aip_bag = f'{aip.id}_bag'
@@ -288,7 +289,7 @@ def package_error(aip):
 
     # Tars the file, using the command appropriate for the operating system.
     # To make the error, giving the wrong name for the AIP bag to be tarred.
-    if operating_system == "win32":
+    if operating_system == "Windows":
         # Does not print the progress to the terminal (stdout), which is a lot of text. [subprocess.DEVNULL]
         tar_output = subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{aip_bag}.tar" "{aip.directory}/aip_error_bag"',
                                     stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, shell=True)
@@ -298,7 +299,7 @@ def package_error(aip):
     # For Windows, checks for errors from 7z.
     # If there is an error, saves the error to the log and does not complete the rest of the function for this AIP.
     # Cannot move it to an error folder because getting a permissions error.
-    if operating_system == "win32" and not tar_output.stderr == b'':
+    if operating_system == "Windows" and not tar_output.stderr == b'':
         aip.log["Package"] = f"Could not tar. 7zip error: {tar_output.stderr.decode('utf-8')}"
         aip.log["Complete"] = "Error during processing."
         a.log(aip.log)
@@ -313,7 +314,7 @@ def package_error(aip):
     # If the AIP should be zipped (if the value of to_zip is true),
     # Zips (bz2) the tar file, using the command appropriate for the operating system.
     if aip.to_zip is True:
-        if operating_system == "win32":
+        if operating_system == "Windows":
             # Does not print the progress to the terminal (stdout), which is a lot of text.
             subprocess.run(
                 f'"C:/Program Files/7-Zip/7z.exe" -tbzip2 a -aoa "{aip_bag}.{bag_size}.tar.bz2" "{aip_bag}.{bag_size}.tar"',
@@ -323,7 +324,7 @@ def package_error(aip):
 
         # Deletes the tar version. Just want the tarred and zipped version.
         # For Mac/Linux, the bzip2 command overwrites the tar file so this step is unnecessary.
-        if operating_system == "win32":
+        if operating_system == "Windows":
             os.remove(f'{aip_bag}.{bag_size}.tar')
 
         # Moves the tarred and zipped version to the aips-to-ingest folder.

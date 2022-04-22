@@ -29,7 +29,8 @@ class AIP:
         self.size = None
         self.log = {"Started": datetime.datetime.now(), "AIP": self.id, "Department": "n/a", "Deletions": "n/a",
                     "ObjectsError": "n/a", "MetadataError": "n/a", "FITSTool": "n/a", "FITSError": "n/a",
-                    "PresXML": "n/a", "PresValid": "n/a", "BagValid": "n/a", "Package": "n/a", "Complete": "n/a"}
+                    "PresXML": "n/a", "PresValid": "n/a", "BagValid": "n/a", "Package": "n/a", "Manifest": "n/a",
+                    "Complete": "n/a"}
 
 
 def log(log_data):
@@ -42,14 +43,15 @@ def log(log_data):
     if log_data == "header":
         log_row = ["Time Started", "AIP ID", "Department Correct", "Files Deleted", "Objects Folder",
                    "Metadata Folder", "FITS Tool Errors", "FITS Combination Errors", "Preservation.xml Made",
-                   "Preservation.xml Valid", "Bag Valid", "Package Errors", "Processing Complete"]
+                   "Preservation.xml Valid", "Bag Valid", "Package Errors", "Manifest Errors", "Processing Complete"]
+
     # In all other cases, log_data is a dictionary, with one key per column in the log.
     # Gets the value of each key in the desired order and adds to a list for saving to the log.
     else:
         log_row = [log_data["Started"], log_data["AIP"], log_data["Department"], log_data["Deletions"],
                    log_data["ObjectsError"], log_data["MetadataError"], log_data["FITSTool"], log_data["FITSError"],
                    log_data["PresXML"], log_data["PresValid"], log_data["BagValid"], log_data["Package"],
-                   log_data["Complete"]]
+                   log_data["Manifest"], log_data["Complete"]]
 
     # Saves the data for the row to the log CSV.
     with open('../general_aip_script_log.csv', 'a', newline='') as log_file:
@@ -598,7 +600,15 @@ def manifest(aip):
         return
 
     # Calculates the MD5 of the packaged AIP.
-    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"', stdout=subprocess.PIPE, shell=True)
+    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+    # If md5deep has an error, does not execute the rest of this function.
+    if md5deep_output.stderr:
+        aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {md5deep_output.stderr.decode('utf-8')}"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        return
 
     # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.
     # Initial output of md5deep is b'md5_value  filename.ext\r\n'

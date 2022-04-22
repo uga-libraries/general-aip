@@ -300,7 +300,7 @@ def package_error(aip):
     # If there is an error, saves the error to the log and does not complete the rest of the function for this AIP.
     # Cannot move it to an error folder because getting a permissions error.
     if operating_system == "Windows" and not tar_output.stderr == b'':
-        aip.log["Package"] = f"Could not tar. 7zip error: {tar_output.stderr.decode('utf-8')}"
+        aip.log["Package"] = f"Could not tar. 7zip error: {tar_output.stderr.decode('utf-8').strip()}"
         aip.log["Complete"] = "Error during processing."
         a.log(aip.log)
         return
@@ -364,8 +364,21 @@ def manifest_error(aip, error_type):
             a.log(aip.log)
         return
 
+    # For error testing, changes the AIP path.
+    if error_type == "md5deep":
+        aip_path = "../aips-to-ingest/error_bag.size.tar.bz2"
+
     # Calculates the MD5 of the packaged AIP.
-    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"', stdout=subprocess.PIPE, shell=True)
+    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+    # If md5deep has an error, does not execute the rest of this function.
+    if md5deep_output.stderr:
+        aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {md5deep_output.stderr.decode('utf-8')}"
+        aip.log["Complete"] = "Error during processing."
+        a.log(aip.log)
+        a.move_error('md5deep_error', aip.id)
+        return
 
     # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.
     # Initial output of md5deep is b'md5_value  filename.ext\r\n'
@@ -790,3 +803,22 @@ for aip_row in read_metadata:
         # Using a different version of this function which produces the error.
         if f'{aip.id}_bag' in os.listdir('.'):
             manifest_error(aip, "missing")
+
+    # TEST 16: md5deep gives an error when calculating the MD5.
+    if CURRENT_AIP == 16:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+        if aip.id in os.listdir('.'):
+            a.extract_metadata(aip)
+        if aip.id in os.listdir('.'):
+            a.make_preservationxml(aip, 'general')
+        if aip.id in os.listdir('.'):
+            a.bag(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+
+        # Using a different version of this function which produces the error.
+        if f'{aip.id}_bag' in os.listdir('.'):
+            manifest_error(aip, "md5deep")

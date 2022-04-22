@@ -340,6 +340,45 @@ def package_error(aip):
     aip.log["Package"] = "Successfully made package"
 
 
+def manifest_error(aip, error_type):
+    """Uses md5deep to calculate the MD5 for the AIP and adds it to the manifest for that department
+    in the aips-to-ingest folder. Each department has a separate manifest so AIPs for multiple departments
+    may be created simultaneously. For testing, creates an error determined by error_type."""
+
+    # Makes the path to the packaged AIP, which is different depending on if it is zipped or not.
+    aip_path = os.path.join(f"../aips-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
+    if aip.to_zip is True:
+        aip_path = aip_path + ".bz2"
+
+    # For error testing, deletes the AIP from aips-to-ingest.
+    if error_type == "missing":
+        os.remove(aip_path)
+
+    # Checks if the tar/zip is present in the aips-to-ingest directory.
+    # If it isn't, due to errors from package(), does not complete the rest of the function.
+    # The error should probably be in the log from package(), but adds it if not.
+    if not os.path.exists(aip_path):
+        if not aip.log["Package"].startswith("Could not tar."):
+            aip.log["Package"] = "Tar/zip file not in aips-to-ingest folder."
+            aip.log["Complete"] = "Error during processing."
+            a.log(aip.log)
+        return
+
+    # Calculates the MD5 of the packaged AIP.
+    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"', stdout=subprocess.PIPE, shell=True)
+
+    # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.
+    # Initial output of md5deep is b'md5_value  filename.ext\r\n'
+    # Converts to a string and remove the \r linebreak to format the manifest text file as required by ARCHive.
+    manifest_path = os.path.join(f"../aips-to-ingest", f"manifest_{aip.department}.txt")
+    with open(manifest_path, 'a', encoding='utf-8') as manifest_file:
+        manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
+
+    # This is the last step, so logs that the AIP completed successfully.
+    aip.log["Complete"] = "Successfully completed processing"
+    a.log(aip.log)
+
+
 # ---------------------------------------------------------------------------------------
 # THIS PART OF THE SCRIPT IS FOR TESTING SCRIPT INPUTS AND IS IDENTICAL TO general_aip.py
 # IT MAKES SURE THERE ARE NO SETUP ERRORS BEFORE BEGINNING TO TEST THE DESIRED ERRORS
@@ -732,3 +771,22 @@ for aip_row in read_metadata:
         # Remaining workflow steps.
         if f'{aip.id}_bag' in os.listdir('.'):
             a.manifest(aip)
+
+    # TEST 15: tar/zip file is not in aips-to-ingest.
+    if CURRENT_AIP == 15:
+
+        # Start of workflow. Should run correctly.
+        if aip.id in os.listdir('.'):
+            a.structure_directory(aip)
+        if aip.id in os.listdir('.'):
+            a.extract_metadata(aip)
+        if aip.id in os.listdir('.'):
+            a.make_preservationxml(aip, 'general')
+        if aip.id in os.listdir('.'):
+            a.bag(aip)
+        if f'{aip.id}_bag' in os.listdir('.'):
+            a.package(aip)
+
+        # Using a different version of this function which produces the error.
+        if f'{aip.id}_bag' in os.listdir('.'):
+            manifest_error(aip, "missing")

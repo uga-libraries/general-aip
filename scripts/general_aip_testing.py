@@ -165,9 +165,9 @@ def make_preservationxml_error(aip, workflow, error_type):
             data = data.replace('<dc:title>Test AIP 9</dc:title>', '<dc:title></dc:title>')
             data = data.replace('<premis:objectCategory>file</premis:objectCategory>',
                                 '<premis:objectCategory>ERROR</premis:objectCategory>')
-            data = data.replace('<premis:size>11</premis:size>',
-                                '<premis:size>11</premis:size><premis:size>ERROR</premis:size>')
-            data = data.replace('<premis:relatedObjectIdentifierValue>rbrl-000</premis:relatedObjectIdentifierValue>',
+            data = data.replace('<premis:size>10</premis:size>',
+                                '<premis:size>10</premis:size><premis:size>ERROR</premis:size>')
+            data = data.replace('<premis:relatedObjectIdentifierValue>999</premis:relatedObjectIdentifierValue>',
                                 '')
         with open(f'{aip.id}/metadata/{aip.id}_preservation.xml', "w") as file:
             file.write(data)
@@ -230,7 +230,7 @@ def bag_error(aip, error_type):
     elif error_type == "file-changed":
         with open(f'{aip.id}_bag/data/metadata/{aip.id}_preservation.xml', "r") as file:
             data = file.read()
-            data = data.replace('<premis:size>11</premis:size>', '<premis:size>10</premis:size>')
+            data = data.replace('<premis:size>10</premis:size>', '<premis:size>9</premis:size>')
         with open(f'{aip.id}_bag/data/metadata/{aip.id}_preservation.xml', "w") as file:
             file.write(data)
     elif error_type == "manifest-missing":
@@ -238,7 +238,7 @@ def bag_error(aip, error_type):
     elif error_type == "fixity-changed":
         with open(f'{aip.id}_bag/manifest-md5.txt', "r") as file:
             data = file.read()
-            data = data.replace('db68a6da2e69c91a11ae4a6b66964f59', 'xxxxxxxxxxxxxxxxxxxxxxxxx')
+            data = data.replace('d0fafe5fe3e8544b9d3bb644cf180a38', 'xxxxxxxxxxxxxxxxxxxxxxxxx')
         with open(f'{aip.id}_bag/manifest-md5.txt', "w") as file:
             file.write(data)
 

@@ -589,8 +589,12 @@ def manifest(aip):
 
     # Checks if the tar/zip is present in the aips-to-ingest directory.
     # If it isn't, due to errors from package(), does not complete the rest of the function.
-    # The error should already be in the log from package() but not currently able to move the bag to an error folder.
+    # The error should probably be in the log from package(), but adds it if not.
     if not os.path.exists(aip_path):
+        if not aip.log["Package"].startswith("Could not tar."):
+            aip.log["Package"] = "Tar/zip file not in aips-to-ingest folder."
+            aip.log["Complete"] = "Error during processing."
+            log(aip.log)
         return
 
     # Calculates the MD5 of the packaged AIP.

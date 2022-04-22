@@ -377,7 +377,6 @@ def manifest_error(aip, error_type):
         aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {md5deep_output.stderr.decode('utf-8')}"
         aip.log["Complete"] = "Error during processing."
         a.log(aip.log)
-        a.move_error('md5deep_error', aip.id)
         return
 
     # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.
@@ -393,14 +392,16 @@ def manifest_error(aip, error_type):
 
 
 # ---------------------------------------------------------------------------------------
-# THIS PART OF THE SCRIPT IS FOR TESTING SCRIPT INPUTS AND IS IDENTICAL TO general_aip.py
-# IT MAKES SURE THERE ARE NO SETUP ERRORS BEFORE BEGINNING TO TEST THE DESIRED ERRORS
+# THIS PART OF THE SCRIPT IS FOR TESTING SCRIPT INPUTS AND IS IDENTICAL TO general_aip.py,
+# EXCEPT FOR WHERE IT MAKES THE TEST FILES.
+# THESE STEPS MAKE SURE THERE ARE NO SETUP ERRORS BEFORE BEGINNING THE ERROR TESTS.
 # ---------------------------------------------------------------------------------------
 
 # Verifies the script arguments are correct and calculates the associated variables.
 # If there are errors, ends the script.
+# For testing, continues if aip_metadata_csv not assigned, since script makes that later.
 AIPS_DIRECTORY, ZIP, aip_metadata_csv, argument_errors = a.check_arguments(sys.argv)
-if len(argument_errors) > 0:
+if len(argument_errors) > 0 and not argument_errors == ["Missing the required file metadata.csv in the AIPs directory."]:
     print('The script cannot be run because of the following error(s):')
     for error in argument_errors:
         print("* " + error)
@@ -419,6 +420,22 @@ if len(configuration_errors) > 0:
         print(error)
     print('\nCorrect the configuration file and run the script again. Use configuration_template.py as a model.')
     sys.exit()
+
+# Makes the test files and the manifest.csv file in the AIPs directory.
+# Each AIP folder contains a single text file.
+for number in range(1, 17):
+    folder = f"Folder {number}"
+    os.mkdir(folder)
+    with open(f"{folder}/file_{number}.txt", "w") as file:
+        file.write("Test file.")
+    with open("metadata.csv", "a", newline="") as metadata_file:
+        metadata_writer = csv.writer(metadata_file)
+        if number == 1:
+            metadata_writer.writerow(["Department", "Collection", "Folder", "AIP_ID", "Title", "Version"])
+        metadata_writer.writerow(["test", "999", folder, f"test-999-er-{format(number, '06d')}", f"Test AIP {number}", 1])
+
+# For testing, makes the metadata_csv variable. In usual script, this is made by check_arguments().
+aip_metadata_csv = os.path.join(AIPS_DIRECTORY, "metadata.csv")
 
 # Reads the CSV with the AIP metadata.
 open_metadata = open(aip_metadata_csv)

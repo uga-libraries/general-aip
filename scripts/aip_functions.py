@@ -617,6 +617,9 @@ def manifest(aip):
     with open(manifest_path, 'a', encoding='utf-8') as manifest_file:
         manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
 
+    # Logs the success of adding to the manifest.
+    aip.log["Manifest"] = "Successfully added AIP to manifest."
+    
     # This is the last step, so logs that the AIP completed successfully.
     aip.log["Complete"] = "Successfully completed processing"
     log(aip.log)

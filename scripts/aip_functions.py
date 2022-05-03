@@ -27,7 +27,7 @@ class AIP:
         self.version = version
         self.to_zip = to_zip
         self.size = None
-        self.log = {"Started": datetime.datetime.now(), "AIP": self.id, "Department": "n/a", "Deletions": "n/a",
+        self.log = {"Started": datetime.datetime.now(), "AIP": self.id, "Deletions": "n/a",
                     "ObjectsError": "n/a", "MetadataError": "n/a", "FITSTool": "n/a", "FITSError": "n/a",
                     "PresXML": "n/a", "PresValid": "n/a", "BagValid": "n/a", "Package": "n/a", "Manifest": "n/a",
                     "Complete": "n/a"}
@@ -41,14 +41,14 @@ def log(log_data):
     # Formats the data for this row in the log CSV as a list.
     # For the header, uses default values.
     if log_data == "header":
-        log_row = ["Time Started", "AIP ID", "Department Correct", "Files Deleted", "Objects Folder",
+        log_row = ["Time Started", "AIP ID", "Files Deleted", "Objects Folder",
                    "Metadata Folder", "FITS Tool Errors", "FITS Combination Errors", "Preservation.xml Made",
                    "Preservation.xml Valid", "Bag Valid", "Package Errors", "Manifest Errors", "Processing Complete"]
 
     # In all other cases, log_data is a dictionary, with one key per column in the log.
     # Gets the value of each key in the desired order and adds to a list for saving to the log.
     else:
-        log_row = [log_data["Started"], log_data["AIP"], log_data["Department"], log_data["Deletions"],
+        log_row = [log_data["Started"], log_data["AIP"], log_data["Deletions"],
                    log_data["ObjectsError"], log_data["MetadataError"], log_data["FITSTool"], log_data["FITSError"],
                    log_data["PresXML"], log_data["PresValid"], log_data["BagValid"], log_data["Package"],
                    log_data["Manifest"], log_data["Complete"]]

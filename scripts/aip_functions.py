@@ -54,7 +54,7 @@ def log(log_data):
                    log_data["Manifest"], log_data["Complete"]]
 
     # Saves the data for the row to the log CSV.
-    with open('../general_aip_script_log.csv', 'a', newline='') as log_file:
+    with open('../aip_log.csv', 'a', newline='') as log_file:
         log_writer = csv.writer(log_file)
         log_writer.writerow(log_row)
 

@@ -87,6 +87,13 @@
                 </xsl:matching-substring>
             </xsl:analyze-string>
         </xsl:if>
+        <xsl:if test="$department='magil'">
+            <xsl:analyze-string select="fileinfo/filepath" regex="magil-ggp-\d+-\d{{4}}-\d{{2}}.*">
+                <xsl:matching-substring>
+                    <xsl:value-of select="." />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
+        </xsl:if>
         <xsl:if test="$department='emory'">
             <xsl:analyze-string select="fileinfo/filepath" regex="emory_[a-z]{{2}}_\d{{2,4}}_\d{{2,4}}.*">
                 <xsl:matching-substring>

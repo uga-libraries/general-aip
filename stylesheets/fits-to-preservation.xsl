@@ -299,8 +299,9 @@
     
     <!--aip relationship to collection: PREMIS 1.13 (required if applicable).-->
     <xsl:template name="relationship-collection">
-        <!--Does not include the default number for Hargrett web archives aips without a related collection.-->
-        <xsl:if test="not($collection-id='0000')">
+        <!--Does not include the default number for web archives aips without a related collection.-->
+        <!--The original formatting is 0000 but if the input spreadsheet is opened in Excel, it is converted to 0.-->
+        <xsl:if test="not($collection-id='0000' or $collection-id='0')">
             <premis:relationship>
                 <premis:relationshipType>structural</premis:relationshipType>
                 <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>

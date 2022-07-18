@@ -29,9 +29,6 @@
                     <premis:objectCharacteristics>
                         <xsl:call-template name="aip-size" />
                         <xsl:call-template name="aip-unique-formats-list" />
-                        <xsl:if test="$workflow='website'">
-                            <xsl:call-template name="warc" />
-                        </xsl:if>
                         <xsl:call-template name="aip-unique-creating-application-list" />
                         <xsl:call-template name="aip-unique-inhibitors-list" />
                     </premis:objectCharacteristics>
@@ -56,14 +53,12 @@
 <!--..................................................................................................-->
     
     <!--Several values are given as arguments when running the xslt via the command line or script.-->
-    <!--The workflow type is an optional argument used to run additional code for websites.-->
     <!--The ns argument is the namespace for the unique identifiers.-->
     <xsl:param name="collection-id" required="yes" />
     <xsl:param name="aip-id" required="yes" />
     <xsl:param name="aip-title" required="yes" />
     <xsl:param name="department" required="yes" />
     <xsl:param name="version" required="yes" />
-    <xsl:param name="workflow" />
     <xsl:param name="ns" required="yes" />
     
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
@@ -226,22 +221,6 @@
             </premis:format>
         </xsl:for-each-group>
     </xsl:template>
-
-
-    <!--For websites, adds warc identification because FITs is only identifying as gzip. -->
-    <xsl:template name="warc">
-        <premis:format>
-            <premis:formatDesignation>
-                <premis:formatName>WARC</premis:formatName>
-            </premis:formatDesignation>
-            <premis:formatRegistry>
-                <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
-                <premis:formatRegistryKey>fmt/289</premis:formatRegistryKey>
-                    <premis:formatRegistryRole>specification</premis:formatRegistryRole>
-            </premis:formatRegistry>
-            <premis:formatNote>File was downloaded from Archive-It.org. According to their policies, it is a WARC.</premis:formatNote>
-        </premis:format>
-    </xsl:template>
     
     
     <!--aip creating application list: PREMIS 1.5.5 (optional): gets a unique list of applications.-->
@@ -356,9 +335,6 @@ multiple possible formats or multiple possible created dates) all possible infor
                 <xsl:apply-templates select="fileinfo/md5checksum" />
                 <xsl:apply-templates select="fileinfo/size" />
                 <xsl:apply-templates select="identification/identity" />
-                <xsl:if test="$workflow='website'">
-                    <xsl:call-template name="warc" />
-                </xsl:if>
                 <xsl:apply-templates select="fileinfo/creatingApplication[string()]" />
                 <xsl:apply-templates select="fileinfo/inhibitor[inhibitorType]" />
             </premis:objectCharacteristics>

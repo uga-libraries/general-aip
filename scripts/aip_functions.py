@@ -390,7 +390,7 @@ def extract_metadata(aip):
     combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
 
 
-def make_preservationxml(aip, workflow):
+def make_preservationxml(aip):
     """Creates PREMIS and Dublin Core metadata from the combined FITS XML and saves it as a file
     named preservation.xml that meets the metadata requirements for the UGA Libraries' digital
     preservation system (ARCHive)."""
@@ -416,7 +416,7 @@ def make_preservationxml(aip, workflow):
     stylesheet = f'{c.STYLESHEETS}/fits-to-preservation.xsl'
     preservation_xml = f'{aip.id}/metadata/{aip.id}_preservation.xml'
     arguments = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
-                f'department="{aip.department}" version={aip.version} workflow="{workflow}" ns={c.NAMESPACE}'
+                f'department="{aip.department}" version={aip.version} ns={c.NAMESPACE}'
     pres_output = subprocess.run(
         f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" {arguments}',
         stderr=subprocess.PIPE, shell=True)

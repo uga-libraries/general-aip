@@ -21,12 +21,34 @@
 
     
     <!--Creates identity element and makes the order of the children elements consistent-->
-    <!--If there are versions, makes one identity element per version-->
+    <!--If there are multiple versions, makes one identity element per version-->
     <!--Known issue: if no identity elements have an @format value, get an empty identification element.-->
     <xsl:template match="identification/identity">
         <!--Will not make an identity element if the format does not have a name.-->
         <xsl:if test="@format !=''">
+            <!--Extract the file extension from the element filename to use for testing if an identification should be included. -->
+            <xsl:variable name="extension">
+                <xsl:analyze-string select="//fileinfo/filename" regex="\.([^.]+)$">
+                    <xsl:matching-substring>
+                        <xsl:value-of select="regex-group(1)" />
+                    </xsl:matching-substring>
+                </xsl:analyze-string>
+            </xsl:variable>
+            <!--Will not make an identity element if the format is known to be incorrect (using empty when element).-->
             <xsl:choose>
+				<!--When a file is a WARC based on identity and file extension, the HTML identification is incorrect.-->
+				<xsl:when test="@format='Hypertext Markup Language' and //identity[@format='WARC'] and $extension='warc'"/>
+				<xsl:otherwise>
+                    <xsl:call-template name="identity-reorg" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:if>
+    </xsl:template>
+
+
+    <!--Reorganizes the information about each identity, including making multiple identities if there is more than one version.-->
+    <xsl:template name="identity-reorg">
+    	    <xsl:choose>
 
                 <!--If at least one identity has a version, reorganizes into one identity per version.-->
                 <xsl:when test="version[string()]">
@@ -35,7 +57,8 @@
 
                 <!--Reorganizes the identity element if no identity has a version.-->
                 <xsl:otherwise>
-                    <identity format="{@format}" xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output">           <!--Identifying tool, if not empty-->
+                    <identity format="{@format}" xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output">
+                        <!--Identifying tool, if not empty-->
                         <xsl:copy-of select="tool[not(@toolname='')]" copy-namespaces="no" />
                         <!--All PUIDs, if not empty.-->
                         <xsl:if test="externalIdentifier[@type='puid'][string()]">
@@ -51,7 +74,6 @@
                 </xsl:otherwise>
 
             </xsl:choose>
-        </xsl:if>
     </xsl:template>
 
 

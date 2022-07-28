@@ -28,7 +28,7 @@
         <xsl:if test="@format !=''">
             <!--Extract the file extension from the element filename to use for testing if an identification should be included. -->
             <xsl:variable name="extension">
-                <xsl:analyze-string select="//fileinfo/filename" regex="\.([^.]+)$">
+                <xsl:analyze-string select="../fileinfo/filename" regex="\.([^.]+)$">
                     <xsl:matching-substring>
                         <xsl:value-of select="regex-group(1)" />
                     </xsl:matching-substring>

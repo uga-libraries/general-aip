@@ -118,7 +118,7 @@ for aip_row in read_metadata:
 
     # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
     if aip.id in os.listdir('.'):
-        a.make_preservationxml(aip, 'general')
+        a.make_preservationxml(aip)
 
     # Bags the AIP using bagit.
     if aip.id in os.listdir('.'):

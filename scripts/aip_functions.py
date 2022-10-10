@@ -106,6 +106,7 @@ def check_arguments(arguments):
     if aips_directory:
         aip_metadata_csv = os.path.join(aips_directory, "metadata.csv")
         if not os.path.exists(aip_metadata_csv):
+            aip_metadata_csv = None
             errors.append('Missing the required file metadata.csv in the AIPs directory.')
     else:
         aip_metadata_csv = None

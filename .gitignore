@@ -5,3 +5,4 @@ pylint_output
 *.pyc
 scripts/configuration.py
 tests/configuration.py
+tests/combined_fits

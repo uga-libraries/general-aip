@@ -9,7 +9,7 @@ import unittest
 from scripts.aip_functions import AIP, log, structure_directory
 
 
-def aip_dir_make(aip_id):
+def make_aip_directory(aip_id):
     """
     Makes a folder for an AIP with test files in the current working directory.
     All have at least three text files and one folder.
@@ -49,7 +49,7 @@ def aip_dir_make(aip_id):
             file.write('Emory Metadata Test File')
 
 
-def aip_dir_print(folder):
+def aip_directory_print(folder):
     """
     Makes and returns a list with the filepath for every folder and file in an AIP folder.
     This is used to compare the structure_directory function's actual results to the expected results.
@@ -85,10 +85,10 @@ class TestStructureDirectory(unittest.TestCase):
         This is an error that the script can handle.
         """
         objects_aip = AIP(os.getcwd(), 'test', 'coll-1', 'err-objects', 'err-objects', 'title', 1, True)
-        aip_dir_make('err-objects')
+        make_aip_directory('err-objects')
         structure_directory(objects_aip)
         aip_path = os.path.join('..', 'errors', 'objects_folder_exists', 'err-objects')
-        result = aip_dir_print(aip_path)
+        result = aip_directory_print(aip_path)
         expected = [os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'Test Dir'),
                     os.path.join(aip_path, 'Text 2.txt'),
@@ -103,10 +103,10 @@ class TestStructureDirectory(unittest.TestCase):
         This is an error that the script can handle.
         """
         both_aip = AIP(os.getcwd(), 'test', 'coll-1', 'err-both', 'err-both', 'title', 1, True)
-        aip_dir_make('err-both')
+        make_aip_directory('err-both')
         structure_directory(both_aip)
         aip_path = os.path.join('..', 'errors', 'objects_folder_exists', 'err-both')
-        result = aip_dir_print(aip_path)
+        result = aip_directory_print(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'Test Dir'),
@@ -123,10 +123,10 @@ class TestStructureDirectory(unittest.TestCase):
         This is an error that the script can handle.
         """
         metadata_aip = AIP(os.getcwd(), 'test', 'coll-1', 'err-metadata', 'err-metadata', 'title', 1, True)
-        aip_dir_make('err-metadata')
+        make_aip_directory('err-metadata')
         structure_directory(metadata_aip)
         aip_path = os.path.join('..', 'errors', 'metadata_folder_exists', 'err-metadata')
-        result = aip_dir_print(aip_path)
+        result = aip_directory_print(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'Test Dir'),
@@ -142,9 +142,9 @@ class TestStructureDirectory(unittest.TestCase):
         All other files will go to the objects subfolder.
         """
         log_aip = AIP(os.getcwd(), 'test', 'coll-1', 'sort-log', 'sort-log', 'title', 1, True)
-        aip_dir_make('sort-log')
+        make_aip_directory('sort-log')
         structure_directory(log_aip)
-        result = aip_dir_print(log_aip.folder_name)
+        result = aip_directory_print(log_aip.folder_name)
         shutil.rmtree('sort-log')
         expected = [os.path.join('sort-log', 'metadata'),
                     os.path.join('sort-log', 'objects'),
@@ -161,9 +161,9 @@ class TestStructureDirectory(unittest.TestCase):
         All other files will go in the objects subfolder.
         """
         emory_aip = AIP(os.getcwd(), 'emory', 'coll-1', 'sort-emory', 'sort-emory', 'title', 1, True)
-        aip_dir_make('sort-emory')
+        make_aip_directory('sort-emory')
         structure_directory(emory_aip)
-        result = aip_dir_print(emory_aip.folder_name)
+        result = aip_directory_print(emory_aip.folder_name)
         shutil.rmtree('sort-emory')
         expected = [os.path.join('sort-emory', 'metadata'),
                     os.path.join('sort-emory', 'objects'),
@@ -179,9 +179,9 @@ class TestStructureDirectory(unittest.TestCase):
         Test for structuring an AIP with no metadata files. All files will go in the objects subfolder.
         """
         none_aip = AIP(os.getcwd(), 'test', 'coll-1', 'sort-none', 'sort-none', 'title', 1, True)
-        aip_dir_make('sort-none')
+        make_aip_directory('sort-none')
         structure_directory(none_aip)
-        result = aip_dir_print(none_aip.folder_name)
+        result = aip_directory_print(none_aip.folder_name)
         shutil.rmtree('sort-none')
         expected = [os.path.join('sort-none', 'metadata'),
                     os.path.join('sort-none', 'objects'),

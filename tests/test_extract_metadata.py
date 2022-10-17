@@ -9,7 +9,7 @@ import unittest
 from scripts.aip_functions import AIP, log, structure_directory, extract_metadata
 
 
-class TestStructureDirectory(unittest.TestCase):
+class TestExtractMetadata(unittest.TestCase):
 
     def setUp(self):
         """
@@ -35,9 +35,11 @@ class TestStructureDirectory(unittest.TestCase):
             file.write('Test File')
         structure_directory(one_file_aip)
         extract_metadata(one_file_aip)
-        result = '?????'
+        with open(os.path.join('one_file', 'metadata', 'one_file_combined-fits.xml'), 'r') as result_file:
+            result = result_file.read()
         shutil.rmtree('one_file')
-        expected = '?????'
+        with open(os.path.join('combined_fits', 'one_file_combined-fits.xml')) as expected_file:
+            expected = expected_file.read()
         self.assertEqual(result, expected, 'Problem with one file')
 
     def test_multi_id(self):

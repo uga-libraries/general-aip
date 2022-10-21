@@ -17,6 +17,14 @@ class TestCheckArguments(unittest.TestCase):
         with open(self.csv_path, "w") as file:
             file.write("File for testing metadata.csv is present")
 
+    def tearDown(self):
+        """
+        Deletes the metadata.csv file, if it is still present after testing so the next test starts fresh.
+        The file may have also been deleted as part of the test.
+        """
+        if os.path.exists(self.csv_path):
+            os.remove(self.csv_path)
+
     def test_one_arg(self):
         """
         Test for if the user supplies no arguments. There is still one argument in sys.argv, the script name.

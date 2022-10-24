@@ -60,7 +60,7 @@ class MyTestCase(unittest.TestCase):
     def test_make_cleaned_fits_xml_error(self):
         """
         Test for error handling while making the cleaned-fits.xml file
-        by deleting the combined-fits.xml file used as the function input.
+        by deleting the combined-fits.xml file used as the saxon input.
         The AIP log is used to test the result.
         """
         os.remove(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_combined-fits.xml'))
@@ -73,23 +73,25 @@ class MyTestCase(unittest.TestCase):
     def test_make_preservation_xml(self):
         """
         Test for successfully making the preservation.xml file.
-        The ???? is used to test the result.
+        Temporarily using if the file exists to test the result.
+        TODO: use the contents of the preservation.xml to test the result.
         """
         make_cleaned_fits_xml(self.aip)
         make_preservation_xml(self.aip)
-        expected = ''
-        result = ''
+        expected = os.path.exists(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_preservation.xml'))
+        result = True
         self.assertEqual(result, expected, 'Problem with preservation.xml')
 
     def test_make_preservation_xml_error(self):
         """
-        Test for error handling while making the preservation.xml file.
-        The ???? is used to test the result.
+        Test for error handling while making the preservation.xml file
+        by not making the cleaned-fits.xml file used as the saxon input.
+        The AIP log is used to test the result.
         """
-        make_cleaned_fits_xml(self.aip)
         make_preservation_xml(self.aip)
-        expected = ''
-        result = ''
+        expected = 'Issue when creating preservation.xml. ' \
+                   'Saxon error: Source file aip-id\\metadata\\aip-id_cleaned-fits.xml does not exist\r\n'
+        result = self.aip.log['PresXML']
         self.assertEqual(result, expected, 'Problem with preservation.xml error handling')
 
     def test_validate_preservation_xml(self):
@@ -139,7 +141,7 @@ class MyTestCase(unittest.TestCase):
         organize_xml(self.aip)
         expected = ''
         result = ''
-        self.assertEqual(result, expected, 'Problem with')
+        self.assertEqual(result, expected, 'Problem with organize xml')
 
 
 if __name__ == '__main__':

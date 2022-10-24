@@ -18,7 +18,7 @@ class MyTestCase(unittest.TestCase):
 
         self.aip = AIP(os.getcwd(), 'test', 'coll-1', 'aip-folder', 'aip-id', 'title', 1, True)
         os.mkdir(self.aip.id)
-        with open(os.path.join(self.aip.id, 'objects', 'file.txt'), 'w') as file:
+        with open(os.path.join(self.aip.id, 'file.txt'), 'w') as file:
             file.write("Test text")
 
         structure_directory(self.aip)
@@ -26,7 +26,7 @@ class MyTestCase(unittest.TestCase):
 
     def tearDown(self):
         """
-        If they are present, deletes the test AIP, the AIP log, and the errors folder.
+        If they are present, deletes the test AIP, the AIP log, the errors folder, and the script output folders.
         """
 
         if os.path.exists(self.aip.id):
@@ -40,24 +40,34 @@ class MyTestCase(unittest.TestCase):
         if os.path.exists(errors_path):
             shutil.rmtree(errors_path)
 
+        script_output_folders = ('aips-to-ingest', 'fits-xml', 'preservation-xml')
+        for folder in script_output_folders:
+            path = os.path.join('..', folder)
+            if os.path.exists(path):
+                shutil.rmtree(path)
+
     def test_make_cleaned_fits_xml(self):
         """
         Test for successfully making the cleaned-fits.xml file.
-        The ???? is used to test the result.
+        Temporarily using if the file exists to test the result.
+        TODO: use the contents of the cleaned-fits.xml to test the result.
         """
         make_cleaned_fits_xml(self.aip)
-        expected = ''
-        result = ''
+        expected = os.path.exists(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_cleaned-fits.xml'))
+        result = True
         self.assertEqual(result, expected, 'Problem with cleaned fits')
 
     def test_make_cleaned_fits_xml_error(self):
         """
-        Test for error handling while making the cleaned-fits.xml file.
-        The ???? is used to test the result.
+        Test for error handling while making the cleaned-fits.xml file
+        by deleting the combined-fits.xml file used as the function input.
+        The AIP log is used to test the result.
         """
+        os.remove(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_combined-fits.xml'))
         make_cleaned_fits_xml(self.aip)
-        expected = ''
-        result = ''
+        expected = 'Issue when creating cleaned-fits.xml. ' \
+                   'Saxon error: Source file aip-id\\metadata\\aip-id_combined-fits.xml does not exist\r\n'
+        result = self.aip.log['PresXML']
         self.assertEqual(result, expected, 'Problem with cleaned fits error handling')
 
     def test_make_preservation_xml(self):

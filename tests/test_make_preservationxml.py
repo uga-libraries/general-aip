@@ -53,8 +53,8 @@ class MyTestCase(unittest.TestCase):
         TODO: use the contents of the cleaned-fits.xml to test the result.
         """
         make_cleaned_fits_xml(self.aip)
-        expected = os.path.exists(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_cleaned-fits.xml'))
-        result = True
+        result = os.path.exists(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_cleaned-fits.xml'))
+        expected = True
         self.assertEqual(result, expected, 'Problem with cleaned fits')
 
     def test_make_cleaned_fits_xml_error(self):
@@ -65,9 +65,9 @@ class MyTestCase(unittest.TestCase):
         """
         os.remove(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_combined-fits.xml'))
         make_cleaned_fits_xml(self.aip)
+        result = self.aip.log['PresXML']
         expected = 'Issue when creating cleaned-fits.xml. ' \
                    'Saxon error: Source file aip-id\\metadata\\aip-id_combined-fits.xml does not exist\r\n'
-        result = self.aip.log['PresXML']
         self.assertEqual(result, expected, 'Problem with cleaned fits error handling')
 
     def test_make_preservation_xml(self):
@@ -78,8 +78,8 @@ class MyTestCase(unittest.TestCase):
         """
         make_cleaned_fits_xml(self.aip)
         make_preservation_xml(self.aip)
-        expected = os.path.exists(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_preservation.xml'))
-        result = True
+        result = os.path.exists(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_preservation.xml'))
+        expected = True
         self.assertEqual(result, expected, 'Problem with preservation.xml')
 
     def test_make_preservation_xml_error(self):
@@ -89,45 +89,59 @@ class MyTestCase(unittest.TestCase):
         The AIP log is used to test the result.
         """
         make_preservation_xml(self.aip)
+        result = self.aip.log['PresXML']
         expected = 'Issue when creating preservation.xml. ' \
                    'Saxon error: Source file aip-id\\metadata\\aip-id_cleaned-fits.xml does not exist\r\n'
-        result = self.aip.log['PresXML']
         self.assertEqual(result, expected, 'Problem with preservation.xml error handling')
 
     def test_validate_preservation_xml(self):
         """
         Test for successfully validating the preservation.xml file.
-        The ???? is used to test the result.
+        The AIP log is used to test the result.
         """
         make_cleaned_fits_xml(self.aip)
         make_preservation_xml(self.aip)
         validate_preservation_xml(self.aip)
-        expected = ''
-        result = ''
-        self.assertEqual(result, expected, 'Problem with preservation.xml validating')
+        result = self.aip.log['PresValid']
+        expected = f'Preservation.xml valid on {datetime.date.today()}'
+        # Since the log for preservation.xml validation includes a timestamp, assert cannot require an exact match.
+        self.assertIn(expected, result, 'Problem with preservation.xml validating')
 
     def test_validate_preservation_xml_missing(self):
         """
         Test for error handling if the preservation.xml file is missing during validation.
-        The ???? is used to test the result.
+        The AIP log is used to test the result.
         """
         make_cleaned_fits_xml(self.aip)
-        make_preservation_xml(self.aip)
         validate_preservation_xml(self.aip)
-        expected = ''
-        result = ''
+        result = self.aip.log['PresXML']
+        expected = 'Preservation.xml was not created. xmllint error: ' \
+                   'warning: failed to load external entity "aip-id/metadata/aip-id_preservation.xml"\r\n'
         self.assertEqual(result, expected, 'Problem with error handling of missing preservation.xml')
 
     def test_validate_preservation_xml_error(self):
         """
         Test for error handling if the preservation.xml file is not valid.
-        The ???? is used to test the result.
+        Temporarily using the AIP log to test the result.
+        TODO: use the contents of the validation log to test the result.
         """
         make_cleaned_fits_xml(self.aip)
         make_preservation_xml(self.aip)
+
+        # Edits the preservation.xml to remove the required field <dc:title>.
+        # TODO: this is not deleting title.
+        ET.register_namespace('dc', 'http://purl.org/dc/terms/')
+        ET.register_namespace('premis', 'http://www.loc.gov/premis/v3')
+        ns = {'dc': 'http://purl.org/dc/terms/', 'premis': 'http://www.loc.gov/premis/v3'}
+        tree = ET.parse(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_preservation.xml'))
+        root = tree.getroot()
+        for title in root.find('dc:title', ns):
+            root.remove(title)
+        tree.write(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_preservation.xml'))
+
         validate_preservation_xml(self.aip)
-        expected = ''
-        result = ''
+        result = self.aip.log['PresValid']
+        expected = 'Preservation.xml is not valid (see log in error folder)'
         self.assertEqual(result, expected, 'Problem with error handling of preservation.xml file that is not valid')
 
     def test_organize_xml(self):
@@ -139,8 +153,8 @@ class MyTestCase(unittest.TestCase):
         make_preservation_xml(self.aip)
         validate_preservation_xml(self.aip)
         organize_xml(self.aip)
-        expected = ''
         result = ''
+        expected = ''
         self.assertEqual(result, expected, 'Problem with organize xml')
 
 

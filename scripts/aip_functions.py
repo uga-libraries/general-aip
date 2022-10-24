@@ -471,6 +471,100 @@ def make_preservationxml(aip):
     os.remove(f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml')
 
 
+def make_cleaned_fits_xml(aip):
+    """Makes a simplified version of the combined fits XML so the format information is easier to aggregate.
+    It is saved in the AIP's metadata folder and deleted after the preservation.xml is made."""
+
+    # Uses saxon and a stylesheet to make the cleaned-fits.xml from the combined-fits.xml.
+    input_file = f'{aip.id}/metadata/{aip.id}_combined-fits.xml'
+    stylesheet = f'{c.STYLESHEETS}/fits-cleanup.xsl'
+    output_file = f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml'
+    saxon_output = subprocess.run(
+        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{input_file}" -xsl:"{stylesheet}" -o:"{output_file}"',
+        stderr=subprocess.PIPE, shell=True)
+
+    # If saxon has an error, moves the AIP to an error folder.
+    if saxon_output.stderr:
+        aip.log["PresXML"] = f"Issue when creating cleaned-fits.xml. Saxon error: {saxon_output.stderr.decode('utf-8')}"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        move_error('cleaned_fits_saxon_error', aip.id)
+
+
+def make_preservation_xml(aip):
+    """Makes the preservation XML (PREMIS and Dublin Core metadata) from the cleaned FITS XML.
+    It is saved in the AIP's metadata folder."""
+
+    # Uses saxon and a stylesheet to make the preservation.xml file from the cleaned-fits.xml.
+    input_file = f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml'
+    stylesheet = f'{c.STYLESHEETS}/fits-to-preservation.xsl'
+    output_file = f'{aip.id}/metadata/{aip.id}_preservation.xml'
+    args = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
+           f'department="{aip.department}" version={aip.version} ns={c.NAMESPACE}'
+    saxon_output = subprocess.run(
+        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{input_file}" -xsl:"{stylesheet}" -o:"{output_file}" {args}',
+        stderr=subprocess.PIPE, shell=True)
+
+    # If saxon has an error, moves the AIP to an error folder.
+    if saxon_output.stderr:
+        aip.log["PresXML"] = f"Issue when creating preservation.xml. Saxon error: {saxon_output.stderr.decode('utf-8')}"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        move_error('pres_xml_saxon_error', aip.id)
+        return
+
+
+def validate_preservation_xml(aip):
+    """Verifies that the preservation.xml file meets the metadata requirements for the UGA Libraries' digital
+    preservation system (ARCHive)."""
+
+    # Uses xmllint and a XSD file to validate the preservation.xml.
+    input_file = f'{aip.id}/metadata/{aip.id}_preservation.xml'
+    xmllint_output = subprocess.run(f'xmllint --noout -schema "{c.STYLESHEETS}/preservation.xsd" "{input_file}"',
+                                    stderr=subprocess.PIPE, shell=True)
+
+    # Converts the xmllint output to a string for easier tests for possible error types.
+    validation_result = xmllint_output.stderr.decode('utf-8')
+
+    # If the preservation.xml file was not made in the expected location, moves the AIP to an error folder.
+    if 'failed to load' in validation_result:
+        aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        move_error('preservationxml_not_found', aip.id)
+        return
+    else:
+        aip.log["PresXML"] = "Successfully created preservation.xml"
+
+    # If the preservation.xml does not meet the requirements, moves the AIP to an error folder.
+    # The validation output is saved to a file in the error folder for review.
+    # It is too much information to put in the AIP log.
+    if 'fails to validate' in validation_result:
+        aip.log["PresValid"] = "Preservation.xml is not valid (see log in error folder)"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        move_error('preservationxml_not_valid', aip.id)
+        with open(f"../errors/preservationxml_not_valid/{aip.id}_presxml_validation.txt", "w") as validation_log:
+            for line in validation_result.split("\r"):
+                validation_log.write(line + "\n")
+        return
+    else:
+        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.datetime.now()}"
+
+
+def organize_xml(aip):
+    """After the preservation.xml is successfully made, organizes the resulting XML files."""
+
+    # Copies the preservation.xml file to the preservation-xml folder for staff reference.
+    shutil.copy2(f'{aip.id}/metadata/{aip.id}_preservation.xml', '../preservation-xml')
+
+    # Moves the combined-fits.xml file to the fits-xml folder for staff reference.
+    os.replace(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', f'../fits-xml/{aip.id}_combined-fits.xml')
+
+    # Deletes the cleaned-fits.xml file because it is a temporary file.
+    os.remove(f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml')
+
+
 def bag(aip):
     """Bags and validates the AIP. Adds _bag to the AIP folder name."""
 

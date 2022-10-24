@@ -502,6 +502,36 @@ def bag(aip):
     aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
 
 
+def make_bag(aip):
+    """Bags the AIP, using md5 and sha256 checksums, and renames to add '_bag' to the end of the AIP folder name."""
+    bagit.make_bag(aip.id, checksums=['md5', 'sha256'])
+    os.replace(aip.id, f'{aip.id}_bag')
+
+
+def validate_bag(aip):
+    """Validates the AIP's bag. If it is not valid, moves the AIP to an error folder and saves the error output
+    to that error folder."""
+    new_bag = bagit.Bag(f'{aip.id}_bag')
+    try:
+        new_bag.validate()
+    except bagit.BagValidationError as errors:
+        aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        move_error('bag_not_valid', f'{aip.id}_bag')
+        # Error log is formatted to be easier to read (one error per line) if error information is in details.
+        # Otherwise, the entire error output is saved to the log.
+        with open(f"../errors/bag_not_valid/{aip.id}_bag_validation.txt", "w") as validation_log:
+            if errors.details:
+                for error_type in errors.details:
+                    validation_log.write(str(error_type) + "\n")
+            else:
+                validation_log.write(str(errors))
+        return
+
+    aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
+
+
 def package(aip):
     """Tars and zips the AIP. Saves the resulting packaged AIP in the aips-to-ingest folder.
     Also uses md5 deep to calculate the MD5 for the AIP and adds it to the manifest for that department

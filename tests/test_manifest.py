@@ -88,9 +88,10 @@ class TestManifest(unittest.TestCase):
                    '0cbc6611f5540bd0809a388dc95a615b  aip3_bag.4000.tar.bz2\n'
         self.assertEqual(expected, result, 'Problem with multiple departments')
 
-    def test_missing_error_handling(self):
+    def test_one_missing_error_handling(self):
         """
         Test for error handling of a tarred file missing from aips-to-ingest.
+        The tar for another AIP is present, so the manifest is made.
         """
         # Makes two AIP instances but only makes the tar file for the first AIP.
         aip1 = AIP(os.getcwd(), 'test', 'coll-1', 'aip1-folder', 'aip1', 'title', 1, to_zip=False)
@@ -104,7 +105,18 @@ class TestManifest(unittest.TestCase):
         with open(os.path.join('..', 'aips-to-ingest', 'manifest_test.txt'), 'r') as file:
             result = file.read()
         expected = '0cbc6611f5540bd0809a388dc95a615b  aip1_bag.4000.tar\n'
-        self.assertEqual(expected, result, 'Problem with missing error handling')
+        self.assertEqual(expected, result, 'Problem with one missing error handling')
+
+    def test_all_missing_error_handling(self):
+        """
+        Test for error handling of a tarred file missing from aips-to-ingest.
+        There are no other AIPs, so the manifest is not made. The log is used for testing.
+        """
+        aip = AIP(os.getcwd(), 'test', 'coll-1', 'aip-folder', 'aip', 'title', 1, to_zip=False)
+        manifest(aip)
+        result = aip.log["Package"]
+        expected = 'Tar/zip file not in aips-to-ingest folder.'
+        self.assertEqual(expected, result, 'Problem with all missing error handling')
 
 
 if __name__ == '__main__':

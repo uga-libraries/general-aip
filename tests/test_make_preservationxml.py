@@ -122,26 +122,24 @@ class MyTestCase(unittest.TestCase):
     def test_validate_preservation_xml_error(self):
         """
         Test for error handling if the preservation.xml file is not valid.
-        Temporarily using the AIP log to test the result.
-        TODO: use the contents of the validation log to test the result.
+        The contents of the validation log are used to test the result.
         """
         make_cleaned_fits_xml(self.aip)
         make_preservation_xml(self.aip)
 
-        # Edits the preservation.xml to remove the required field <dc:title>.
-        # TODO: this is not deleting title.
+        # Edits the preservation.xml to remove the required field <dc:title>, which is the first element.
         ET.register_namespace('dc', 'http://purl.org/dc/terms/')
         ET.register_namespace('premis', 'http://www.loc.gov/premis/v3')
-        ns = {'dc': 'http://purl.org/dc/terms/', 'premis': 'http://www.loc.gov/premis/v3'}
         tree = ET.parse(os.path.join('aip-id', 'metadata', 'aip-id_preservation.xml'))
         root = tree.getroot()
-        for title in root.find('dc:title', ns):
-            root.remove(title)
+        root.remove(root[0])
         tree.write(os.path.join('aip-id', 'metadata', 'aip-id_preservation.xml'))
 
         validate_preservation_xml(self.aip)
-        result = self.aip.log['PresValid']
-        expected = 'Preservation.xml is not valid (see log in error folder)'
+        with open(os.path.join('..', 'errors', 'preservationxml_not_valid', 'aip-id_presxml_validation.txt'), 'r') as f:
+            result = f.readlines()
+        expected = ["Element '{http://purl.org/dc/terms/}rights': This element is not expected. Expected is ( {http://purl.org/dc/terms/}title ).\n",
+                    "\n", "aip-id/metadata/aip-id_preservation.xml fails to validate\n", "\n", "\n"]
         self.assertEqual(result, expected, 'Problem with error handling of preservation.xml file that is not valid')
 
     def test_organize_xml(self):

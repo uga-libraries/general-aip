@@ -29,8 +29,8 @@ class MyTestCase(unittest.TestCase):
         If they are present, deletes the test AIP, the AIP log, the errors folder, and the script output folders.
         """
 
-        if os.path.exists(self.aip.id):
-            shutil.rmtree(self.aip.id)
+        if os.path.exists('aip-id'):
+            shutil.rmtree('aip-id')
 
         log_path = os.path.join('..', 'aip_log.csv')
         if os.path.exists(log_path):
@@ -53,7 +53,7 @@ class MyTestCase(unittest.TestCase):
         TODO: use the contents of the cleaned-fits.xml to test the result.
         """
         make_cleaned_fits_xml(self.aip)
-        result = os.path.exists(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_cleaned-fits.xml'))
+        result = os.path.exists(os.path.join('aip-id', 'metadata', 'aip-id_cleaned-fits.xml'))
         expected = True
         self.assertEqual(result, expected, 'Problem with cleaned fits')
 
@@ -63,7 +63,7 @@ class MyTestCase(unittest.TestCase):
         by deleting the combined-fits.xml file used as the saxon input.
         The AIP log is used to test the result.
         """
-        os.remove(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_combined-fits.xml'))
+        os.remove(os.path.join('aip-id', 'metadata', 'aip-id_combined-fits.xml'))
         make_cleaned_fits_xml(self.aip)
         result = self.aip.log['PresXML']
         expected = 'Issue when creating cleaned-fits.xml. ' \
@@ -78,7 +78,7 @@ class MyTestCase(unittest.TestCase):
         """
         make_cleaned_fits_xml(self.aip)
         make_preservation_xml(self.aip)
-        result = os.path.exists(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_preservation.xml'))
+        result = os.path.exists(os.path.join('aip-id', 'metadata', 'aip-id_preservation.xml'))
         expected = True
         self.assertEqual(result, expected, 'Problem with preservation.xml')
 
@@ -133,11 +133,11 @@ class MyTestCase(unittest.TestCase):
         ET.register_namespace('dc', 'http://purl.org/dc/terms/')
         ET.register_namespace('premis', 'http://www.loc.gov/premis/v3')
         ns = {'dc': 'http://purl.org/dc/terms/', 'premis': 'http://www.loc.gov/premis/v3'}
-        tree = ET.parse(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_preservation.xml'))
+        tree = ET.parse(os.path.join('aip-id', 'metadata', 'aip-id_preservation.xml'))
         root = tree.getroot()
         for title in root.find('dc:title', ns):
             root.remove(title)
-        tree.write(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_preservation.xml'))
+        tree.write(os.path.join('aip-id', 'metadata', 'aip-id_preservation.xml'))
 
         validate_preservation_xml(self.aip)
         result = self.aip.log['PresValid']

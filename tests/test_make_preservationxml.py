@@ -147,14 +147,18 @@ class MyTestCase(unittest.TestCase):
     def test_organize_xml(self):
         """
         Test for organizing XML files after the preservation.xml file is made.
-        The ???? is used to test the result.
+        A list of path tests for the XML files is used to test the result.
         """
         make_cleaned_fits_xml(self.aip)
         make_preservation_xml(self.aip)
         validate_preservation_xml(self.aip)
         organize_xml(self.aip)
-        result = ''
-        expected = ''
+        result = [os.path.exists(os.path.join('..', 'preservation-xml', 'aip-id_preservation.xml')),
+                  os.path.exists(os.path.join('aip-id', 'metadata', 'aip-id_preservation.xml')),
+                  os.path.exists(os.path.join('..', 'fits-xml', 'aip-id_combined-fits.xml')),
+                  os.path.exists(os.path.join('aip-id', 'metadata', 'aip-id_combined-fits.xml')),
+                  os.path.exists(os.path.join('aip-id', 'metadata', 'aip-id_cleaned-fits.xml'))]
+        expected = [True, True, True, False, False]
         self.assertEqual(result, expected, 'Problem with organize xml')
 
 

@@ -5,7 +5,6 @@ The log is updated after each step in the script.
 These tests are for if information is written to a CSV correctly.
 They are not testing if the correct information is saved to the log after each step."""
 
-import datetime
 import os
 import unittest
 from scripts.aip_functions import AIP, log
@@ -24,9 +23,15 @@ class MyTestCase(unittest.TestCase):
         Test for making the log file with a header.
         """
         log('header')
+
         with open(os.path.join('..', 'aip_log.csv'), 'r') as file:
             result = file.readlines()
-        expected = ['Time Started,AIP ID,Files Deleted,Objects Folder,Metadata Folder,FITS Tool Errors,FITS Combination Errors,Preservation.xml Made,Preservation.xml Valid,Bag Valid,Package Errors,Manifest Errors,Processing Complete\n']
+
+        header_expected = ['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                           'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
+                           'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
+                           'Processing Complete\n']
+        expected = [",".join(header_expected)]
         self.assertEqual(expected, result, 'Problem with header')
 
     def test_one_aip(self):
@@ -41,10 +46,17 @@ class MyTestCase(unittest.TestCase):
         aip.log['ObjectsError'] = 'Objects folder already exists in original files'
         aip.log['Complete'] = 'Error during processing'
         log(aip.log)
+
         with open(os.path.join('..', 'aip_log.csv'), 'r') as file:
             result = file.readlines()
-        expected = ['Time Started,AIP ID,Files Deleted,Objects Folder,Metadata Folder,FITS Tool Errors,FITS Combination Errors,Preservation.xml Made,Preservation.xml Valid,Bag Valid,Package Errors,Manifest Errors,Processing Complete\n',
-                    f'{aip.log["Started"]},one-tar,No files deleted,Objects folder already exists in original files,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,Error during processing\n']
+
+        header_expected = ['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                           'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
+                           'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
+                           'Processing Complete\n']
+        aip_expected = [str(aip.log['Started']), 'one-tar', 'No files deleted', 'Objects folder already exists in original files',
+                        'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'Error during processing\n']
+        expected = [",".join(header_expected), ",".join(aip_expected)]
         self.assertEqual(expected, result, 'Problem with one aip')
 
     def test_multiple_aips(self):

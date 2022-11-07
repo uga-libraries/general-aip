@@ -7,6 +7,19 @@ import unittest
 from scripts.aip_functions import move_error
 
 
+def errors_directory_print():
+    """
+    Makes and returns a list with the filepath for every folder in the errors folder.
+    The errors folder should be in the parent directory of the current directory.
+    This is used to compare the move_error function's actual results to the expected results.
+    """
+    result = []
+    for root, dirs, files in os.walk(os.path.join('..', 'errors')):
+        for directory in dirs:
+            result.append(os.path.join(root, directory))
+    return result
+
+
 class TestMoveError(unittest.TestCase):
 
     def tearDown(self):
@@ -20,7 +33,12 @@ class TestMoveError(unittest.TestCase):
         """
         Test for moving a folder into an error folder when there is no pre-existing errors folder.
         """
-        self.assertEqual(True, False)
+        os.mkdir("aip_one")
+        move_error("test_error", "aip_one")
+        result = errors_directory_print()
+        expected = [os.path.join('..', 'errors', 'test_error'),
+                    os.path.join('..', 'errors', 'test_error', 'aip_one')]
+        self.assertEqual(result, expected, 'Problem with no previous error')
 
     def test_previous_error_diff_type(self):
         """

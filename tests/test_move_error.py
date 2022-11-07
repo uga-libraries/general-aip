@@ -61,7 +61,15 @@ class TestMoveError(unittest.TestCase):
         Test for moving a folder into an error folder when there is a pre-existing errors folder
         and there is a pre-existing error folder of the same error type.
         """
-        self.assertEqual(True, False)
+        os.mkdir('aip_one')
+        move_error('test_error', 'aip_one')
+        os.mkdir('aip_two')
+        move_error('test_error', 'aip_two')
+        result = errors_directory_print()
+        expected = [os.path.join('..', 'errors', 'test_error'),
+                    os.path.join('..', 'errors', 'test_error', 'aip_one'),
+                    os.path.join('..', 'errors', 'test_error', 'aip_two')]
+        self.assertEqual(result, expected, 'Problem with previous error, same type')
 
 
 if __name__ == '__main__':

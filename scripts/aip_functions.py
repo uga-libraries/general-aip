@@ -649,6 +649,7 @@ def package(aip):
     for file in os.listdir(aip_bag):
         if file.endswith('.txt'):
             bag_size += os.path.getsize(f"{aip_bag}/{file}")
+    bag_info.close()
     bag_size = int(bag_size)
 
     # Tars the file, using the command appropriate for the operating system.

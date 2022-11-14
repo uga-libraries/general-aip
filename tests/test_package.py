@@ -27,12 +27,17 @@ class TestPackage(unittest.TestCase):
 
     def tearDown(self):
         """
-        Deletes the script output folders and bagged AIP.
+        Deletes the bagged AIP, script output folders, and AIP log (if created).
         """
         shutil.rmtree(f'{self.aip.id}_bag')
         shutil.rmtree(os.path.join('..', 'aips-to-ingest'))
         os.rmdir(os.path.join('..', 'fits-xml'))
         os.rmdir(os.path.join('..', 'preservation-xml'))
+
+        try:
+            os.remove(os.path.join('..', 'aip_log.csv'))
+        except FileNotFoundError:
+            pass
 
     def test_tar_zip(self):
         """
@@ -52,6 +57,20 @@ class TestPackage(unittest.TestCase):
         package(self.aip)
         result = os.path.exists(os.path.join('..', 'aips-to-ingest', 'test-aip-id_bag.6791.tar'))
         self.assertEqual(result, True, 'Problem with tar')
+
+    def test_tar_error(self):
+        """
+        Test error handling if 7zip is not able to tar the file.
+        Error is created by changing the directory, which prevents 7zip from locating the bag to tar.
+        Result for testing is the value ofr Package in the AIP log.
+        """
+        self.aip.directory = 'DoesNotExist'
+        package(self.aip)
+        result = 'Could not tar. 7zip error: \r\n' \
+                 'WARNING: The system cannot find the file specified.\r\n' \
+                 'DoesNotExist\r\n\r\n'
+        expected = self.aip.log['Package']
+        self.assertEqual(result, expected, 'Problem with tar error')
 
 
 if __name__ == '__main__':

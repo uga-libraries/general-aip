@@ -93,19 +93,29 @@ class TestExtractMetadata(unittest.TestCase):
         Formats: Comma-Separated Values (CSV), JSON (also identified as JSON Data Interchange Format and Plain text),
         Plain text
         """
-        multi_format_aip = AIP(os.getcwd(), 'test', 'coll-1', 'multi_format', 'multi_format', 'title', 1, True)
-        os.mkdir('multi_format')
-        with open(os.path.join('multi_format', 'Text.txt'), 'w') as file:
+        multi_file_aip = AIP(os.getcwd(), 'test', 'coll-1', 'multi_file', 'multi_file', 'title', 1, True)
+        os.mkdir('multi_file')
+        with open(os.path.join('multi_file', 'Text.txt'), 'w') as file:
             file.write('Test File')
-        os.mkdir(os.path.join('multi_format', 'Pandas Output'))
+        os.mkdir(os.path.join('multi_file', 'Pandas Output'))
         df = pd.DataFrame({'First': ['a', 'b', 'c', 'd'], 'Second': [1, 2, 3, 4], 'Third': [0.1, 0.2, 0.3, 0.4]})
-        df.to_csv(os.path.join('multi_format', 'Pandas Output', 'output.csv'), index=False)
-        df.to_json(os.path.join('multi_format', 'Pandas Output', 'output.json'))
-        structure_directory(multi_format_aip)
-        extract_metadata(multi_format_aip)
-        result = '?????'
-        shutil.rmtree('multi_format')
-        expected = '?????'
+        df.to_csv(os.path.join('multi_file', 'Pandas Output', 'output.csv'), index=False)
+        df.to_json(os.path.join('multi_file', 'Pandas Output', 'output.json'))
+        structure_directory(multi_file_aip)
+        extract_metadata(multi_file_aip)
+
+        # Edits the produced by the function and then reads it to use for the comparison.
+        update_fits(os.path.join('multi_file', 'metadata', 'multi_file_combined-fits.xml'))
+        with open(os.path.join('multi_file', 'metadata', 'multi_file_combined-fits.xml'), 'r') as result_file:
+            result = result_file.read()
+
+        # Deletes the test AIP.
+        shutil.rmtree('multi_file')
+
+        # Reads data from XML with the expected result after updating.
+        with open(os.path.join('combined_fits', 'multi_file_combined-fits.xml')) as expected_file:
+            expected = expected_file.read()
+
         self.assertEqual(result, expected, 'Problem with multiple formats')
 
     def test_error_fits_tool(self):

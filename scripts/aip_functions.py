@@ -627,10 +627,9 @@ def validate_bag(aip):
 
 
 def package(aip):
-    """Tars and zips the AIP. Saves the resulting packaged AIP in the aips-to-ingest folder.
-    Also uses md5 deep to calculate the MD5 for the AIP and adds it to the manifest for that department
-    in the aips-to-ingest folder. Each department has a separate manifest so AIPs for multiple departments
-    may be created simultaneously."""
+    """Tars and zips the AIP.
+    Renames the file to include the unzipped size.
+    Saves the resulting packaged AIP in the aips-to-ingest folder."""
 
     # Get operating system, since the tar and zip commands are different for Windows and Mac/Linux.
     operating_system = platform.system()

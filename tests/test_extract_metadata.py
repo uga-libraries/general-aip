@@ -6,7 +6,44 @@ import os
 import pandas as pd
 import shutil
 import unittest
+import xml.etree.ElementTree as ET
 from scripts.aip_functions import AIP, log, structure_directory, extract_metadata
+
+
+def update_fits(path):
+    """
+    Reads the FITS XML and edits the data to remove data that varies each time the test is run
+    so that it can be compared to expected results.
+    Saves the updated XML so it can later be read and compared to another file with the expected results.
+    """
+
+    # Reads data from XML produced by the function.
+    tree = ET.parse(path)
+    root = tree.getroot()
+
+    # Changes the timestamp attribute of every fits element.
+    for fits in root.iter('{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}fits'):
+        fits.set('timestamp', 'VARIES')
+
+    # Changes the beginning of the filepath of every filepath element.
+    for filepath in root.iter('{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}filepath'):
+        new_path = filepath.text.replace(os.getcwd(), 'CURRENT-DIRECTORY')
+        filepath.text = new_path
+
+    # Changes the value of every fslastmodified element.
+    for date in root.iter('{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}fslastmodified'):
+        date.text = '0000000000000'
+
+    # Changes the fitsExecutionTime attribute of every statistics element.
+    for stats in root.iter('{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}statistics'):
+        stats.set('fitsExecutionTime', '000')
+
+    # Changes the executionTime attribute of every tool element with that attribute.
+    for tool in root.iter('{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}tool'):
+        if 'executionTime' in tool.attrib:
+            tool.set('executionTime', '000')
+
+    tree.write(path, xml_declaration=True, encoding='UTF-8')
 
 
 class TestExtractMetadata(unittest.TestCase):
@@ -35,11 +72,19 @@ class TestExtractMetadata(unittest.TestCase):
             file.write('Test File')
         structure_directory(one_file_aip)
         extract_metadata(one_file_aip)
+
+        # Edits the produced by the function and then reads it to use for the comparison.
+        update_fits(os.path.join('one_file', 'metadata', 'one_file_combined-fits.xml'))
         with open(os.path.join('one_file', 'metadata', 'one_file_combined-fits.xml'), 'r') as result_file:
             result = result_file.read()
+
+        # Deletes the test AIP.
         shutil.rmtree('one_file')
+
+        # Reads data from XML with the expected result after updating.
         with open(os.path.join('combined_fits', 'one_file_combined-fits.xml')) as expected_file:
             expected = expected_file.read()
+
         self.assertEqual(result, expected, 'Problem with one file')
 
     def test_multi_id(self):
@@ -53,9 +98,19 @@ class TestExtractMetadata(unittest.TestCase):
         df.to_excel(os.path.join('multi_id', 'Spreadsheet.xlsx'), index=False)
         structure_directory(multi_id_aip)
         extract_metadata(multi_id_aip)
-        result = '?????'
+
+        # Edits the produced by the function and then reads it to use for the comparison.
+        update_fits(os.path.join('multi_id', 'metadata', 'multi_id_combined-fits.xml'))
+        with open(os.path.join('multi_id', 'metadata', 'multi_id_combined-fits.xml'), 'r') as result_file:
+            result = result_file.read()
+
+        # Deletes the test AIP.
         shutil.rmtree('multi_id')
-        expected = '?????'
+
+        # Reads data from XML with the expected result after updating.
+        with open(os.path.join('combined_fits', 'multi_id_combined-fits.xml')) as expected_file:
+            expected = expected_file.read()
+
         self.assertEqual(result, expected, 'Problem with multiple identifications')
 
     def test_one_format(self):

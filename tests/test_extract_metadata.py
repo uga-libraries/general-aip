@@ -87,56 +87,7 @@ class TestExtractMetadata(unittest.TestCase):
 
         self.assertEqual(result, expected, 'Problem with one file')
 
-    def test_multi_id(self):
-        """
-        Test for an AIP with a format that has multiple possible identifications.
-        Format: Excel spreadsheet, identified as ZIP Format, XLSX, and Office Open XML Workbook
-        """
-        multi_id_aip = AIP(os.getcwd(), 'test', 'coll-1', 'multi_id', 'multi_id', 'title', 1, True)
-        os.mkdir('multi_id')
-        df = pd.DataFrame({'Column1': ['Text', 'Data', 'More'], 'Column2': ['aaa', 'bbb', 'ccc']})
-        df.to_excel(os.path.join('multi_id', 'Spreadsheet.xlsx'), index=False)
-        structure_directory(multi_id_aip)
-        extract_metadata(multi_id_aip)
-
-        # Edits the produced by the function and then reads it to use for the comparison.
-        update_fits(os.path.join('multi_id', 'metadata', 'multi_id_combined-fits.xml'))
-        with open(os.path.join('multi_id', 'metadata', 'multi_id_combined-fits.xml'), 'r') as result_file:
-            result = result_file.read()
-
-        # Deletes the test AIP.
-        shutil.rmtree('multi_id')
-
-        # Reads data from XML with the expected result after updating.
-        with open(os.path.join('combined_fits', 'multi_id_combined-fits.xml')) as expected_file:
-            expected = expected_file.read()
-
-        self.assertEqual(result, expected, 'Problem with multiple identifications')
-
-    def test_one_format(self):
-        """
-        Test for an AIP with multiple files that are the same format.
-        Format: Comma-Separated Values (CSV)
-        """
-        one_format_aip = AIP(os.getcwd(), 'test', 'coll-1', 'one_format', 'one_format', 'title', 1, True)
-        os.mkdir('one_format')
-        with open(os.path.join('one_format', 'spreadsheet.csv'), 'w') as file:
-            writer = csv.writer(file)
-            writer.writerow(['one', 'two', 'three'])
-            writer.writerow(['uno', 'dos', 'tres'])
-            writer.writerow(['ein', 'zwei', 'drei'])
-        with open(os.path.join('one_format', 'spreadsheet_two.csv'), 'w') as file:
-            writer = csv.writer(file)
-            writer.writerow(['one fish', 'two fish'])
-            writer.writerow(['red fish', 'blue fish'])
-        structure_directory(one_format_aip)
-        extract_metadata(one_format_aip)
-        result = '?????'
-        shutil.rmtree('one_format')
-        expected = '?????'
-        self.assertEqual(result, expected, 'Problem with one format')
-
-    def test_multi_format(self):
+    def test_multiple_files(self):
         """
         Test for an AIP with multiple files of different formats.
         Formats: Comma-Separated Values (CSV), JSON (also identified as JSON Data Interchange Format and Plain text),

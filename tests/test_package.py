@@ -37,11 +37,21 @@ class TestPackage(unittest.TestCase):
     def test_tar_zip(self):
         """
         Test for an AIP that should be tarred and zipped.
-        Result is if the tarred/zipped file is in the aips-to-ingest folder.
+        Result for testing is if the tarred/zipped file is in the aips-to-ingest folder.
         """
         package(self.aip)
         result = os.path.exists(os.path.join('..', 'aips-to-ingest', 'test-aip-id_bag.6791.tar.bz2'))
         self.assertEqual(result, True, 'Problem with tar and zip')
+
+    def test_tar(self):
+        """
+        Test for an AIP that should be tarred and not zipped.
+        Result for testing is if the tarred file is in the aips-to-ingest folder.
+        """
+        self.aip.to_zip=False
+        package(self.aip)
+        result = os.path.exists(os.path.join('..', 'aips-to-ingest', 'test-aip-id_bag.6791.tar'))
+        self.assertEqual(result, True, 'Problem with tar')
 
 
 if __name__ == '__main__':

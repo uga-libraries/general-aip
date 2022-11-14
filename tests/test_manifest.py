@@ -7,7 +7,12 @@ In the production script, the manifest is made or edited after each AIP is made.
 For faster testing, this makes the output of the previous steps (a tar and/or zip file in aips-to-ingest),
 instead of using the functions to do that.
 Also for faster testing, the tar and/or zip file is a text file with the '.tar' or '.tar.bz2' extensions.
-The tests only require that the file name be correct."""
+The tests only require that the file name be correct.
+
+NOTE: was not able to make a test for md5deep error handling.
+The only way to cause an error is give it an incorrect path, but that is caught at an earlier step.
+We plan to stop using md5deep fairly soon, so leaving that without a test.
+"""
 
 import os
 import shutil

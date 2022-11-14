@@ -1,7 +1,11 @@
 """Testing for the function bag, which takes an AIP class instance as input and makes it into a bag,
 with md5 and sha256 checksums. The bag folder is renamed with '_bag' suffix and the bag is validated.
 There is error handling for if the bag is not valid.
-There are two functions for bagging, one to make it and one to validate it."""
+There are two functions for bagging, one to make it and one to validate it.
+
+NOTE: validate_bag() has a test for writing the entire message to the log if the information is not in error.details.
+We could not write a test for this because we don't know how to force that to happen.
+"""
 
 import datetime
 import os

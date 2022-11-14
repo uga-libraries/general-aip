@@ -30,12 +30,18 @@ class TestPackage(unittest.TestCase):
         Deletes the script output folders and bagged AIP.
         """
         shutil.rmtree(f'{self.aip.id}_bag')
-        os.rmdir(os.path.join('..', 'aips-to-ingest'))
+        shutil.rmtree(os.path.join('..', 'aips-to-ingest'))
         os.rmdir(os.path.join('..', 'fits-xml'))
         os.rmdir(os.path.join('..', 'preservation-xml'))
 
-    def test_something(self):
-        self.assertEqual(True, True)
+    def test_tar_zip(self):
+        """
+        Test for an AIP that should be tarred and zipped.
+        Result is if the tarred/zipped file is in the aips-to-ingest folder.
+        """
+        package(self.aip)
+        result = os.path.exists(os.path.join('..', 'aips-to-ingest', 'test-aip-id_bag.6791.tar.bz2'))
+        self.assertEqual(result, True, 'Problem with tar and zip')
 
 
 if __name__ == '__main__':

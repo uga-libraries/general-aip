@@ -49,13 +49,17 @@ class TestExtractMetadata(unittest.TestCase):
 
     def tearDown(self):
         """
-        Deletes the log and error folder, if any, for a clean start to the next test.
+        Deletes the log, error folder, and AIP test folders for a clean start to the next test.
+        None of these files and folders are guaranteed to be there, so it tests for if they exist first.
         """
         if os.path.exists(os.path.join('..', 'aip_log.csv')):
             os.remove(os.path.join('..', 'aip_log.csv'))
+        
+        directory_paths = (os.path.join('..', 'errors'), 'one_file', 'multi_file', 'tool_error', 'et_error')
 
-        if os.path.exists(os.path.join('..', 'errors')):
-            shutil.rmtree(os.path.join('..', 'errors'))
+        for directory_path in directory_paths:
+            if os.path.exists(directory_path):
+                shutil.rmtree(directory_path)
 
     def test_one_file(self):
         """
@@ -77,9 +81,6 @@ class TestExtractMetadata(unittest.TestCase):
         update_fits(os.path.join('one_file', 'metadata', 'one_file_combined-fits.xml'))
         with open(os.path.join('one_file', 'metadata', 'one_file_combined-fits.xml'), 'r') as result_file:
             result = result_file.read()
-
-        # Deletes the test AIP.
-        shutil.rmtree('one_file')
 
         # Reads an XML file with the expected result after editing.
         with open(os.path.join('combined_fits', 'one_file_combined-fits.xml')) as expected_file:
@@ -112,9 +113,6 @@ class TestExtractMetadata(unittest.TestCase):
         with open(os.path.join('multi_file', 'metadata', 'multi_file_combined-fits.xml'), 'r') as result_file:
             result = result_file.read()
 
-        # Deletes the test AIP.
-        shutil.rmtree('multi_file')
-
         # Reads an XML file with the expected result after editing.
         with open(os.path.join('combined_fits', 'multi_file_combined-fits.xml')) as expected_file:
             expected = expected_file.read()
@@ -143,8 +141,7 @@ class TestExtractMetadata(unittest.TestCase):
             result = ('org.jdom.input.JDOMParseException' in content,
                       'Tool error processing file' in content,
                       'Content is not allowed in prolog.' in content)
-
-        shutil.rmtree('tool_error')
+            
         expected = (True, True, True)
         self.assertEqual(result, expected, 'Problem with FITS tool error')
 

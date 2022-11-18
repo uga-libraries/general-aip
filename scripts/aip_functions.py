@@ -391,6 +391,68 @@ def extract_metadata(aip):
     combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
 
 
+def extract_metadata_only(aip):
+    """Extracts technical metadata from the files in the objects folder using FITS. """
+
+    # Runs FITS on the files in the AIP's objects folder and saves the output to it's metadata folder.
+    # The FITS output is named with the original file name. If there is more than one file anywhere
+    # within the objects folder with the same name, FITS adds a number to the duplicates, for example:
+    # file.ext.fits.xml, file.ext-1.fits.xml, file.ext-2.fits.xml
+    fits_output = subprocess.run(
+        f'"{c.FITS}" -r -i "{aip.directory}/{aip.id}/objects" -o "{aip.directory}/{aip.id}/metadata"',
+        shell=True, stderr=subprocess.PIPE)
+
+    # If there were any tool error messages from FITS, saves those to a log in the AIP's metadata folder.
+    # Processing on the AIP continues, since typically other tools still work.
+    if fits_output.stderr:
+        with open(f"{aip.directory}/{aip.id}/metadata/{aip.id}_fits-tool-errors_fitserr.txt", "w") as fits_errors:
+            fits_errors.write(fits_output.stderr.decode('utf-8'))
+        aip.log["FITSTool"] = "FITs tools generated errors (saved to metadata folder)"
+    else:
+        aip.log["FITSTool"] = "No FITS tools errors"
+
+    # Renames the FITS output to the UGA Libraries' metadata naming convention (filename_fits.xml).
+    for item in os.listdir(f'{aip.id}/metadata'):
+        if item.endswith('.fits.xml'):
+            new_name = item.replace('.fits', '_fits')
+            os.rename(f'{aip.id}/metadata/{item}', f'{aip.id}/metadata/{new_name}')
+
+
+def combine_metadata(aip):
+    """Creates a single XML file that combines the FITS output for every file in the AIP. """
+
+    # Makes a new XML object with the root element named combined-fits.
+    combo_tree = ET.ElementTree(ET.Element('combined-fits'))
+    combo_root = combo_tree.getroot()
+
+    # Gets each of the FITS documents in the AIP's metadata folder.
+    for doc in os.listdir(f'{aip.id}/metadata'):
+        if doc.endswith('_fits.xml'):
+
+            # Makes Python aware of the FITS namespace.
+            ET.register_namespace('', "http://hul.harvard.edu/ois/xml/ns/fits/fits_output")
+
+            # Gets the FITS element and its children and makes it a child of the root, combined-fits.
+            try:
+                tree = ET.parse(f'{aip.id}/metadata/{doc}')
+                root = tree.getroot()
+                combo_root.append(root)
+            # Errors: the file is empty, is not XML, or has invalid XML.
+            # Moves the AIP to an error folder and does not execute the rest of this function.
+            except ET.ParseError as error:
+                aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
+                aip.log["Complete"] = "Error during processing."
+                log(aip.log)
+                move_error('combining_fits', aip.id)
+                return
+
+    # Updates the log for any without errors during FITS combination.
+    aip.log["FITSError"] = "Successfully created combined-fits.xml"
+
+    # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
+    combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
+
+
 def make_preservationxml(aip):
     """Creates PREMIS and Dublin Core metadata from the combined FITS XML and saves it as a file
     named preservation.xml that meets the metadata requirements for the UGA Libraries' digital

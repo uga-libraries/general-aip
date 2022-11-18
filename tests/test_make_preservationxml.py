@@ -3,6 +3,7 @@ makes the preservation.xml metadata file.
 There is error handling throughout for XML transformations and validating the preservation.xml.
 There are four functions used, to keep each step separate."""
 
+import fileinput
 import unittest
 from scripts.aip_functions import *
 
@@ -88,13 +89,22 @@ class MyTestCase(unittest.TestCase):
     def test_make_preservation_xml(self):
         """
         Test for successfully making the preservation.xml file.
-        Temporarily using if the file exists to test the result.
-        TODO: use the contents of the preservation.xml to test the result.
+        The contents of the preservation.xml to test the result.
         """
         make_cleaned_fits_xml(self.aip)
         make_preservation_xml(self.aip)
-        result = os.path.exists(os.path.join('aip-id', 'metadata', 'aip-id_preservation.xml'))
-        expected = True
+
+        # Replaces the UGA URI throughout the preservation.xml with "uri", since it cannot be in GitHub.
+        with fileinput.FileInput(os.path.join('aip-id', 'metadata', 'aip-id_preservation.xml'), inplace=True) as file:
+            for line in file:
+                print(line.replace(c.NAMESPACE, 'http://uri'), end="")
+
+        # Reads the preservation.xml file produced by the function and a preservation.xml file with the expected values.
+            with open(os.path.join('aip-id', 'metadata', 'aip-id_preservation.xml'), 'r') as result_file:
+                result = result_file.read()
+            with open(os.path.join('expected_xml', 'aip-id_preservation.xml'), 'r') as expected_file:
+                expected = expected_file.read()
+
         self.assertEqual(result, expected, 'Problem with preservation.xml')
 
     def test_make_preservation_xml_error(self):

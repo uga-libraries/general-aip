@@ -24,51 +24,63 @@ class TestMoveError(unittest.TestCase):
 
     def tearDown(self):
         """
-        Deletes the error folder for a clean start to the next test.
-        All AIP folders should be in the error folder at this point and don't need to be deleted separately.
+        Deletes the errors folder.
+        All test AIP folders should be in the error folder at this point and don't need to be deleted separately.
         """
         shutil.rmtree(os.path.join('..', 'errors'))
 
     def test_no_previous_error(self):
         """
         Test for moving a folder into an error folder when there is no pre-existing errors folder.
+        Result for testing is a list of paths for every folder in the errors folder.
         """
         os.mkdir('aip_one')
         move_error('test_error', 'aip_one')
+
         result = errors_directory_print()
+
         expected = [os.path.join('..', 'errors', 'test_error'),
                     os.path.join('..', 'errors', 'test_error', 'aip_one')]
+
         self.assertEqual(result, expected, 'Problem with no previous error')
 
     def test_previous_error_diff_type(self):
         """
         Test for moving a folder into an error folder when there is a pre-existing errors folder
         but there is not a pre-existing error folder of the same error type.
+        Result for testing is a list of paths for every folder in the errors folder.
         """
         os.mkdir('aip_one')
         move_error('test_error', 'aip_one')
         os.mkdir('aip_two')
         move_error('test_two', 'aip_two')
+
         result = errors_directory_print()
+
         expected = [os.path.join('..', 'errors', 'test_error'),
                     os.path.join('..', 'errors', 'test_two'),
                     os.path.join('..', 'errors', 'test_error', 'aip_one'),
                     os.path.join('..', 'errors', 'test_two', 'aip_two')]
+
         self.assertEqual(result, expected, 'Problem with previous error, different type')
 
     def test_previous_error_same_type(self):
         """
         Test for moving a folder into an error folder when there is a pre-existing errors folder
         and there is a pre-existing error folder of the same error type.
+        Result for testing is a list of paths for every folder in the errors folder.
         """
         os.mkdir('aip_one')
         move_error('test_error', 'aip_one')
         os.mkdir('aip_two')
         move_error('test_error', 'aip_two')
+
         result = errors_directory_print()
+
         expected = [os.path.join('..', 'errors', 'test_error'),
                     os.path.join('..', 'errors', 'test_error', 'aip_one'),
                     os.path.join('..', 'errors', 'test_error', 'aip_two')]
+
         self.assertEqual(result, expected, 'Problem with previous error, same type')
 
 

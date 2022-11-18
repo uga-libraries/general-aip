@@ -52,7 +52,9 @@ class TestExtractMetadata(unittest.TestCase):
         """
         Deletes the log and error folder, if any, for a clean start to the next test.
         """
-        os.remove(os.path.join('..', 'aip_log.csv'))
+        if os.path.exists(os.path.join('..', 'aip_log.csv')):
+            os.remove(os.path.join('..', 'aip_log.csv'))
+
         if os.path.exists(os.path.join('..', 'errors')):
             shutil.rmtree(os.path.join('..', 'errors'))
 

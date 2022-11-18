@@ -124,8 +124,29 @@ class TestExtractMetadata(unittest.TestCase):
     def test_error_fits_tool(self):
         """
         Test for an AIP with a format that causes FITS to generate an error.
-        TODO: how do I cause this error?
+        Generates error by making a text file with an XML extension.
+        Result for testing is the FITS tool errors text file.
         """
+        # Makes the test AIP, including making the initial AIP instance, folder and file and
+        # running the first two functions for the AIP workflow.
+        tool_aip = AIP(os.getcwd(), 'test', 'coll-1', 'tool_error', 'tool_error', 'title', 1, True)
+        os.mkdir('tool_error')
+        with open(os.path.join('tool_error', 'not.xml'), 'w') as file:
+            file.write('This is not XML')
+        structure_directory(tool_aip)
+        extract_metadata_only(tool_aip)
+
+        # Generates result, which is if a few phrases are in the FITs error output.
+        # The contents of the entire file cannot be tested, since most are variable (timestamps and file paths).
+        with open(os.path.join('tool_error', 'metadata', 'tool_error_fits-tool-errors_fitserr.txt')) as file:
+            content = file.read()
+            result = ('org.jdom.input.JDOMParseException' in content,
+                      'Tool error processing file' in content,
+                      'Content is not allowed in prolog.' in content)
+
+        shutil.rmtree('tool_error')
+        expected = (True, True, True)
+        self.assertEqual(result, expected, 'Problem with FITS tool error')
 
     def test_error_et_parse(self):
         """

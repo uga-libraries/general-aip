@@ -407,7 +407,7 @@ def extract_metadata_only(aip):
     if fits_output.stderr:
         with open(f"{aip.directory}/{aip.id}/metadata/{aip.id}_fits-tool-errors_fitserr.txt", "w") as fits_errors:
             fits_errors.write(fits_output.stderr.decode('utf-8'))
-        aip.log["FITSTool"] = "FITs tools generated errors (saved to metadata folder)"
+        aip.log["FITSTool"] = "FITS tools generated errors (saved to metadata folder)"
     else:
         aip.log["FITSTool"] = "No FITS tools errors"
 

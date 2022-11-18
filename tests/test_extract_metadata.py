@@ -48,12 +48,6 @@ def update_fits(path):
 
 class TestExtractMetadata(unittest.TestCase):
 
-    def setUp(self):
-        """
-        Starts the log, which is typically done in the main body of the script.
-        """
-        log('header')
-
     def tearDown(self):
         """
         Deletes the log and error folder, if any, for a clean start to the next test.
@@ -65,7 +59,11 @@ class TestExtractMetadata(unittest.TestCase):
     def test_one_file(self):
         """
         Test for an AIP with one file.
+        Result for testing is the contents of the combined-fits.xml file, with data that varies for each test
+        (time FITS was made, etc.) changed to consistent values to allow an exact comparison.
         """
+        # Makes the test AIP, including making the initial AIP instance, folder and file and
+        # running the first two functions for the AIP workflow.
         one_file_aip = AIP(os.getcwd(), 'test', 'coll-1', 'one_file', 'one_file', 'title', 1, True)
         os.mkdir('one_file')
         with open(os.path.join('one_file', 'Text.txt'), 'w') as file:
@@ -73,7 +71,7 @@ class TestExtractMetadata(unittest.TestCase):
         structure_directory(one_file_aip)
         extract_metadata(one_file_aip)
 
-        # Edits the produced by the function and then reads it to use for the comparison.
+        # Edits the combined-fits.xml produced by the function and then reads it to use for the comparison.
         update_fits(os.path.join('one_file', 'metadata', 'one_file_combined-fits.xml'))
         with open(os.path.join('one_file', 'metadata', 'one_file_combined-fits.xml'), 'r') as result_file:
             result = result_file.read()
@@ -81,7 +79,7 @@ class TestExtractMetadata(unittest.TestCase):
         # Deletes the test AIP.
         shutil.rmtree('one_file')
 
-        # Reads data from XML with the expected result after updating.
+        # Reads an XML file with the expected result after editing.
         with open(os.path.join('combined_fits', 'one_file_combined-fits.xml')) as expected_file:
             expected = expected_file.read()
 
@@ -89,10 +87,12 @@ class TestExtractMetadata(unittest.TestCase):
 
     def test_multiple_files(self):
         """
-        Test for an AIP with multiple files of different formats.
-        Formats: Comma-Separated Values (CSV), JSON (also identified as JSON Data Interchange Format and Plain text),
-        Plain text
+        Test for an AIP with multiple files of different formats (CSV, JSON, Plain text).
+        Result for testing is the contents of the combined-fits.xml file, with data that varies for each test
+        (time FITS was made, etc.) changed to consistent values to allow an exact comparison.
         """
+        # Makes the test AIP, including making the initial AIP instance, folders and files and
+        # running the first two functions for the AIP workflow.
         multi_file_aip = AIP(os.getcwd(), 'test', 'coll-1', 'multi_file', 'multi_file', 'title', 1, True)
         os.mkdir('multi_file')
         with open(os.path.join('multi_file', 'Text.txt'), 'w') as file:
@@ -104,7 +104,7 @@ class TestExtractMetadata(unittest.TestCase):
         structure_directory(multi_file_aip)
         extract_metadata(multi_file_aip)
 
-        # Edits the produced by the function and then reads it to use for the comparison.
+        # Edits the combined-fits.xml produced by the function and then reads it to use for the comparison.
         update_fits(os.path.join('multi_file', 'metadata', 'multi_file_combined-fits.xml'))
         with open(os.path.join('multi_file', 'metadata', 'multi_file_combined-fits.xml'), 'r') as result_file:
             result = result_file.read()
@@ -112,7 +112,7 @@ class TestExtractMetadata(unittest.TestCase):
         # Deletes the test AIP.
         shutil.rmtree('multi_file')
 
-        # Reads data from XML with the expected result after updating.
+        # Reads an XML file with the expected result after editing.
         with open(os.path.join('combined_fits', 'multi_file_combined-fits.xml')) as expected_file:
             expected = expected_file.read()
 

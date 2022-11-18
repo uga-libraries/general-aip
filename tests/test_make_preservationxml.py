@@ -1,4 +1,4 @@
-"""Testing for the function make_preservationxml, which takes an AIp class instance as input and
+"""Testing for the function make_preservationxml, which takes an AIP class instance as input and
 makes the preservation.xml metadata file.
 There is error handling throughout for XML transformations and validating the preservation.xml.
 There are four functions used, to keep each step separate."""
@@ -50,11 +50,26 @@ class MyTestCase(unittest.TestCase):
         """
         Test for successfully making the cleaned-fits.xml file.
         Temporarily using if the file exists to test the result.
-        TODO: use the contents of the cleaned-fits.xml to test the result.
+        Result for testing is the contents of the cleaned-fits.xml file.
         """
         make_cleaned_fits_xml(self.aip)
-        result = os.path.exists(os.path.join('aip-id', 'metadata', 'aip-id_cleaned-fits.xml'))
-        expected = True
+
+        # Edits the timestamp and filepath to consistent values to allow an exact comparison to expected.
+        tree = ET.parse(os.path.join('aip-id', 'metadata', 'aip-id_cleaned-fits.xml'))
+        root = tree.getroot()
+        for fits in root.iter('{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}fits'):
+            fits.set('timestamp', '01/01/22 1:23 PM')
+        for filepath in root.iter('{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}filepath'):
+            filepath.text = 'C:/Path/aip-id/objects/file.txt'
+        tree.write(os.path.join('aip-id', 'metadata', 'aip-id_cleaned-fits.xml'),
+                   xml_declaration=True, encoding='UTF-8')
+
+        # Reads the cleaned-fits.xml file produced by the function and a cleaned-fits.xml file with the expected values.
+        with open(os.path.join('aip-id', 'metadata', 'aip-id_cleaned-fits.xml'), 'r') as result_file:
+            result = result_file.read()
+        with open(os.path.join('expected_xml', 'aip-id_cleaned-fits.xml'), 'r') as expected_file:
+            expected = expected_file.read()
+
         self.assertEqual(result, expected, 'Problem with cleaned fits')
 
     def test_make_cleaned_fits_xml_error(self):

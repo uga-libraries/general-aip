@@ -42,34 +42,47 @@ class TestPackage(unittest.TestCase):
     def test_tar_zip(self):
         """
         Test for an AIP that should be tarred and zipped.
-        Result for testing is if the tarred/zipped file is in the aips-to-ingest folder.
+        Result for testing is if the tarred/zipped file is in the aips-to-ingest folder, plus the AIP log.
         """
         package(self.aip)
-        result = os.path.exists(os.path.join('..', 'aips-to-ingest', 'test-aip-id_bag.6791.tar.bz2'))
-        self.assertEqual(result, True, 'Problem with tar and zip')
+
+        result = (os.path.exists(os.path.join('..', 'aips-to-ingest', 'test-aip-id_bag.6791.tar.bz2')),
+                  self.aip.log['Package'])
+
+        expected = (True, 'Successfully made package')
+
+        self.assertEqual(result, expected, 'Problem with tar and zip')
 
     def test_tar(self):
         """
         Test for an AIP that should be tarred and not zipped.
-        Result for testing is if the tarred file is in the aips-to-ingest folder.
+        Result for testing is if the tarred file is in the aips-to-ingest folder, plus the AIP log.
         """
-        self.aip.to_zip=False
+        self.aip.to_zip = False
         package(self.aip)
-        result = os.path.exists(os.path.join('..', 'aips-to-ingest', 'test-aip-id_bag.6791.tar'))
-        self.assertEqual(result, True, 'Problem with tar')
+
+        result = (os.path.exists(os.path.join('..', 'aips-to-ingest', 'test-aip-id_bag.6791.tar')),
+                  self.aip.log['Package'])
+
+        expected = (True, 'Successfully made package')
+
+        self.assertEqual(result, expected, 'Problem with tar')
 
     def test_tar_error(self):
         """
         Test error handling if 7zip is not able to tar the file.
         Error is created by changing the directory, which prevents 7zip from locating the bag to tar.
-        Result for testing is the value ofr Package in the AIP log.
+        Result for testing is the AIP log.
         """
         self.aip.directory = 'DoesNotExist'
         package(self.aip)
-        result = 'Could not tar. 7zip error: \r\n' \
-                 'WARNING: The system cannot find the file specified.\r\n' \
-                 'DoesNotExist\r\n\r\n'
-        expected = self.aip.log['Package']
+
+        result = self.aip.log['Package']
+
+        expected = 'Could not tar. 7zip error: \r\n' \
+                   'WARNING: The system cannot find the file specified.\r\n' \
+                   'DoesNotExist\r\n\r\n'
+
         self.assertEqual(result, expected, 'Problem with tar error')
 
 

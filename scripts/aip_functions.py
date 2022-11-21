@@ -781,7 +781,7 @@ def manifest(aip):
     # The error should probably be in the log from package(), but adds it if not.
     if not os.path.exists(aip_path):
         if not aip.log["Package"].startswith("Could not tar."):
-            aip.log["Package"] = "Tar/zip file not in aips-to-ingest folder."
+            aip.log["Manifest"] = "Tar/zip file not in aips-to-ingest folder"
             aip.log["Complete"] = "Error during processing."
             log(aip.log)
         return
@@ -805,7 +805,7 @@ def manifest(aip):
         manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
 
     # Logs the success of adding to the manifest.
-    aip.log["Manifest"] = "Successfully added AIP to manifest."
+    aip.log["Manifest"] = "Successfully added AIP to manifest"
     
     # This is the last step, so logs that the AIP completed successfully.
     aip.log["Complete"] = "Successfully completed processing"

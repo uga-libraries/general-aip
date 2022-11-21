@@ -65,130 +65,170 @@ def aip_directory_print(folder):
 
 class TestStructureDirectory(unittest.TestCase):
 
-    def setUp(self):
-        """
-        Starts the log, which is typically done in the main body of the script.
-        """
-        log('header')
-
     def tearDown(self):
         """
-        Deletes the log and error folder, if any, for a clean start to the next test.
+        Deletes the aip log, errors folder, and test AIPs folders, if present.
         """
-        os.remove(os.path.join('..', 'aip_log.csv'))
-        if os.path.exists(os.path.join('..', 'errors')):
-            shutil.rmtree(os.path.join('..', 'errors'))
+        if os.path.exists(os.path.join('..', 'aip_log.csv')):
+            os.remove(os.path.join('..', 'aip_log.csv'))
+
+        paths = (os.path.join('..', 'errors'), 'sort-log', 'sort-emory', 'sort-none')
+        for path in paths:
+            if os.path.exists(path):
+                shutil.rmtree(path)
 
     def test_error_objects_exists(self):
         """
-        Test for structuring an AIP when there is already an objects subfolder and no metadata subfolder.
-        This is an error that the script can handle.
+        Test for error handling when there is already an objects subfolder and no metadata subfolder.
+        Result for testing is the files and folders within the AIPs folder plus the AIP log.
         """
         objects_aip = AIP(os.getcwd(), 'test', 'coll-1', 'err-objects', 'err-objects', 'title', 1, True)
         make_aip_directory('err-objects')
         structure_directory(objects_aip)
+
         aip_path = os.path.join('..', 'errors', 'objects_folder_exists', 'err-objects')
-        result = aip_directory_print(aip_path)
-        expected = [os.path.join(aip_path, 'objects'),
+        result = (aip_directory_print(aip_path),
+                  objects_aip.log['ObjectsError'],
+                  objects_aip.log['MetadataError'])
+
+        expected = ([os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'Test Dir'),
                     os.path.join(aip_path, 'Text 2.txt'),
                     os.path.join(aip_path, 'Text.txt'),
                     os.path.join(aip_path, 'objects', 'Objects Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')],
+                    'Objects folder already exists in original files',
+                    'n/a')
+
         self.assertEqual(result, expected, 'Problem with error - objects exists')
 
     def test_error_both_exist(self):
         """
         Test for structuring an AIP when there are already objects and metadata subfolders.
-        This is an error that the script can handle.
+        Result for testing is the files and folders within the AIPs folder plus the AIP log.
         """
         both_aip = AIP(os.getcwd(), 'test', 'coll-1', 'err-both', 'err-both', 'title', 1, True)
         make_aip_directory('err-both')
         structure_directory(both_aip)
+
         aip_path = os.path.join('..', 'errors', 'objects_folder_exists', 'err-both')
-        result = aip_directory_print(aip_path)
-        expected = [os.path.join(aip_path, 'metadata'),
+        result = (aip_directory_print(aip_path),
+                  both_aip.log['ObjectsError'],
+                  both_aip.log['MetadataError'])
+
+        expected = ([os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'Test Dir'),
                     os.path.join(aip_path, 'Text 2.txt'),
                     os.path.join(aip_path, 'Text.txt'),
                     os.path.join(aip_path, 'metadata', 'Metadata Text.txt'),
                     os.path.join(aip_path, 'objects', 'Objects Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')],
+                    'Objects folder already exists in original files',
+                    'n/a')
+
         self.assertEqual(result, expected, 'Problem with error - metadata and objects exists')
 
     def test_error_metadata_exists(self):
         """
         Test for structuring an AIP when there is already a metadata subfolder and no objects subfolder.
-        This is an error that the script can handle.
+        Result for testing is the files and folders within the AIPs folder plus the AIP log.
         """
         metadata_aip = AIP(os.getcwd(), 'test', 'coll-1', 'err-metadata', 'err-metadata', 'title', 1, True)
         make_aip_directory('err-metadata')
         structure_directory(metadata_aip)
+
         aip_path = os.path.join('..', 'errors', 'metadata_folder_exists', 'err-metadata')
-        result = aip_directory_print(aip_path)
-        expected = [os.path.join(aip_path, 'metadata'),
+        result = (aip_directory_print(aip_path),
+                  metadata_aip.log['ObjectsError'],
+                  metadata_aip.log['MetadataError'])
+
+        expected = ([os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'Test Dir'),
                     os.path.join(aip_path, 'Text 2.txt'),
                     os.path.join(aip_path, 'Text.txt'),
                     os.path.join(aip_path, 'metadata', 'Metadata Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')],
+                    'n/a',
+                    'Metadata folder already exists in original files')
+
         self.assertEqual(result, expected, 'Problem with error - metadata exists')
 
     def test_sort_files_deleted(self):
         """
         Test for structuring an AIP which contains a deletion log, which goes in the metadata subfolder.
         All other files will go to the objects subfolder.
+        Result for testing is the files and folders within the AIPs folder plus the AIP log.
         """
         log_aip = AIP(os.getcwd(), 'test', 'coll-1', 'sort-log', 'sort-log', 'title', 1, True)
         make_aip_directory('sort-log')
         structure_directory(log_aip)
-        result = aip_directory_print(log_aip.folder_name)
-        shutil.rmtree('sort-log')
-        expected = [os.path.join('sort-log', 'metadata'),
+
+        result = (aip_directory_print(log_aip.folder_name),
+                  log_aip.log['ObjectsError'],
+                  log_aip.log['MetadataError'])
+
+        expected = ([os.path.join('sort-log', 'metadata'),
                     os.path.join('sort-log', 'objects'),
                     os.path.join('sort-log', 'metadata', 'sort-log_files-deleted_2022-10-31_del.csv'),
                     os.path.join('sort-log', 'objects', 'Test Dir'),
                     os.path.join('sort-log', 'objects', 'Text 2.txt'),
                     os.path.join('sort-log', 'objects', 'Text.txt'),
-                    os.path.join('sort-log', 'objects', 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join('sort-log', 'objects', 'Test Dir', 'Test Dir Text.txt')],
+                    'Successfully created objects folder',
+                    'Successfully created metadata folder')
+
         self.assertEqual(result, expected, 'Problem with sort deletion log')
 
     def test_sort_emory(self):
         """
         Test for structuring an AIP which contains an Emory metadata file, which goes in the metadata subfolder.
         All other files will go in the objects subfolder.
+        Result for testing is the files and folders within the AIPs folder plus the AIP log.
         """
         emory_aip = AIP(os.getcwd(), 'emory', 'coll-1', 'sort-emory', 'sort-emory', 'title', 1, True)
         make_aip_directory('sort-emory')
         structure_directory(emory_aip)
-        result = aip_directory_print(emory_aip.folder_name)
-        shutil.rmtree('sort-emory')
-        expected = [os.path.join('sort-emory', 'metadata'),
+
+        result = (aip_directory_print(emory_aip.folder_name),
+                  emory_aip.log['ObjectsError'],
+                  emory_aip.log['MetadataError'])
+
+        expected = ([os.path.join('sort-emory', 'metadata'),
                     os.path.join('sort-emory', 'objects'),
                     os.path.join('sort-emory', 'metadata', 'EmoryMD_Test.txt'),
                     os.path.join('sort-emory', 'objects', 'Test Dir'),
                     os.path.join('sort-emory', 'objects', 'Text 2.txt'),
                     os.path.join('sort-emory', 'objects', 'Text.txt'),
-                    os.path.join('sort-emory', 'objects', 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join('sort-emory', 'objects', 'Test Dir', 'Test Dir Text.txt')],
+                    'Successfully created objects folder',
+                    'Successfully created metadata folder')
+
         self.assertEqual(result, expected, 'Problem with sort Emory metadata')
 
     def test_sort_none(self):
         """
         Test for structuring an AIP with no metadata files. All files will go in the objects subfolder.
+        Result for testing is the files and folders within the AIPs folder plus the AIP log.
         """
         none_aip = AIP(os.getcwd(), 'test', 'coll-1', 'sort-none', 'sort-none', 'title', 1, True)
         make_aip_directory('sort-none')
         structure_directory(none_aip)
-        result = aip_directory_print(none_aip.folder_name)
-        shutil.rmtree('sort-none')
-        expected = [os.path.join('sort-none', 'metadata'),
+
+        result = (aip_directory_print(none_aip.folder_name),
+                  none_aip.log['ObjectsError'],
+                  none_aip.log['MetadataError'])
+
+        expected = ([os.path.join('sort-none', 'metadata'),
                     os.path.join('sort-none', 'objects'),
                     os.path.join('sort-none', 'objects', 'Test Dir'),
                     os.path.join('sort-none', 'objects', 'Text 2.txt'),
                     os.path.join('sort-none', 'objects', 'Text.txt'),
-                    os.path.join('sort-none', 'objects', 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join('sort-none', 'objects', 'Test Dir', 'Test Dir Text.txt')],
+                    'Successfully created objects folder',
+                    'Successfully created metadata folder')
+
         self.assertEqual(result, expected, 'Problem with sort no metadata')
 
 

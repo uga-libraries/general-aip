@@ -1,10 +1,8 @@
-"""Testing for the function bag, which takes an AIP class instance as input and makes it into a bag,
-with md5 and sha256 checksums. The bag folder is renamed with '_bag' suffix and the bag is validated.
+"""Testing for the function validate_bag, which takes an AIP class instance as input and validates the AIPs bag.
 There is error handling for if the bag is not valid.
-There are two functions for bagging, one to make it and one to validate it.
 
-NOTE: validate_bag() has a test for writing the entire message to the log if the information is not in error.details.
-We could not write a test for this because we don't know how to force that to happen.
+NOTE: there is no test for writing the entire message to the log if the information is not in error.details
+because we don't know how to force that to happen.
 """
 
 import datetime
@@ -18,19 +16,27 @@ class TestBag(unittest.TestCase):
 
     def setUp(self):
         """
-        Makes an AIP instance and corresponding folder to use for testing.
-        To save time, since they are not used for the test, the metadata files are text files and not real.
+        Makes an AIP instance and corresponding bag to use for testing.
         """
+        # Makes the AIP instance and a folder named with the AIP ID.
         self.aip = AIP(os.getcwd(), 'test', 'coll-1', 'aip-folder', 'aip-id', 'title', 1, True)
         os.mkdir(self.aip.id)
+
+        # Makes the AIP metadata folder and metadata files.
+        # To save time, since they are not used for the test, the metadata files are text files and not real.
         os.mkdir(os.path.join(self.aip.id, 'metadata'))
         with open(os.path.join(self.aip.id, 'metadata', 'file_fits.xml'), 'w') as file:
             file.write("Text")
         with open(os.path.join(self.aip.id, 'metadata', f'{self.aip.id}_preservation.xml'), 'w') as file:
             file.write("Text")
+
+        # Makes the AIP object folder and a test file.
         os.mkdir(os.path.join(self.aip.id, 'objects'))
         with open(os.path.join(self.aip.id, 'objects', 'file.txt'), 'w') as file:
             file.write("Test")
+
+        # Makes a bag from the AIP folder.
+        make_bag(self.aip)
 
     def tearDown(self):
         """
@@ -50,32 +56,11 @@ class TestBag(unittest.TestCase):
         if os.path.exists(errors_path):
             shutil.rmtree(errors_path)
 
-    def test_make_bag(self):
-        """
-        Test for making a bag of an AIP folder.
-        The bag directory structure is used to test the result.
-        """
-        make_bag(self.aip)
-
-        # If the renamed bag folder is present, a directory print of the folder is the test result.
-        # Otherwise, default error language is the result.
-        if os.path.exists(f'{self.aip.id}_bag'):
-            result = []
-            for item in os.listdir(f'{self.aip.id}_bag'):
-                result.append(item)
-        else:
-            result = "AIP's bag folder not found"
-
-        expected = ['bag-info.txt', 'bagit.txt', 'data', 'manifest-md5.txt', 'manifest-sha256.txt',
-                    'tagmanifest-md5.txt', 'tagmanifest-sha256.txt']
-        self.assertEqual(result, expected, 'Problem with make bag')
-
     def test_valid_bag(self):
         """
         Test for validating a valid bag.
-        The AIP log is used to test the result.
+        Result for testing is the AIP log.
         """
-        make_bag(self.aip)
         validate_bag(self.aip)
         result = self.aip.log["BagValid"]
         expected = f'Bag valid on {datetime.date.today()}'
@@ -85,12 +70,11 @@ class TestBag(unittest.TestCase):
     def test_not_valid_bag(self):
         """
         Test for validating a bag that is not valid.
-        The validation log, which will be in the errors folder, is used to test the result.
+        Result for testing is the validation log, which will be in the errors folder.
         NOTE: bagit will also print validation result to the terminal in red.
         """
-        make_bag(self.aip)
 
-        # Replacing the MD5 manifest with incorrect information so the bag is no longer valid.
+        # Makes the bag not valid by replacing the MD5 manifest with incorrect information.
         # Fixity is changed for file.txt, which also changes the fixity of manifest-md5.txt.
         # If the files are changed instead, it produces a one-line payload error, which doesn't test log formatting.
         with open(os.path.join(f'{self.aip.id}_bag', 'manifest-md5.txt'), 'w') as file:

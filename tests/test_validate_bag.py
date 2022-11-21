@@ -70,7 +70,7 @@ class TestBag(unittest.TestCase):
     def test_not_valid_bag(self):
         """
         Test for validating a bag that is not valid.
-        Result for testing is the validation log, which will be in the errors folder.
+        Result for testing is the validation log, which will be in the errors folder, plus the AIP log.
         NOTE: bagit will also print validation result to the terminal in red.
         """
 
@@ -89,13 +89,16 @@ class TestBag(unittest.TestCase):
         log_path = os.path.join('..', 'errors', 'bag_not_valid', 'aip-id_bag_validation.txt')
         if os.path.exists(log_path):
             with open(log_path, 'r') as file:
-                result = file.readlines()
-                result.sort()
+                log_data = file.readlines()
+                log_data.sort()
+                result = (log_data, self.aip.log['BagValid'])
         else:
-            result = 'The validation log was not found'
-        expected = ['data\\objects\\file.txt md5 validation failed: expected="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" found="0cbc6611f5540bd0809a388dc95a615b"\n',
+            result = ('The validation log was not found', self.aip.log['BagValid'])
+
+        expected = (['data\\objects\\file.txt md5 validation failed: expected="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" found="0cbc6611f5540bd0809a388dc95a615b"\n',
                     'manifest-md5.txt md5 validation failed: expected="ca30eea54d30b25cca192fb4a38efbc3" found="7fd32d6a82c9ba59534103d4a877e3d8"\n',
-                    'manifest-md5.txt sha256 validation failed: expected="ce73cc2e81ad3cc1b9f24d84a57984b96a4322914f7b02067a11c81b739ae548" found="0752123baadbf461f459b56be3c91b84548582d6ef6f4497f5ee6c528afdca10"\n']
+                    'manifest-md5.txt sha256 validation failed: expected="ce73cc2e81ad3cc1b9f24d84a57984b96a4322914f7b02067a11c81b739ae548" found="0752123baadbf461f459b56be3c91b84548582d6ef6f4497f5ee6c528afdca10"\n'],
+                    'Bag not valid (see log in bag_not_valid error folder)')
 
         self.assertEqual(result, expected, 'Problem with validating a bag that is not valid')
 

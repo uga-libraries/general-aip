@@ -53,10 +53,10 @@ class MyTestCase(unittest.TestCase):
         The result for testing is the AIP log.
         """
         validate_preservation_xml(self.aip)
-        result = self.aip.log['PresValid']
-        expected = f'Preservation.xml valid on {datetime.date.today()}'
-        # Since the log for preservation.xml validation includes a timestamp, assert cannot require an exact match.
-        self.assertIn(expected, result, 'Problem with preservation.xml validating')
+        result = (self.aip.log['PresXML'] == 'Successfully created preservation.xml',
+                  self.aip.log['PresValid'].startswith(f'Preservation.xml valid on {datetime.date.today()}'))
+        expected = (True, True)
+        self.assertEqual(expected, result, 'Problem with preservation.xml validating')
 
     def test_validate_preservation_xml_missing(self):
         """
@@ -77,7 +77,7 @@ class MyTestCase(unittest.TestCase):
     def test_validate_preservation_xml_error(self):
         """
         Test for error handling if the preservation.xml file is not valid.
-        Result for testing is the contents of the validation log.
+        Result for testing is the contents of the validation log, plus the AIP log.
         """
         # Causes the error by removing the field <dc:title> (the first element) from the preservation.xml.
         ET.register_namespace('dc', 'http://purl.org/dc/terms/')
@@ -89,10 +89,12 @@ class MyTestCase(unittest.TestCase):
         validate_preservation_xml(self.aip)
 
         with open(os.path.join('..', 'errors', 'preservationxml_not_valid', 'aip-id_presxml_validation.txt'), 'r') as f:
-            result = f.readlines()
+            result = (f.readlines(), self.aip.log['PresXML'], self.aip.log['PresValid'])
 
-        expected = ["Element '{http://purl.org/dc/terms/}rights': This element is not expected. Expected is ( {http://purl.org/dc/terms/}title ).\n",
-                    "\n", "aip-id/metadata/aip-id_preservation.xml fails to validate\n", "\n", "\n"]
+        expected = (["Element '{http://purl.org/dc/terms/}rights': This element is not expected. Expected is ( {http://purl.org/dc/terms/}title ).\n",
+                    "\n", "aip-id/metadata/aip-id_preservation.xml fails to validate\n", "\n", "\n"],
+                    'Successfully created preservation.xml',
+                    'Preservation.xml is not valid (see log in error folder)')
 
         self.assertEqual(result, expected, 'Problem with error handling of preservation.xml file that is not valid')
 

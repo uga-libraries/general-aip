@@ -6,7 +6,7 @@ import pandas as pd
 import shutil
 import unittest
 import xml.etree.ElementTree as ET
-from scripts.aip_functions import AIP, structure_directory, extract_metadata_only, combine_metadata
+from scripts.aip_functions import AIP, structure_directory, extract_metadata, combine_metadata
 
 
 def update_fits(path):
@@ -72,7 +72,7 @@ class TestExtractMetadata(unittest.TestCase):
         with open(os.path.join('one_file', 'Text.txt'), 'w') as file:
             file.write('Test File')
         structure_directory(one_file_aip)
-        extract_metadata_only(one_file_aip)
+        extract_metadata(one_file_aip)
         combine_metadata(one_file_aip)
 
         # Edits the combined-fits.xml produced by the function and then reads it to use for the comparison.
@@ -103,7 +103,7 @@ class TestExtractMetadata(unittest.TestCase):
         df.to_csv(os.path.join('multi_file', 'Pandas Output', 'output.csv'), index=False)
         df.to_json(os.path.join('multi_file', 'Pandas Output', 'output.json'))
         structure_directory(multi_file_aip)
-        extract_metadata_only(multi_file_aip)
+        extract_metadata(multi_file_aip)
         combine_metadata(multi_file_aip)
 
         # Edits the combined-fits.xml produced by the function and then reads it to use for the comparison.

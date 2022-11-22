@@ -331,67 +331,6 @@ def structure_directory(aip):
 
 
 def extract_metadata(aip):
-    """Extracts technical metadata from the files in the objects folder using FITS and
-    creates a single XML file that combines the FITS output for every file in the AIP. """
-
-    # Runs FITS on the files in the AIP's objects folder and saves the output to it's metadata folder.
-    # The FITS output is named with the original file name. If there is more than one file anywhere
-    # within the objects folder with the same name, FITS adds a number to the duplicates, for example:
-    # file.ext.fits.xml, file.ext-1.fits.xml, file.ext-2.fits.xml
-    fits_output = subprocess.run(
-        f'"{c.FITS}" -r -i "{aip.directory}/{aip.id}/objects" -o "{aip.directory}/{aip.id}/metadata"',
-        shell=True, stderr=subprocess.PIPE)
-
-    # If there were any tool error messages from FITS, saves those to a log in the AIP's metadata folder.
-    # Processing on the AIP continues, since typically other tools still work.
-    if fits_output.stderr:
-        with open(f"{aip.directory}/{aip.id}/metadata/{aip.id}_fits-tool-errors_fitserr.txt", "w") as fits_errors:
-            fits_errors.write(fits_output.stderr.decode('utf-8'))
-        aip.log["FITSTool"] = "FITs tools generated errors (saved to metadata folder)"
-    else:
-        aip.log["FITSTool"] = "No FITS tools errors"
-
-    # Renames the FITS output to the UGA Libraries' metadata naming convention (filename_fits.xml).
-    for item in os.listdir(f'{aip.id}/metadata'):
-        if item.endswith('.fits.xml'):
-            new_name = item.replace('.fits', '_fits')
-            os.rename(f'{aip.id}/metadata/{item}', f'{aip.id}/metadata/{new_name}')
-
-    # The rest of this function copies the FITS output into a single XML file.
-
-    # Makes a new XML object with the root element named combined-fits.
-    combo_tree = ET.ElementTree(ET.Element('combined-fits'))
-    combo_root = combo_tree.getroot()
-
-    # Gets each of the FITS documents in the AIP's metadata folder.
-    for doc in os.listdir(f'{aip.id}/metadata'):
-        if doc.endswith('_fits.xml'):
-
-            # Makes Python aware of the FITS namespace.
-            ET.register_namespace('', "http://hul.harvard.edu/ois/xml/ns/fits/fits_output")
-
-            # Gets the FITS element and its children and makes it a child of the root, combined-fits.
-            try:
-                tree = ET.parse(f'{aip.id}/metadata/{doc}')
-                root = tree.getroot()
-                combo_root.append(root)
-            # Errors: the file is empty, is not XML, or has invalid XML.
-            # Moves the AIP to an error folder and does not execute the rest of this function.
-            except ET.ParseError as error:
-                aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
-                aip.log["Complete"] = "Error during processing."
-                log(aip.log)
-                move_error('combining_fits', aip.id)
-                return
-
-    # Updates the log for any without errors during FITS combination.
-    aip.log["FITSError"] = "Successfully created combined-fits.xml"
-
-    # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
-    combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
-
-
-def extract_metadata_only(aip):
     """Extracts technical metadata from the files in the objects folder using FITS. """
 
     # Runs FITS on the files in the AIP's objects folder and saves the output to it's metadata folder.
@@ -451,86 +390,6 @@ def combine_metadata(aip):
 
     # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
     combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
-
-
-def make_preservationxml(aip):
-    """Creates PREMIS and Dublin Core metadata from the combined FITS XML and saves it as a file
-    named preservation.xml that meets the metadata requirements for the UGA Libraries' digital
-    preservation system (ARCHive)."""
-
-    # Makes a simplified version of the combined fits XML so the XML is easier to aggregate.
-    # Saves the file in the AIP's metadata folder. It is deleted at the end of the function.
-    combined_fits = f'{aip.id}/metadata/{aip.id}_combined-fits.xml'
-    cleanup_stylesheet = f'{c.STYLESHEETS}/fits-cleanup.xsl'
-    cleaned_fits = f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml'
-    cleaned_output = subprocess.run(
-        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{combined_fits}" -xsl:"{cleanup_stylesheet}" -o:"{cleaned_fits}"',
-        stderr=subprocess.PIPE, shell=True)
-
-    # If saxon has an error, moves the AIP to an error folder and does not execute the rest of this function.
-    if cleaned_output.stderr:
-        aip.log["PresXML"] = f"Issue when creating cleaned-fits.xml. Saxon error: {cleaned_output.stderr.decode('utf-8')}"
-        aip.log["Complete"] = "Error during processing."
-        log(aip.log)
-        move_error('cleaned_fits_saxon_error', aip.id)
-        return
-
-    # Makes the preservation.xml file using a stylesheet and saves it to the AIP's metadata folder.
-    stylesheet = f'{c.STYLESHEETS}/fits-to-preservation.xsl'
-    preservation_xml = f'{aip.id}/metadata/{aip.id}_preservation.xml'
-    arguments = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
-                f'department="{aip.department}" version={aip.version} ns={c.NAMESPACE}'
-    pres_output = subprocess.run(
-        f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{cleaned_fits}" -xsl:"{stylesheet}" -o:"{preservation_xml}" {arguments}',
-        stderr=subprocess.PIPE, shell=True)
-
-    # If saxon has an error, moves the AIP to an error folder and does not execute the rest of this function.
-    if pres_output.stderr:
-        aip.log["PresXML"] = f"Issue when creating preservation.xml. Saxon error: {pres_output.stderr.decode('utf-8')}"
-        aip.log["Complete"] = "Error during processing."
-        log(aip.log)
-        move_error('pres_xml_saxon_error', aip.id)
-        return
-
-    # Validates the preservation.xml file against the requirements of ARCHive.
-    # If it is not valid, moves the AIP to an error folder and does not execute the rest of this function.
-    validation = subprocess.run(f'xmllint --noout -schema "{c.STYLESHEETS}/preservation.xsd" "{preservation_xml}"',
-                                stderr=subprocess.PIPE, shell=True)
-    validation_result = validation.stderr.decode('utf-8')
-
-    # This error happens if the preservation.xml file was not made in the expected location.
-    # It will probably not happen now that the script tests for saxon errors, but leaving just in case.
-    if 'failed to load' in validation_result:
-        aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
-        aip.log["Complete"] = "Error during processing."
-        log(aip.log)
-        move_error('preservationxml_not_found', aip.id)
-        return
-    else:
-        aip.log["PresXML"] = "Successfully created preservation.xml"
-
-    # This error happens if the preservation.xml file does not meet the Libraries' requirements.
-    # The validation output is saved to a file in the error folder for review.
-    if 'fails to validate' in validation_result:
-        aip.log["PresValid"] = "Preservation.xml is not valid (see log in error folder)"
-        aip.log["Complete"] = "Error during processing."
-        log(aip.log)
-        move_error('preservationxml_not_valid', aip.id)
-        with open(f"../errors/preservationxml_not_valid/{aip.id}_presxml_validation.txt", "w") as validation_log:
-            for line in validation_result.split("\r"):
-                validation_log.write(line + "\n")
-        return
-    else:
-        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.datetime.now()}"
-
-    # Copies the preservation.xml file to the preservation-xml folder for staff reference.
-    shutil.copy2(f'{aip.id}/metadata/{aip.id}_preservation.xml', '../preservation-xml')
-
-    # Moves the combined-fits.xml file to the fits-xml folder for staff reference.
-    os.replace(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', f'../fits-xml/{aip.id}_combined-fits.xml')
-
-    # Deletes the cleaned-fits.xml file because it is a temporary file.
-    os.remove(f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml')
 
 
 def make_cleaned_fits_xml(aip):
@@ -625,37 +484,6 @@ def organize_xml(aip):
 
     # Deletes the cleaned-fits.xml file because it is a temporary file.
     os.remove(f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml')
-
-
-def bag(aip):
-    """Bags and validates the AIP. Adds _bag to the AIP folder name."""
-
-    # Bags the AIP folder in place with md5 and sha256 checksums for extra security.
-    bagit.make_bag(aip.id, checksums=['md5', 'sha256'])
-
-    # Renames the AIP folder to add _bag to the end of the folder name.
-    new_aip_name = f'{aip.id}_bag'
-    os.replace(aip.id, new_aip_name)
-
-    # Validates the bag.
-    # If it is not valid, saves the validation errors to the log, moves the AIP to an error folder.
-    new_bag = bagit.Bag(new_aip_name)
-    try:
-        new_bag.validate()
-    except bagit.BagValidationError as errors:
-        aip.log["BagValid"] = "Bag not valid (see log in AIP folder)"
-        aip.log["Complete"] = "Error during processing."
-        log(aip.log)
-        move_error('bag_not_valid', f'{aip.id}_bag')
-        with open(f"../errors/bag_not_valid/{aip.id}_bag_validation.txt", "w") as validation_log:
-            if errors.details:
-                for error_type in errors.details:
-                    validation_log.write(str(error_type) + "\n")
-            else:
-                validation_log.write(str(errors))
-        return
-
-    aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
 
 
 def make_bag(aip):

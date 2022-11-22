@@ -1,5 +1,5 @@
-"""Testing for the function extract_metadata, which takes an AIP class instance as input and
-uses FITS to extract technical metadata, which is combined into a single XML file."""
+"""Testing for the function combine_metadata, which takes an AIP class instance as input and
+combines the FITS files in the AIP's metadata folder into a single XML file."""
 
 import os
 import pandas as pd
@@ -49,14 +49,12 @@ class TestExtractMetadata(unittest.TestCase):
 
     def tearDown(self):
         """
-        Deletes the log, error folder, and AIP test folders for a clean start to the next test.
-        None of these files and folders are guaranteed to be there, so it tests for if they exist first.
+        Deletes the log, errors folder, and AIP test folders, if present.
         """
         if os.path.exists(os.path.join('..', 'aip_log.csv')):
             os.remove(os.path.join('..', 'aip_log.csv'))
         
         directory_paths = (os.path.join('..', 'errors'), 'one_file', 'multi_file', 'tool_error', 'et_error')
-
         for directory_path in directory_paths:
             if os.path.exists(directory_path):
                 shutil.rmtree(directory_path)
@@ -65,7 +63,7 @@ class TestExtractMetadata(unittest.TestCase):
         """
         Test for an AIP with one file.
         Result for testing is the contents of the combined-fits.xml file, with data that varies for each test
-        (time FITS was made, etc.) changed to consistent values to allow an exact comparison.
+        (time FITS was made, etc.) changed to consistent values to allow an exact comparison, plus the AIP log.
         """
         # Makes the test AIP, including making the initial AIP instance, folder and file and
         # running the first two functions for the AIP workflow.
@@ -80,11 +78,11 @@ class TestExtractMetadata(unittest.TestCase):
         # Edits the combined-fits.xml produced by the function and then reads it to use for the comparison.
         update_fits(os.path.join('one_file', 'metadata', 'one_file_combined-fits.xml'))
         with open(os.path.join('one_file', 'metadata', 'one_file_combined-fits.xml'), 'r') as result_file:
-            result = result_file.read()
+            result = (result_file.read(), one_file_aip.log['FITSError'])
 
         # Reads an XML file with the expected result after editing.
-        with open(os.path.join('combined_fits', 'one_file_combined-fits.xml')) as expected_file:
-            expected = expected_file.read()
+        with open(os.path.join('expected_xml', 'one_file_combined-fits.xml')) as expected_file:
+            expected = (expected_file.read(), 'Successfully created combined-fits.xml')
 
         self.assertEqual(result, expected, 'Problem with one file')
 
@@ -92,7 +90,7 @@ class TestExtractMetadata(unittest.TestCase):
         """
         Test for an AIP with multiple files of different formats (CSV, JSON, Plain text).
         Result for testing is the contents of the combined-fits.xml file, with data that varies for each test
-        (time FITS was made, etc.) changed to consistent values to allow an exact comparison.
+        (time FITS was made, etc.) changed to consistent values to allow an exact comparison, plus the AIP log.
         """
         # Makes the test AIP, including making the initial AIP instance, folders and files and
         # running the first two functions for the AIP workflow.
@@ -111,45 +109,19 @@ class TestExtractMetadata(unittest.TestCase):
         # Edits the combined-fits.xml produced by the function and then reads it to use for the comparison.
         update_fits(os.path.join('multi_file', 'metadata', 'multi_file_combined-fits.xml'))
         with open(os.path.join('multi_file', 'metadata', 'multi_file_combined-fits.xml'), 'r') as result_file:
-            result = result_file.read()
+            result = (result_file.read(), multi_file_aip.log['FITSError'])
 
         # Reads an XML file with the expected result after editing.
-        with open(os.path.join('combined_fits', 'multi_file_combined-fits.xml')) as expected_file:
-            expected = expected_file.read()
+        with open(os.path.join('expected_xml', 'multi_file_combined-fits.xml')) as expected_file:
+            expected = (expected_file.read(), 'Successfully created combined-fits.xml')
 
         self.assertEqual(result, expected, 'Problem with multiple formats')
-
-    def test_error_fits_tool(self):
-        """
-        Test for an AIP with a format that causes FITS to generate an error.
-        Generates error by making a text file with an XML extension.
-        Result for testing is the FITS tool errors text file.
-        """
-        # Makes the test AIP, including making the initial AIP instance, folder and file and
-        # running the first two functions for the AIP workflow.
-        tool_aip = AIP(os.getcwd(), 'test', 'coll-1', 'tool_error', 'tool_error', 'title', 1, True)
-        os.mkdir('tool_error')
-        with open(os.path.join('tool_error', 'not.xml'), 'w') as file:
-            file.write('This is not XML')
-        structure_directory(tool_aip)
-        extract_metadata_only(tool_aip)
-
-        # Generates result, which is if a few phrases are in the FITs error output.
-        # The contents of the entire file cannot be tested, since most are variable (timestamps and file paths).
-        with open(os.path.join('tool_error', 'metadata', 'tool_error_fits-tool-errors_fitserr.txt')) as file:
-            content = file.read()
-            result = ('org.jdom.input.JDOMParseException' in content,
-                      'Tool error processing file' in content,
-                      'Content is not allowed in prolog.' in content)
-            
-        expected = (True, True, True)
-        self.assertEqual(result, expected, 'Problem with FITS tool error')
 
     def test_error_et_parse(self):
         """
         Test for an AIP where the FITS XML can't be parsed correctly by ElementTree.
         Generates error by making a fake FITS file that is not real XML.
-        Result for testing is the AIP log value and if the AIP is in the expected error folder.
+        Result for testing is the AIP log and if the AIP is in the expected error folder.
         """
         # Makes the test AIP, including making the initial AIP instance, folder and file and
         # running the first function for the AIP workflow.

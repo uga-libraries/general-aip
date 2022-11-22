@@ -1,11 +1,11 @@
-"""Testing for the function extract_metadata_only, which takes an AIP class instance as input and
+"""Testing for the function extract_metadata, which takes an AIP class instance as input and
 uses FITS to extract technical metadata."""
 
 import os
 import pandas as pd
 import shutil
 import unittest
-from scripts.aip_functions import AIP, structure_directory, extract_metadata_only
+from scripts.aip_functions import AIP, structure_directory, extract_metadata
 
 
 class TestExtractMetadata(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestExtractMetadata(unittest.TestCase):
         with open(os.path.join('one_file', 'Text.txt'), 'w') as file:
             file.write('Test File')
         structure_directory(one_file_aip)
-        extract_metadata_only(one_file_aip)
+        extract_metadata(one_file_aip)
 
         result = (os.listdir(os.path.join('one_file', 'metadata')), one_file_aip.log['FITSTool'])
 
@@ -55,7 +55,7 @@ class TestExtractMetadata(unittest.TestCase):
         df.to_csv(os.path.join('multi_file', 'Pandas Output', 'output.csv'), index=False)
         df.to_json(os.path.join('multi_file', 'Pandas Output', 'output.json'))
         structure_directory(multi_file_aip)
-        extract_metadata_only(multi_file_aip)
+        extract_metadata(multi_file_aip)
 
         result = (os.listdir(os.path.join('multi_file', 'metadata')), multi_file_aip.log['FITSTool'])
 
@@ -76,7 +76,7 @@ class TestExtractMetadata(unittest.TestCase):
         with open(os.path.join('tool_error', 'not.xml'), 'w') as file:
             file.write('This is not XML')
         structure_directory(tool_aip)
-        extract_metadata_only(tool_aip)
+        extract_metadata(tool_aip)
 
         # Generates result, which is if a few phrases are in the FITs error output.
         # The contents of the entire file cannot be tested, since most are variable (timestamps and file paths).

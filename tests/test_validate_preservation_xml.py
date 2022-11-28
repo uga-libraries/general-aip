@@ -22,6 +22,7 @@ class MyTestCase(unittest.TestCase):
 
         structure_directory(self.aip)
         extract_metadata(self.aip)
+        combine_metadata(self.aip)
         make_cleaned_fits_xml(self.aip)
         make_preservation_xml(self.aip)
 

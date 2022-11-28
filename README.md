@@ -61,6 +61,11 @@ md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating sys
 7. Tars and zips a copy of the bag, which is saved in the aips-to-ingest folder.
 8. Uses md5deep to calculate the md5 for the packaged AIP and adds it to a department manifest in aips-to-ingest.
 
+# Unit Tests
+Includes one test file per function, and a test to run the full script.
+Unit test scripts should be run with the script repo folder "tests" as the current working directory.
+Copy the configuration.py file for the local installation of the script to the "tests" folder before running any tests.
+
 # Initial Author
 Adriane Hanson, Head of Digital Stewardship, December 2019.
 

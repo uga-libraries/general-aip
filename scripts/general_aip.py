@@ -1,6 +1,6 @@
 """Purpose: Creates AIPs from folders of digital objects that are then ready for ingest into the
 UGA Libraries' digital preservation system (ARCHive). The AIPs may contain one or multiple files
-of any format. The script works with Hargrett and Russell library IDs and Emory disk IDs.
+of any format. The script works with Hargrett and Russell library IDs and Emory disk image IDs.
 
 All workflow steps are done for one AIP before processing begins on the next.
 If an anticipated error is encountered during processing, the AIP is moved to an error folder
@@ -8,17 +8,18 @@ and the rest of the workflow steps are not executed for that AIP. A log is gener
 the script runs to record which AIPs were processed and any errors encountered.
 
 Prior to running the script:
-    1. The digital objects for each AIP should be in a folder named 'aip-id_AIP Title'
+    1. Make one folder per AIP with the digital objects for those AIPs.
     2. All folders to be made into AIPs should be in a single folder (the AIPs directory).
+    3. Make a file named metadata.csv in the AIPs directory. See README for what to include.
 
 Workflow Steps:
-    1. Extracts the aip id, department, and aip title from the aip folder title.
+    1. Extracts the information about each AIP from metadata.csv.
     2. Deletes temporary files.
     3. Organizes folder contents into the UGA Libraries' AIP directory structure.
     4. Extracts technical metadata using FITS.
     5. Converts technical metadata to Dublin Core and PREMIS (preservation.xml file).
     6. Packages the AIP (bag, tar, zip).
-    7. When all AIPs are created (steps 1-6), makes a md5 manifest of the packaged AIPs.
+    7. Adds the md5 for the packaged AIP to the department's md5 manifest.
 
 Script usage: python '/path/general_aip.py' '/path/aips_directory' [no-zip]
 Depending on how Python is installed on the machine, may need to substitute python3 for python.
@@ -27,119 +28,119 @@ Use the optional argument no-zip for batches of AIPs that should only be tarred.
 This script has been tested on Windows 10 and Mac OS X (10.9.5).
 """
 
-import datetime
+import csv
 import os
-import re
 import sys
+import aip_functions as a
 
-import aip_functions as aip
-
-# Assigns the required script argument to the aips_directory variable and makes that the current directory.
-# Ends the script if it is missing or not a valid directory.
-try:
-    AIPS_DIRECTORY = sys.argv[1]
-    os.chdir(AIPS_DIRECTORY)
-except (IndexError, FileNotFoundError):
-    print('Unable to run the script: AIPs directory argument is missing or invalid.')
-    print('Script usage: python "/path/general_aip.py" "/path/aips-directory" [no-zip]')
+# Verifies the script arguments are correct and calculates the associated variables.
+# If there are errors, ends the script.
+AIPS_DIRECTORY, ZIP, aip_metadata_csv, argument_errors = a.check_arguments(sys.argv)
+if len(argument_errors) > 0:
+    print('\nProblems detected with the provided script arguments:')
+    for error in argument_errors:
+        print("   * " + error)
+    print('\nScript usage: python "path/general_aip.py" "path/aips-directory" [no-zip]')
+    print("Correct the script arguments and run the script again.")
     sys.exit()
 
-# If the optional script argument no-zip is present, updates the zip variable to False.
-# This is for AIPs that are larger when zipped and should only be tarred to save space and time.
-ZIP = True
-if len(sys.argv) == 3:
-    if sys.argv[2] == "no-zip":
-        ZIP = False
-    else:
-        print('Unexpected value for the second argument. If provided, should be "no-zip".')
-        print('Script usage: python "/path/general_aip.py" "/path/aips-directory" [no-zip]')
-        sys.exit()
+# Makes the current directory the AIPs directory
+os.chdir(AIPS_DIRECTORY)
 
-# Verifies all the paths from the configuration file are valid. If not, ends the script.
-valid_errors = aip.check_paths()
-if not valid_errors == "no errors":
-    print('The following path(s) in the configuration file are not correct:')
-    for error in valid_errors:
-        print(error)
-    print('Correct the configuration file and run the script again.')
+# Verifies all the variables from the configuration file are present and all the paths are valid.
+# If not, ends the script.
+configuration_errors = a.check_configuration()
+if len(configuration_errors) > 0:
+    print('\nProblems detected with configuration.py:')
+    for error in configuration_errors:
+        print("   * " + error)
+    print('\nCorrect the configuration file and run the script again. Use configuration_template.py as a model.')
     sys.exit()
 
-# Starts a in log for saving information about errors encountered while running the script.
-# The log includes the script start time for calculating how long it takes the script to run.
-LOG_PATH = f'../script_log_{datetime.date.today()}.txt'
-aip.log(LOG_PATH, f'Starting AIP script at {datetime.datetime.today()}')
+# Reads the CSV with the AIP metadata.
+open_metadata = open(aip_metadata_csv)
+read_metadata = csv.reader(open_metadata)
+
+# Verifies the metadata header row has the expected values, departments are all ARCHive groups, and the folders match
+# what is in the AIPs directory. If there are an errors, ends the script.
+metadata_errors = a.check_metadata_csv(read_metadata)
+if len(metadata_errors) > 0:
+    print('\nProblems detected with metadata.csv:')
+    for error in metadata_errors:
+        print("   * " + error)
+    print('\nCorrect the metadata.csv and run the script again.')
+    sys.exit()
+
+# If there isn't already a log from running this script on a previous batch,
+# starts a log for saving information about events and errors from running the script and adds a header row.
+if not os.path.exists('../aip_log.csv'):
+    a.log("header")
 
 # Makes directories used to store script outputs in the same parent folder as the AIPs directory.
-aip.make_output_directories()
+a.make_output_directories()
 
 # Starts counts for tracking script progress.
 # Some steps are time consuming so this shows the script is not stuck.
-# If the AIPs directory already contains the output folders and log, the total will be too high.
+# Subtracts one from the count for the metadata file.
 CURRENT_AIP = 0
-TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY))
+TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY)) - 1
 
-# Uses the aip functions to create AIPs for one folder at a time.
-# Checks if the AIP folder is still present before # calling the function for the next step
+# Returns to the beginning of the CSV (the script is at the end because of checking it for errors) and skips the header.
+open_metadata.seek(0)
+next(read_metadata)
+
+# Uses the AIP functions to create an AIP for each folder in the metadata CSV.
+# Checks if the AIP folder is still present before calling the function for the next step
 # in case it was moved due to an error in the previous step.
-for aip_folder in os.listdir(AIPS_DIRECTORY):
+for aip_row in read_metadata:
 
-    # Skip output folders and log, if present from running the script previously.
-    if aip_folder in ["aips-to-ingest", "fits-xml", "preservation-xml"] or aip_folder.startswith("script_log"):
-        continue
+    # Makes an instance of the AIP class using metadata from the CSV and global variables.
+    department, collection_id, aip_folder, aip_id, title, version = aip_row
+    aip = a.AIP(AIPS_DIRECTORY, department, collection_id, aip_folder, aip_id, title, version, ZIP)
 
-    # Updates the current AIP number and displays the script progress.
+    # Updates the current AIP number and displays the script progress in the terminal.
     CURRENT_AIP += 1
-    aip.log(LOG_PATH, f'\n>>>Processing {aip_folder} ({CURRENT_AIP} of {TOTAL_AIPS}).')
-    print(f'\n>>>Processing {aip_folder} ({CURRENT_AIP} of {TOTAL_AIPS}).')
+    print(f'\n>>>Processing {aip.id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
 
-    # Parses the department, AIP id, and AIP title from the folder name.
-    #   * Prefix indicates the UGA department or partner institution.
-    #   * AIP id is everything before the last underscore, include department if present.
-    #   * AIP title is everything after the last underscore.
-    regex = re.match('^((harg|guan|rbrl|emory)[_|-][a-z0-9-_]+)_(?!.*_)(.*)', aip_folder)
-    try:
-        aip_id = regex.group(1)
-        department = regex.group(2)
-        aip_title = regex.group(3)
-    except AttributeError:
-        aip.log(LOG_PATH, 'Stop processing. Folder name not structured correctly.')
-        aip.move_error('folder_name', aip_folder)
-        continue
+    # Renames the folder to the AIP ID.
+    os.replace(aip.folder_name, aip.id)
 
-    # Renames the AIP folder to the AIP ID.
-    # Only need the AIP title in the folder name to get the title for the preservation.xml file.
-    os.replace(aip_folder, aip_id)
+    # Deletes any temporary files and makes a log of each deleted file.
+    a.delete_temp(aip)
 
-    # Deletes temporary files.
-    # For Emory AIPs, makes a log of deleted files which is saved in the metadata folder.
-    if department == "emory":
-        aip.delete_temp(aip_id, deletion_log=True)
-    else:
-        aip.delete_temp(aip_id)
-
-    # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure.
-    if aip_id in os.listdir('.'):
-        aip.structure_directory(aip_id, LOG_PATH)
+    # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure (objects and metadata).
+    if aip.id in os.listdir('.'):
+        a.structure_directory(aip)
 
     # Extracts technical metadata from the files using FITS.
-    if aip_id in os.listdir('.'):
-        aip.extract_metadata(aip_id, AIPS_DIRECTORY, LOG_PATH)
+    if aip.id in os.listdir('.'):
+        a.extract_metadata(aip)
+        a.combine_metadata(aip)
 
     # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
-    if aip_id in os.listdir('.'):
-        aip.make_preservationxml(aip_id, aip_title, department, 'general', LOG_PATH)
+    if aip.id in os.listdir('.'):
+        a.make_cleaned_fits_xml(aip)
+    if aip.id in os.listdir('.'):
+        a.make_preservation_xml(aip)
+    if aip.id in os.listdir('.'):
+        a.validate_preservation_xml(aip)
+    if aip.id in os.listdir('.'):
+        a.organize_xml(aip)
 
     # Bags the AIP using bagit.
-    if aip_id in os.listdir('.'):
-        aip.bag(aip_id, LOG_PATH)
+    if aip.id in os.listdir('.'):
+        a.make_bag(aip)
+        a.validate_bag(aip)
 
-    # Tars the AIP and zips (bz2) the AIP if ZIP is True.
-    if f'{aip_id}_bag' in os.listdir('.'):
-        aip.package(aip_id, AIPS_DIRECTORY, ZIP)
+    # Tars the AIP and also zips (bz2) the AIP if ZIP (optional script argument) is True.
+    if f'{aip.id}_bag' in os.listdir('.'):
+        a.package(aip)
 
-# Makes a MD5 manifest of all packaged AIPs in this batch using md5deep.
-aip.make_manifest()
+    # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
+    if f'{aip.id}_bag' in os.listdir('.'):
+        a.manifest(aip)
 
-# Adds date and time the script was completed to the log.
-aip.log(LOG_PATH, f'\nScript finished running at {datetime.datetime.today()}.')
-print("Script is finished running.")
+# Closes the metadata CSV.
+open_metadata.close()
+
+print("\nScript is finished running.")

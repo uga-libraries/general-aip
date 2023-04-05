@@ -4,3 +4,4 @@ scripts/_pycache_
 pylint_output
 *.pyc
 scripts/configuration.py
+tests/configuration.py

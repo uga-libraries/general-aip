@@ -29,9 +29,6 @@
                     <premis:objectCharacteristics>
                         <xsl:call-template name="aip-size" />
                         <xsl:call-template name="aip-unique-formats-list" />
-                        <xsl:if test="$workflow='website'">
-                            <xsl:call-template name="warc" />
-                        </xsl:if>
                         <xsl:call-template name="aip-unique-creating-application-list" />
                         <xsl:call-template name="aip-unique-inhibitors-list" />
                     </premis:objectCharacteristics>
@@ -57,56 +54,18 @@
 <!--PARAMETER, VARIABLES, and REGEX-->
 <!--..................................................................................................-->
     
-    <!--The aip id, aip title, and department are given as arguments when running the xslt via the command line or script.-->
-    <!--The workflow type is an optional fourth argument used to run additional code for websites-->
+    <!--Several values are given as arguments when running the xslt via the command line or script.-->
+    <!--The ns argument is the namespace for the unique identifiers.-->
+    <xsl:param name="collection-id" required="yes" />
     <xsl:param name="aip-id" required="yes" />
     <xsl:param name="aip-title" required="yes" />
     <xsl:param name="department" required="yes" />
-    <xsl:param name="workflow" />
+    <xsl:param name="version" required="yes" />
     <xsl:param name="ns" required="yes" />
     
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
     <xsl:variable name="uri"><xsl:value-of select="$ns" />/<xsl:value-of select="$department" /></xsl:variable>
          
-    <!--$collection-id: gets the collection-id from the aip id.-->
-    <!--Uses department parameter to determine what pattern to match.-->
-    <xsl:variable name="collection-id">
-
-        <!--BMAC collection-id is a combination of lowercase letters, numbers, and dashes between the bmac_ and the next underscore.-->
-        <xsl:if test="$department='bmac'">
-            <xsl:analyze-string select="$aip-id" regex="^bmac_([a-z0-9-]+)_">
-                <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1)" />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-
-        <!--Hargrett collection-id is formatted harg-ms####, harg-ua####, harg-ua##-####, or harg-0000-->
-        <xsl:if test="$department='hargrett'">
-            <xsl:analyze-string select="$aip-id" regex="^(harg-(ms|ua)?(\d{{2}}-)?\d{{4}})">
-                <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1)" />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-		    <!--Emory collection-id is two to four digits, between the two letter repository code and object id.-->
-        <xsl:if test="$department='emory'">
-            <xsl:analyze-string select="$aip-id" regex="^emory_[a-z]{{2}}_(\d{{2,4}})_\d{{2,4}}">
-                <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1)" />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-        <!--Russell collection-id is formatted rbrl-###-->
-        <xsl:if test="$department='russell'">
-            <xsl:analyze-string select="$aip-id" regex="^(rbrl-\d{{3}})">
-                <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1)" />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-    </xsl:variable>
-    
     <!--file-id: the portion of the file path beginning with the aip id.-->
     <!--Gets the file id from each instance of fits/fileinfo/filepath-->
     <!--Uses department parameter to determine what pattern to match.-->
@@ -119,7 +78,14 @@
             </xsl:analyze-string>
         </xsl:if>
         <xsl:if test="$department='hargrett'">
-            <xsl:analyze-string select="fileinfo/filepath" regex="harg-(ms|ua)?(\d{{2}}-)?\d{{4}}(er|-web-\d{{6}}-)\d{{4}}.*">
+            <xsl:analyze-string select="fileinfo/filepath" regex="(harg|guan)[-|_](ms|ua)?(\d{{2}}-)?([a-z]{{4}}_)?\d{{4}}(er|-web-\d{{6}}-|-)\d{{3,4}}.*">
+                <xsl:matching-substring>
+                    <xsl:value-of select="." />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
+        </xsl:if>
+        <xsl:if test="$department='magil'">
+            <xsl:analyze-string select="fileinfo/filepath" regex="magil-ggp-\d+-\d{{4}}-\d{{2}}.*">
                 <xsl:matching-substring>
                     <xsl:value-of select="." />
                 </xsl:matching-substring>
@@ -134,6 +100,13 @@
         </xsl:if>
         <xsl:if test="$department='russell'">
             <xsl:analyze-string select="fileinfo/filepath" regex="rbrl-\d{{3}}-(er|web)-\d{{6}}(-\d{{4}})?.*">
+                <xsl:matching-substring>
+                    <xsl:value-of select="." />
+                </xsl:matching-substring>
+            </xsl:analyze-string>
+        </xsl:if>
+        <xsl:if test="$department='test'">
+            <xsl:analyze-string select="fileinfo/filepath" regex="test-\d{{3}}-er-\d{{6}}.*">
                 <xsl:matching-substring>
                     <xsl:value-of select="." />
                 </xsl:matching-substring>
@@ -165,7 +138,7 @@
     <xsl:template name="aip-version">
         <premis:objectIdentifier>
             <premis:objectIdentifierType><xsl:value-of select="$uri" />/<xsl:value-of select="$aip-id" /></premis:objectIdentifierType>
-            <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
+            <premis:objectIdentifierValue><xsl:value-of select="$version" /></premis:objectIdentifierValue>
         </premis:objectIdentifier>
     </xsl:template>
 
@@ -250,22 +223,6 @@
             </premis:format>
         </xsl:for-each-group>
     </xsl:template>
-
-
-    <!--For websites, adds warc identification because FITs is only identifying as gzip. -->
-    <xsl:template name="warc">
-        <premis:format>
-            <premis:formatDesignation>
-                <premis:formatName>WARC</premis:formatName>
-            </premis:formatDesignation>
-            <premis:formatRegistry>
-                <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
-                <premis:formatRegistryKey>fmt/289</premis:formatRegistryKey>
-                    <premis:formatRegistryRole>specification</premis:formatRegistryRole>
-            </premis:formatRegistry>
-            <premis:formatNote>File was downloaded from Archive-It.org. According to their policies, it is a WARC.</premis:formatNote>
-        </premis:format>
-    </xsl:template>
     
     
     <!--aip creating application list: PREMIS 1.5.5 (optional): gets a unique list of applications.-->
@@ -323,8 +280,9 @@
     
     <!--aip relationship to collection: PREMIS 1.13 (required if applicable).-->
     <xsl:template name="relationship-collection">
-        <!--Does not include the default number for Hargrett web archives aips without a related collection.-->
-        <xsl:if test="not($collection-id='harg-0000')">
+        <!--Does not include the default number for web archives aips without a related collection.-->
+        <!--The original formatting is 0000 but if the input spreadsheet is opened in Excel, it is converted to 0.-->
+        <xsl:if test="not($collection-id='0000' or $collection-id='0')">
             <premis:relationship>
                 <premis:relationshipType>structural</premis:relationshipType>
                 <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
@@ -379,9 +337,6 @@ multiple possible formats or multiple possible created dates) all possible infor
                 <xsl:apply-templates select="fileinfo/md5checksum" />
                 <xsl:apply-templates select="fileinfo/size" />
                 <xsl:apply-templates select="identification/identity" />
-                <xsl:if test="$workflow='website'">
-                    <xsl:call-template name="warc" />
-                </xsl:if>
                 <xsl:apply-templates select="fileinfo/creatingApplication[string()]" />
                 <xsl:apply-templates select="fileinfo/inhibitor[inhibitorType]" />
             </premis:objectCharacteristics>

@@ -16,6 +16,21 @@ python /path/general_aip.py /path/aip-directory [no-zip]
 
 The script has been tested in Windows 10 and Mac OS X.
 
+# Metadata File Required for Script
+Create a file named metadata.csv in the AIPs directory. This contains required information about each of the AIPs to be included in this batch.
+
+
+The header row is formatted Department,Collection,Folder,AIP_ID,Title,Version
+
+
+For UGA, these values are:
+* Department: ARCHive group name
+* Collection: collection identifier
+* Folder: the current folder name of the AIP folder
+* AIP_ID: AIP identifier
+* Title: AIP title
+* Version: AIP version number, which must be a whole number
+
 # Dependencies
 md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating systems. xmllint is also included with Strawberry Perl.
 * bagit.py (https://github.com/LibraryOfCongress/bagit-python). Follow install instructions in the README.
@@ -35,16 +50,21 @@ md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating sys
 4. Change permission on the scripts so they are executable.
 
 # Workflow Details
-1. Extracts the AIP id, department, and AIP title from the AIP folder title.
+1. Extracts the department, collection id, folder name, AIP id, title, and version from metadata.csv.
 
 
 2. Deletes temporary files from anywhere within the AIP folder because they cause errors with validating bags.
-3. Creates the AIP directory structure. The AIP folder has the naming convention aip-id_AIP Title and contains metadata and objects folders. The digital content is moved to the objects folder.
+3. Creates the AIP directory structure. The AIP folder is named with the AIP ID and contains metadata and objects folders.
 4. Extracts technical metadata from each file in the objects folder with FITS and saves the FITS xml to the metadata folder. If there is more than one file with the same name, the FITS xml will include a number to distinguish between the different outputs. Copies the information from each xml file into one file named combined-fits.xml, which is saved outside the AIP in the fits-xml folder.
 5. Transforms the combined-fits xml into Dublin Core and PREMIS metadata using Saxon and an xslt stylesheet, which is saved as preservation.xml in the metadata folder. Verifies that the preservation.xml file meets UGA standards with xmllint and xsds.
 6. Uses bagit to bag each AIP folder in place, making md5 and sha256 manifests. Validates the bag.
 7. Tars and zips a copy of the bag, which is saved in the aips-to-ingest folder.
-8. Once all AIPs are created, uses md5deep to calculate the md5 for each packaged AIP and saves it to a manifest, along with the filename.
+8. Uses md5deep to calculate the md5 for the packaged AIP and adds it to a department manifest in aips-to-ingest.
+
+# Unit Tests
+Includes one test file per function, and a test to run the full script.
+Unit test scripts should be run with the script repo folder "tests" as the current working directory.
+Copy the configuration.py file for the local installation of the script to the "tests" folder before running any tests.
 
 # Initial Author
 Adriane Hanson, Head of Digital Stewardship, December 2019.

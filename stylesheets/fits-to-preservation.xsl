@@ -32,7 +32,9 @@
                         <xsl:call-template name="aip-unique-creating-application-list" />
                         <xsl:call-template name="aip-unique-inhibitors-list" />
                     </premis:objectCharacteristics>
-                    <xsl:call-template name="relationship-collection" />
+                    <xsl:if test="not($department='magil')">
+                        <xsl:call-template name="relationship-collection" />
+                    </xsl:if>
                     <xsl:if test="$department='emory'">
 						<xsl:call-template name="relationship-repository" />
 					</xsl:if>
@@ -555,7 +557,8 @@ multiple possible formats or multiple possible created dates) all possible infor
 <!--If a new date format is encountered, the "otherwise" option will create an invalid premis:dateCreatedByApplication element so that the preservation.xml causes a validation error so staff know to update this stylesheet.-->
 <!--..................................................................................................-->
 
-    <xsl:template match="created">
+ <xsl:template match="created">
+ 
         <xsl:variable name="apdate" select="." />
         <xsl:choose>
         
@@ -574,6 +577,27 @@ multiple possible formats or multiple possible created dates) all possible infor
                     </xsl:variable>
                     <!--Replaces any colon with a dash. -->
                     <xsl:value-of select="replace($dateString, ':', '-')" />
+                </premis:dateCreatedByApplication>
+            </xsl:when>
+			
+			<!--Pattern: Year:Month:DayTTime and Year-Month-DayTTime-->
+			<!--Examples: 2019-01-19T13:09:10-08:00-->
+			<xsl:when test="matches($apdate, '^\d{4}(:|-)\d{2}(:|-)\d{2}T')">
+                <premis:dateCreatedByApplication>
+                    <!--Gets content before the T (removes time portion). -->
+                    <xsl:variable name="dateString">
+                        <xsl:value-of select="substring-before($apdate,'T')" />
+                    </xsl:variable>
+                    <!--Replaces any colon with a dash. -->
+                    <xsl:value-of select="replace($dateString, ':', '-')" />
+                </premis:dateCreatedByApplication>
+            </xsl:when>
+			
+			<!--Pattern: Year:Month:Day-->
+            <!--Examples: 2018:01:02-->
+            <xsl:when test="matches($apdate, '^\d{4}(:|-)\d{2}(:|-)\d{2}')">
+                <premis:dateCreatedByApplication>
+                    <xsl:value-of select="replace($apdate, ':', '-')" />
                 </premis:dateCreatedByApplication>
             </xsl:when>
             
@@ -756,7 +780,7 @@ multiple possible formats or multiple possible created dates) all possible infor
             <!--Makes an invalid element to catch new date formats during validation.-->
             <xsl:otherwise>
                 <premis:dateCreatedByApplication>
-                    <xsl:text>New Date Format Identified: Update Stylesheet</xsl:text>
+					<xsl:text>New Date Format Identified: Update Stylesheet</xsl:text>
                 </premis:dateCreatedByApplication>
             </xsl:otherwise>
             

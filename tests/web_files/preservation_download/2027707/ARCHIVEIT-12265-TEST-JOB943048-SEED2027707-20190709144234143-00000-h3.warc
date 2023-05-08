@@ -1,0 +1,2 @@
+abstract_scope_rule,account,collection,created_by,created_date,enabled,host,id,last_updated_by,last_updated_date,scope_rule_template,seed,type,url_match,value
+,1468,,bpieczko,2019-07-09 14:39:43.257364+00:00,True,,933838,bpieczko,2019-07-09 14:39:43.257394+00:00,,2027707,BLOCK_URL,STRING_MATCH,http://openrecords.podbean.com/

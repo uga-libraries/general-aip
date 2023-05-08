@@ -15,7 +15,8 @@ class TestCheckMetadataCSV(unittest.TestCase):
 
     def setUp(self):
         """
-        Makes folders to serve as the AIPs directory and makes that the current directory.
+        Makes folders to serve as the AIP folders and AIPs directory
+        and makes the AIPs directory the current directory.
         If a metadata.csv file is correct, it contains all the folders in the AIPs directory and nothing else.
         """
         os.mkdir('aips_directory')

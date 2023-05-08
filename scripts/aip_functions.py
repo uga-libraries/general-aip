@@ -321,6 +321,9 @@ def structure_directory(aip):
             os.replace(f"{aip.id}/{item}", f"{aip.id}/metadata/{item}")
         if aip.department == "emory" and item.startswith("EmoryMD"):
             os.replace(f"{aip.id}/{item}", f"{aip.id}/metadata/{item}")
+        web_metadata = ("_coll.csv", "_collscope.csv", "_crawldef.csv", "_crawljob.csv", "_seed.csv", "_seedscope.csv")
+        if item.endswith(web_metadata):
+            os.replace(f"{aip.id}/{item}", f"{aip.id}/metadata/{item}")
 
     # Moves all remaining files and folders to the objects folder.
     # The first level within the AIPs folder is now just the metadata folder and objects folder.

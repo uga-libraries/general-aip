@@ -56,6 +56,11 @@ def make_aip_directory(aip_id):
     elif aip_id == 'sort-emory':
         with open(os.path.join(aip_id, 'EmoryMD_Test.txt'), 'w') as file:
             file.write('Emory Metadata Test File')
+    elif aip_id == 'sort-none':
+        with open(os.path.join(aip_id, 'EmoryMD_Test.txt'), 'w') as file:
+            file.write('Emory Metadata Test File: should not sort')
+        with open(os.path.join(aip_id, 'sort-seed_seed.csv'), 'w') as file:
+            file.write('Seed Test File: short not sort')
     elif aip_id == 'sort-seed':
         with open(os.path.join(aip_id, 'sort-seed_seed.csv'), 'w') as file:
             file.write('Seed Test File')
@@ -333,6 +338,7 @@ class TestStructureDirectory(unittest.TestCase):
     def test_sort_none(self):
         """
         Test for structuring an AIP with no metadata files. All files will go in the objects subfolder.
+        Includes files that would be sorted to metadata if the department or AIP ID was different.
         Result for testing is the files and folders within the AIPs folder plus the AIP log.
         """
         none_aip = AIP(os.getcwd(), 'test', 'coll-1', 'sort-none', 'sort-none', 'title', 1, True)
@@ -346,6 +352,8 @@ class TestStructureDirectory(unittest.TestCase):
         expected = ([os.path.join('sort-none', 'metadata'),
                     os.path.join('sort-none', 'objects'),
                     os.path.join('sort-none', 'objects', 'Test Dir'),
+                    os.path.join('sort-none', 'objects', 'EmoryMD_Test.txt'),
+                    os.path.join('sort-none', 'objects', 'sort-seed_seed.csv'),
                     os.path.join('sort-none', 'objects', 'Text 2.txt'),
                     os.path.join('sort-none', 'objects', 'Text.txt'),
                     os.path.join('sort-none', 'objects', 'Test Dir', 'Test Dir Text.txt')],

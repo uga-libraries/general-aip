@@ -11,128 +11,103 @@ import unittest
 from scripts.aip_functions import check_metadata_csv
 
 
+def run_function(csv_name):
+    """
+    Reads the CSV, runs the function with the read data, and returns the function output.
+    """
+    with open(os.path.join("..", "metadata_csv", csv_name)) as open_metadata:
+        read_metadata = csv.reader(open_metadata)
+        output = check_metadata_csv(read_metadata)
+    return output
+
+
 class TestCheckMetadataCSV(unittest.TestCase):
 
     def setUp(self):
         """
-        Makes folders to serve as the AIP folders and AIPs directory
-        and makes the AIPs directory the current directory.
-        If a metadata.csv file is correct, it contains all the folders in the AIPs directory and nothing else.
+        Makes folders to use as test data.
         """
-        os.mkdir('aips_directory')
-        os.mkdir(os.path.join('aips_directory', 'aip-1'))
-        os.mkdir(os.path.join('aips_directory', 'aip-2'))
-        os.mkdir(os.path.join('aips_directory', 'aip-3'))
+        # Makes a folder for the AIPs directory and makes it the current directory.
+        os.mkdir("aips_directory")
+        os.chdir("aips_directory")
 
-        os.chdir('aips_directory')
+        # Makes three folders to represent AIPs.
+        os.mkdir("aip-1")
+        os.mkdir("aip-2")
+        os.mkdir("aip-3")
 
     def tearDown(self):
         """
-        Deletes the folders used for the AIPs directory for testing.
-        Changes the current directory so there isn't a permissions error for deleting aips_directory
-        when it is in the current directory.
+        Deletes the files and folders used for testing, which are all in the AIPs directory.
+        Changes the current directory first to avoid a permissions error.
         """
-        os.chdir('..')
-        shutil.rmtree('aips_directory')
+        os.chdir("..")
+        shutil.rmtree("aips_directory")
 
-    def test_correct_case_match(self):
+    def test_correct(self):
         """
-        Test for a metadata.csv with valid information and column case matches the template exactly.
-        Result for testing is the list returned by check_metadata_csv().
+        Test for a metadata.csv with valid information 
+        and column case matches the README instructions exactly.
         """
-        with open(os.path.join('..', 'metadata_csv', 'correct_same_case_metadata.csv')) as open_metadata:
-            read_metadata = csv.reader(open_metadata)
-            result = check_metadata_csv(read_metadata)
-
+        result = run_function("correct_same_case_metadata.csv")
         expected = []
-
-        self.assertEqual(result, expected, 'Problem with correct_same_case_metadata.csv')
+        self.assertEqual(result, expected, "Problem with test for correct_same_case_metadata.csv")
 
     def test_correct_case_difference(self):
         """
-        Test for a metadata.csv with valid information, but the column titles are all lowercase or uppercase.
-        This doesn't match the template but is not an error.
-        Result for testing is the list returned by check_metadata_csv().
+        Test for a metadata.csv with valid information
+        and the column case doesn't match the README instructions. This is not an error.
         """
-        with open(os.path.join('..', 'metadata_csv', 'correct_diff_case_metadata.csv')) as open_metadata:
-            read_metadata = csv.reader(open_metadata)
-            result = check_metadata_csv(read_metadata)
-
+        result = run_function(os.path.join("..", "metadata_csv", "correct_diff_case_metadata.csv"))
         expected = []
+        self.assertEqual(result, expected, "Problem with test for correct_diff_case_metadata.csv")
 
-        self.assertEqual(result, expected, 'Problem with correct_diff_case_metadata.csv')
-
-    def test_column_order_error(self):
+    def test_error_columns(self):
         """
-        Test for the column names in metadata.csv not matching the expected order.
-        Result for testing is the list returned by check_metadata_csv().
+        Test for the column names in metadata.csv not matching the expected values.
         """
-        with open(os.path.join('..', 'metadata_csv', 'error_column_order_metadata.csv')) as open_metadata:
-            read_metadata = csv.reader(open_metadata)
-            result = check_metadata_csv(read_metadata)
+        result = run_function("error_column_order_metadata.csv")
+        expected = ["The columns in the metadata.csv do not match the required values or order.",
+                    "Required: Department, Collection, Folder, AIP_ID, Title, Version",
+                    "Current:  AIP_ID, Department, Collection, Folder, Title, Version",
+                    "Since the columns are not correct, did not check the column values."]
+        self.assertEqual(result, expected, "Problem with test for error, columns")
 
-        expected = ['The columns in the metadata.csv do not match the required values or order.',
-                    'Required: Department, Collection, Folder, AIP_ID, Title, Version',
-                    'Current:  AIP_ID, Department, Collection, Folder, Title, Version',
-                    'Since the columns are not correct, did not check the column values.']
-
-        self.assertEqual(result, expected, 'Problem with error_column_order_metadata.csv')
-
-    def test_group_error(self):
+    def test_error_group(self):
         """
         Test for departments in the metadata.csv which are not ARCHive groups (from the configuration file).
-        Result for testing is the list returned by check_metadata_csv().
         """
-        with open(os.path.join('..', 'metadata_csv', 'error_group_metadata.csv')) as open_metadata:
-            read_metadata = csv.reader(open_metadata)
-            result = check_metadata_csv(read_metadata)
+        result = run_function("error_group_metadata.csv")
+        expected = ["Brown is not an ARCHive group.", "banana is not an ARCHive group."]
+        self.assertEqual(result, expected, "Problem with test for error, group")
 
-        expected = ['Brown is not an ARCHive group.', 'banana is not an ARCHive group.']
-
-        self.assertEqual(result, expected, 'Problem with error_group_metadata.csv')
-
-    def test_repeat_folders_error(self):
+    def test_error_repeated_folders(self):
         """
-        Test for AIPs that are in the metadata.csv more than once, based on the folder.
-        Result for testing is the list returned by check_metadata_csv().
+        Test for AIPs that are in the metadata.csv more than once.
         """
-        with open(os.path.join('..', 'metadata_csv', 'error_repeat_metadata.csv')) as open_metadata:
-            read_metadata = csv.reader(open_metadata)
-            result = check_metadata_csv(read_metadata)
+        result = run_function("error_repeat_metadata.csv")
+        expected = ["aip-2 is in the metadata.csv folder column more than once.",
+                    "aip-3 is in the metadata.csv folder column more than once."]
+        self.assertEqual(result, expected, "Problem with test for error, repeated folders")
 
-        expected = ['aip-2 is in the metadata.csv folder column more than once.',
-                    'aip-3 is in the metadata.csv folder column more than once.']
-
-        self.assertEqual(result, expected, 'Problem with error_repeat_metadata.csv')
-
-    def test_csv_only_error(self):
+    def test_error_csv_only(self):
         """
         Test for AIP folders that are only in the metadata.csv and not in the AIPs directory.
-        Result for testing is the list returned by check_metadata_csv().
         """
-        with open(os.path.join('..', 'metadata_csv', 'error_csv_only_metadata.csv')) as open_metadata:
-            read_metadata = csv.reader(open_metadata)
-            result = check_metadata_csv(read_metadata)
+        result = run_function("error_csv_only_metadata.csv")
+        expected = ["aip-4 is in metadata.csv and missing from the AIPs directory.",
+                    "aip-5 is in metadata.csv and missing from the AIPs directory."]
+        self.assertEqual(result, expected, "Problem with test for error, CSV only")
 
-        expected = ['aip-4 is in metadata.csv and missing from the AIPs directory.',
-                    'aip-5 is in metadata.csv and missing from the AIPs directory.']
-
-        self.assertEqual(result, expected, 'Problem with error_csv_only_metadata.csv')
-
-    def test_directory_only_error(self):
+    def test_error_directory_only(self):
         """
         Test for AIP folders that are only in the AIPs directory and not the metadata.csv.
-        Result for testing is the list returned by check_metadata_csv().
         """
-        with open(os.path.join('..', 'metadata_csv', 'error_directory_only_metadata.csv')) as open_metadata:
-            read_metadata = csv.reader(open_metadata)
-            result = check_metadata_csv(read_metadata)
-
-        expected = ['aip-1 is in the AIPs directory and missing from metadata.csv.',
-                    'aip-3 is in the AIPs directory and missing from metadata.csv.']
-
-        self.assertEqual(result, expected, 'Problem with error_directory_only_metadata.csv')
+        result = run_function("error_directory_only_metadata.csv")
+        expected = ["aip-1 is in the AIPs directory and missing from metadata.csv.",
+                    "aip-3 is in the AIPs directory and missing from metadata.csv."]
+        self.assertEqual(result, expected, "Problem with test for error, directory only")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -27,10 +27,17 @@ def path_list(dir_name):
             paths_list.append(os.path.join(root, directory))
 
         # Adds the path for every file.
+        # Makes changes to create consistent data for for comparison to the expected.
         for file in files:
+
             # Edits the file size that is part of zipped AIP filenames, since that varies each time.
             if root.endswith('aips-to-ingest') and file.endswith('.tar.bz2'):
                 file = re.sub(r'_bag.\d+.', '_bag.1000.', file)
+
+            # Skips the FITS tool error log because FITS does not always have a tool error on the test files.
+            # Adds all other files to the list.
+            if file.endswith('_fits-tool-errors_fitserr.txt'):
+                continue
             paths_list.append(os.path.join(root, file))
 
     return paths_list
@@ -45,21 +52,26 @@ def log_list(log_path):
         log_read = csv.reader(log)
         log_rows_list = list(log_read)
 
-    # Makes a new version of log_rows_list that replaces timestamps with dates.
-    # This is necessary to have a consistent value to compare to expected results.
+    # Makes a new version of log_rows_list that has consistent data for comparison to expected values.
     updated_rows_list = []
     for row in log_rows_list:
 
-        # Don't edit the header.
+        # Does not edit the header.
         if row[0] == 'Time Started':
             updated_rows_list.append(row)
             continue
 
-        # The columns are Time Started, Preservation.xml Valid, and Bag Valid.
         # Remove the time stamp, which is the last 16 characters ( HH:MM:SS.######).
+        # The columns are Time Started, Preservation.xml Valid, and Bag Valid.
         row[0] = row[0][:-16]
         row[8] = row[8][:-16]
         row[9] = row[9][:-16]
+
+        # Changes the FITS Tool Errors column back to no errors, if present.
+        # FITS does not always have a tool error on the test files.
+        if row[5] == 'FITS tools generated errors (saved to metadata folder)':
+            row[5] = 'No FITS tools errors'
+
         updated_rows_list.append(row)
 
     return updated_rows_list

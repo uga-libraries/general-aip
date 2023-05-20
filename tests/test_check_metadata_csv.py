@@ -58,7 +58,7 @@ class TestCheckMetadataCSV(unittest.TestCase):
         Test for a metadata.csv with valid information
         and the column case doesn't match the README instructions. This is not an error.
         """
-        result = run_function(os.path.join("..", "metadata_csv", "correct_diff_case_metadata.csv"))
+        result = run_function("correct_diff_case_metadata.csv")
         expected = []
         self.assertEqual(result, expected, "Problem with test for correct_diff_case_metadata.csv")
 

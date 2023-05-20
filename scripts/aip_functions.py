@@ -34,16 +34,20 @@ class AIP:
 
 
 def check_arguments(arguments):
-    """Verifies that all the arguments received are correct and calculates variables.
-    Returns the variables and a list of errors, if any."""
+    """Verifies that all the arguments received are correct and assigns values to
+    variables aips_directory, to_zip, and aip_metadata_csv.
+    Returns the variables and a list of errors in a tuple."""
 
-    # Starts a list for all encountered errors, so all errors can be checked before returning a result.
+    # Starts a list for all encountered errors, so all errors can be checked before returning a result,
+    # and the two variables assigned from arguments are set to None.
+    # These are updated to the correct value from the arguments, if they are provided.
     errors = []
+    aips_directory = None
+    to_zip = None
 
     # Checks if arguments were given, besides the default of script name. If not, saves an error.
     if len(arguments) == 1:
-        aips_directory = None
-        errors.append('AIPs directory argument is missing.')
+        errors.append("AIPs directory argument is missing.")
 
     # Assigns the required script argument to the aips_directory variable, if it is a valid directory.
     # If not, saves an error.
@@ -51,17 +55,15 @@ def check_arguments(arguments):
         if os.path.exists(arguments[1]):
             aips_directory = arguments[1]
         else:
-            aips_directory = None
-            errors.append('AIPs directory argument is not a valid directory.')
+            errors.append("AIPs directory argument is not a valid directory.")
 
-    # If the optional script argument no-zip is present, assigns the zip variable to False. Otherwise, zip is True.
-    # no-zip is for AIPs that are larger when zipped and should only be tarred to save space and time.
-    if len(arguments) == 3:
+    # Assigns the value of the to_zip value based on the optional argument.
+    # If it is missing, value is True. If it is no-zip, value is False. If it is anything else, value stays None.
+    if len(arguments) > 2:
         if arguments[2] == "no-zip":
             to_zip = False
         else:
-            to_zip = None
-            errors.append('Unexpected value for the second argument. If provided, should be "no-zip".')
+            errors.append("Unexpected value for the second argument. If provided, should be 'no-zip'.")
     else:
         to_zip = True
 
@@ -71,12 +73,13 @@ def check_arguments(arguments):
         aip_metadata_csv = os.path.join(aips_directory, "metadata.csv")
         if not os.path.exists(aip_metadata_csv):
             aip_metadata_csv = None
-            errors.append('Missing the required file metadata.csv in the AIPs directory.')
+            errors.append("Missing the required file metadata.csv in the AIPs directory.")
     else:
         aip_metadata_csv = None
-        errors.append('Cannot check for the metadata.csv in the AIPs directory because the AIPs directory has an error.')
+        errors.append("Cannot check for the metadata.csv because the AIPs directory has an error.")
 
-    # Return the variables and errors list
+    # Returns the variables and errors list in a tuple.
+    # The errors list is empty if there where no errors.
     return aips_directory, to_zip, aip_metadata_csv, errors
 
 

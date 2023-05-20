@@ -25,7 +25,7 @@ class TestCheckArguments(unittest.TestCase):
         if os.path.exists(self.csv_path):
             os.remove(self.csv_path)
 
-    def test_metadata_error(self):
+    def test_metadata_missing(self):
         """
         Test for if the aips_directory (the only required argument) is present and the path is valid,
         but the metadata.csv is not in the expected location.
@@ -35,7 +35,7 @@ class TestCheckArguments(unittest.TestCase):
         result = check_arguments(["general-aip.py", os.getcwd()])
         errors = ["Missing the required file metadata.csv in the AIPs directory."]
         expected = (os.getcwd(), True, None, errors)
-        self.assertEqual(result, expected, "Problem with correct aips_directory and missing metadata.csv")
+        self.assertEqual(result, expected, "Problem with test for missing metadata.csv")
 
     def test_no_argument(self):
         """
@@ -44,9 +44,9 @@ class TestCheckArguments(unittest.TestCase):
         """
         result = check_arguments(["general-aip.py"])
         errors = ["AIPs directory argument is missing.",
-                  "Cannot check for the metadata.csv in the AIPs directory because the AIPs directory has an error."]
+                  "Cannot check for the metadata.csv because the AIPs directory has an error."]
         expected = (None, True, None, errors)
-        self.assertEqual(result, expected, "Problem with no aips_directory")
+        self.assertEqual(result, expected, "Problem with test for no argument provided")
 
     def test_optional_argument(self):
         """
@@ -55,16 +55,16 @@ class TestCheckArguments(unittest.TestCase):
         """
         result = check_arguments(["general-aip.py", os.getcwd(), "no-zip"])
         expected = (os.getcwd(), False, self.csv_path, [])
-        self.assertEqual(result, expected, "Problem with correct no-zip")
+        self.assertEqual(result, expected, "Problem with test for optional argument included, correct")
 
     def test_optional_argument_error(self):
         """
         Test for if the user includes the optional argument but it is not the expected value.
         """
         result = check_arguments(["general-aip.py", os.getcwd(), "error"])
-        errors = ['Unexpected value for the second argument. If provided, should be "no-zip".']
+        errors = ["Unexpected value for the second argument. If provided, should be 'no-zip'."]
         expected = (os.getcwd(), None, self.csv_path, errors)
-        self.assertEqual(result, expected, "Problem with wrong value for no-zip argument")
+        self.assertEqual(result, expected, "Problem with test for optional argument included, error")
 
     def test_required_argument(self):
         """
@@ -72,7 +72,7 @@ class TestCheckArguments(unittest.TestCase):
         """
         result = check_arguments(["general-aip.py", os.getcwd()])
         expected = (os.getcwd(), True, self.csv_path, [])
-        self.assertEqual(result, expected, "Problem with correct aips_directory and correct metadata.csv")
+        self.assertEqual(result, expected, "Problem with test for required argument only, correct")
 
     def test_required_argument_error(self):
         """
@@ -80,9 +80,9 @@ class TestCheckArguments(unittest.TestCase):
         """
         result = check_arguments(["general-aip.py", "path-error"])
         errors = ["AIPs directory argument is not a valid directory.",
-                  "Cannot check for the metadata.csv in the AIPs directory because the AIPs directory has an error."]
+                  "Cannot check for the metadata.csv because the AIPs directory has an error."]
         expected = (None, True, None, errors)
-        self.assertEqual(result, expected, "Problem with incorrect aips_directory")
+        self.assertEqual(result, expected, "Problem with test for required argument only, error")
 
 
 if __name__ == "__main__":

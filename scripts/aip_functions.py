@@ -208,19 +208,19 @@ def combine_metadata(aip):
     """Creates a single XML file that combines the FITS output for every file in the AIP. """
 
     # Makes a new XML object with the root element named combined-fits.
-    combo_tree = ET.ElementTree(ET.Element('combined-fits'))
+    combo_tree = ET.ElementTree(ET.Element("combined-fits"))
     combo_root = combo_tree.getroot()
 
     # Gets each of the FITS documents in the AIP's metadata folder.
-    for doc in os.listdir(f'{aip.id}/metadata'):
-        if doc.endswith('_fits.xml'):
+    for doc in os.listdir(os.path.join(aip.id, "metadata")):
+        if doc.endswith("_fits.xml"):
 
             # Makes Python aware of the FITS namespace.
-            ET.register_namespace('', "http://hul.harvard.edu/ois/xml/ns/fits/fits_output")
+            ET.register_namespace("", "http://hul.harvard.edu/ois/xml/ns/fits/fits_output")
 
             # Gets the FITS element and its children and makes it a child of the root, combined-fits.
             try:
-                tree = ET.parse(f'{aip.id}/metadata/{doc}')
+                tree = ET.parse(os.path.join(aip.id, "metadata", doc))
                 root = tree.getroot()
                 combo_root.append(root)
             # Errors: the file is empty, is not XML, or has invalid XML.
@@ -229,14 +229,15 @@ def combine_metadata(aip):
                 aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
                 aip.log["Complete"] = "Error during processing."
                 log(aip.log)
-                move_error('combining_fits', aip.id)
+                move_error("combining_fits", aip.id)
                 return
 
     # Updates the log for any without errors during FITS combination.
     aip.log["FITSError"] = "Successfully created combined-fits.xml"
 
     # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
-    combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
+    fits_path = os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml")
+    combo_tree.write(fits_path, xml_declaration=True, encoding="UTF-8")
 
 
 def delete_temp(aip):

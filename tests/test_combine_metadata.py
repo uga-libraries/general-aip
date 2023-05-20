@@ -51,7 +51,7 @@ def update_fits(path):
     return read_file
 
 
-class TestExtractMetadata(unittest.TestCase):
+class TestCombineMetadata(unittest.TestCase):
 
     def tearDown(self):
         """
@@ -143,12 +143,13 @@ class TestExtractMetadata(unittest.TestCase):
         # Test for if the AIP folder is in the expected error folder.
         result = os.path.exists(os.path.join("..", "errors", "combining_fits", "et_error"))
         expected = True
-        self.assertEqual(result, expected, "Problem with ET parse error")
+        self.assertEqual(result, expected, "Problem with ET parse error, move to error")
 
         # Test for the AIP log.
-        result = aip.log["FITSError"]
-        expected = "Issue when creating combined-fits.xml: syntax error: line 1, column 0"
-        self.assertEqual(result, expected, "Problem with ET parse error")
+        result = (aip.log["FITSError"], aip.log["Complete"])
+        expected = ("Issue when creating combined-fits.xml: syntax error: line 1, column 0",
+                    "Error during processing.")
+        self.assertEqual(result, expected, "Problem with ET parse error, log")
 
 
 if __name__ == "__main__":

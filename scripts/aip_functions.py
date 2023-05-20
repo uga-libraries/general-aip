@@ -33,42 +33,6 @@ class AIP:
                     "Complete": "n/a"}
 
 
-def log(log_data):
-    """Saves information about each step done on an AIP to a CSV file.
-    Information is stored in a dictionary after each step and saved to the log
-    after each AIP either finishes processing or encounters an error."""
-
-    # Formats the data for this row in the log CSV as a list.
-    # For the header, uses default values.
-    if log_data == "header":
-        log_row = ["Time Started", "AIP ID", "Files Deleted", "Objects Folder",
-                   "Metadata Folder", "FITS Tool Errors", "FITS Combination Errors", "Preservation.xml Made",
-                   "Preservation.xml Valid", "Bag Valid", "Package Errors", "Manifest Errors", "Processing Complete"]
-
-    # In all other cases, log_data is a dictionary, with one key per column in the log.
-    # Gets the value of each key in the desired order and adds to a list for saving to the log.
-    else:
-        log_row = [log_data["Started"], log_data["AIP"], log_data["Deletions"],
-                   log_data["ObjectsError"], log_data["MetadataError"], log_data["FITSTool"], log_data["FITSError"],
-                   log_data["PresXML"], log_data["PresValid"], log_data["BagValid"], log_data["Package"],
-                   log_data["Manifest"], log_data["Complete"]]
-
-    # Saves the data for the row to the log CSV.
-    with open('../aip_log.csv', 'a', newline='') as log_file:
-        log_writer = csv.writer(log_file)
-        log_writer.writerow(log_row)
-
-
-def move_error(error_name, item):
-    """Moves the AIP folder to an error folder, named with the error type, so the rest of the
-    workflow steps are not completed on it. Makes the error folder if it does not already exist
-    prior to moving the AIP folder. """
-
-    if not os.path.exists(f'../errors/{error_name}'):
-        os.makedirs(f'../errors/{error_name}')
-    os.replace(item, f'../errors/{error_name}/{item}')
-
-
 def check_arguments(arguments):
     """Verifies that all the arguments received are correct and calculates variables.
     Returns the variables and a list of errors, if any."""
@@ -237,15 +201,39 @@ def check_metadata_csv(read_metadata):
     return errors
 
 
-def make_output_directories():
-    """Makes the directories used to store script outputs, if they don't already exist,
-    in the parent folder of the AIPs directory."""
+def combine_metadata(aip):
+    """Creates a single XML file that combines the FITS output for every file in the AIP. """
 
-    directories = ['aips-to-ingest', 'fits-xml', 'preservation-xml']
+    # Makes a new XML object with the root element named combined-fits.
+    combo_tree = ET.ElementTree(ET.Element('combined-fits'))
+    combo_root = combo_tree.getroot()
 
-    for directory in directories:
-        if not os.path.exists(f'../{directory}'):
-            os.mkdir(f'../{directory}')
+    # Gets each of the FITS documents in the AIP's metadata folder.
+    for doc in os.listdir(f'{aip.id}/metadata'):
+        if doc.endswith('_fits.xml'):
+
+            # Makes Python aware of the FITS namespace.
+            ET.register_namespace('', "http://hul.harvard.edu/ois/xml/ns/fits/fits_output")
+
+            # Gets the FITS element and its children and makes it a child of the root, combined-fits.
+            try:
+                tree = ET.parse(f'{aip.id}/metadata/{doc}')
+                root = tree.getroot()
+                combo_root.append(root)
+            # Errors: the file is empty, is not XML, or has invalid XML.
+            # Moves the AIP to an error folder and does not execute the rest of this function.
+            except ET.ParseError as error:
+                aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
+                aip.log["Complete"] = "Error during processing."
+                log(aip.log)
+                move_error('combining_fits', aip.id)
+                return
+
+    # Updates the log for any without errors during FITS combination.
+    aip.log["FITSError"] = "Successfully created combined-fits.xml"
+
+    # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
+    combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
 
 
 def delete_temp(aip):
@@ -286,55 +274,6 @@ def delete_temp(aip):
         aip.log["Deletions"] = "No files deleted"
 
 
-def structure_directory(aip):
-    """Makes the AIP directory structure (objects and metadata folders within the AIP folder)
-    and moves the digital objects into those folders. Anything not recognized as metadata is
-    moved into the objects folder. If the digital objects are organized into folders, that
-    directory structure is maintained within the objects folder. """
-
-    # Makes the objects and metadata folders within the AIP folder, if they don't exist.
-    # Otherwise, moves the AIP to an error folder so the directory structure is not altered.
-    try:
-        os.mkdir(f'{aip.id}/objects')
-    except FileExistsError:
-        aip.log["ObjectsError"] = "Objects folder already exists in original files"
-        aip.log["Complete"] = "Error during processing."
-        log(aip.log)
-        move_error("objects_folder_exists", aip.id)
-        return
-    try:
-        os.mkdir(f"{aip.id}/metadata")
-    except FileExistsError:
-        aip.log["MetadataError"] = "Metadata folder already exists in original files"
-        aip.log["Complete"] = "Error during processing."
-        log(aip.log)
-        move_error("metadata_folder_exists", aip.id)
-        return
-
-    # Update log that no errors were found for objects or metadata folders.
-    aip.log["ObjectsError"] = "Successfully created objects folder"
-    aip.log["MetadataError"] = "Successfully created metadata folder"
-
-    # Moves any metadata files, identified by their file names and department if not all use it, to the metadata folder.
-    for item in os.listdir(aip.id):
-        if item.startswith(f"{aip.id}_files-deleted_"):
-            os.replace(f"{aip.id}/{item}", f"{aip.id}/metadata/{item}")
-        if aip.department == "emory" and item.startswith("EmoryMD"):
-            os.replace(f"{aip.id}/{item}", f"{aip.id}/metadata/{item}")
-        web_metadata = ("_coll.csv", "_collscope.csv", "_crawldef.csv", "_crawljob.csv", "_seed.csv", "_seedscope.csv")
-        if "-web-" in aip.id and item.endswith(web_metadata):
-            os.replace(f"{aip.id}/{item}", f"{aip.id}/metadata/{item}")
-        if aip.department == "magil" and item.endswith(web_metadata):
-            os.replace(f"{aip.id}/{item}", f"{aip.id}/metadata/{item}")
-
-    # Moves all remaining files and folders to the objects folder.
-    # The first level within the AIPs folder is now just the metadata folder and objects folder.
-    for item in os.listdir(aip.id):
-        if item in ("metadata", "objects"):
-            continue
-        os.replace(f"{aip.id}/{item}", f"{aip.id}/objects/{item}")
-
-
 def extract_metadata(aip):
     """Extracts technical metadata from the files in the objects folder using FITS. """
 
@@ -362,39 +301,36 @@ def extract_metadata(aip):
             os.rename(f'{aip.id}/metadata/{item}', f'{aip.id}/metadata/{new_name}')
 
 
-def combine_metadata(aip):
-    """Creates a single XML file that combines the FITS output for every file in the AIP. """
+def log(log_data):
+    """Saves information about each step done on an AIP to a CSV file.
+    Information is stored in a dictionary after each step and saved to the log
+    after each AIP either finishes processing or encounters an error."""
 
-    # Makes a new XML object with the root element named combined-fits.
-    combo_tree = ET.ElementTree(ET.Element('combined-fits'))
-    combo_root = combo_tree.getroot()
+    # Formats the data for this row in the log CSV as a list.
+    # For the header, uses default values.
+    if log_data == "header":
+        log_row = ["Time Started", "AIP ID", "Files Deleted", "Objects Folder",
+                   "Metadata Folder", "FITS Tool Errors", "FITS Combination Errors", "Preservation.xml Made",
+                   "Preservation.xml Valid", "Bag Valid", "Package Errors", "Manifest Errors", "Processing Complete"]
 
-    # Gets each of the FITS documents in the AIP's metadata folder.
-    for doc in os.listdir(f'{aip.id}/metadata'):
-        if doc.endswith('_fits.xml'):
+    # In all other cases, log_data is a dictionary, with one key per column in the log.
+    # Gets the value of each key in the desired order and adds to a list for saving to the log.
+    else:
+        log_row = [log_data["Started"], log_data["AIP"], log_data["Deletions"],
+                   log_data["ObjectsError"], log_data["MetadataError"], log_data["FITSTool"], log_data["FITSError"],
+                   log_data["PresXML"], log_data["PresValid"], log_data["BagValid"], log_data["Package"],
+                   log_data["Manifest"], log_data["Complete"]]
 
-            # Makes Python aware of the FITS namespace.
-            ET.register_namespace('', "http://hul.harvard.edu/ois/xml/ns/fits/fits_output")
+    # Saves the data for the row to the log CSV.
+    with open('../aip_log.csv', 'a', newline='') as log_file:
+        log_writer = csv.writer(log_file)
+        log_writer.writerow(log_row)
 
-            # Gets the FITS element and its children and makes it a child of the root, combined-fits.
-            try:
-                tree = ET.parse(f'{aip.id}/metadata/{doc}')
-                root = tree.getroot()
-                combo_root.append(root)
-            # Errors: the file is empty, is not XML, or has invalid XML.
-            # Moves the AIP to an error folder and does not execute the rest of this function.
-            except ET.ParseError as error:
-                aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
-                aip.log["Complete"] = "Error during processing."
-                log(aip.log)
-                move_error('combining_fits', aip.id)
-                return
 
-    # Updates the log for any without errors during FITS combination.
-    aip.log["FITSError"] = "Successfully created combined-fits.xml"
-
-    # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
-    combo_tree.write(f'{aip.id}/metadata/{aip.id}_combined-fits.xml', xml_declaration=True, encoding='UTF-8')
+def make_bag(aip):
+    """Bags the AIP, using md5 and sha256 checksums, and renames to add '_bag' to the end of the AIP folder name."""
+    bagit.make_bag(aip.id, checksums=['md5', 'sha256'])
+    os.replace(aip.id, f'{aip.id}_bag')
 
 
 def make_cleaned_fits_xml(aip):
@@ -415,6 +351,17 @@ def make_cleaned_fits_xml(aip):
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
         move_error('cleaned_fits_saxon_error', aip.id)
+
+
+def make_output_directories():
+    """Makes the directories used to store script outputs, if they don't already exist,
+    in the parent folder of the AIPs directory."""
+
+    directories = ['aips-to-ingest', 'fits-xml', 'preservation-xml']
+
+    for directory in directories:
+        if not os.path.exists(f'../{directory}'):
+            os.mkdir(f'../{directory}')
 
 
 def make_preservation_xml(aip):
@@ -440,42 +387,60 @@ def make_preservation_xml(aip):
         return
 
 
-def validate_preservation_xml(aip):
-    """Verifies that the preservation.xml file meets the metadata requirements for the UGA Libraries' digital
-    preservation system (ARCHive)."""
+def manifest(aip):
+    """Uses md5deep to calculate the MD5 for the AIP and adds it to the manifest for that department
+    in the aips-to-ingest folder. Each department has a separate manifest so AIPs for multiple departments
+    may be created simultaneously."""
 
-    # Uses xmllint and a XSD file to validate the preservation.xml.
-    input_file = f'{aip.id}/metadata/{aip.id}_preservation.xml'
-    xmllint_output = subprocess.run(f'xmllint --noout -schema "{c.STYLESHEETS}/preservation.xsd" "{input_file}"',
-                                    stderr=subprocess.PIPE, shell=True)
+    # Makes the path to the packaged AIP, which is different depending on if it is zipped or not.
+    aip_path = os.path.join(f"../aips-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
+    if aip.to_zip is True:
+        aip_path = aip_path + ".bz2"
 
-    # Converts the xmllint output to a string for easier tests for possible error types.
-    validation_result = xmllint_output.stderr.decode('utf-8')
+    # Checks if the tar/zip is present in the aips-to-ingest directory.
+    # If it isn't, due to errors from package(), does not complete the rest of the function.
+    # The error should probably be in the log from package(), but adds it if not.
+    if not os.path.exists(aip_path):
+        if not aip.log["Package"].startswith("Could not tar."):
+            aip.log["Manifest"] = "Tar/zip file not in aips-to-ingest folder"
+            aip.log["Complete"] = "Error during processing."
+            log(aip.log)
+        return
 
-    # If the preservation.xml file was not made in the expected location, moves the AIP to an error folder.
-    if 'failed to load' in validation_result:
-        aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
+    # Calculates the MD5 of the packaged AIP.
+    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+    # If md5deep has an error, does not execute the rest of this function.
+    if md5deep_output.stderr:
+        aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {md5deep_output.stderr.decode('utf-8')}"
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
-        move_error('preservationxml_not_found', aip.id)
         return
-    else:
-        aip.log["PresXML"] = "Successfully created preservation.xml"
 
-    # If the preservation.xml does not meet the requirements, moves the AIP to an error folder.
-    # The validation output is saved to a file in the error folder for review.
-    # It is too much information to put in the AIP log.
-    if 'fails to validate' in validation_result:
-        aip.log["PresValid"] = "Preservation.xml is not valid (see log in error folder)"
-        aip.log["Complete"] = "Error during processing."
-        log(aip.log)
-        move_error('preservationxml_not_valid', aip.id)
-        with open(f"../errors/preservationxml_not_valid/{aip.id}_presxml_validation.txt", "w") as validation_log:
-            for line in validation_result.split("\r"):
-                validation_log.write(line + "\n")
-        return
-    else:
-        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.datetime.now()}"
+    # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.
+    # Initial output of md5deep is b'md5_value  filename.ext\r\n'
+    # Converts to a string and remove the \r linebreak to format the manifest text file as required by ARCHive.
+    manifest_path = os.path.join(f"../aips-to-ingest", f"manifest_{aip.department}.txt")
+    with open(manifest_path, 'a', encoding='utf-8') as manifest_file:
+        manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
+
+    # Logs the success of adding to the manifest.
+    aip.log["Manifest"] = "Successfully added AIP to manifest"
+
+    # This is the last step, so logs that the AIP completed successfully.
+    aip.log["Complete"] = "Successfully completed processing"
+    log(aip.log)
+
+
+def move_error(error_name, item):
+    """Moves the AIP folder to an error folder, named with the error type, so the rest of the
+    workflow steps are not completed on it. Makes the error folder if it does not already exist
+    prior to moving the AIP folder. """
+
+    if not os.path.exists(f'../errors/{error_name}'):
+        os.makedirs(f'../errors/{error_name}')
+    os.replace(item, f'../errors/{error_name}/{item}')
 
 
 def organize_xml(aip):
@@ -489,36 +454,6 @@ def organize_xml(aip):
 
     # Deletes the cleaned-fits.xml file because it is a temporary file.
     os.remove(f'{aip.id}/metadata/{aip.id}_cleaned-fits.xml')
-
-
-def make_bag(aip):
-    """Bags the AIP, using md5 and sha256 checksums, and renames to add '_bag' to the end of the AIP folder name."""
-    bagit.make_bag(aip.id, checksums=['md5', 'sha256'])
-    os.replace(aip.id, f'{aip.id}_bag')
-
-
-def validate_bag(aip):
-    """Validates the AIP's bag. If it is not valid, moves the AIP to an error folder and saves the error output
-    to that error folder."""
-    new_bag = bagit.Bag(f'{aip.id}_bag')
-    try:
-        new_bag.validate()
-    except bagit.BagValidationError as errors:
-        aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
-        aip.log["Complete"] = "Error during processing."
-        log(aip.log)
-        move_error('bag_not_valid', f'{aip.id}_bag')
-        # Error log is formatted to be easier to read (one error per line) if error information is in details.
-        # Otherwise, the entire error output is saved to the log.
-        with open(f"../errors/bag_not_valid/{aip.id}_bag_validation.txt", "w") as validation_log:
-            if errors.details:
-                for error_type in errors.details:
-                    validation_log.write(str(error_type) + "\n")
-            else:
-                validation_log.write(str(errors))
-        return
-
-    aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
 
 
 def package(aip):
@@ -599,47 +534,112 @@ def package(aip):
     aip.log["Package"] = "Successfully made package"
 
 
-def manifest(aip):
-    """Uses md5deep to calculate the MD5 for the AIP and adds it to the manifest for that department
-    in the aips-to-ingest folder. Each department has a separate manifest so AIPs for multiple departments
-    may be created simultaneously."""
+def structure_directory(aip):
+    """Makes the AIP directory structure (objects and metadata folders within the AIP folder)
+    and moves the digital objects into those folders. Anything not recognized as metadata is
+    moved into the objects folder. If the digital objects are organized into folders, that
+    directory structure is maintained within the objects folder. """
 
-    # Makes the path to the packaged AIP, which is different depending on if it is zipped or not.
-    aip_path = os.path.join(f"../aips-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
-    if aip.to_zip is True:
-        aip_path = aip_path + ".bz2"
-
-    # Checks if the tar/zip is present in the aips-to-ingest directory.
-    # If it isn't, due to errors from package(), does not complete the rest of the function.
-    # The error should probably be in the log from package(), but adds it if not.
-    if not os.path.exists(aip_path):
-        if not aip.log["Package"].startswith("Could not tar."):
-            aip.log["Manifest"] = "Tar/zip file not in aips-to-ingest folder"
-            aip.log["Complete"] = "Error during processing."
-            log(aip.log)
-        return
-
-    # Calculates the MD5 of the packaged AIP.
-    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
-                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-
-    # If md5deep has an error, does not execute the rest of this function.
-    if md5deep_output.stderr:
-        aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {md5deep_output.stderr.decode('utf-8')}"
+    # Makes the objects and metadata folders within the AIP folder, if they don't exist.
+    # Otherwise, moves the AIP to an error folder so the directory structure is not altered.
+    try:
+        os.mkdir(f'{aip.id}/objects')
+    except FileExistsError:
+        aip.log["ObjectsError"] = "Objects folder already exists in original files"
         aip.log["Complete"] = "Error during processing."
         log(aip.log)
+        move_error("objects_folder_exists", aip.id)
+        return
+    try:
+        os.mkdir(f"{aip.id}/metadata")
+    except FileExistsError:
+        aip.log["MetadataError"] = "Metadata folder already exists in original files"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        move_error("metadata_folder_exists", aip.id)
         return
 
-    # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.
-    # Initial output of md5deep is b'md5_value  filename.ext\r\n'
-    # Converts to a string and remove the \r linebreak to format the manifest text file as required by ARCHive.
-    manifest_path = os.path.join(f"../aips-to-ingest", f"manifest_{aip.department}.txt")
-    with open(manifest_path, 'a', encoding='utf-8') as manifest_file:
-        manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
+    # Update log that no errors were found for objects or metadata folders.
+    aip.log["ObjectsError"] = "Successfully created objects folder"
+    aip.log["MetadataError"] = "Successfully created metadata folder"
 
-    # Logs the success of adding to the manifest.
-    aip.log["Manifest"] = "Successfully added AIP to manifest"
-    
-    # This is the last step, so logs that the AIP completed successfully.
-    aip.log["Complete"] = "Successfully completed processing"
-    log(aip.log)
+    # Moves any metadata files, identified by their file names and department if not all use it, to the metadata folder.
+    for item in os.listdir(aip.id):
+        if item.startswith(f"{aip.id}_files-deleted_"):
+            os.replace(f"{aip.id}/{item}", f"{aip.id}/metadata/{item}")
+        if aip.department == "emory" and item.startswith("EmoryMD"):
+            os.replace(f"{aip.id}/{item}", f"{aip.id}/metadata/{item}")
+        web_metadata = ("_coll.csv", "_collscope.csv", "_crawldef.csv", "_crawljob.csv", "_seed.csv", "_seedscope.csv")
+        if "-web-" in aip.id and item.endswith(web_metadata):
+            os.replace(f"{aip.id}/{item}", f"{aip.id}/metadata/{item}")
+        if aip.department == "magil" and item.endswith(web_metadata):
+            os.replace(f"{aip.id}/{item}", f"{aip.id}/metadata/{item}")
+
+    # Moves all remaining files and folders to the objects folder.
+    # The first level within the AIPs folder is now just the metadata folder and objects folder.
+    for item in os.listdir(aip.id):
+        if item in ("metadata", "objects"):
+            continue
+        os.replace(f"{aip.id}/{item}", f"{aip.id}/objects/{item}")
+
+
+def validate_bag(aip):
+    """Validates the AIP's bag. If it is not valid, moves the AIP to an error folder and saves the error output
+    to that error folder."""
+    new_bag = bagit.Bag(f'{aip.id}_bag')
+    try:
+        new_bag.validate()
+    except bagit.BagValidationError as errors:
+        aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        move_error('bag_not_valid', f'{aip.id}_bag')
+        # Error log is formatted to be easier to read (one error per line) if error information is in details.
+        # Otherwise, the entire error output is saved to the log.
+        with open(f"../errors/bag_not_valid/{aip.id}_bag_validation.txt", "w") as validation_log:
+            if errors.details:
+                for error_type in errors.details:
+                    validation_log.write(str(error_type) + "\n")
+            else:
+                validation_log.write(str(errors))
+        return
+
+    aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
+
+
+def validate_preservation_xml(aip):
+    """Verifies that the preservation.xml file meets the metadata requirements for the UGA Libraries' digital
+    preservation system (ARCHive)."""
+
+    # Uses xmllint and a XSD file to validate the preservation.xml.
+    input_file = f'{aip.id}/metadata/{aip.id}_preservation.xml'
+    xmllint_output = subprocess.run(f'xmllint --noout -schema "{c.STYLESHEETS}/preservation.xsd" "{input_file}"',
+                                    stderr=subprocess.PIPE, shell=True)
+
+    # Converts the xmllint output to a string for easier tests for possible error types.
+    validation_result = xmllint_output.stderr.decode('utf-8')
+
+    # If the preservation.xml file was not made in the expected location, moves the AIP to an error folder.
+    if 'failed to load' in validation_result:
+        aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        move_error('preservationxml_not_found', aip.id)
+        return
+    else:
+        aip.log["PresXML"] = "Successfully created preservation.xml"
+
+    # If the preservation.xml does not meet the requirements, moves the AIP to an error folder.
+    # The validation output is saved to a file in the error folder for review.
+    # It is too much information to put in the AIP log.
+    if 'fails to validate' in validation_result:
+        aip.log["PresValid"] = "Preservation.xml is not valid (see log in error folder)"
+        aip.log["Complete"] = "Error during processing."
+        log(aip.log)
+        move_error('preservationxml_not_valid', aip.id)
+        with open(f"../errors/preservationxml_not_valid/{aip.id}_presxml_validation.txt", "w") as validation_log:
+            for line in validation_result.split("\r"):
+                validation_log.write(line + "\n")
+        return
+    else:
+        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.datetime.now()}"

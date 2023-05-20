@@ -247,7 +247,7 @@ def delete_temp(aip):
     change in size after making the AIP. """
 
     # List of files to be deleted where the filename can be matched in its entirely.
-    delete = ['.DS_Store', '._.DS_Store', 'Thumbs.db']
+    delete_list = [".DS_Store", "._.DS_Store", "Thumbs.db"]
 
     # List of files that were deleted, to save to a log if desired.
     deleted_files = []
@@ -256,7 +256,7 @@ def delete_temp(aip):
     # Gets information for the deletion log and then deletes the file.
     for root, directories, files in os.walk(aip.id):
         for item in files:
-            if item in delete or item.endswith('.tmp') or item.startswith('.'):
+            if item in delete_list or item.endswith(".tmp") or item.startswith("."):
                 path = os.path.join(root, item)
                 date = time.gmtime(os.path.getmtime(path))
                 date_reformatted = f"{date.tm_year}-{date.tm_mon}-{date.tm_mday} {date.tm_hour}:{date.tm_hour}:{date.tm_min}"
@@ -268,7 +268,7 @@ def delete_temp(aip):
     # Adds event information for deletion to the script log.
     if len(deleted_files) > 0:
         filename = f"{aip.id}_files-deleted_{datetime.datetime.today().date()}_del.csv"
-        with open(f"{aip.id}/{filename}", "w", newline="") as deleted_log:
+        with open(os.path.join(aip.id, filename), "w", newline="") as deleted_log:
             deleted_log_writer = csv.writer(deleted_log)
             deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
             for file_data in deleted_files:
@@ -281,7 +281,7 @@ def delete_temp(aip):
 def extract_metadata(aip):
     """Extracts technical metadata from the files in the objects folder using FITS. """
 
-    # Runs FITS on the files in the AIP's objects folder and saves the output to it's metadata folder.
+    # Runs FITS on the files in the AIP"s objects folder and saves the output to it's metadata folder.
     # The FITS output is named with the original file name. If there is more than one file anywhere
     # within the objects folder with the same name, FITS adds a number to the duplicates, for example:
     # file.ext.fits.xml, file.ext-1.fits.xml, file.ext-2.fits.xml

@@ -285,24 +285,25 @@ def extract_metadata(aip):
     # The FITS output is named with the original file name. If there is more than one file anywhere
     # within the objects folder with the same name, FITS adds a number to the duplicates, for example:
     # file.ext.fits.xml, file.ext-1.fits.xml, file.ext-2.fits.xml
-    fits_output = subprocess.run(
-        f'"{c.FITS}" -r -i "{aip.directory}/{aip.id}/objects" -o "{aip.directory}/{aip.id}/metadata"',
-        shell=True, stderr=subprocess.PIPE)
+    objects = os.path.join(aip.directory, aip.id, "objects")
+    metadata = os.path.join(aip.directory, aip.id, "metadata")
+    fits_output = subprocess.run(f'"{c.FITS}" -r -i "{objects}" -o "{metadata}"',
+                                 shell=True, stderr=subprocess.PIPE)
 
     # If there were any tool error messages from FITS, saves those to a log in the AIP's metadata folder.
     # Processing on the AIP continues, since typically other tools still work.
     if fits_output.stderr:
-        with open(f"{aip.directory}/{aip.id}/metadata/{aip.id}_fits-tool-errors_fitserr.txt", "w") as fits_errors:
-            fits_errors.write(fits_output.stderr.decode('utf-8'))
+        with open(os.path.join(metadata, f"{aip.id}_fits-tool-errors_fitserr.txt"), "w") as fits_errors:
+            fits_errors.write(fits_output.stderr.decode("utf-8"))
         aip.log["FITSTool"] = "FITS tools generated errors (saved to metadata folder)"
     else:
         aip.log["FITSTool"] = "No FITS tools errors"
 
     # Renames the FITS output to the UGA Libraries' metadata naming convention (filename_fits.xml).
-    for item in os.listdir(f'{aip.id}/metadata'):
-        if item.endswith('.fits.xml'):
-            new_name = item.replace('.fits', '_fits')
-            os.rename(f'{aip.id}/metadata/{item}', f'{aip.id}/metadata/{new_name}')
+    for item in os.listdir(metadata):
+        if item.endswith(".fits.xml"):
+            new_name = item.replace(".fits", "_fits")
+            os.rename(os.path.join(metadata, item), os.path.join(metadata, new_name))
 
 
 def log(log_data):

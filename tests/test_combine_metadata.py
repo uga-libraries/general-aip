@@ -148,7 +148,7 @@ class TestCombineMetadata(unittest.TestCase):
         # Test for the AIP log.
         result = (aip.log["FITSError"], aip.log["Complete"])
         expected = ("Issue when creating combined-fits.xml: syntax error: line 1, column 0",
-                    "Error during processing.")
+                    "Error during processing")
         self.assertEqual(result, expected, "Problem with ET parse error, log")
 
 

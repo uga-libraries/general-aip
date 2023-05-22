@@ -6,7 +6,7 @@ import unittest
 from scripts.aip_functions import *
 
 
-class MyTestCase(unittest.TestCase):
+class TestMakeCleanedFitsXML(unittest.TestCase):
 
     def setUp(self):
         """
@@ -50,7 +50,7 @@ class MyTestCase(unittest.TestCase):
         make_cleaned_fits_xml(self.aip)
 
         # Edits the timestamp and filepath to consistent values to allow an exact comparison to expected.
-        tree = ET.parse(os.path.join("aip-id", "metadata", "aip-id_cleaned-fits.xml"))
+        tree = et.parse(os.path.join("aip-id", "metadata", "aip-id_cleaned-fits.xml"))
         root = tree.getroot()
         for fits in root.iter("{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}fits"):
             fits.set("timestamp", "01/01/22 1:23 PM")

@@ -77,7 +77,7 @@ def log_list(log_path):
     return updated_rows_list
 
 
-class MyTestCase(unittest.TestCase):
+class TestFullScript(unittest.TestCase):
 
     def tearDown(self):
         """

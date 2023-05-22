@@ -5,7 +5,7 @@ import unittest
 from scripts.aip_functions import *
 
 
-class MyTestCase(unittest.TestCase):
+class TestOrganizeXML(unittest.TestCase):
 
     def tearDown(self):
         """

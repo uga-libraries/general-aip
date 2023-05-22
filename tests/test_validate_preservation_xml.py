@@ -6,7 +6,7 @@ import unittest
 from scripts.aip_functions import *
 
 
-class MyTestCase(unittest.TestCase):
+class TestValidatePreservationXML(unittest.TestCase):
 
     def setUp(self):
         """

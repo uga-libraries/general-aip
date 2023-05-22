@@ -21,7 +21,7 @@ def aip_log_list():
     return row_list
 
 
-class MyTestCase(unittest.TestCase):
+class TestLog(unittest.TestCase):
 
     def setUp(self):
         """

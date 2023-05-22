@@ -56,7 +56,7 @@ def read_preservation_xml(aip_id):
     return read_xml
 
 
-class MyTestCase(unittest.TestCase):
+class TestMakePreservationXML(unittest.TestCase):
 
     def tearDown(self):
         """

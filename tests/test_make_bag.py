@@ -7,7 +7,7 @@ import unittest
 from scripts.aip_functions import AIP, make_bag
 
 
-class TestBag(unittest.TestCase):
+class TestMakeBag(unittest.TestCase):
 
     def setUp(self):
         """

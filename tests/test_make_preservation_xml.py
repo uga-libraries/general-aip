@@ -136,12 +136,16 @@ class TestMakePreservationXML(unittest.TestCase):
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with test for error handling, moving AIP folder")
 
-        # Test for the AIP log.
-        result_log = (aip.log["PresXML"], aip.log["Complete"])
-        expected_log = ("Issue when creating preservation.xml. " 
-                       "Saxon error: Source file error-id\\metadata\\error-id_cleaned-fits.xml does not exist\r\n",
-                        "Error during processing")
-        self.assertEqual(result_log, expected_log, "Problem with test for error handling")
+        # Test for the AIP log, PresXML.
+        result_log = aip.log["PresXML"]
+        expected_log = "Issue when creating preservation.xml. " \
+                       "Saxon error: Source file error-id\\metadata\\error-id_cleaned-fits.xml does not exist\r\n"
+        self.assertEqual(result_log, expected_log, "Problem with test for error handling, log: PresXML")
+
+        # Test for the AIP log, Complete.
+        result_log2 = aip.log["Complete"]
+        expected_log2 = "Error during processing"
+        self.assertEqual(result_log2, expected_log2, "Problem with test for error handling, log: Complete")
 
     def test_web_hargrett(self):
         """

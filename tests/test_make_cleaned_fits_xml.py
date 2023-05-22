@@ -82,12 +82,16 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with cleaned fits error handling, moving to error folder")
 
-        # Test for the AIP log.
-        result_log = (self.aip.log["PresXML"], self.aip.log["Complete"])
-        expected_log = ("Issue when creating cleaned-fits.xml. " 
-                        "Saxon error: Source file aip-id\\metadata\\aip-id_combined-fits.xml does not exist\r\n",
-                        "Error during processing")
-        self.assertEqual(result_log, expected_log, "Problem with cleaned fits error handling, log")
+        # Test for the AIP log, PresXML.
+        result_log = self.aip.log["PresXML"]
+        expected_log = "Issue when creating cleaned-fits.xml. " \
+                       "Saxon error: Source file aip-id\\metadata\\aip-id_combined-fits.xml does not exist\r\n"
+        self.assertEqual(result_log, expected_log, "Problem with cleaned fits error handling, log: PresXML")
+
+        # Test for the AIP log, Complete.
+        result_log2 = self.aip.log["Complete"]
+        expected_log2 = "Error during processing"
+        self.assertEqual(result_log2, expected_log2, "Problem with cleaned fits error handling, log: Complete")
 
 
 if __name__ == "__main__":

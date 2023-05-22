@@ -103,9 +103,9 @@ class TestValidatePreservationXML(unittest.TestCase):
         Result for testing is the contents of the validation log, plus the AIP log.
         """
         # Causes the error by removing the field <dc:title> (the first element) from the preservation.xml.
-        ET.register_namespace("dc", "http://purl.org/dc/terms/")
-        ET.register_namespace("premis", "http://www.loc.gov/premis/v3")
-        tree = ET.parse(os.path.join("aip-id", "metadata", "aip-id_preservation.xml"))
+        et.register_namespace("dc", "http://purl.org/dc/terms/")
+        et.register_namespace("premis", "http://www.loc.gov/premis/v3")
+        tree = et.parse(os.path.join("aip-id", "metadata", "aip-id_preservation.xml"))
         root = tree.getroot()
         root.remove(root[0])
         tree.write(os.path.join("aip-id", "metadata", "aip-id_preservation.xml"))

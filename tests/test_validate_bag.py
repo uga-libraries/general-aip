@@ -97,15 +97,26 @@ class TestValidateBag(unittest.TestCase):
                 result.sort()
         except FileNotFoundError:
             result = "The validation log was not found"
-        expected = ['data\\objects\\file.txt md5 validation failed: expected="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" found="0cbc6611f5540bd0809a388dc95a615b"\n',
-                    'manifest-md5.txt md5 validation failed: expected="ca30eea54d30b25cca192fb4a38efbc3" found="7fd32d6a82c9ba59534103d4a877e3d8"\n',
-                    'manifest-md5.txt sha256 validation failed: expected="ce73cc2e81ad3cc1b9f24d84a57984b96a4322914f7b02067a11c81b739ae548" found="0752123baadbf461f459b56be3c91b84548582d6ef6f4497f5ee6c528afdca10"\n']
+        expected = ['data\\objects\\file.txt md5 validation failed: expected="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" '
+                    'found="0cbc6611f5540bd0809a388dc95a615b"\n',
+                    'manifest-md5.txt md5 validation failed: expected="ca30eea54d30b25cca192fb4a38efbc3" '
+                    'found="7fd32d6a82c9ba59534103d4a877e3d8"\n',
+                    'manifest-md5.txt sha256 validation failed: '
+                    'expected="ce73cc2e81ad3cc1b9f24d84a57984b96a4322914f7b02067a11c81b739ae548" '
+                    'found="0752123baadbf461f459b56be3c91b84548582d6ef6f4497f5ee6c528afdca10"\n']
         self.assertEqual(result, expected, "Problem with validating a bag that is not valid, validation log")
 
-        # Test for the AIP log.
-        result_log = (self.aip.log["BagValid"], self.aip.log["Complete"])
-        expected_log = ("Bag not valid (see log in bag_not_valid error folder)", "Error during processing")
-        self.assertEqual(result_log, expected_log, "Problem with validating a bag that is not valid, AIP log")
+        # Test for the AIP log: BagValid.
+        result_log = self.aip.log["BagValid"]
+        expected_log = "Bag not valid (see log in bag_not_valid error folder)"
+        self.assertEqual(result_log, expected_log,
+                         "Problem with validating a bag that is not valid, AIP log: BagValid")
+
+        # Test for the AIP log: Complete.
+        result_log2 = self.aip.log["Complete"]
+        expected_log2 = "Error during processing"
+        self.assertEqual(result_log2, expected_log2,
+                         "Problem with validating a bag that is not valid, AIP log: Complete")
 
 
 if __name__ == "__main__":

@@ -64,10 +64,15 @@ class TestManifest(unittest.TestCase):
         expected = [["0cbc6611f5540bd0809a388dc95a615b", "one-tar_bag.4000.tar"]]
         self.assertEqual(expected, result, "Problem with one tar, manifest")
 
-        # Test for the AIP log
-        result_log = (aip.log["Manifest"], aip.log["Complete"])
-        expected_log = ("Successfully added AIP to manifest", "Successfully completed processing")
-        self.assertEqual(result_log, expected_log, "Problem with one tar, log")
+        # Test for the AIP log: Manifest.
+        result_log = aip.log["Manifest"]
+        expected_log = "Successfully added AIP to manifest"
+        self.assertEqual(result_log, expected_log, "Problem with one tar, log: Manifest")
+
+        # Test for the AIP log: Complete.
+        result_log2 = aip.log["Complete"]
+        expected_log2 = "Successfully completed processing"
+        self.assertEqual(result_log2, expected_log2, "Problem with one tar, log: Complete")
 
     def test_one_zip(self):
         """
@@ -86,10 +91,15 @@ class TestManifest(unittest.TestCase):
         expected = [["0cbc6611f5540bd0809a388dc95a615b", "one-zip_bag.4000.tar.bz2"]]
         self.assertEqual(expected, result, "Problem with one zip, manifest")
 
-        # Test for the AIP log.
-        result_log = (aip.log["Manifest"], aip.log["Complete"])
-        expected_log = ("Successfully added AIP to manifest", "Successfully completed processing")
-        self.assertEqual(result_log, expected_log, "Problem with one zip, log")
+        # Test for the AIP log: Manifest.
+        result_log = aip.log["Manifest"]
+        expected_log = "Successfully added AIP to manifest"
+        self.assertEqual(result_log, expected_log, "Problem with one zip, log: Manifest")
+
+        # Test for the AIP log: Complete.
+        result_log2 = aip.log["Complete"]
+        expected_log2 = "Successfully completed processing"
+        self.assertEqual(result_log2, expected_log2, "Problem with one zip, log: Complete")
 
     def test_multiple_departments(self):
         """
@@ -111,24 +121,33 @@ class TestManifest(unittest.TestCase):
         # Test for the bmac manifest.
         result_bmac = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_bmac.txt"))
         expected_bmac = [["0cbc6611f5540bd0809a388dc95a615b", "aip2_bag.4000.tar.bz2"]]
-        self.assertEqual(result_bmac, expected_bmac, "Problem with multiple departments: test, manifest")
+        self.assertEqual(result_bmac, expected_bmac, "Problem with multiple depts: bmac, manifest")
 
-        # Test for the bmac AIP log.
-        result_bmac_log = (aip2.log["Manifest"], aip2.log["Complete"])
-        expected_bmac_log = ("Successfully added AIP to manifest", "Successfully completed processing")
-        self.assertEqual(result_bmac_log, expected_bmac_log, "Problem with multiple departments: bmac, log")
+        # Test for the bmac AIP log: Manifest.
+        result_bmac_log = aip2.log["Manifest"]
+        expected_bmac_log = "Successfully added AIP to manifest"
+        self.assertEqual(result_bmac_log, expected_bmac_log, "Problem with multiple depts: bmac, log: Manifest")
+
+        # Test for the bmac AIP log: Complete.
+        result_bmac_log2 = aip2.log["Complete"]
+        expected_bmac_log2 = "Successfully completed processing"
+        self.assertEqual(result_bmac_log2, expected_bmac_log2, "Problem with multiple depts: bmac, log: Complete")
 
         # Test for the test manifest.
         result_test = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
         expected_test = [["0cbc6611f5540bd0809a388dc95a615b", "aip1_bag.4000.tar.bz2"],
                          ["0cbc6611f5540bd0809a388dc95a615b", "aip3_bag.4000.tar.bz2"]]
-        self.assertEqual(result_test, expected_test, "Problem with multiple departments: test, manifest")
+        self.assertEqual(result_test, expected_test, "Problem with multiple depts: test, manifest")
 
-        # Test for the test AIP log.
-        result_test_log = (aip1.log["Manifest"], aip1.log["Complete"], aip3.log["Manifest"], aip3.log["Complete"])
-        expected_test_log = ("Successfully added AIP to manifest", "Successfully completed processing",
-                             "Successfully added AIP to manifest", "Successfully completed processing")
-        self.assertEqual(result_test_log, expected_test_log, "Problem with multiple departments: test, log")
+        # Test for the test AIP log: Manifest.
+        result_test_log = (aip1.log["Manifest"], aip3.log["Manifest"])
+        expected_test_log = ("Successfully added AIP to manifest", "Successfully added AIP to manifest")
+        self.assertEqual(result_test_log, expected_test_log, "Problem with multiple depts: test, log: Manifest")
+
+        # Test for the test AIP log: Complete.
+        result_test_log2 = (aip1.log["Complete"], aip3.log["Complete"])
+        expected_test_log2 = ("Successfully completed processing", "Successfully completed processing")
+        self.assertEqual(result_test_log2, expected_test_log2, "Problem with multiple depts: test, log: Complete")
 
     def test_error_one_missing(self):
         """
@@ -151,11 +170,15 @@ class TestManifest(unittest.TestCase):
         expected = [["0cbc6611f5540bd0809a388dc95a615b", "aip1_bag.4000.tar"]]
         self.assertEqual(result, expected, "Problem with error: one missing, manifest")
 
-        # Test for the AIP log.
-        result_log = (aip1.log["Manifest"], aip1.log["Complete"], aip2.log["Manifest"], aip2.log["Complete"])
-        expected_log = ("Successfully added AIP to manifest", "Successfully completed processing",
-                        "Tar/zip file not in aips-to-ingest folder", "Error during processing")
-        self.assertEqual(result_log, expected_log, "Problem with error: one missing, log")
+        # Test for the AIP log: Manifest.
+        result_log = (aip1.log["Manifest"], aip2.log["Manifest"])
+        expected_log = ("Successfully added AIP to manifest", "Tar/zip file not in aips-to-ingest folder")
+        self.assertEqual(result_log, expected_log, "Problem with error: one missing, log: Manifest")
+
+        # Test for the AIP log: Complete.
+        result_log2 = (aip1.log["Complete"], aip2.log["Complete"])
+        expected_log2 = ("Successfully completed processing", "Error during processing")
+        self.assertEqual(result_log2, expected_log2, "Problem with error: one missing, log: Complete")
 
     def test_error_all_missing(self):
         """
@@ -174,11 +197,15 @@ class TestManifest(unittest.TestCase):
         result = os.path.exists(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
         self.assertEqual(result, False, "Problem with error: all missing, manifest")
 
-        # Test for the AIP log.
-        result_log = (aip1.log["Manifest"], aip1.log["Complete"], aip2.log["Manifest"], aip2.log["Complete"])
-        expected_log = ("Tar/zip file not in aips-to-ingest folder", "Error during processing",
-                        "Tar/zip file not in aips-to-ingest folder", "Error during processing")
-        self.assertEqual(result_log, expected_log, "Problem with error: all missing, log")
+        # Test for the AIP log: Manifest.
+        result_log = (aip1.log["Manifest"], aip2.log["Manifest"])
+        expected_log = ("Tar/zip file not in aips-to-ingest folder", "Tar/zip file not in aips-to-ingest folder")
+        self.assertEqual(result_log, expected_log, "Problem with error: all missing, log: Manifest")
+
+        # Test for the AIP log: Complete.
+        result_log2 = (aip1.log["Complete"], aip2.log["Complete"])
+        expected_log2 = ("Error during processing", "Error during processing")
+        self.assertEqual(result_log2, expected_log2, "Problem with error: all missing, log: Complete")
 
 
 if __name__ == "__main__":

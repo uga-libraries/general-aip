@@ -1,0 +1,2 @@
+abstract_scope_rule,account,collection,created_by,created_date,enabled,host,id,last_updated_by,last_updated_date,scope_rule_template,seed,type,url_match,value
+,1468,12264,bpieczko,2019-10-18 13:57:47.325436+00:00,True,soundcloud.com,1001751,bpieczko,2019-10-18 13:57:47.325468+00:00,,,IGNORE_ROBOTS,,

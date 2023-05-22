@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preservation xmlns:dc="http://purl.org/dc/terms/"
+              xmlns:premis="http://www.loc.gov/premis/v3">
+   <dc:title>Hargrett Born-Digital Title</dc:title>
+   <dc:rights>http://rightsstatements.org/vocab/InC/1.0/</dc:rights>
+   <aip>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/hargrett</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>harg-ms3786er0002</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/hargrett/harg-ms3786er0002</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>representation</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:size>331</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Comma-Separated Values (CSV)</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>x-fmt/18</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+            </premis:format>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Plain text</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>x-fmt/111</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+               <premis:formatNote>Format identified by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified by file utility version 5.03</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://uri/hargrett</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>harg-ms3786</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+   </aip>
+   <filelist>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/hargrett/harg-ms3786er0002</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>harg-ms3786er0002/objects/file.txt</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:fixity>
+               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
+               <premis:messageDigest>aaaf7028b8b9c6ce59bd3d1ee80869b3</premis:messageDigest>
+               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
+            </premis:fixity>
+            <premis:size>9</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Plain text</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>x-fmt/111</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified as valid by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified as well-formed by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+               <premis:formatNote>Format identified by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified by file utility version 5.03</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://uri/hargrett</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>harg-ms3786er0002</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/hargrett/harg-ms3786er0002</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>harg-ms3786er0002/objects/file2.txt</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:fixity>
+               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
+               <premis:messageDigest>3a6b67072d340500cdba69323d0adc69</premis:messageDigest>
+               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
+            </premis:fixity>
+            <premis:size>270</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Plain text</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>x-fmt/111</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified as valid by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified as well-formed by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+               <premis:formatNote>Format identified by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified by file utility version 5.03</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://uri/hargrett</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>harg-ms3786er0002</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/hargrett/harg-ms3786er0002</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>harg-ms3786er0002/objects/file3.csv</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:fixity>
+               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
+               <premis:messageDigest>d3db0252d110811fe3e0614a40906a4f</premis:messageDigest>
+               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
+            </premis:fixity>
+            <premis:size>52</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Comma-Separated Values (CSV)</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>x-fmt/18</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://uri/hargrett</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>harg-ms3786er0002</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+   </filelist>
+</preservation>

@@ -14,11 +14,10 @@ class TestExtractMetadata(unittest.TestCase):
         """
         Deletes the log, error folder, and AIP test folders, if present.
         """
-        if os.path.exists(os.path.join('..', 'aip_log.csv')):
-            os.remove(os.path.join('..', 'aip_log.csv'))
+        if os.path.exists(os.path.join("..", "aip_log.csv")):
+            os.remove(os.path.join("..", "aip_log.csv"))
         
-        directory_paths = (os.path.join('..', 'errors'), 'one_file', 'multi_file', 'tool_error', 'et_error')
-
+        directory_paths = (os.path.join("..", "errors"), "one_file", "multi_file", "tool_error")
         for directory_path in directory_paths:
             if os.path.exists(directory_path):
                 shutil.rmtree(directory_path)
@@ -26,71 +25,78 @@ class TestExtractMetadata(unittest.TestCase):
     def test_one_file(self):
         """
         Test for an AIP with one file.
-        Result for testing is the files in the metadata folder, plus the AIP log.
         """
-        one_file_aip = AIP(os.getcwd(), 'test', 'coll-1', 'one_file', 'one_file', 'title', 1, True)
-        os.mkdir('one_file')
-        with open(os.path.join('one_file', 'Text.txt'), 'w') as file:
-            file.write('Test File')
-        structure_directory(one_file_aip)
-        extract_metadata(one_file_aip)
+        aip = AIP(os.getcwd(), "test", "coll-1", "one_file", "one_file", "title", 1, True)
+        os.mkdir("one_file")
+        with open(os.path.join("one_file", "Text.txt"), "w") as file:
+            file.write("Test File")
+        structure_directory(aip)
+        extract_metadata(aip)
 
-        result = (os.listdir(os.path.join('one_file', 'metadata')), one_file_aip.log['FITSTool'])
+        # Test for the contents of the metadata folder.
+        result = os.listdir(os.path.join("one_file", "metadata"))
+        expected = ["Text.txt_fits.xml"]
+        self.assertEqual(result, expected, "Problem with one file, metadata folder")
 
-        expected = (['Text.txt_fits.xml'], 'No FITS tools errors')
-
-        self.assertEqual(result, expected, 'Problem with one file')
+        # Test for the AIP log.
+        result_log = aip.log["FITSTool"]
+        expected_log = "No FITS tools errors"
+        self.assertEqual(result_log, expected_log, "Problem with one file, log")
 
     def test_multiple_files(self):
         """
         Test for an AIP with multiple files of different formats (CSV, JSON, Plain text).
-        Result for testing is the files in the metadata folder, plus the AIP log.
         """
-        multi_file_aip = AIP(os.getcwd(), 'test', 'coll-1', 'multi_file', 'multi_file', 'title', 1, True)
-        os.mkdir('multi_file')
-        with open(os.path.join('multi_file', 'Text.txt'), 'w') as file:
-            file.write('Test File')
-        os.mkdir(os.path.join('multi_file', 'Pandas Output'))
-        df = pd.DataFrame({'First': ['a', 'b', 'c', 'd'], 'Second': [1, 2, 3, 4], 'Third': [0.1, 0.2, 0.3, 0.4]})
-        df.to_csv(os.path.join('multi_file', 'Pandas Output', 'output.csv'), index=False)
-        df.to_json(os.path.join('multi_file', 'Pandas Output', 'output.json'))
-        structure_directory(multi_file_aip)
-        extract_metadata(multi_file_aip)
+        aip = AIP(os.getcwd(), "test", "coll-1", "multi_file", "multi_file", "title", 1, True)
+        os.mkdir("multi_file")
+        with open(os.path.join("multi_file", "Text.txt"), "w") as file:
+            file.write("Test File")
+        os.mkdir(os.path.join("multi_file", "Pandas Output"))
+        df = pd.DataFrame({"First": ["a", "b", "c", "d"], "Second": [1, 2, 3, 4], "Third": [0.1, 0.2, 0.3, 0.4]})
+        df.to_csv(os.path.join("multi_file", "Pandas Output", "output.csv"), index=False)
+        df.to_json(os.path.join("multi_file", "Pandas Output", "output.json"))
+        structure_directory(aip)
+        extract_metadata(aip)
 
-        result = (os.listdir(os.path.join('multi_file', 'metadata')), multi_file_aip.log['FITSTool'])
+        # Test for the contents of the metadata folder.
+        result = os.listdir(os.path.join("multi_file", "metadata"))
+        expected = ["output.csv_fits.xml", "output.json_fits.xml", "Text.txt_fits.xml"]
+        self.assertEqual(result, expected, "Problem with multiple files, metadata folder")
 
-        expected = (['output.csv_fits.xml', 'output.json_fits.xml', 'Text.txt_fits.xml'], 'No FITS tools errors')
-
-        self.assertEqual(result, expected, 'Problem with multiple formats')
+        # Test for the AIP log.
+        result_log = aip.log["FITSTool"]
+        expected_log = "No FITS tools errors"
+        self.assertEqual(result_log, expected_log, "Problem with multiple files, log")
 
     def test_error_fits_tool(self):
         """
         Test for an AIP with a format that causes FITS to generate an error.
-        Result for testing is the FITS tool errors text file, plus AIP log.
         """
         # Makes the test AIP, including making the initial AIP instance, folder and file and
         # running the first two functions for the AIP workflow.
         # Generates error by making a text file with an XML extension.
-        tool_aip = AIP(os.getcwd(), 'test', 'coll-1', 'tool_error', 'tool_error', 'title', 1, True)
-        os.mkdir('tool_error')
-        with open(os.path.join('tool_error', 'not.xml'), 'w') as file:
-            file.write('This is not XML')
-        structure_directory(tool_aip)
-        extract_metadata(tool_aip)
+        aip = AIP(os.getcwd(), "test", "coll-1", "tool_error", "tool_error", "title", 1, True)
+        os.mkdir("tool_error")
+        with open(os.path.join("tool_error", "not.xml"), "w") as file:
+            file.write("This is not XML")
+        structure_directory(aip)
+        extract_metadata(aip)
 
-        # Generates result, which is if a few phrases are in the FITs error output.
+        # Test for the FITS error log, which is if 3 phrases are in the file.
         # The contents of the entire file cannot be tested, since most are variable (timestamps and file paths).
-        with open(os.path.join('tool_error', 'metadata', 'tool_error_fits-tool-errors_fitserr.txt')) as file:
+        with open(os.path.join("tool_error", "metadata", "tool_error_fits-tool-errors_fitserr.txt")) as file:
             content = file.read()
-            result = ('org.jdom.input.JDOMParseException' in content,
-                      'Tool error processing file' in content,
-                      'Content is not allowed in prolog.' in content,
-                      tool_aip.log['FITSTool'])
-            
-        expected = (True, True, True, 'FITS tools generated errors (saved to metadata folder)')
+            result = ("org.jdom.input.JDOMParseException" in content,
+                      "Tool error processing file" in content,
+                      "Content is not allowed in prolog." in content)
+        expected = (True, True, True)
+        self.assertEqual(result, expected, "Problem with error, FITS tool log")
 
-        self.assertEqual(result, expected, 'Problem with FITS tool error')
+        # Test for the AIP log.
+        result_log = aip.log["FITSTool"]
+        expected_log = "FITS tools generated errors (saved to metadata folder)"
+        self.assertEqual(result_log, expected_log, "Problem with error, AIP log")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

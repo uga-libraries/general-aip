@@ -74,11 +74,11 @@ class TestValidatePreservationXML(unittest.TestCase):
         os.remove(os.path.join("aip-id", "metadata", "aip-id_preservation.xml"))
         validate_preservation_xml(self.aip)
 
-        # Test for folder is moved, both that it is not in the original location and is in the error folder.
-        in_original = os.path.exists("aip-id")
-        in_error = os.path.exists(os.path.join("..", "errors", "preservationxml_not_found", "aip-id"))
-        result = (in_original, in_error)
-        expected = (False, True)
+        # Test for if the folder is moved, both that it is in the error folder
+        # and is not in the original location (AIPs directory).
+        result = (os.path.exists(os.path.join("..", "errors", "preservationxml_not_found", "aip-id")),
+                  os.path.exists("aip-id"))
+        expected = (True, False)
         self.assertEqual(result, expected, "Problem with error: missing, move to error folder")
 
         # Test for the AIP Log: preservation.xml is made.
@@ -113,11 +113,11 @@ class TestValidatePreservationXML(unittest.TestCase):
         # Runs the function being tested.
         validate_preservation_xml(self.aip)
 
-        # Test for folder is moved, both that it is not in the original location and is in the error folder.
-        in_original = os.path.exists("aip-id")
-        in_error = os.path.exists(os.path.join("..", "errors", "preservationxml_not_valid", "aip-id"))
-        result = (in_original, in_error)
-        expected = (False, True)
+        # Test for if the folder is moved, both that it is in the error folder
+        # and is not in the original location (AIPs directory).
+        result = (os.path.exists(os.path.join("..", "errors", "preservationxml_not_valid", "aip-id")),
+                  os.path.exists("aip-id"))
+        expected = (True, False)
         self.assertEqual(result, expected, "Problem with error: not valid, move to error folder")
 
         # Test for the validation log.

@@ -129,12 +129,12 @@ class TestMakePreservationXML(unittest.TestCase):
         os.remove(os.path.join("error-id", "metadata", "error-id_cleaned-fits.xml"))
         make_preservation_xml(aip)
 
-        # Test for the AIP being moved to the error folder.
-        # Tests that it is no longer in the AIP directory and is in the error folder.
+        # Test for if the folder is moved, both that it is in the error folder
+        # and is not in the original location (AIPs directory).
         result = (os.path.exists(os.path.join("..", "errors", "pres_xml_saxon_error", "error-id")),
                   os.path.exists("error-id"))
         expected = (True, False)
-        self.assertEqual(result, expected, "Problem with test for error handling, moving AIP folder")
+        self.assertEqual(result, expected, "Problem with test for error handling, move to error folder")
 
         # Test for the AIP log, PresXML.
         result_log = aip.log["PresXML"]

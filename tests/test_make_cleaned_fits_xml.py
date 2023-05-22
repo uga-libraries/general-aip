@@ -75,12 +75,12 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         os.remove(os.path.join("aip-id", "metadata", "aip-id_combined-fits.xml"))
         make_cleaned_fits_xml(self.aip)
 
-        # Test for the AIP folder being moved to the error folder.
-        # Tests both that the folder is in the error folder and not in the AIPs directory.
+        # Test for if the folder is moved, both that it is in the error folder
+        # and is not in the original location (AIPs directory).
         result = (os.path.exists(os.path.join("..", "errors", "cleaned_fits_saxon_error", "aip-id")),
                   os.path.exists("aip-id"))
         expected = (True, False)
-        self.assertEqual(result, expected, "Problem with cleaned fits error handling, moving to error folder")
+        self.assertEqual(result, expected, "Problem with cleaned fits error handling, move to error folder")
 
         # Test for the AIP log, PresXML.
         result_log = self.aip.log["PresXML"]

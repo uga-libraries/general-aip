@@ -121,6 +121,11 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, "Test Dir", "Test Dir Text.txt")]
         self.assertEqual(result, expected, "Problem with error - objects exists, AIP folder")
 
+        # Test for the AIP being moved from the AIPs directory.
+        # The test for the contents of the AIP folder verifies it is in the error folder.
+        result_dir = os.path.exists("err-objects")
+        self.assertEqual(result_dir, False, "Problem with error - objects exists, move AIP folder")
+
         # Test for the AIP log: ObjectsError.
         result_log = aip.log["ObjectsError"]
         expected_log = "Objects folder already exists in original files"
@@ -158,6 +163,11 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, "Test Dir", "Test Dir Text.txt")]
         self.assertEqual(result, expected, "Problem with error - both exist, AIP folder")
 
+        # Test for the AIP being moved from the AIPs directory.
+        # The test for the contents of the AIP folder verifies it is in the error folder.
+        result_dir = os.path.exists("err-both")
+        self.assertEqual(result_dir, False, "Problem with error - both exist, move AIP folder")
+
         # Test for the AIP log: ObjectsError.
         result_log = aip.log["ObjectsError"]
         expected_log = "Objects folder already exists in original files"
@@ -193,6 +203,11 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, "metadata", "Metadata Text.txt"),
                     os.path.join(aip_path, "Test Dir", "Test Dir Text.txt")]
         self.assertEqual(result, expected, "Problem with error - metadata exists, AIP folder")
+
+        # Test for the AIP being moved from the AIPs directory.
+        # The test for the contents of the AIP folder verifies it is in the error folder.
+        result_dir = os.path.exists("err-metadata")
+        self.assertEqual(result_dir, False, "Problem with error - metadata exists, move AIP folder")
 
         # Test for the AIP log: ObjectsError.
         result_log = aip.log["ObjectsError"]

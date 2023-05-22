@@ -106,6 +106,14 @@ class TestValidateBag(unittest.TestCase):
                     'found="0752123baadbf461f459b56be3c91b84548582d6ef6f4497f5ee6c528afdca10"\n']
         self.assertEqual(result, expected, "Problem with validating a bag that is not valid, validation log")
 
+        # Test for if the folder is moved, both that it is in the error folder
+        # and is not in the original location (AIPs directory).
+        result_move = (os.path.exists(os.path.join("..", "errors", "bag_not_valid", "aip-id_bag")),
+                       os.path.exists("aip-id"))
+        expected_move = (True, False)
+        self.assertEqual(result_move, expected_move,
+                         "Problem with validating a bag that is not valid, move to error folder")
+
         # Test for the AIP log: BagValid.
         result_log = self.aip.log["BagValid"]
         expected_log = "Bag not valid (see log in bag_not_valid error folder)"

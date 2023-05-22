@@ -140,10 +140,12 @@ class TestCombineMetadata(unittest.TestCase):
         # Runs the function with the error handling being tested.
         combine_metadata(aip)
 
-        # Test for if the AIP folder is in the expected error folder.
-        result = os.path.exists(os.path.join("..", "errors", "combining_fits", "et_error"))
-        expected = True
-        self.assertEqual(result, expected, "Problem with ET parse error, move to error")
+        # Test for if the folder is moved, both that it is in the error folder
+        # and is not in the original location (AIPs directory).
+        result = (os.path.exists(os.path.join("..", "errors", "combining_fits", "et_error")),
+                  os.path.exists("et_error"))
+        expected = (True, False)
+        self.assertEqual(result, expected, "Problem with ET parse error, move to error folder")
 
         # Test for the AIP log, FITSError.
         result_log = aip.log["FITSError"]

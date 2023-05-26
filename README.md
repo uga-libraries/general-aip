@@ -34,12 +34,20 @@ For UGA, these values are:
 # Dependencies
 md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating systems. xmllint is also included with Strawberry Perl.
 * bagit.py (https://github.com/LibraryOfCongress/bagit-python). Follow install instructions in the README.
-* FITS (https://projects.iq.harvard.edu/fits/downloads)
+* FITS (https://projects.iq.harvard.edu/fits/downloads). Configure as indicated below
 * md5deep (https://github.com/jessek/hashdeep/releases): download and unzip md5deep-4.4.zip
 * saxon9he (http://saxon.sourceforge.net/)
 * Strawberry Perl (Windows only) (http://strawberryperl.com/)
 * xmllint (http://xmlsoft.org/xmllint.html): documentation. Install is with Strawberry Perl.
 * 7-Zip (Windows only) (https://www.7-zip.org/download.html)
+
+# FITS configuration
+FITS includes multiple identification tools, and we adjust which tools are used for particular formats (based on the file extension) to reduce the number of errors.
+1. Navigate to the "xml" folder in the FITS folder on your local machine.
+2. Open the "fits.xml" file
+3. Edit the "exclude-exts" and "include-exts" for each tool as needed.
+    1. Jhove: exclude "warc"
+    2. FileUtility: exclude "warc"
 
 # Installation
 1. Install the dependencies (listed above). For Windows, add 7-Zip to your Windows System PATH. In settings, go to Environment Variables > Path > Edit > New and add the 7-zip folder. 
@@ -47,7 +55,7 @@ md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating sys
 
 2. Download this repository and save to your computer.
 3. Use the configuration_template.py to make a file named configuration.py with file path variables for your local machine.
-4. Change permission on the scripts so they are executable.
+5. Change permission on the scripts so they are executable.
 
 # Workflow Details
 1. Extracts the department, collection id, folder name, AIP id, title, and version from metadata.csv.

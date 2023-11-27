@@ -3,8 +3,8 @@
 ## Overview
 
 This is the general workflow to make archival information packages (AIPs) that are ready for ingest into the UGA Libraries' digital preservation system (ARCHive). 
-The workflow organizes the files, extracts and formats metadata, and packages the files. 
-It may be used for one or multiple files of any file format. 
+It may be used for one or multiple files of any file format.
+The workflow organizes the files, extracts and formats technical metadata, and bags and zips the AIP folders. 
 
 Each AIP is fully processed before the next one is started.
 If a known error is encountered, such as failing a validation test or a regular expression does not find a match, 

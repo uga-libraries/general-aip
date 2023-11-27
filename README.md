@@ -6,8 +6,6 @@ This is the general workflow to make archival information packages (AIPs) that a
 The workflow organizes the files, extracts and formats metadata, and packages the files. 
 It may be used for one or multiple files of any file format. 
 
-More specialized workflows have been developed for [audiovisual materials](https://github.com/uga-libraries/av-aip_russell) and [web archives](https://github.com/uga-libraries/web-aip). 
-
 Each step of the workflow is in its own Python function. 
 The functions are in a separate document (aip_functions.py) so that these can easily be used in other workflows as well. 
 The general AIP workflow is implemented by general_aip.py, which iterates over the folders being made into AIPs, calling the function for each step in turn. 
@@ -15,7 +13,11 @@ Each AIP is fully processed before the next one is started.
 
 If a known error is encountered, such as failing a validation test or a regular expression does not find a match, 
 the AIP is moved to an error folder with the name of the error, and the rest of the steps are skipped for that AIP. 
-A log is also created as the script runs which saves details about the errors. 
+A log is also created as the script runs which saves details about the errors.
+
+Specialized AIP workflows for audiovisual materials:
+- [Brown Media Archives](https://github.com/uga-libraries/av-aip)
+- [Russell Library Oral Histories](https://github.com/uga-libraries/av-aip_russell)
 
 ## Getting Started
 

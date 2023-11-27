@@ -1,37 +1,17 @@
-# General Workflow for AIPs
+# General Workflow for Creating AIPs
 
-# Purpose and overview
+## Overview
+
 This is the general workflow to make archival information packages (AIPs) that are ready for ingest into the UGA Libraries' digital preservation system (ARCHive). The workflow organizes the files, extracts and formats metadata, and packages the files. It may be used for one or multiple files of any file format. More specialized workflows have been developed for [audiovisual materials](https://github.com/uga-libraries/av-aip_russell) and [web archives](https://github.com/uga-libraries/web-aip). 
 
-# Script approach
 Each step of the workflow is in its own Python function. The functions are in a separate document (aip_functions.py) so that these can easily be used in other workflows as well. The general AIP workflow is implemented by general_aip.py, which iterates over the folders being made into AIPs, calling the function for each step in turn. Each AIP is fully processed before the next one is started.
 
 If a known error is encountered, such as failing a validation test or a regular expression does not find a match, the AIP is moved to an error folder with the name of the error and the rest of the steps are skipped for that AIP. A log is also created as the script runs which saves details about the errors. 
 
-# Script usage
-python /path/general_aip.py /path/aip-directory [no-zip]
-* general_aip.py is the script that implements the workflow.
-* aip-directory is the folder which contains all the folders to make into AIPs.
-* include no-zip if the script should only tar and not zip the AIP (for disk images).
+## Getting Started
 
-The script has been tested in Windows 10 and Mac OS X.
+### Dependencies
 
-# Metadata File Required for Script
-Create a file named metadata.csv in the AIPs directory. This contains required information about each of the AIPs to be included in this batch.
-
-
-The header row is formatted Department,Collection,Folder,AIP_ID,Title,Version
-
-
-For UGA, these values are:
-* Department: ARCHive group name
-* Collection: collection identifier
-* Folder: the current folder name of the AIP folder
-* AIP_ID: AIP identifier
-* Title: AIP title
-* Version: AIP version number, which must be a whole number
-
-# Dependencies
 md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating systems. xmllint is also included with Strawberry Perl.
 * bagit.py (https://github.com/LibraryOfCongress/bagit-python). Follow install instructions in the README.
 * FITS (https://projects.iq.harvard.edu/fits/downloads). Configure as indicated below
@@ -41,7 +21,8 @@ md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating sys
 * xmllint (http://xmlsoft.org/xmllint.html): documentation. Install is with Strawberry Perl.
 * 7-Zip (Windows only) (https://www.7-zip.org/download.html)
 
-# FITS configuration
+### Installation
+
 FITS includes multiple identification tools, and we adjust which tools are used for particular formats (based on the file extension) to reduce the number of errors.
 1. Navigate to the "xml" folder in the FITS folder on your local machine.
 2. Open the "fits.xml" file
@@ -49,7 +30,6 @@ FITS includes multiple identification tools, and we adjust which tools are used 
     1. Jhove: exclude "warc"
     2. FileUtility: exclude "warc"
 
-# Installation
 1. Install the dependencies (listed above). For Windows, add 7-Zip to your Windows System PATH. In settings, go to Environment Variables > Path > Edit > New and add the 7-zip folder. 
 
 
@@ -57,7 +37,35 @@ FITS includes multiple identification tools, and we adjust which tools are used 
 3. Use the configuration_template.py to make a file named configuration.py with file path variables for your local machine.
 5. Change permission on the scripts so they are executable.
 
-# Workflow Details
+Metadata File Required for Script
+Create a file named metadata.csv in the AIPs directory. This contains required information about each of the AIPs to be included in this batch.
+The header row is formatted Department,Collection,Folder,AIP_ID,Title,Version
+
+For UGA, these values are:
+* Department: ARCHive group name
+* Collection: collection identifier
+* Folder: the current folder name of the AIP folder
+* AIP_ID: AIP identifier
+* Title: AIP title
+* Version: AIP version number, which must be a whole number
+
+### Script Arguments
+
+python /path/general_aip.py /path/aip-directory [no-zip]
+* general_aip.py is the script that implements the workflow.
+* aip-directory is the folder which contains all the folders to make into AIPs.
+* include no-zip if the script should only tar and not zip the AIP (for disk images).
+
+The script has been tested in Windows 10 and Mac OS X.
+
+### Testing
+
+Includes one test file per function, and a test to run the full script.
+Unit test scripts should be run with the script repo folder "tests" as the current working directory.
+Copy the configuration.py file for the local installation of the script to the "tests" folder before running any tests.
+
+## Workflow
+
 1. Extracts the department, collection id, folder name, AIP id, title, and version from metadata.csv.
 
 
@@ -69,14 +77,11 @@ FITS includes multiple identification tools, and we adjust which tools are used 
 7. Tars and zips a copy of the bag, which is saved in the aips-to-ingest folder.
 8. Uses md5deep to calculate the md5 for the packaged AIP and adds it to a department manifest in aips-to-ingest.
 
-# Unit Tests
-Includes one test file per function, and a test to run the full script.
-Unit test scripts should be run with the script repo folder "tests" as the current working directory.
-Copy the configuration.py file for the local installation of the script to the "tests" folder before running any tests.
+## Author
 
-# Initial Author
 Adriane Hanson, Head of Digital Stewardship, December 2019.
 
-# Acknowledgements
+## History
+
 These scripts were adapted from a set of two bash scripts that were used for making AIPs from 2017-October 2019 at UGA Libraries. (https://github.com/uga-libraries/aip-mac-bash-fits)
 

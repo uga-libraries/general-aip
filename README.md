@@ -29,6 +29,8 @@ md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating sys
 
 ### Installation
 
+Use the configuration_template.py to make a file named configuration.py with file path variables for your local machine.
+
 FITS includes multiple identification tools, and we adjust which tools are used for particular formats (based on the file extension) to reduce the number of errors.
 1. Navigate to the "xml" folder in the FITS folder on your local machine.
 2. Open the "fits.xml" file
@@ -38,9 +40,6 @@ FITS includes multiple identification tools, and we adjust which tools are used 
 
 For Windows, add 7-Zip to your Windows System PATH. 
 In settings, go to Environment Variables > Path > Edit > New and add the 7-zip folder. 
-
-
-Use the configuration_template.py to make a file named configuration.py with file path variables for your local machine.
 
 Metadata File Required for Script
 Create a file named metadata.csv in the AIPs directory. This contains required information about each of the AIPs to be included in this batch.

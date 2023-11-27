@@ -36,12 +36,11 @@ FITS includes multiple identification tools, and we adjust which tools are used 
     1. Jhove: exclude "warc"
     2. FileUtility: exclude "warc"
 
-1. Install the dependencies (listed above). For Windows, add 7-Zip to your Windows System PATH. In settings, go to Environment Variables > Path > Edit > New and add the 7-zip folder. 
+For Windows, add 7-Zip to your Windows System PATH. 
+In settings, go to Environment Variables > Path > Edit > New and add the 7-zip folder. 
 
 
-2. Download this repository and save to your computer.
-3. Use the configuration_template.py to make a file named configuration.py with file path variables for your local machine.
-5. Change permission on the scripts so they are executable.
+Use the configuration_template.py to make a file named configuration.py with file path variables for your local machine.
 
 Metadata File Required for Script
 Create a file named metadata.csv in the AIPs directory. This contains required information about each of the AIPs to be included in this batch.

@@ -3,7 +3,7 @@ validates the preservation.xml metadata file already in the AIP metadata folder.
 There is error handling for if the preservation.xml file is missing or not valid."""
 
 import unittest
-from scripts.aip_functions import *
+from aip_functions import *
 
 
 class TestValidatePreservationXML(unittest.TestCase):
@@ -34,19 +34,16 @@ class TestValidatePreservationXML(unittest.TestCase):
         if os.path.exists("aip-id"):
             shutil.rmtree("aip-id")
 
-        log_path = os.path.join("..", "aip_log.csv")
-        if os.path.exists(log_path):
-            os.remove(log_path)
+        if os.path.exists("aip_log.csv"):
+            os.remove("aip_log.csv")
 
-        errors_path = os.path.join("..", "errors")
-        if os.path.exists(errors_path):
-            shutil.rmtree(errors_path)
+        if os.path.exists("errors"):
+            shutil.rmtree("errors")
 
         script_output_folders = ("aips-to-ingest", "fits-xml", "preservation-xml")
         for folder in script_output_folders:
-            path = os.path.join("..", folder)
-            if os.path.exists(path):
-                shutil.rmtree(path)
+            if os.path.exists(folder):
+                shutil.rmtree(folder)
 
     def test_valid(self):
         """
@@ -76,7 +73,7 @@ class TestValidatePreservationXML(unittest.TestCase):
 
         # Test for if the folder is moved, both that it is in the error folder
         # and is not in the original location (AIPs directory).
-        result = (os.path.exists(os.path.join("..", "errors", "preservationxml_not_found", "aip-id")),
+        result = (os.path.exists(os.path.join("errors", "preservationxml_not_found", "aip-id")),
                   os.path.exists("aip-id"))
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with error: missing, move to error folder")
@@ -115,17 +112,21 @@ class TestValidatePreservationXML(unittest.TestCase):
 
         # Test for if the folder is moved, both that it is in the error folder
         # and is not in the original location (AIPs directory).
-        result = (os.path.exists(os.path.join("..", "errors", "preservationxml_not_valid", "aip-id")),
+        result = (os.path.exists(os.path.join("errors", "preservationxml_not_valid", "aip-id")),
                   os.path.exists("aip-id"))
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with error: not valid, move to error folder")
 
         # Test for the validation log.
-        with open(os.path.join("..", "errors", "preservationxml_not_valid", "aip-id_presxml_validation.txt"), "r") as f:
+        with open(os.path.join("errors", "preservationxml_not_valid", "aip-id_presxml_validation.txt"), "r") as f:
             result_log = f.readlines()
-        expected_log = ["Element '{http://purl.org/dc/terms/}rights': This element is not expected. " 
-                        'Expected is ( {http://purl.org/dc/terms/}title ).\n',
-                        '\n', 'aip-id\\metadata\\aip-id_preservation.xml fails to validate\n', '\n', '\n']
+        expected_log = ['aip-id/metadata/aip-id_preservation.xml:2: element rights: Schemas validity '
+                        "error : Element '{http://purl.org/dc/terms/}rights': This element is not "
+                        'expected. Expected is ( {http://purl.org/dc/terms/}title ).\n',
+                        '\n',
+                        'aip-id\\metadata\\aip-id_preservation.xml fails to validate\n',
+                        '\n',
+                        '\n']
         self.assertEqual(result_log, expected_log, "Problem with error: not valid, validation log")
 
         # Test for the AIP Log: preservation.xml is made.

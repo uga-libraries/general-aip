@@ -29,7 +29,11 @@ Specialized AIP workflows for audiovisual materials:
 
 ### Installation
 
+#### Configuration File
+
 Use the configuration_template.py to make a file named configuration.py with file path variables for your local machine.
+
+#### FITS Configuration
 
 FITS includes multiple identification tools, and we adjust which tools are used for particular formats 
 (based on the file extension) to reduce the number of errors.
@@ -39,11 +43,14 @@ FITS includes multiple identification tools, and we adjust which tools are used 
     1. Jhove: exclude "warc"
     2. FileUtility: exclude "warc"
 
+#### 7-Zip Path
+
 For Windows, add 7-Zip to your Windows System PATH. 
 In settings, go to Environment Variables > Path > Edit > New and add the 7-zip folder. 
 
-Metadata File Required for Script
-Create a file named metadata.csv in the AIPs directory. 
+#### Metadata File
+
+Create a file named metadata.csv in the AIPs directory. [Example metadata.csv](documentation/metadata.csv) 
 This contains required information about each of the AIPs to be included in this batch.
 The header row is formatted Department,Collection,Folder,AIP_ID,Title,Version
 

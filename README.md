@@ -18,9 +18,10 @@ Specialized AIP workflows for audiovisual materials:
 
 ### Dependencies
 
-* bagit.py (https://github.com/LibraryOfCongress/bagit-python). Follow install instructions in the README.
+* bagit (https://github.com/LibraryOfCongress/bagit-python)
 * FITS (https://projects.iq.harvard.edu/fits/downloads). Configure as indicated below
 * md5deep (Windows only) (https://github.com/jessek/hashdeep/releases): download and unzip md5deep-4.4.zip
+* pandas (https://pandas.pydata.org/docs/index.html)
 * saxon9he (http://saxon.sourceforge.net/)
 * Strawberry Perl (Windows only) (http://strawberryperl.com/)
 * xmllint (Windows only) (http://xmlsoft.org/xmllint.html): documentation. Installed with Strawberry Perl.

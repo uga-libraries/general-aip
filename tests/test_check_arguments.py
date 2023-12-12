@@ -3,7 +3,7 @@
 
 import os
 import unittest
-from scripts.aip_functions import check_arguments
+from aip_functions import check_arguments
 
 
 class TestCheckArguments(unittest.TestCase):

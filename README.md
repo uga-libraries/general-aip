@@ -82,8 +82,7 @@ See [AIP Creation Instructions](documentation/aip_creation_instructions.md) for 
 
 Each AIP is fully processed before the next one is started.
 If a known error is encountered, such as failing a validation test or a regular expression does not find a match, 
-the AIP is moved to an error folder, and the rest of the steps are skipped for that AIP. 
-
+the AIP is moved to an error folder, and the rest of the steps are skipped for that AIP.
 
 ## Author
 
@@ -93,4 +92,3 @@ Adriane Hanson, Head of Digital Stewardship, December 2019.
 
 These scripts were adapted from a set of two bash scripts that were used for making AIPs from 2017-October 2019 at UGA Libraries. 
 (https://github.com/uga-libraries/aip-mac-bash-fits)
-

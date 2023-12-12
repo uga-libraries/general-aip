@@ -31,7 +31,8 @@ md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating sys
 
 Use the configuration_template.py to make a file named configuration.py with file path variables for your local machine.
 
-FITS includes multiple identification tools, and we adjust which tools are used for particular formats (based on the file extension) to reduce the number of errors.
+FITS includes multiple identification tools, and we adjust which tools are used for particular formats 
+(based on the file extension) to reduce the number of errors.
 1. Navigate to the "xml" folder in the FITS folder on your local machine.
 2. Open the "fits.xml" file
 3. Edit the "exclude-exts" and "include-exts" for each tool as needed.
@@ -42,7 +43,8 @@ For Windows, add 7-Zip to your Windows System PATH.
 In settings, go to Environment Variables > Path > Edit > New and add the 7-zip folder. 
 
 Metadata File Required for Script
-Create a file named metadata.csv in the AIPs directory. This contains required information about each of the AIPs to be included in this batch.
+Create a file named metadata.csv in the AIPs directory. 
+This contains required information about each of the AIPs to be included in this batch.
 The header row is formatted Department,Collection,Folder,AIP_ID,Title,Version
 
 For UGA, these values are:
@@ -74,11 +76,27 @@ Copy the configuration.py file for the local installation of the script to the "
 
 
 2. Deletes temporary files from anywhere within the AIP folder because they cause errors with validating bags.
-3. Creates the AIP directory structure. The AIP folder is named with the AIP ID and contains metadata and objects folders.
-4. Extracts technical metadata from each file in the objects folder with FITS and saves the FITS xml to the metadata folder. If there is more than one file with the same name, the FITS xml will include a number to distinguish between the different outputs. Copies the information from each xml file into one file named combined-fits.xml, which is saved outside the AIP in the fits-xml folder.
-5. Transforms the combined-fits xml into Dublin Core and PREMIS metadata using Saxon and an xslt stylesheet, which is saved as preservation.xml in the metadata folder. Verifies that the preservation.xml file meets UGA standards with xmllint and xsds.
+
+
+3. Creates the AIP directory structure. 
+   The AIP folder is named with the AIP ID and contains metadata and objects folders.
+
+4. Extracts technical metadata from each file in the objects folder with FITS and saves the FITS xml to the metadata folder. 
+   If there is more than one file with the same name, the FITS xml will include a number to distinguish between the different outputs. 
+   Copies the information from each xml file into one file named combined-fits.xml, which is saved outside the AIP in the fits-xml folder.
+
+
+5. Transforms the combined-fits xml into Dublin Core and PREMIS metadata using Saxon and an xslt stylesheet, 
+   which is saved as preservation.xml in the metadata folder. 
+   Verifies that the preservation.xml file meets UGA standards with xmllint and xsds.
+
+
 6. Uses bagit to bag each AIP folder in place, making md5 and sha256 manifests. Validates the bag.
+
+
 7. Tars and zips a copy of the bag, which is saved in the aips-to-ingest folder.
+
+
 8. Uses md5deep to calculate the md5 for the packaged AIP and adds it to a department manifest in aips-to-ingest.
 
 ## Author
@@ -87,5 +105,6 @@ Adriane Hanson, Head of Digital Stewardship, December 2019.
 
 ## History
 
-These scripts were adapted from a set of two bash scripts that were used for making AIPs from 2017-October 2019 at UGA Libraries. (https://github.com/uga-libraries/aip-mac-bash-fits)
+These scripts were adapted from a set of two bash scripts that were used for making AIPs from 2017-October 2019 at UGA Libraries. 
+(https://github.com/uga-libraries/aip-mac-bash-fits)
 

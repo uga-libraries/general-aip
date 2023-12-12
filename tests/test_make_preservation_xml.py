@@ -7,7 +7,7 @@ uses the ID to calculate additional values."""
 
 import fileinput
 import unittest
-from scripts.aip_functions import *
+from aip_functions import *
 
 
 def make_test_input(aip):

@@ -8,7 +8,7 @@ import csv
 import os
 import shutil
 import unittest
-from scripts.aip_functions import check_metadata_csv
+from aip_functions import check_metadata_csv
 
 
 def run_function(csv_name):

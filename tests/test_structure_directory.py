@@ -6,7 +6,7 @@ There are a few files that are sorted into metadata and everything else goes int
 import os
 import shutil
 import unittest
-from scripts.aip_functions import AIP, log, structure_directory
+from aip_functions import AIP, log, structure_directory
 
 
 def make_aip_directory(aip_id):
@@ -92,10 +92,10 @@ class TestStructureDirectory(unittest.TestCase):
         """
         Deletes the aip log, errors folder, and test AIPs folders, if present.
         """
-        if os.path.exists(os.path.join("..", "aip_log.csv")):
-            os.remove(os.path.join("..", "aip_log.csv"))
+        if os.path.exists("aip_log.csv"):
+            os.remove("aip_log.csv")
 
-        paths = (os.path.join("..", "errors"), "sort-coll", "sort-collscope", "sort-crawldef", "sort-crawljob",
+        paths = ("errors", "sort-coll", "sort-collscope", "sort-crawldef", "sort-crawljob",
                  "sort-emory", "sort-log", "sort-none", "sort-seed", "sort-seedscope")
         for path in paths:
             if os.path.exists(path):
@@ -111,7 +111,7 @@ class TestStructureDirectory(unittest.TestCase):
         structure_directory(aip)
 
         # Test for the contents of the AIP folder.
-        aip_path = os.path.join("..", "errors", "objects_folder_exists", "err-objects")
+        aip_path = os.path.join("errors", "objects_folder_exists", "err-objects")
         result = aip_directory_list(aip_path)
         expected = [os.path.join(aip_path, "objects"),
                     os.path.join(aip_path, "Test Dir"),
@@ -151,7 +151,7 @@ class TestStructureDirectory(unittest.TestCase):
         structure_directory(aip)
 
         # Test for the contents of the AIP folder.
-        aip_path = os.path.join("..", "errors", "objects_folder_exists", "err-both")
+        aip_path = os.path.join("errors", "objects_folder_exists", "err-both")
         result = aip_directory_list(aip_path)
         expected = [os.path.join(aip_path, "metadata"),
                     os.path.join(aip_path, "objects"),
@@ -193,7 +193,7 @@ class TestStructureDirectory(unittest.TestCase):
         structure_directory(aip)
 
         # Test for the contents of the AIP folder.
-        aip_path = os.path.join("..", "errors", "metadata_folder_exists", "err-metadata")
+        aip_path = os.path.join("errors", "metadata_folder_exists", "err-metadata")
         result = aip_directory_list(aip_path)
         expected = [os.path.join(aip_path, "metadata"),
                     os.path.join(aip_path, "objects"),

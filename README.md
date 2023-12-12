@@ -2,8 +2,13 @@
 
 ## Overview
 
-This is the general workflow to make archival information packages (AIPs) that are ready for ingest into the UGA Libraries' digital preservation system (ARCHive). 
+This script implements the general workflow to make archival information packages (AIPs) that are ready for ingest 
+into the UGA Libraries' digital preservation system (ARCHive). 
 It may be used for one or multiple files of any file format.
+
+AIPs contain digital objects and metadata files, including a preservation.xml file required by ARCHive,
+and are bagged according to the Library of Congress standard. 
+[UGA Libraries AIP Definition](https://docs.google.com/document/d/1PuRtSC9E0Fyt5vf4yVCER20bIWp_odPhdhGokBhJ69s/edit)
 
 Specialized AIP workflows for audiovisual materials:
 - [Brown Media Archives](https://github.com/uga-libraries/av-aip)

@@ -4,11 +4,6 @@
 
 This is the general workflow to make archival information packages (AIPs) that are ready for ingest into the UGA Libraries' digital preservation system (ARCHive). 
 It may be used for one or multiple files of any file format.
-The workflow organizes the files, extracts and formats technical metadata, and bags and zips the AIP folders. 
-
-Each AIP is fully processed before the next one is started.
-If a known error is encountered, such as failing a validation test or a regular expression does not find a match, 
-the AIP is moved to an error folder, and the rest of the steps are skipped for that AIP. 
 
 Specialized AIP workflows for audiovisual materials:
 - [Brown Media Archives](https://github.com/uga-libraries/av-aip)
@@ -71,6 +66,10 @@ Unit test scripts should be run with the script repo folder "tests" as the curre
 Copy the configuration.py file for the local installation of the script to the "tests" folder before running any tests.
 
 ## Workflow
+The workflow organizes the files, extracts and formats technical metadata, and bags and zips the AIP folders. 
+Each AIP is fully processed before the next one is started.
+If a known error is encountered, such as failing a validation test or a regular expression does not find a match, 
+the AIP is moved to an error folder, and the rest of the steps are skipped for that AIP. 
 
 1. Extracts the department, collection id, folder name, AIP id, title, and version from metadata.csv.
 

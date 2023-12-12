@@ -7,7 +7,7 @@ Tests for functions with error handling include testing if the correct informati
 import os
 import pandas as pd
 import unittest
-from scripts.aip_functions import AIP, log
+from aip_functions import AIP, log
 
 
 def aip_log_list():
@@ -15,7 +15,7 @@ def aip_log_list():
     Reads a aip_log.csv and returns a list of lists, where each list is a row in the CSV.
     Fills na with text for easier comparison.
     """
-    df = pd.read_csv(os.path.join("..", "aip_log.csv"))
+    df = pd.read_csv("aip_log.csv")
     df = df.fillna("n/a")
     row_list = [df.columns.to_list()] + df.values.tolist()
     return row_list
@@ -36,7 +36,7 @@ class TestLog(unittest.TestCase):
         """
         Deletes the log so a new one can be made for the next test.
         """
-        os.remove(os.path.join("..", "aip_log.csv"))
+        os.remove("aip_log.csv")
 
     def test_header(self):
         """

@@ -18,7 +18,7 @@ import os
 import pandas as pd
 import shutil
 import unittest
-from scripts.aip_functions import AIP, log, make_output_directories, manifest
+from aip_functions import AIP, log, make_output_directories, manifest
 
 
 def manifest_to_list(path):
@@ -42,10 +42,10 @@ class TestManifest(unittest.TestCase):
         """
         Deletes the log and script output folders.
         """
-        os.remove(os.path.join("..", "aip_log.csv"))
-        shutil.rmtree(os.path.join("..", "aips-to-ingest"))
-        shutil.rmtree(os.path.join("..", "fits-xml"))
-        shutil.rmtree(os.path.join("..", "preservation-xml"))
+        os.remove("aip_log.csv")
+        shutil.rmtree("aips-to-ingest")
+        shutil.rmtree("fits-xml")
+        shutil.rmtree("preservation-xml")
 
     def test_one_tar(self):
         """
@@ -55,12 +55,12 @@ class TestManifest(unittest.TestCase):
         # Makes 1 AIP instance, an AIP tar placeholder, and the manifest.
         aip = AIP(os.getcwd(), "test", "coll-1", "one-tar-folder", "one-tar", "title", 1, to_zip=False)
         aip.size = 4000
-        with open(os.path.join("..", "aips-to-ingest", f"{aip.id}_bag.4000.tar"), "w") as fake_file:
+        with open(os.path.join("aips-to-ingest", f"{aip.id}_bag.4000.tar"), "w") as fake_file:
             fake_file.write("Test")
         manifest(aip)
 
         # Test for the manifest.
-        result = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
+        result = manifest_to_list(os.path.join("aips-to-ingest", "manifest_test.txt"))
         expected = [["0cbc6611f5540bd0809a388dc95a615b", "one-tar_bag.4000.tar"]]
         self.assertEqual(expected, result, "Problem with one tar, manifest")
 
@@ -82,12 +82,12 @@ class TestManifest(unittest.TestCase):
         # Makes 1 AIP instance, an AIP tar.bz2 placeholder, and the manifest.
         aip = AIP(os.getcwd(), "test", "coll-1", "one-zip-folder", "one-zip", "title", 1, to_zip=True)
         aip.size = 4000
-        with open(os.path.join("..", "aips-to-ingest", f"{aip.id}_bag.4000.tar.bz2"), "w") as fake_file:
+        with open(os.path.join("aips-to-ingest", f"{aip.id}_bag.4000.tar.bz2"), "w") as fake_file:
             fake_file.write("Test")
         manifest(aip)
 
         # Test for the manifest.
-        result = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
+        result = manifest_to_list(os.path.join("aips-to-ingest", "manifest_test.txt"))
         expected = [["0cbc6611f5540bd0809a388dc95a615b", "one-zip_bag.4000.tar.bz2"]]
         self.assertEqual(expected, result, "Problem with one zip, manifest")
 
@@ -114,12 +114,12 @@ class TestManifest(unittest.TestCase):
         # Makes an AIP tar.bz2 placeholder for all three of the AIP instances and makes the manifest.
         for aip in (aip1, aip2, aip3):
             aip.size = 4000
-            with open(os.path.join("..", "aips-to-ingest", f"{aip.id}_bag.4000.tar.bz2"), "w") as fake_file:
+            with open(os.path.join("aips-to-ingest", f"{aip.id}_bag.4000.tar.bz2"), "w") as fake_file:
                 fake_file.write("Test")
             manifest(aip)
 
         # Test for the bmac manifest.
-        result_bmac = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_bmac.txt"))
+        result_bmac = manifest_to_list(os.path.join("aips-to-ingest", "manifest_bmac.txt"))
         expected_bmac = [["0cbc6611f5540bd0809a388dc95a615b", "aip2_bag.4000.tar.bz2"]]
         self.assertEqual(result_bmac, expected_bmac, "Problem with multiple depts: bmac, manifest")
 
@@ -134,7 +134,7 @@ class TestManifest(unittest.TestCase):
         self.assertEqual(result_bmac_log2, expected_bmac_log2, "Problem with multiple depts: bmac, log: Complete")
 
         # Test for the test manifest.
-        result_test = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
+        result_test = manifest_to_list(os.path.join("aips-to-ingest", "manifest_test.txt"))
         expected_test = [["0cbc6611f5540bd0809a388dc95a615b", "aip1_bag.4000.tar.bz2"],
                          ["0cbc6611f5540bd0809a388dc95a615b", "aip3_bag.4000.tar.bz2"]]
         self.assertEqual(result_test, expected_test, "Problem with multiple depts: test, manifest")
@@ -160,13 +160,13 @@ class TestManifest(unittest.TestCase):
 
         # Only makes an AIP tar placeholder for one AIP instance and makes the manifest for both.
         aip1.size = 4000
-        with open(os.path.join("..", "aips-to-ingest", f"{aip1.id}_bag.4000.tar"), "w") as fake_file:
+        with open(os.path.join("aips-to-ingest", f"{aip1.id}_bag.4000.tar"), "w") as fake_file:
             fake_file.write("Test")
         manifest(aip1)
         manifest(aip2)
 
         # Test for the manifest.
-        result = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
+        result = manifest_to_list(os.path.join("aips-to-ingest", "manifest_test.txt"))
         expected = [["0cbc6611f5540bd0809a388dc95a615b", "aip1_bag.4000.tar"]]
         self.assertEqual(result, expected, "Problem with error: one missing, manifest")
 
@@ -194,7 +194,7 @@ class TestManifest(unittest.TestCase):
         manifest(aip2)
 
         # Test for the manifest not being made.
-        result = os.path.exists(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
+        result = os.path.exists(os.path.join("aips-to-ingest", "manifest_test.txt"))
         self.assertEqual(result, False, "Problem with error: all missing, manifest")
 
         # Test for the AIP log: Manifest.

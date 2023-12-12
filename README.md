@@ -18,14 +18,14 @@ Specialized AIP workflows for audiovisual materials:
 
 ### Dependencies
 
-* bagit (https://github.com/LibraryOfCongress/bagit-python)
-* FITS (https://projects.iq.harvard.edu/fits/downloads). Configure as indicated below
-* md5deep (Windows only) (https://github.com/jessek/hashdeep/releases): download and unzip md5deep-4.4.zip
-* pandas (https://pandas.pydata.org/docs/index.html)
-* saxon9he (http://saxon.sourceforge.net/)
-* Strawberry Perl (Windows only) (http://strawberryperl.com/)
-* xmllint (Windows only) (http://xmlsoft.org/xmllint.html): documentation. Installed with Strawberry Perl.
-* 7-Zip (Windows only) (https://www.7-zip.org/download.html)
+* bagit (https://github.com/LibraryOfCongress/bagit-python) - make bags
+* FITS (https://projects.iq.harvard.edu/fits/downloads) - format identification and technical metadata
+* md5deep (Windows only) (https://github.com/jessek/hashdeep/releases) - generate MD5 checksums
+* pandas (https://pandas.pydata.org/docs/index.html) - analyze spreadsheets (unit tests only)
+* saxon9he (http://saxon.sourceforge.net/) - transform XML using stylesheets
+* Strawberry Perl (Windows only) (http://strawberryperl.com/) - to get xmllint (other use has been discontinued)
+* xmllint (Windows only) (http://xmlsoft.org/xmllint.html) - validate XML using XSD files. Installed with Strawberry Perl.
+* 7-Zip (Windows only) (https://www.7-zip.org/download.html) - tar and zip
 
 ### Installation
 

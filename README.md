@@ -18,13 +18,12 @@ Specialized AIP workflows for audiovisual materials:
 
 ### Dependencies
 
-md5deep, perl, and xmllint are pre-installed on most Mac and Linux operating systems. xmllint is also included with Strawberry Perl.
 * bagit.py (https://github.com/LibraryOfCongress/bagit-python). Follow install instructions in the README.
 * FITS (https://projects.iq.harvard.edu/fits/downloads). Configure as indicated below
-* md5deep (https://github.com/jessek/hashdeep/releases): download and unzip md5deep-4.4.zip
+* md5deep (Windows only) (https://github.com/jessek/hashdeep/releases): download and unzip md5deep-4.4.zip
 * saxon9he (http://saxon.sourceforge.net/)
 * Strawberry Perl (Windows only) (http://strawberryperl.com/)
-* xmllint (http://xmlsoft.org/xmllint.html): documentation. Install is with Strawberry Perl.
+* xmllint (Windows only) (http://xmlsoft.org/xmllint.html): documentation. Installed with Strawberry Perl.
 * 7-Zip (Windows only) (https://www.7-zip.org/download.html)
 
 ### Installation

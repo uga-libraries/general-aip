@@ -64,12 +64,10 @@ For UGA, these values are:
 
 ### Script Arguments
 
-python /path/general_aip.py /path/aip-directory [no-zip]
-* general_aip.py is the script that implements the workflow.
-* aip-directory is the folder which contains all the folders to make into AIPs.
-* include no-zip if the script should only tar and not zip the AIP (for disk images).
+To run the script via the command line: python /path/general_aip.py aips_directory [no-zip]
 
-The script has been tested in Windows 10 and Mac OS X.
+* aips_directory (required) is the folder which contains all the folders to make into AIPs and the metadata.csv file
+* no-zip (optional) is included to only tar and not zip the AIP (for big formats like disk images).
 
 ### Testing
 

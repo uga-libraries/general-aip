@@ -76,37 +76,14 @@ Unit test scripts should be run with the script repo folder "tests" as the curre
 Copy the configuration.py file for the local installation of the script to the "tests" folder before running any tests.
 
 ## Workflow
-The workflow organizes the files, extracts and formats technical metadata, and bags and zips the AIP folders. 
+
+The script organizes the files, extracts and formats technical metadata, and bags and zips the AIP folders.
+See [AIP Creation Instructions](documentation/aip_creation_instructions.md) for details.
+
 Each AIP is fully processed before the next one is started.
 If a known error is encountered, such as failing a validation test or a regular expression does not find a match, 
 the AIP is moved to an error folder, and the rest of the steps are skipped for that AIP. 
 
-1. Extracts the department, collection id, folder name, AIP id, title, and version from metadata.csv.
-
-
-2. Deletes temporary files from anywhere within the AIP folder because they cause errors with validating bags.
-
-
-3. Creates the AIP directory structure. 
-   The AIP folder is named with the AIP ID and contains metadata and objects folders.
-
-4. Extracts technical metadata from each file in the objects folder with FITS and saves the FITS xml to the metadata folder. 
-   If there is more than one file with the same name, the FITS xml will include a number to distinguish between the different outputs. 
-   Copies the information from each xml file into one file named combined-fits.xml, which is saved outside the AIP in the fits-xml folder.
-
-
-5. Transforms the combined-fits xml into Dublin Core and PREMIS metadata using Saxon and an xslt stylesheet, 
-   which is saved as preservation.xml in the metadata folder. 
-   Verifies that the preservation.xml file meets UGA standards with xmllint and xsds.
-
-
-6. Uses bagit to bag each AIP folder in place, making md5 and sha256 manifests. Validates the bag.
-
-
-7. Tars and zips a copy of the bag, which is saved in the aips-to-ingest folder.
-
-
-8. Uses md5deep to calculate the md5 for the packaged AIP and adds it to a department manifest in aips-to-ingest.
 
 ## Author
 

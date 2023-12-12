@@ -4,7 +4,7 @@ with md5 and sha256 checksums. The bag folder is renamed with "_bag" suffix."""
 import os
 import shutil
 import unittest
-from scripts.aip_functions import AIP, make_bag
+from aip_functions import AIP, make_bag
 
 
 class TestMakeBag(unittest.TestCase):

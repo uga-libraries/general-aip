@@ -1,31 +1,20 @@
-"""Purpose: Creates AIPs from folders of digital objects that are then ready for ingest into the
-UGA Libraries' digital preservation system (ARCHive). The AIPs may contain one or multiple files
-of any format. The script works with Hargrett and Russell library IDs and Emory disk image IDs.
+"""Creates AIPs from folders of digital objects that are ready for ingest into our digital preservation system (ARCHive)
 
-All workflow steps are done for one AIP before processing begins on the next.
-If an anticipated error is encountered during processing, the AIP is moved to an error folder
-and the rest of the workflow steps are not executed for that AIP. A log is generated while
-the script runs to record which AIPs were processed and any errors encountered.
+The AIPs may contain one or multiple files of any format.
+The script works with Hargrett and Russell library born-digital IDs,
+Hargrett, MAGIL and Russell web IDs, and Emory disk image IDs.
 
-Prior to running the script:
-    1. Make one folder per AIP with the digital objects for those AIPs.
-    2. All folders to be made into AIPs should be in a single folder (the AIPs directory).
-    3. Make a file named metadata.csv in the AIPs directory. See README for what to include.
+Parameters:
+    aips_directory : required,  folder that contains the folders to be made into AIPs
+    no-zip : optional, use if AIP should only be tarred and not zipped
 
-Workflow Steps:
-    1. Extracts the information about each AIP from metadata.csv.
-    2. Deletes temporary files.
-    3. Organizes folder contents into the UGA Libraries' AIP directory structure.
-    4. Extracts technical metadata using FITS.
-    5. Converts technical metadata to Dublin Core and PREMIS (preservation.xml file).
-    6. Packages the AIP (bag, tar, zip).
-    7. Adds the md5 for the packaged AIP to the department's md5 manifest.
-
-Script usage: python '/path/general_aip.py' '/path/aips_directory' [no-zip]
-Depending on how Python is installed on the machine, may need to substitute python3 for python.
-Use the optional argument no-zip for batches of AIPs that should only be tarred.
-
-This script has been tested on Windows 10 and Mac OS X (10.9.5).
+Returns:
+    The aips_directory folder with the AIP bags, which are complete AIPs except for zipping
+    aip_log.csv with the status of each script step
+    aips-to-ingest folder with completed AIPs and a manifest
+    errors folder (if there were errors), with folders for each error encountered containing the AIP folders
+    fits-xml folder with combined FITS XML for each AIP, for reference (FITS XML for each file is in the AIP)
+    preservation-xml folder with preservation.xml for each AIP, for reference (a copy is in the AIP)
 """
 
 import csv

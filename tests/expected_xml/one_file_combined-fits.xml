@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<combined-fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><fits timestamp="VARIES" version="1.5.0" xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd">
+<combined-fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="VARIES">
   <identification>
     <identity format="Plain text" mimetype="text/plain" toolname="FITS" toolversion="1.5.0">
       <tool toolname="Droid" toolversion="6.4" />
@@ -10,14 +10,14 @@
   </identification>
   <fileinfo>
     <size toolname="Jhove" toolversion="1.20.1">9</size>
-    <filepath status="SINGLE_RESULT" toolname="OIS File Information" toolversion="1.0">CURRENT-DIRECTORY\one_file\objects\Text.txt</filepath>
-    <filename status="SINGLE_RESULT" toolname="OIS File Information" toolversion="1.0">Text.txt</filename>
-    <md5checksum status="SINGLE_RESULT" toolname="OIS File Information" toolversion="1.0">dfee14c3ca5a537621c67ffba86333b7</md5checksum>
-    <fslastmodified status="SINGLE_RESULT" toolname="OIS File Information" toolversion="1.0">0000000000000</fslastmodified>
+    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">CURRENT-DIRECTORY\one_file\objects\Text.txt</filepath>
+    <filename toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">Text.txt</filename>
+    <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">dfee14c3ca5a537621c67ffba86333b7</md5checksum>
+    <fslastmodified toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">0000000000000</fslastmodified>
   </fileinfo>
   <filestatus>
-    <well-formed status="SINGLE_RESULT" toolname="Jhove" toolversion="1.20.1">true</well-formed>
-    <valid status="SINGLE_RESULT" toolname="Jhove" toolversion="1.20.1">true</valid>
+    <well-formed toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</well-formed>
+    <valid toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</valid>
   </filestatus>
   <metadata>
     <text>
@@ -25,17 +25,17 @@
     </text>
   </metadata>
   <statistics fitsExecutionTime="000">
-    <tool status="did not run" toolname="OIS Audio Information" toolversion="0.1" />
-    <tool status="did not run" toolname="ADL Tool" toolversion="0.1" />
-    <tool status="did not run" toolname="VTT Tool" toolversion="0.1" />
-    <tool executionTime="000" toolname="Droid" toolversion="6.4" />
-    <tool executionTime="000" toolname="Jhove" toolversion="1.20.1" />
-    <tool executionTime="000" toolname="file utility" toolversion="5.03" />
-    <tool status="did not run" toolname="Exiftool" toolversion="11.54" />
-    <tool status="did not run" toolname="NLNZ Metadata Extractor" toolversion="3.6GA" />
-    <tool executionTime="000" toolname="OIS File Information" toolversion="1.0" />
-    <tool status="did not run" toolname="OIS XML Metadata" toolversion="0.2" />
-    <tool executionTime="000" toolname="ffident" toolversion="0.2" />
-    <tool executionTime="000" toolname="Tika" toolversion="1.21" />
+    <tool toolname="OIS Audio Information" toolversion="0.1" status="did not run" />
+    <tool toolname="ADL Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="VTT Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="Droid" toolversion="6.4" executionTime="000" />
+    <tool toolname="Jhove" toolversion="1.20.1" executionTime="000" />
+    <tool toolname="file utility" toolversion="5.03" executionTime="000" />
+    <tool toolname="Exiftool" toolversion="11.54" status="did not run" />
+    <tool toolname="NLNZ Metadata Extractor" toolversion="3.6GA" status="did not run" />
+    <tool toolname="OIS File Information" toolversion="1.0" executionTime="000" />
+    <tool toolname="OIS XML Metadata" toolversion="0.2" status="did not run" />
+    <tool toolname="ffident" toolversion="0.2" executionTime="000" />
+    <tool toolname="Tika" toolversion="1.21" executionTime="000" />
   </statistics>
 </fits></combined-fits>

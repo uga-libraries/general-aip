@@ -42,6 +42,7 @@ FITS includes multiple identification tools, and we adjust which tools are used 
 3. Edit the "exclude-exts" and "include-exts" for each tool as needed.
     1. Jhove: exclude "warc"
     2. FileUtility: exclude "warc"
+4. Comment out (start with <!-- and end with -->) MediaInfo, which has a known issue of not running correctly in FITS.
 
 #### 7-Zip Path
 

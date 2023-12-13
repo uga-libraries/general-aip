@@ -363,7 +363,7 @@ def make_output_directories():
     output_directories = ["aips-to-ingest", "fits-xml", "preservation-xml"]
 
     for directory in output_directories:
-        directory_path = os.path.join("", directory)
+        directory_path = os.path.join("..", directory)
         if not os.path.exists(directory_path):
             os.mkdir(directory_path)
 

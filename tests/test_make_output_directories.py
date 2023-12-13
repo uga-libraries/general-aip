@@ -3,7 +3,7 @@ It does not have any inputs and returns nothing."""
 
 import os
 import unittest
-from scripts.aip_functions import make_output_directories
+from aip_functions import make_output_directories
 
 
 class TestMakeOutputDirectories(unittest.TestCase):

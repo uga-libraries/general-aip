@@ -29,11 +29,10 @@ if len(argument_errors) > 0:
     print('\nProblems detected with the provided script arguments:')
     for error in argument_errors:
         print("   * " + error)
-    print('\nScript usage: python "path/general_aip.py" "path/aips-directory" [no-zip]')
-    print("Correct the script arguments and run the script again.")
+    print('\nScript usage: python "path/general_aip.py" "path/aips_directory" [no-zip]')
     sys.exit()
 
-# Makes the current directory the AIPs directory
+# Makes the current directory the AIPs directory.
 os.chdir(AIPS_DIRECTORY)
 
 # Verifies all the variables from the configuration file are present and all the paths are valid.
@@ -43,7 +42,6 @@ if len(configuration_errors) > 0:
     print('\nProblems detected with configuration.py:')
     for error in configuration_errors:
         print("   * " + error)
-    print('\nCorrect the configuration file and run the script again. Use configuration_template.py as a model.')
     sys.exit()
 
 # Reads the CSV with the AIP metadata.
@@ -57,20 +55,19 @@ if len(metadata_errors) > 0:
     print('\nProblems detected with metadata.csv:')
     for error in metadata_errors:
         print("   * " + error)
-    print('\nCorrect the metadata.csv and run the script again.')
     sys.exit()
 
 # If there isn't already a log from running this script on a previous batch,
-# starts a log for saving information about events and errors from running the script and adds a header row.
-if not os.path.exists('../aip_log.csv'):
+# starts a log for tracking script success and adds a header row.
+if not os.path.exists(os.path.join('..', 'aip_log.csv')):
     a.log("header")
 
-# Makes directories used to store script outputs in the same parent folder as the AIPs directory.
+# Makes directories used to store script outputs in the parent folder of the AIPs directory.
 a.make_output_directories()
 
-# Starts counts for tracking script progress.
-# Some steps are time consuming so this shows the script is not stuck.
-# Subtracts one from the count for the metadata file.
+# Starts counters for tracking the script progress.
+# Some steps are time-consuming, so this shows the script is not stuck.
+# Subtracts one from the total AIPs count for the metadata.csv file.
 CURRENT_AIP = 0
 TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY)) - 1
 
@@ -87,7 +84,7 @@ for aip_row in read_metadata:
     department, collection_id, aip_folder, aip_id, title, version = aip_row
     aip = a.AIP(AIPS_DIRECTORY, department, collection_id, aip_folder, aip_id, title, version, ZIP)
 
-    # Updates the current AIP number and displays the script progress in the terminal.
+    # Updates the current AIP number and prints the script progress in the terminal.
     CURRENT_AIP += 1
     print(f'\n>>>Processing {aip.id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
 

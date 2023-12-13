@@ -74,7 +74,8 @@ To run the script via the command line: python /path/general_aip.py aips_directo
 
 Includes one test file per function, and a test to run the full script.
 Unit test scripts should be run with the script repo folder "tests" as the current working directory.
-Copy the configuration.py file for the local installation of the script to the "tests" folder before running any tests.
+
+Known issue: Tests that check the contents of XML may fail due to the inconsistent order of element attributes.
 
 ## Workflow
 

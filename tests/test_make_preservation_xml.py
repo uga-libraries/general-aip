@@ -73,14 +73,13 @@ class TestMakePreservationXML(unittest.TestCase):
                 shutil.rmtree(aip_folder)
 
         # Deletes the AIP log.
-        if os.path.exists(os.path.join("..", "aip_log.csv")):
-            os.remove(os.path.join("..", "aip_log.csv"))
+        if os.path.exists("aip_log.csv"):
+            os.remove("aip_log.csv")
 
         # Deletes the script output folders.
         for output_folder in ("aips-to-ingest", "errors", "fits-xml", "preservation-xml"):
-            path = os.path.join("..", output_folder)
-            if os.path.exists(path):
-                shutil.rmtree(path)
+            if os.path.exists(output_folder):
+                shutil.rmtree(output_folder)
 
     def test_born_digital_hargrett(self):
         """
@@ -131,7 +130,7 @@ class TestMakePreservationXML(unittest.TestCase):
 
         # Test for if the folder is moved, both that it is in the error folder
         # and is not in the original location (AIPs directory).
-        result = (os.path.exists(os.path.join("..", "errors", "pres_xml_saxon_error", "error-id")),
+        result = (os.path.exists(os.path.join("errors", "pres_xml_saxon_error", "error-id")),
                   os.path.exists("error-id"))
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with test for error handling, move to error folder")

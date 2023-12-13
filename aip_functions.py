@@ -454,11 +454,11 @@ def organize_xml(aip):
 
     # Copies the preservation.xml file to the preservation-xml folder for staff reference.
     shutil.copy2(os.path.join(aip.id, "metadata", f"{aip.id}_preservation.xml"),
-                 os.path.join("", "preservation-xml"))
+                 os.path.join("..", "preservation-xml"))
 
     # Moves the combined-fits.xml file to the fits-xml folder for staff reference.
     os.replace(os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml"),
-               os.path.join("", "fits-xml", f"{aip.id}_combined-fits.xml"))
+               os.path.join("..", "fits-xml", f"{aip.id}_combined-fits.xml"))
 
     # Deletes the cleaned-fits.xml file because it is a temporary file.
     os.remove(os.path.join(aip.id, "metadata", f"{aip.id}_cleaned-fits.xml"))

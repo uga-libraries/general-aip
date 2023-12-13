@@ -16,6 +16,8 @@ import configuration as c
 
 
 class AIP:
+    """Characteristics of each AIP and log data used by multiple functions"""
+
     def __init__(self, directory, department, collection_id, folder_name, aip_id, title, version, to_zip):
         self.directory = directory
         self.department = department
@@ -33,9 +35,17 @@ class AIP:
 
 
 def check_arguments(arguments):
-    """Verifies that all the arguments received are correct and assigns values to
-    variables aips_directory, to_zip, and aip_metadata_csv.
-    Returns the variables and a list of errors in a tuple."""
+    """Verify the script arguments are correct and calculate the path to metadata.csv
+
+    Parameters:
+        arguments : sys.argv list of script arguments
+
+    Returns:
+        aips_directory : the path to the folder which contains the folders to be made into AIPs
+        to_zip : a boolean for if the AIPs should be zipped as well as tarred (True) or only tarred (False)
+        aip_metadata_csv : the path to the metadata.csv file in the aips_directory
+        errors_list : a list of errors, or an empty list if there were no errors
+    """
 
     # Starts a list for all encountered errors, so all errors can be checked before returning a result,
     # and the two variables assigned from arguments are set to None.
@@ -84,8 +94,16 @@ def check_arguments(arguments):
 
 
 def check_configuration():
-    """Verifies all the expected variables are in the configuration file and paths are valid if they are a path.
-    Returns a list of errors or an empty list if there are no errors."""
+    """Verify the variables in the configuration file are correct
+
+    - All variables are present
+    - Path variables are a valid path
+
+    Parameters: none
+
+    Returns:
+        errors_list : a list of errors, or an empty list if there were no errors
+    """
 
     # Starts a list for all encountered errors, so all errors can be checked before returning a result.
     errors_list = []
@@ -134,10 +152,19 @@ def check_configuration():
 
 
 def check_metadata_csv(read_metadata):
-    """Verifies that the columns are in the required order.
-    If so, verifies that the departments match ARCHive group codes
-    and that the AIP list in the CSV matches the folders in the AIPs directory.
-    Returns a list of errors or an empty list if there are no errors. """
+    """Verify the content of the metadata.csv is correct
+
+    - Columns are in the required order
+    - Departments match ARCHive group codes
+    - No AIP is in the CSV more than once
+    - The AIPs in the CSV match the folders in the AIPs directory
+
+    Parameters:
+        read_metadata : contents of the metadata.csv file, read with the csv library
+
+    Returns:
+        errors_list : a list of errors, or an empty list if there were no errors
+    """
 
     # Starts a list for all encountered errors, so all errors can be checked before returning a result.
     errors_list = []
@@ -203,7 +230,13 @@ def check_metadata_csv(read_metadata):
 
 
 def combine_metadata(aip):
-    """Creates a single XML file that combines the FITS output for every file in the AIP. """
+    """Make the combined-fits.xml file in the metadata folder, which contains the FITS output for every file in the AIP
+
+    Parameters:
+        aip : instance of the AIP class, used for id and log
+
+    Returns: none
+    """
 
     # Makes a new XML object with the root element named combined-fits.
     combo_tree = et.ElementTree(et.Element("combined-fits"))
@@ -237,10 +270,16 @@ def combine_metadata(aip):
 
 
 def delete_temp(aip):
-    """Deletes temporary files of various types from anywhere within the AIP folder because they cause errors later
-    in the workflow, especially with bag validation. Creates a log of the deleted files as a record of actions taken
-    on the AIP during processing. This is especially important if there are large files that result in a noticeable
-    change in size after making the AIP. """
+    """Delete temporary files of various types from the AIP folder and make a log of deleted files
+
+    Temporary files are deleted because they cause errors later in the workflow, especially with bag validation.
+    Types of files deleted: DS_Store, Thumbs.db, ends with .tmp, and starts with '.'
+
+    Parameters:
+         aip : instance of the AIP class, used for id and log
+
+    Returns: none
+    """
 
     # List of files to be deleted where the filename can be matched in its entirety.
     delete_list = [".DS_Store", "._.DS_Store", "Thumbs.db"]
@@ -276,7 +315,13 @@ def delete_temp(aip):
 
 
 def extract_metadata(aip):
-    """Extracts technical metadata from the files in the objects folder using FITS. """
+    """Extract technical metadata from the files in the objects folder using FITS
+
+    Parameters:
+         aip : instance of the AIP class, used for directory, id, and log
+
+    Returns: none
+    """
 
     # Runs FITS on the files in the AIP's objects folder and saves the output to it's metadata folder.
     # The FITS output is named with the original file name. If there is more than one file anywhere
@@ -306,7 +351,13 @@ def extract_metadata(aip):
 def log(log_data):
     """Saves information about each step done on an AIP to a CSV file.
     Information is stored in a dictionary in the AIP instance
-    and is saved to the log after the AIP either finishes processing or encounters an anticipated error."""
+    and is saved to the log after the AIP either finishes processing or encounters an anticipated error.
+
+    Parameters:
+        log_data :
+
+    Returns: none
+    """
 
     # Formats the data for this row in the log CSV as a list.
     # For the header, uses default values.
@@ -328,16 +379,29 @@ def log(log_data):
 
 
 def make_bag(aip):
-    """Bags the AIP, using md5 and sha256 checksums,
-    and renames the AIP folder to add "_bag" to the end."""
+    """Bag the AIP, with md5 and sha256 manifests, and rename the AIP folder to add "_bag" to the end
+
+    Parameters:
+         aip : instance of the AIP class, used for id
+
+    Returns: none
+    """
 
     bagit.make_bag(aip.id, checksums=["md5", "sha256"])
     os.replace(aip.id, f"{aip.id}_bag")
 
 
 def make_cleaned_fits_xml(aip):
-    """Makes a simplified version of the combined fits XML so the format information is easier to aggregate.
-    It is saved in the AIP's metadata folder and deleted after the preservation.xml is made."""
+    """Make a simplified version of the combined-fits.xml in the metadata folder
+
+    The cleaned FITS makes the format information is easier to aggregate.
+    It is deleted after the preservation.xml is made.
+
+    Parameters:
+         aip : instance of the AIP class, used for id and log
+
+    Returns: none
+    """
 
     # Uses saxon and a stylesheet to make the cleaned-fits.xml from the combined-fits.xml.
     input_file = os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml")
@@ -357,8 +421,12 @@ def make_cleaned_fits_xml(aip):
 
 
 def make_output_directories():
-    """Makes the directories used to store script outputs, if they don't already exist,
-    in the parent folder of the AIPs directory."""
+    """Make the directories for script outputs, if they don't already exist, in the parent folder of the AIPs directory
+
+    Parameters: none
+
+    Returns: none
+    """
 
     output_directories = ["aips-to-ingest", "fits-xml", "preservation-xml"]
 
@@ -369,8 +437,13 @@ def make_output_directories():
 
 
 def make_preservation_xml(aip):
-    """Makes the preservation XML (PREMIS and Dublin Core metadata) from the cleaned FITS XML.
-    It is saved in the AIP's metadata folder."""
+    """Make the preservation.xml from the cleaned FITS XML in the metadata folder
+
+    Parameters:
+         aip : instance of the AIP class, used for collection_id, department, id, log, title, and version
+
+    Returns: none
+    """
 
     # Uses saxon and a stylesheet to make the preservation.xml file from the cleaned-fits.xml.
     input_file = os.path.join(aip.id, "metadata", f"{aip.id}_cleaned-fits.xml")
@@ -393,9 +466,16 @@ def make_preservation_xml(aip):
 
 
 def manifest(aip):
-    """Uses md5deep to calculate the MD5 for the AIP and adds it to the manifest for that department
-    in the aips-to-ingest folder. Each department has a separate manifest so AIPs for multiple departments
-    may be created simultaneously."""
+    """Calculate the MD5 checksum for the AIP and add it to the department's manifest in the aips-to-ingest folder.
+
+    One manifest is made for each department so that AIPs may be made for multiple departments simultaneously.
+    One manifest per department is needed to ingest AIPs into our digital preservation system.
+
+    Parameters:
+         aip : instance of the AIP class, used for department, id, log, size, and to_zip
+
+    Returns: none
+    """
 
     # Makes the path to the packaged AIP, which is different depending on if it is zipped or not.
     aip_path = os.path.join("..", "aips-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
@@ -436,8 +516,16 @@ def manifest(aip):
 
 
 def move_error(error_name, item):
-    """Moves the AIP folder to an error folder, named with the error type,
-    so the rest of the workflow steps are not completed on it. """
+    """Move the AIP folder to an error folder, named with the error type
+
+    The AIP is moved so the rest of the workflow steps are not attempted on it.
+
+    Parameters:
+        error_name : the name of the error folder
+        item : the name of the AIP folder with the error
+
+    Returns: none
+    """
 
     # Makes the error folder, if it does not already exist.
     # Error folders are in the folder "errors", which is in the parent folder of the AIPs directory.
@@ -450,7 +538,17 @@ def move_error(error_name, item):
 
 
 def organize_xml(aip):
-    """After the preservation.xml is successfully made, organizes the resulting XML files."""
+    """Organize the XML files after the preservation.xml is successfully made
+
+    - A copy of the preservation.xml is made in the preservation-xml folder
+    - The combined-fits.xml is moved to the fits-xml folder
+    - The cleaned-fits.xml is deleted
+
+    Parameters:
+         aip : instance of the AIP class, used for id
+
+    Returns: none
+    """
 
     # Copies the preservation.xml file to the preservation-xml folder for staff reference.
     shutil.copy2(os.path.join(aip.id, "metadata", f"{aip.id}_preservation.xml"),
@@ -465,8 +563,16 @@ def organize_xml(aip):
 
 
 def package(aip):
-    """Tars and zips the AIP, renames the file to include the unzipped size,
-    and saves the resulting packaged AIP in the aips-to-ingest folder."""
+    """Tar and zip (optional) the AIP, rename it to include the size, and save it to the aips-to-ingest folder
+
+    AIPs may not be zipped if zipping is time-consuming and does not save much space. They must be tarred.
+    The unzipped size is included so the preservation system can determine if there is room to unzip it during ingest.
+
+    Parameters:
+         aip : instance of the AIP class, used for directory, id, log, size, and to_zip
+
+    Returns: none
+    """
 
     # Gets the operating system, since the tar and zip commands are different for Windows and Mac/Linux.
     operating_system = platform.system()
@@ -542,10 +648,16 @@ def package(aip):
 
 
 def structure_directory(aip):
-    """Makes the AIP directory structure (objects and metadata folders within the AIP folder)
-    and moves the digital objects into those folders. Anything not recognized as metadata is
-    moved into the objects folder. If the digital objects are organized into folders, that
-    directory structure is maintained within the objects folder. """
+    """Make the AIP directory structure (objects and metadata folders) and move the digital objects into those folders
+
+    Anything not recognized as metadata is moved into the objects folder.
+    If the digital objects are organized into folders, that directory structure is maintained within the objects folder.
+
+    Parameters:
+         aip : instance of the AIP class, used for department, id, and log
+
+    Returns: none
+    """
 
     # Makes the objects folder within the AIP folder, if it doesn't exist.
     # If it does, moves the AIP to an error folder so the original directory structure is not altered.
@@ -599,8 +711,13 @@ def structure_directory(aip):
 
 
 def validate_bag(aip):
-    """Validates the AIP's bag.
-    If it is not valid, moves the AIP to an error folder and saves the error output to that error folder."""
+    """Validate the AIP's bag
+
+    Parameters:
+         aip : instance of the AIP class, used for id and log
+
+    Returns: none
+    """
 
     new_bag = bagit.Bag(f"{aip.id}_bag")
     try:
@@ -623,8 +740,13 @@ def validate_bag(aip):
 
 
 def validate_preservation_xml(aip):
-    """Verifies that the preservation.xml file meets the metadata requirements for the
-    UGA Libraries' digital preservation system (ARCHive)."""
+    """Validate the preservation.xml file against UGA's requirements
+
+    Parameters:
+         aip : instance of the AIP class, used for id and log
+
+    Returns: none
+    """
 
     # Uses xmllint and a XSD file to validate the preservation.xml.
     input_file = os.path.join(aip.id, "metadata", f"{aip.id}_preservation.xml")

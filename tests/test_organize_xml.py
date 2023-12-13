@@ -20,8 +20,9 @@ class TestOrganizeXML(unittest.TestCase):
 
         script_output_folders = ("aips-to-ingest", "fits-xml", "preservation-xml")
         for folder in script_output_folders:
-            if os.path.exists(folder):
-                shutil.rmtree(folder)
+            path = os.path.join("..", folder)
+            if os.path.exists(path):
+                shutil.rmtree(path)
 
     def test_organize_xml(self):
         """
@@ -48,9 +49,9 @@ class TestOrganizeXML(unittest.TestCase):
 
         # Tests if the files are at the original location and in the new location (if copied or moved).
         # and compares the result to what is expected.
-        result = [os.path.exists(os.path.join("preservation-xml", "aip-id_preservation.xml")),
+        result = [os.path.exists(os.path.join("..", "preservation-xml", "aip-id_preservation.xml")),
                   os.path.exists(os.path.join("aip-id", "metadata", "aip-id_preservation.xml")),
-                  os.path.exists(os.path.join("fits-xml", "aip-id_combined-fits.xml")),
+                  os.path.exists(os.path.join("..", "fits-xml", "aip-id_combined-fits.xml")),
                   os.path.exists(os.path.join("aip-id", "metadata", "aip-id_combined-fits.xml")),
                   os.path.exists(os.path.join("aip-id", "metadata", "aip-id_cleaned-fits.xml"))]
         expected = [True, True, True, False, False]

@@ -48,11 +48,11 @@ class TestValidateBag(unittest.TestCase):
         elif os.path.exists(self.aip.id):
             shutil.rmtree(self.aip.id)
 
-        if os.path.exists("aip_log.csv"):
-            os.remove("aip_log.csv")
+        if os.path.exists(os.path.join("..", "aip_log.csv")):
+            os.remove(os.path.join("..", "aip_log.csv"))
 
-        if os.path.exists("errors"):
-            shutil.rmtree("errors")
+        if os.path.exists(os.path.join("..", "errors")):
+            shutil.rmtree(os.path.join("..", "errors"))
 
     def test_valid_bag(self):
         """
@@ -88,7 +88,7 @@ class TestValidateBag(unittest.TestCase):
         # If the validation log is present, the contents of the log are the test result.
         # The contents are sorted because bagit saves the errors in an inconsistent order.
         # Otherwise, default error language is the result.
-        log_path = os.path.join("errors", "bag_not_valid", "aip-id_bag_validation.txt")
+        log_path = os.path.join("..", "errors", "bag_not_valid", "aip-id_bag_validation.txt")
         try:
             with open(log_path, "r") as file:
                 result = file.readlines()
@@ -106,7 +106,7 @@ class TestValidateBag(unittest.TestCase):
 
         # Test for if the folder is moved, both that it is in the error folder
         # and is not in the original location (AIPs directory).
-        result_move = (os.path.exists(os.path.join("errors", "bag_not_valid", "aip-id_bag")),
+        result_move = (os.path.exists(os.path.join("..", "errors", "bag_not_valid", "aip-id_bag")),
                        os.path.exists("aip-id"))
         expected_move = (True, False)
         self.assertEqual(result_move, expected_move,

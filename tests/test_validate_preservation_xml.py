@@ -34,16 +34,17 @@ class TestValidatePreservationXML(unittest.TestCase):
         if os.path.exists("aip-id"):
             shutil.rmtree("aip-id")
 
-        if os.path.exists("aip_log.csv"):
-            os.remove("aip_log.csv")
+        if os.path.exists(os.path.join("..", "aip_log.csv")):
+            os.remove(os.path.join("..", "aip_log.csv"))
 
-        if os.path.exists("errors"):
-            shutil.rmtree("errors")
+        if os.path.exists(os.path.join("..", "errors")):
+            shutil.rmtree(os.path.join("..", "errors"))
 
         script_output_folders = ("aips-to-ingest", "fits-xml", "preservation-xml")
         for folder in script_output_folders:
-            if os.path.exists(folder):
-                shutil.rmtree(folder)
+            path = os.path.join("..", folder)
+            if os.path.exists(path):
+                shutil.rmtree(path)
 
     def test_valid(self):
         """
@@ -73,7 +74,7 @@ class TestValidatePreservationXML(unittest.TestCase):
 
         # Test for if the folder is moved, both that it is in the error folder
         # and is not in the original location (AIPs directory).
-        result = (os.path.exists(os.path.join("errors", "preservationxml_not_found", "aip-id")),
+        result = (os.path.exists(os.path.join("..", "errors", "preservationxml_not_found", "aip-id")),
                   os.path.exists("aip-id"))
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with error: missing, move to error folder")
@@ -112,13 +113,13 @@ class TestValidatePreservationXML(unittest.TestCase):
 
         # Test for if the folder is moved, both that it is in the error folder
         # and is not in the original location (AIPs directory).
-        result = (os.path.exists(os.path.join("errors", "preservationxml_not_valid", "aip-id")),
+        result = (os.path.exists(os.path.join("..", "errors", "preservationxml_not_valid", "aip-id")),
                   os.path.exists("aip-id"))
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with error: not valid, move to error folder")
 
         # Test for the validation log.
-        with open(os.path.join("errors", "preservationxml_not_valid", "aip-id_presxml_validation.txt"), "r") as f:
+        with open(os.path.join("..", "errors", "preservationxml_not_valid", "aip-id_presxml_validation.txt"), "r") as f:
             result_log = f.readlines()
         expected_log = ['aip-id/metadata/aip-id_preservation.xml:2: element rights: Schemas validity '
                         "error : Element '{http://purl.org/dc/terms/}rights': This element is not "

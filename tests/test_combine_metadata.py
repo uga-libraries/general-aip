@@ -57,10 +57,10 @@ class TestCombineMetadata(unittest.TestCase):
         """
         Deletes the log, errors folder, and AIP test folders, if present.
         """
-        if os.path.exists("aip_log.csv"):
-            os.remove("aip_log.csv")
+        if os.path.exists(os.path.join("..", "aip_log.csv")):
+            os.remove(os.path.join("..", "aip_log.csv"))
 
-        directory_paths = (os.path.join("errors"), "one_file", "multi_file", "et_error")
+        directory_paths = (os.path.join("..", "errors"), "one_file", "multi_file", "et_error")
         for directory_path in directory_paths:
             if os.path.exists(directory_path):
                 shutil.rmtree(directory_path)
@@ -142,7 +142,7 @@ class TestCombineMetadata(unittest.TestCase):
 
         # Test for if the folder is moved, both that it is in the error folder
         # and is not in the original location (AIPs directory).
-        result = (os.path.exists(os.path.join("errors", "combining_fits", "et_error")),
+        result = (os.path.exists(os.path.join("..", "errors", "combining_fits", "et_error")),
                   os.path.exists("et_error"))
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with ET parse error, move to error folder")

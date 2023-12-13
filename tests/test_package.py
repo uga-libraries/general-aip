@@ -30,12 +30,12 @@ class TestPackage(unittest.TestCase):
         Deletes the bagged AIP, script output folders, and AIP log (if created).
         """
         shutil.rmtree(f"{self.aip.id}_bag")
-        shutil.rmtree("aips-to-ingest")
-        os.rmdir("fits-xml")
-        os.rmdir("preservation-xml")
+        shutil.rmtree(os.path.join("..", "aips-to-ingest"))
+        os.rmdir(os.path.join("..", "fits-xml"))
+        os.rmdir(os.path.join("..", "preservation-xml"))
 
-        if os.path.exists("aip_log.csv"):
-            os.remove("aip_log.csv")
+        if os.path.exists(os.path.join("..", "aip_log.csv")):
+            os.remove(os.path.join("..", "aip_log.csv"))
 
     def test_tar_zip(self):
         """
@@ -45,7 +45,7 @@ class TestPackage(unittest.TestCase):
         package(self.aip)
 
         # Test that the tar.bz2 file is in the aips-to-ingest folder.
-        result_ingest = os.path.exists(os.path.join("aips-to-ingest", "test-aip-id_bag.6791.tar.bz2"))
+        result_ingest = os.path.exists(os.path.join("..", "aips-to-ingest", "test-aip-id_bag.6791.tar.bz2"))
         self.assertEqual(result_ingest, True, "Problem with tar and zip, aips-to-ingest")
         
         # Test that the tar.bz2 file and tar file are not in the AIPs directory.
@@ -70,7 +70,7 @@ class TestPackage(unittest.TestCase):
         package(self.aip)
 
         # Test that the tar file is in the aips-to-ingest folder.
-        result_ingest = os.path.exists(os.path.join("aips-to-ingest", "test-aip-id_bag.6791.tar"))
+        result_ingest = os.path.exists(os.path.join("..", "aips-to-ingest", "test-aip-id_bag.6791.tar"))
         self.assertEqual(result_ingest, True, "Problem with tar, aips-to-ingest")
 
         # Test that the tar file is not in the AIPs directory. It should have been moved to aips-to-ingest.

@@ -322,7 +322,7 @@ def log(log_data):
                    log_data["Manifest"], log_data["Complete"]]
 
     # Saves the data for the row to the log CSV.
-    with open(os.path.join("", "aip_log.csv"), "a", newline="") as log_file:
+    with open(os.path.join("..", "aip_log.csv"), "a", newline="") as log_file:
         log_writer = csv.writer(log_file)
         log_writer.writerow(log_row)
 
@@ -398,7 +398,7 @@ def manifest(aip):
     may be created simultaneously."""
 
     # Makes the path to the packaged AIP, which is different depending on if it is zipped or not.
-    aip_path = os.path.join("", "aips-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
+    aip_path = os.path.join("..", "aips-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
     if aip.to_zip is True:
         aip_path = aip_path + ".bz2"
 
@@ -425,7 +425,7 @@ def manifest(aip):
     # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.
     # Initial output of md5deep is b'md5_value  filename.ext\r\n'
     # Converts to a string and remove the \r linebreak to format the manifest text file as required by ARCHive.
-    manifest_path = os.path.join("", "aips-to-ingest", f"manifest_{aip.department}.txt")
+    manifest_path = os.path.join("..", "aips-to-ingest", f"manifest_{aip.department}.txt")
     with open(manifest_path, "a", encoding="utf-8") as manifest_file:
         manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
 
@@ -441,7 +441,7 @@ def move_error(error_name, item):
 
     # Makes the error folder, if it does not already exist.
     # Error folders are in the folder "errors", which is in the parent folder of the AIPs directory.
-    error_path = os.path.join("", "errors", error_name)
+    error_path = os.path.join("..", "errors", error_name)
     if not os.path.exists(error_path):
         os.makedirs(error_path)
 
@@ -529,12 +529,12 @@ def package(aip):
             os.remove(f"{aip_bag}.{bag_size}.tar")
 
         # Moves the tarred and zipped version to the aips-to-ingest folder.
-        path = os.path.join("", "aips-to-ingest", f"{aip_bag}.{bag_size}.tar.bz2")
+        path = os.path.join("..", "aips-to-ingest", f"{aip_bag}.{bag_size}.tar.bz2")
         os.replace(f"{aip_bag}.{bag_size}.tar.bz2", path)
 
     # If not zipping, moves the tarred version to the aips-to-ingest folder.
     else:
-        path = os.path.join("", "aips-to-ingest", f"{aip_bag}.{bag_size}.tar")
+        path = os.path.join("..", "aips-to-ingest", f"{aip_bag}.{bag_size}.tar")
         os.replace(f"{aip_bag}.{bag_size}.tar", path)
 
     # Updates log with success.
@@ -613,7 +613,7 @@ def validate_bag(aip):
         move_error("bag_not_valid", f"{aip.id}_bag")
         # Error log is formatted to be easier to read (one error per line) if error information is in details.
         # Otherwise, the entire error output is saved to the log.
-        log_path = os.path.join("", "errors", "bag_not_valid", f"{aip.id}_bag_validation.txt")
+        log_path = os.path.join("..", "errors", "bag_not_valid", f"{aip.id}_bag_validation.txt")
         with open(log_path, "w") as log_path:
             if errors.details:
                 for error_type in errors.details:
@@ -654,7 +654,7 @@ def validate_preservation_xml(aip):
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
         move_error("preservationxml_not_valid", aip.id)
-        log_path = os.path.join("", "errors", "preservationxml_not_valid", f"{aip.id}_presxml_validation.txt")
+        log_path = os.path.join("..", "errors", "preservationxml_not_valid", f"{aip.id}_presxml_validation.txt")
         with open(log_path, "w") as validation_log:
             for line in validation_result.split("\r"):
                 validation_log.write(line + "\n")

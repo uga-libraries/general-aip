@@ -14,7 +14,7 @@ def errors_directory_print():
     This is used to compare the move_error function"s actual results to the expected results.
     """
     result = []
-    for root, dirs, files in os.walk("errors"):
+    for root, dirs, files in os.walk(os.path.join("..", "errors")):
         for directory in dirs:
             result.append(os.path.join(root, directory))
     return result
@@ -27,7 +27,7 @@ class TestMoveError(unittest.TestCase):
         Deletes the errors folder.
         All test AIP folders should be in the error folder at this point and don"t need to be deleted separately.
         """
-        shutil.rmtree("errors")
+        shutil.rmtree(os.path.join("..", "errors"))
 
     def test_no_previous_error(self):
         """
@@ -39,8 +39,8 @@ class TestMoveError(unittest.TestCase):
 
         result = errors_directory_print()
 
-        expected = [os.path.join("errors", "test_error"),
-                    os.path.join("errors", "test_error", "aip_one")]
+        expected = [os.path.join("..", "errors", "test_error"),
+                    os.path.join("..", "errors", "test_error", "aip_one")]
 
         self.assertEqual(result, expected, "Problem with no previous error")
 
@@ -50,16 +50,16 @@ class TestMoveError(unittest.TestCase):
         but there is not a pre-existing error folder of the same error type.
         Result for testing is a list of paths for every folder in the errors folder.
         """
-        os.makedirs(os.path.join("errors", "test_error", "aip_one"))
+        os.makedirs(os.path.join("..", "errors", "test_error", "aip_one"))
         os.mkdir("aip_two")
         move_error("test_two", "aip_two")
 
         result = errors_directory_print()
 
-        expected = [os.path.join("errors", "test_error"),
-                    os.path.join("errors", "test_two"),
-                    os.path.join("errors", "test_error", "aip_one"),
-                    os.path.join("errors", "test_two", "aip_two")]
+        expected = [os.path.join("..", "errors", "test_error"),
+                    os.path.join("..", "errors", "test_two"),
+                    os.path.join("..", "errors", "test_error", "aip_one"),
+                    os.path.join("..", "errors", "test_two", "aip_two")]
 
         self.assertEqual(result, expected, "Problem with previous error, different type")
 
@@ -69,15 +69,15 @@ class TestMoveError(unittest.TestCase):
         and there is a pre-existing error folder of the same error type.
         Result for testing is a list of paths for every folder in the errors folder.
         """
-        os.makedirs(os.path.join("errors", "test_error", "aip_one"))
+        os.makedirs(os.path.join("..", "errors", "test_error", "aip_one"))
         os.mkdir("aip_two")
         move_error("test_error", "aip_two")
 
         result = errors_directory_print()
 
-        expected = [os.path.join("errors", "test_error"),
-                    os.path.join("errors", "test_error", "aip_one"),
-                    os.path.join("errors", "test_error", "aip_two")]
+        expected = [os.path.join("..", "errors", "test_error"),
+                    os.path.join("..", "errors", "test_error", "aip_one"),
+                    os.path.join("..", "errors", "test_error", "aip_two")]
 
         self.assertEqual(result, expected, "Problem with previous error, same type")
 

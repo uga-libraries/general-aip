@@ -3,7 +3,7 @@ makes a simplified version of the combined-fits.xml file already in the metadata
 There is error handling for the XML transformation."""
 
 import unittest
-from scripts.aip_functions import *
+from aip_functions import *
 
 
 class TestMakeCleanedFitsXML(unittest.TestCase):
@@ -32,15 +32,14 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         if os.path.exists("aip-id"):
             shutil.rmtree("aip-id")
 
-        log_path = os.path.join("..", "aip_log.csv")
+        log_path = os.path.join("aip_log.csv")
         if os.path.exists(log_path):
             os.remove(log_path)
 
         script_output_folders = ("aips-to-ingest", "errors", "fits-xml", "preservation-xml")
         for folder in script_output_folders:
-            path = os.path.join("..", folder)
-            if os.path.exists(path):
-                shutil.rmtree(path)
+           if os.path.exists(folder):
+                shutil.rmtree(folder)
 
     def test_make_cleaned_fits_xml(self):
         """
@@ -77,7 +76,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
 
         # Test for if the folder is moved, both that it is in the error folder
         # and is not in the original location (AIPs directory).
-        result = (os.path.exists(os.path.join("..", "errors", "cleaned_fits_saxon_error", "aip-id")),
+        result = (os.path.exists(os.path.join("errors", "cleaned_fits_saxon_error", "aip-id")),
                   os.path.exists("aip-id"))
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with cleaned fits error handling, move to error folder")

@@ -229,6 +229,9 @@ def check_metadata_csv(read_metadata):
 def combine_metadata(aip):
     """Make the combined-fits.xml file in the metadata folder, which contains the FITS output for every file in the AIP
 
+    It is moved out of the AIP folder and into the fits-xml folder after the preservation.xml is made.
+    Only the FITS XML for each file is kept in the AIP.
+
     Parameters:
         aip : instance of the AIP class, used for id and log
 

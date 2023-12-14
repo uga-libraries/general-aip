@@ -315,7 +315,7 @@ def delete_temp(aip):
 
 
 def extract_metadata(aip):
-    """Extract technical metadata from the files in the objects folder using FITS
+    """Extract technical metadata from the files in the objects folder using FITS and saves to metadata folder
 
     Parameters:
          aip : instance of the AIP class, used for directory, id, and log

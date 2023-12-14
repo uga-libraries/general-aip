@@ -1,7 +1,4 @@
-"""
-Functions used to make AIPs from folders of digital objects that are ready for ingest into the
-UGA Libraries' digital preservation system (ARCHive).
-"""
+"""Functions used to make AIPs from folders of digital objects"""
 
 import csv
 import datetime
@@ -349,12 +346,12 @@ def extract_metadata(aip):
 
 
 def log(log_data):
-    """Saves information about each step done on an AIP to a CSV file.
-    Information is stored in a dictionary in the AIP instance
-    and is saved to the log after the AIP either finishes processing or encounters an anticipated error.
+    """Save the result about each step done on an AIP to a CSV file
+
+    Information is saved to the log after the AIP either finishes processing or encounters an anticipated error.
 
     Parameters:
-        log_data :
+        log_data : "header" or dictionary with log information for the AIP
 
     Returns: none
     """

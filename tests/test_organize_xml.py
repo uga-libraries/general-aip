@@ -2,7 +2,7 @@
 deletes, copies, or moves the XML files created to produce the preservation.xml file."""
 
 import unittest
-from scripts.aip_functions import *
+from aip_functions import *
 
 
 class TestOrganizeXML(unittest.TestCase):
@@ -15,9 +15,8 @@ class TestOrganizeXML(unittest.TestCase):
         if os.path.exists("aip-id"):
             shutil.rmtree("aip-id")
 
-        log_path = os.path.join("..", "aip_log.csv")
-        if os.path.exists(log_path):
-            os.remove(log_path)
+        if os.path.exists("aip_log.csv"):
+            os.remove("aip_log.csv")
 
         script_output_folders = ("aips-to-ingest", "fits-xml", "preservation-xml")
         for folder in script_output_folders:

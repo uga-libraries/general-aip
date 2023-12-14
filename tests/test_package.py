@@ -7,7 +7,7 @@ This test is just for Windows. The function will be updated to use Python instea
 import os
 import shutil
 import unittest
-from scripts.aip_functions import AIP, make_output_directories, make_bag, package
+from aip_functions import AIP, make_output_directories, make_bag, package
 
 
 class TestPackage(unittest.TestCase):

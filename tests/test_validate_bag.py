@@ -9,7 +9,7 @@ import datetime
 import os
 import shutil
 import unittest
-from scripts.aip_functions import AIP, make_bag, validate_bag
+from aip_functions import AIP, make_bag, validate_bag
 
 
 class TestValidateBag(unittest.TestCase):
@@ -48,13 +48,11 @@ class TestValidateBag(unittest.TestCase):
         elif os.path.exists(self.aip.id):
             shutil.rmtree(self.aip.id)
 
-        log_path = os.path.join("..", "aip_log.csv")
-        if os.path.exists(log_path):
-            os.remove(log_path)
+        if os.path.exists(os.path.join("..", "aip_log.csv")):
+            os.remove(os.path.join("..", "aip_log.csv"))
 
-        errors_path = os.path.join("..", "errors")
-        if os.path.exists(errors_path):
-            shutil.rmtree(errors_path)
+        if os.path.exists(os.path.join("..", "errors")):
+            shutil.rmtree(os.path.join("..", "errors"))
 
     def test_valid_bag(self):
         """

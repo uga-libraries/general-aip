@@ -4,7 +4,7 @@ makes a folder with the error name if one doesn't already exist, and moves the f
 import os
 import shutil
 import unittest
-from scripts.aip_functions import move_error
+from aip_functions import move_error
 
 
 def errors_directory_print():

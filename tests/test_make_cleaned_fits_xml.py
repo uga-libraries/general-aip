@@ -3,7 +3,7 @@ makes a simplified version of the combined-fits.xml file already in the metadata
 There is error handling for the XML transformation."""
 
 import unittest
-from scripts.aip_functions import *
+from aip_functions import *
 
 
 class TestMakeCleanedFitsXML(unittest.TestCase):
@@ -32,7 +32,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         if os.path.exists("aip-id"):
             shutil.rmtree("aip-id")
 
-        log_path = os.path.join("..", "aip_log.csv")
+        log_path = os.path.join(os.path.join("..", "aip_log.csv"))
         if os.path.exists(log_path):
             os.remove(log_path)
 

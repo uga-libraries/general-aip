@@ -27,7 +27,7 @@ def path_list(dir_name):
             paths_list.append(os.path.join(root, directory))
 
         # Adds the path for every file.
-        # Makes changes to create consistent data for for comparison to the expected.
+        # Makes changes to create consistent data for comparison to the expected.
         for file in files:
 
             # Edits the file size that is part of zipped AIP filenames, since that varies each time.
@@ -96,9 +96,9 @@ class TestFullScript(unittest.TestCase):
         shutil.copytree("born_digital_files", "born_digital_current")
 
         # Runs the script.
-        script_path = os.path.join("..", "scripts", "general_aip.py")
+        script_path = os.path.join("..", "general_aip.py")
         aip_dir = os.path.join(os.getcwd(), "born_digital_current", "aip_directory")
-        subprocess.run(f"python {script_path} {aip_dir}", shell=True)
+        subprocess.run(f'python "{script_path}" "{aip_dir}"', shell=True)
 
         # Test for the contents of the test_current folder.
         actual = path_list("born_digital_current")
@@ -199,9 +199,9 @@ class TestFullScript(unittest.TestCase):
         shutil.copytree("web_files", "web_current")
 
         # Runs the script.
-        script_path = os.path.join("..", "scripts", "general_aip.py")
+        script_path = os.path.join(os.path.dirname(os.getcwd()), "general_aip.py")
         aip_dir = os.path.join(os.getcwd(), "web_current", "preservation_download")
-        subprocess.run(f"python {script_path} {aip_dir}", shell=True)
+        subprocess.run(f'python "{script_path}" "{aip_dir}"', shell=True)
 
         # Test for the contents of the test_current folder.
         actual = path_list("web_current")

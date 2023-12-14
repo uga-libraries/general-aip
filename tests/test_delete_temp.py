@@ -10,7 +10,7 @@ import os
 import pandas as pd
 import shutil
 import unittest
-from scripts.aip_functions import AIP, delete_temp
+from aip_functions import AIP, delete_temp
 
 
 def make_aip_directory(aip_id):

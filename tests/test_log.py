@@ -7,7 +7,7 @@ Tests for functions with error handling include testing if the correct informati
 import os
 import pandas as pd
 import unittest
-from scripts.aip_functions import AIP, log
+from aip_functions import AIP, log
 
 
 def aip_log_list():

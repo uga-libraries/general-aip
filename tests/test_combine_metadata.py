@@ -6,7 +6,7 @@ import pandas as pd
 import shutil
 import unittest
 import xml.etree.ElementTree as ET
-from scripts.aip_functions import AIP, structure_directory, extract_metadata, combine_metadata
+from aip_functions import AIP, structure_directory, extract_metadata, combine_metadata
 
 
 def update_fits(path):
@@ -59,7 +59,7 @@ class TestCombineMetadata(unittest.TestCase):
         """
         if os.path.exists(os.path.join("..", "aip_log.csv")):
             os.remove(os.path.join("..", "aip_log.csv"))
-        
+
         directory_paths = (os.path.join("..", "errors"), "one_file", "multi_file", "et_error")
         for directory_path in directory_paths:
             if os.path.exists(directory_path):

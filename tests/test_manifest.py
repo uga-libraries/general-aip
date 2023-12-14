@@ -18,7 +18,7 @@ import os
 import pandas as pd
 import shutil
 import unittest
-from scripts.aip_functions import AIP, log, make_output_directories, manifest
+from aip_functions import AIP, log, make_output_directories, manifest
 
 
 def manifest_to_list(path):

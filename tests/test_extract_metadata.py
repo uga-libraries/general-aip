@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import shutil
 import unittest
-from scripts.aip_functions import AIP, structure_directory, extract_metadata
+from aip_functions import AIP, structure_directory, extract_metadata
 
 
 class TestExtractMetadata(unittest.TestCase):

@@ -3,7 +3,7 @@ validates the preservation.xml metadata file already in the AIP metadata folder.
 There is error handling for if the preservation.xml file is missing or not valid."""
 
 import unittest
-from scripts.aip_functions import *
+from aip_functions import *
 
 
 class TestValidatePreservationXML(unittest.TestCase):
@@ -34,13 +34,11 @@ class TestValidatePreservationXML(unittest.TestCase):
         if os.path.exists("aip-id"):
             shutil.rmtree("aip-id")
 
-        log_path = os.path.join("..", "aip_log.csv")
-        if os.path.exists(log_path):
-            os.remove(log_path)
+        if os.path.exists(os.path.join("..", "aip_log.csv")):
+            os.remove(os.path.join("..", "aip_log.csv"))
 
-        errors_path = os.path.join("..", "errors")
-        if os.path.exists(errors_path):
-            shutil.rmtree(errors_path)
+        if os.path.exists(os.path.join("..", "errors")):
+            shutil.rmtree(os.path.join("..", "errors"))
 
         script_output_folders = ("aips-to-ingest", "fits-xml", "preservation-xml")
         for folder in script_output_folders:
@@ -123,9 +121,13 @@ class TestValidatePreservationXML(unittest.TestCase):
         # Test for the validation log.
         with open(os.path.join("..", "errors", "preservationxml_not_valid", "aip-id_presxml_validation.txt"), "r") as f:
             result_log = f.readlines()
-        expected_log = ["Element '{http://purl.org/dc/terms/}rights': This element is not expected. " 
-                        'Expected is ( {http://purl.org/dc/terms/}title ).\n',
-                        '\n', 'aip-id\\metadata\\aip-id_preservation.xml fails to validate\n', '\n', '\n']
+        expected_log = ['aip-id/metadata/aip-id_preservation.xml:2: element rights: Schemas validity '
+                        "error : Element '{http://purl.org/dc/terms/}rights': This element is not "
+                        'expected. Expected is ( {http://purl.org/dc/terms/}title ).\n',
+                        '\n',
+                        'aip-id\\metadata\\aip-id_preservation.xml fails to validate\n',
+                        '\n',
+                        '\n']
         self.assertEqual(result_log, expected_log, "Problem with error: not valid, validation log")
 
         # Test for the AIP Log: preservation.xml is made.

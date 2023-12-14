@@ -466,7 +466,7 @@ def make_preservation_xml(aip):
 
 
 def manifest(aip):
-    """Calculate the MD5 checksum for the AIP and add it to the department's manifest in the aips-to-ingest folder.
+    """Calculate the MD5 checksum for the AIP and add it to the department's manifest in the aips-to-ingest folder
 
     One manifest is made for each department so that AIPs may be made for multiple departments simultaneously.
     One manifest per department is needed to ingest AIPs into our digital preservation system.
@@ -651,7 +651,8 @@ def structure_directory(aip):
     """Make the AIP directory structure (objects and metadata folders) and move the digital objects into those folders
 
     Anything not recognized as metadata is moved into the objects folder.
-    If the digital objects are organized into folders, that directory structure is maintained within the objects folder.
+    If the digital objects are already organized into folders,
+    that directory structure is maintained within the objects folder.
 
     Parameters:
          aip : instance of the AIP class, used for department, id, and log

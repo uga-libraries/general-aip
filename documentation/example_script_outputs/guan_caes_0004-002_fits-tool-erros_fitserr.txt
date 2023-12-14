@@ -1,0 +1,25 @@
+2022-01-07 11:12:41 - ERROR - Fits:677 - Tool error processing file: athens-spring.jpg
+Exception reading metadata (Error on line 1: An invalid XML character (Unicode: 0x5) was found in the element content of the document.)
+ 
+edu.harvard.hul.ois.fits.exceptions.FitsToolException: Exception reading metadata (Error on line 1: An invalid XML character (Unicode: 0x5) was found in the element content of the document.)
+ 
+at edu.harvard.hul.ois.fits.tools.tika.TikaTool.buildRawData(TikaTool.java:532)
+ 
+at edu.harvard.hul.ois.fits.tools.tika.TikaTool.extractInfo(TikaTool.java:455)
+ 
+at edu.harvard.hul.ois.fits.tools.ToolBase.run(ToolBase.java:284)
+ 
+at java.lang.Thread.run(Unknown Source)
+ 
+2022-01-07 11:12:42 - ERROR - Fits:677 - Tool error processing file: Bay Meadows 2017.JPG
+Exception reading metadata (Error on line 1: An invalid XML character (Unicode: 0x5) was found in the element content of the document.)
+ 
+edu.harvard.hul.ois.fits.exceptions.FitsToolException: Exception reading metadata (Error on line 1: An invalid XML character (Unicode: 0x5) was found in the element content of the document.)
+ 
+at edu.harvard.hul.ois.fits.tools.tika.TikaTool.buildRawData(TikaTool.java:532)
+ 
+at edu.harvard.hul.ois.fits.tools.tika.TikaTool.extractInfo(TikaTool.java:455)
+ 
+at edu.harvard.hul.ois.fits.tools.ToolBase.run(ToolBase.java:284)
+ 
+at java.lang.Thread.run(Unknown Source) 

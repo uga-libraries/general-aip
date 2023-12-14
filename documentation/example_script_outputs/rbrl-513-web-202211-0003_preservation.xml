@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preservation xmlns:premis="http://www.loc.gov/premis/v3"
+              xmlns:dc="http://purl.org/dc/terms/">
+   <dc:title>GALEO | Facebook</dc:title>
+   <dc:rights>http://rightsstatements.org/vocab/InC/1.0/</dc:rights>
+   <aip>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://*****/russell</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>rbrl-513-web-202211-0003</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://*****/russell/rbrl-513-web-202211-0003</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>representation</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:size>78280387</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Hypertext Markup Language</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified by Jhove version 1.20.1</premis:formatNote>
+            </premis:format>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>WARC</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://*****/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>rbrl-513</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+   </aip>
+   <filelist>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://*****/russell/rbrl-513-web-202211-0003</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>rbrl-513-web-202211-0003/objects/ARCHIVEIT-12263-TEST-JOB1695540-0-SEED2912239-20221021155448248-00000-78t0rd4q.warc</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:fixity>
+               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
+               <premis:messageDigest>1fc767f70cbfd05115734ec4e60abcfb</premis:messageDigest>
+               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
+            </premis:fixity>
+            <premis:size>77647497</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Hypertext Markup Language</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified as not valid by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified as not well-formed by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified by Jhove version 1.20.1</premis:formatNote>
+            </premis:format>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>WARC</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://*****/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>rbrl-513-web-202211-0003</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://*****/russell/rbrl-513-web-202211-0003</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>rbrl-513-web-202211-0003/objects/ARCHIVEIT-12263-TEST-JOB1695540-0-SEED2912239-20221021164243509-00000-q8jlysdv.warc</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:fixity>
+               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
+               <premis:messageDigest>0e13f7d09624fdd504894953f54b6d94</premis:messageDigest>
+               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
+            </premis:fixity>
+            <premis:size>632890</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Hypertext Markup Language</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified as not valid by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified as not well-formed by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified by Jhove version 1.20.1</premis:formatNote>
+            </premis:format>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>WARC</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://*****/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>rbrl-513-web-202211-0003</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+   </filelist>
+</preservation>

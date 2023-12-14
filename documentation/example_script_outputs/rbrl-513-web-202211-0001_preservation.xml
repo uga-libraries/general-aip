@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preservation xmlns:premis="http://www.loc.gov/premis/v3"
+              xmlns:dc="http://purl.org/dc/terms/">
+   <dc:title>GALEO (@iamgaleo) TikTok | Watch GALEO's Newest TikTok Videos</dc:title>
+   <dc:rights>http://rightsstatements.org/vocab/InC/1.0/</dc:rights>
+   <aip>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://*****/russell</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>rbrl-513-web-202211-0001</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://*****/russell/rbrl-513-web-202211-0001</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:size>619058</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>WARC</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://****/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>rbrl-513</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+   </aip>
+</preservation>

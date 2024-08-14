@@ -18,7 +18,7 @@ MD5DEEP = 'C:\\INSERT\\PATH\\md5deep64.exe'
 STYLESHEETS = 'C:\\INSERT\\PATH\\stylesheets'
 
 # Namespace for the AIP identifiers.
-# For UGA, this is the URI for the ARCHive.
+# For UGA, this is the URI for the ARCHive. It starts with http, not https
 NAMESPACE = 'INSERT_NAMESPACE'
 
 # Department for AIP identifiers.

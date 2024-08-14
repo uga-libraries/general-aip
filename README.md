@@ -34,6 +34,8 @@ Specialized AIP workflows for audiovisual materials:
 
 Use the configuration_template.py to make a file named configuration.py with file path variables for your local machine.
 
+The path to FITS in configuration.py MUST be in the same letter directory as the files being converted to AIPs.
+
 #### FITS Configuration
 
 FITS includes multiple identification tools, and we adjust which tools are used for particular formats 

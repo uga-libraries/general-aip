@@ -20,6 +20,7 @@ Specialized AIP workflows for audiovisual materials:
 
 * bagit (https://github.com/LibraryOfCongress/bagit-python) - make bags
 * FITS (https://projects.iq.harvard.edu/fits/downloads) - format identification and technical metadata
+* Java (https://www.java.com/en/download/) - for running FITS
 * md5deep (Windows only) (https://github.com/jessek/hashdeep/releases) - generate MD5 checksums
 * pandas (https://pandas.pydata.org/docs/index.html) - analyze spreadsheets (unit tests only)
 * saxon9he (http://saxon.sourceforge.net/) - transform XML using stylesheets

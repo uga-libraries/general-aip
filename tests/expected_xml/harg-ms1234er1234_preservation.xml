@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <preservation xmlns:dc="http://purl.org/dc/terms/"
               xmlns:premis="http://www.loc.gov/premis/v3">
-   <dc:title>Hargrett Born-Digital Title</dc:title>
+   <dc:title>Hargrett Born-Digital Title Variation 5</dc:title>
    <dc:rights>http://rightsstatements.org/vocab/InC/1.0/</dc:rights>
    <aip>
       <premis:object>
          <premis:objectIdentifier>
             <premis:objectIdentifierType>http://uri/hargrett</premis:objectIdentifierType>
-            <premis:objectIdentifierValue>harg-ms3786er0002</premis:objectIdentifierValue>
+            <premis:objectIdentifierValue>harg-ms1234er1234</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://uri/hargrett/harg-ms3786er0002</premis:objectIdentifierType>
+            <premis:objectIdentifierType>http://uri/hargrett/harg-ms1234er1234</premis:objectIdentifierType>
             <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>representation</premis:objectCategory>
@@ -46,7 +46,7 @@
             <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
             <premis:relatedObjectIdentifier>
                <premis:relatedObjectIdentifierType>http://uri/hargrett</premis:relatedObjectIdentifierType>
-               <premis:relatedObjectIdentifierValue>harg-ms3786</premis:relatedObjectIdentifierValue>
+               <premis:relatedObjectIdentifierValue>harg-ms1234</premis:relatedObjectIdentifierValue>
             </premis:relatedObjectIdentifier>
          </premis:relationship>
       </premis:object>
@@ -54,8 +54,8 @@
    <filelist>
       <premis:object>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://uri/hargrett/harg-ms3786er0002</premis:objectIdentifierType>
-            <premis:objectIdentifierValue>harg-ms3786er0002/objects/file.txt</premis:objectIdentifierValue>
+            <premis:objectIdentifierType>http://uri/hargrett/harg-ms1234er1234</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>harg-ms1234er1234/objects/file.txt</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>file</premis:objectCategory>
          <premis:objectCharacteristics>
@@ -86,14 +86,14 @@
             <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
             <premis:relatedObjectIdentifier>
                <premis:relatedObjectIdentifierType>http://uri/hargrett</premis:relatedObjectIdentifierType>
-               <premis:relatedObjectIdentifierValue>harg-ms3786er0002</premis:relatedObjectIdentifierValue>
+               <premis:relatedObjectIdentifierValue>harg-ms1234er1234</premis:relatedObjectIdentifierValue>
             </premis:relatedObjectIdentifier>
          </premis:relationship>
       </premis:object>
       <premis:object>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://uri/hargrett/harg-ms3786er0002</premis:objectIdentifierType>
-            <premis:objectIdentifierValue>harg-ms3786er0002/objects/file2.txt</premis:objectIdentifierValue>
+            <premis:objectIdentifierType>http://uri/hargrett/harg-ms1234er1234</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>harg-ms1234er1234/objects/file2.txt</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>file</premis:objectCategory>
          <premis:objectCharacteristics>
@@ -124,14 +124,14 @@
             <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
             <premis:relatedObjectIdentifier>
                <premis:relatedObjectIdentifierType>http://uri/hargrett</premis:relatedObjectIdentifierType>
-               <premis:relatedObjectIdentifierValue>harg-ms3786er0002</premis:relatedObjectIdentifierValue>
+               <premis:relatedObjectIdentifierValue>harg-ms1234er1234</premis:relatedObjectIdentifierValue>
             </premis:relatedObjectIdentifier>
          </premis:relationship>
       </premis:object>
       <premis:object>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://uri/hargrett/harg-ms3786er0002</premis:objectIdentifierType>
-            <premis:objectIdentifierValue>harg-ms3786er0002/objects/file3.csv</premis:objectIdentifierValue>
+            <premis:objectIdentifierType>http://uri/hargrett/harg-ms1234er1234</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>harg-ms1234er1234/objects/file3.csv</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>file</premis:objectCategory>
          <premis:objectCharacteristics>
@@ -158,7 +158,7 @@
             <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
             <premis:relatedObjectIdentifier>
                <premis:relatedObjectIdentifierType>http://uri/hargrett</premis:relatedObjectIdentifierType>
-               <premis:relatedObjectIdentifierValue>harg-ms3786er0002</premis:relatedObjectIdentifierValue>
+               <premis:relatedObjectIdentifierValue>harg-ms1234er1234</premis:relatedObjectIdentifierValue>
             </premis:relatedObjectIdentifier>
          </premis:relationship>
       </premis:object>

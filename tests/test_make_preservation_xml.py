@@ -16,10 +16,18 @@ def make_test_input(aip):
     and gets it ready for running the make_preservation_xml function.
     """
 
-    # Makes the AIP folder and test files to use as the AIP content.
-    # For a born-digital AIP (identifier contains er), makes two text files and a csv.
+    # Makes the AIP folder.
     os.mkdir(aip.id)
-    if "er" in aip.id:
+
+    # Makes the test files.
+    # For a web AIP, makes a file with a WARC extension.
+    # Since it is not really a WARC, the format identification will be Unknown Binary.
+    if "web" in aip.id or aip.id.startswith("magil-ggp"):
+        with open(os.path.join(aip.id, "file.warc"), "w") as file:
+            file.write("Placeholder for a warc file")
+    # For other AIPs, makes two text files and a csv.
+    # Oral histories wouldn't have these formats but may have multiple files, so this is good enough for now.
+    else:
         with open(os.path.join(aip.id, "file.txt"), "w") as file:
             file.write("Test text")
         with open(os.path.join(aip.id, "file2.txt"), "w") as file2:
@@ -27,12 +35,6 @@ def make_test_input(aip):
         with open(os.path.join(aip.id, "file3.csv"), "w") as file3:
             file3.write("test,test,test,test,test\n")
             file3.write("test,test,test,test,test\n")
-    # For a web AIP (currently the only other type using this script),
-    # makes a file with a WARC extension.
-    # Since it is not really a WARC, the format identification will be Unknown Binary.
-    else:
-        with open(os.path.join(aip.id, "file.warc"), "w") as file:
-            file.write("Placeholder for a warc file")
 
     # Runs the functions for the earlier workflow steps so there is FITS data ready to make into a preservation.xml
     make_output_directories()
@@ -65,7 +67,9 @@ class TestMakePreservationXML(unittest.TestCase):
         """
 
         # Deletes any AIP folder, which would be in the current directory.
-        aip_ids = ("error-id", "harg-0000-web-202108-0001", "harg-ms3786er0002", "harg-ms3786-web-202108-0001",
+        aip_ids = ("error-id", "guan_caes_1234-123", "har-ua12-123_1234_media", "har-ua12-123_1234_metadata",
+                   "har-ua12-123-123-123", "harg-0000-web-202108-0001", "harg-ms1234-123-123",
+                   "harg-ms1234-123a-123", "harg-ms1234a-123-123", "harg-ms1234er1234", "harg-ms3786-web-202108-0001",
                    "har-ua20-002-web-202108-0001", "magil-ggp-2472041-2022-05", "rbrl-000-web-202102-0001",
                    "rbrl-025-er-000018", "rbrl-043-web-202102-0001")
         for aip_folder in aip_ids:
@@ -82,14 +86,14 @@ class TestMakePreservationXML(unittest.TestCase):
             if os.path.exists(path):
                 shutil.rmtree(path)
 
-    def test_born_digital_hargrett(self):
+    def test_born_digital_hargrett_1(self):
         """
         Test for making the preservation.xml file for a Hargrett born-digital AIP.
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files),
         # and runs the function.
-        aip = AIP(os.getcwd(), "hargrett", "harg-ms3786", "harg-ms3786er0002", "harg-ms3786er0002",
-                  "Hargrett Born-Digital Title", 1, True)
+        aip = AIP(os.getcwd(), "hargrett", "ua12-123", "guan_caes_1234-123", "guan_caes_1234-123",
+                  "Hargrett Born-Digital Title Variation 1", 1, True)
         make_test_input(aip)
         make_preservation_xml(aip)
 
@@ -98,7 +102,79 @@ class TestMakePreservationXML(unittest.TestCase):
         result = read_preservation_xml(aip.id)
         with open(os.path.join("expected_xml", f"{aip.id}_preservation.xml"), "r") as expected_file:
             expected = expected_file.read()
-        self.assertEqual(result, expected, "Problem with test for Hargrett born-digital")
+        self.assertEqual(result, expected, "Problem with test for Hargrett born-digital, variation 1")
+
+    def test_born_digital_hargrett_2(self):
+        """
+        Test for making the preservation.xml file for a Hargrett born-digital AIP.
+        """
+        # Makes the input needed for the function (AIP class instance and AIP folder with test files),
+        # and runs the function.
+        aip = AIP(os.getcwd(), "hargrett", "harg-ms1234", "harg-ms1234-123-123", "harg-ms1234-123-123",
+                  "Hargrett Born-Digital Title Variation 2", 1, True)
+        make_test_input(aip)
+        make_preservation_xml(aip)
+
+        # Test for the preservation.xml file.
+        # The expected value is stored in the test folder of this script repo.
+        result = read_preservation_xml(aip.id)
+        with open(os.path.join("expected_xml", f"{aip.id}_preservation.xml"), "r") as expected_file:
+            expected = expected_file.read()
+        self.assertEqual(result, expected, "Problem with test for Hargrett born-digital, variation 2")
+
+    def test_born_digital_hargrett_3(self):
+        """
+        Test for making the preservation.xml file for a Hargrett born-digital AIP.
+        """
+        # Makes the input needed for the function (AIP class instance and AIP folder with test files),
+        # and runs the function.
+        aip = AIP(os.getcwd(), "hargrett", "harg-ms1234", "harg-ms1234-123a-123", "harg-ms1234-123a-123",
+                  "Hargrett Born-Digital Title Variation 3", 1, True)
+        make_test_input(aip)
+        make_preservation_xml(aip)
+
+        # Test for the preservation.xml file.
+        # The expected value is stored in the test folder of this script repo.
+        result = read_preservation_xml(aip.id)
+        with open(os.path.join("expected_xml", f"{aip.id}_preservation.xml"), "r") as expected_file:
+            expected = expected_file.read()
+        self.assertEqual(result, expected, "Problem with test for Hargrett born-digital, variation 3")
+
+    def test_born_digital_hargrett_4(self):
+        """
+        Test for making the preservation.xml file for a Hargrett born-digital AIP.
+        """
+        # Makes the input needed for the function (AIP class instance and AIP folder with test files),
+        # and runs the function.
+        aip = AIP(os.getcwd(), "hargrett", "harg-ms1234", "harg-ms1234a-123-123", "harg-ms1234a-123-123",
+                  "Hargrett Born-Digital Title Variation 4", 1, True)
+        make_test_input(aip)
+        make_preservation_xml(aip)
+
+        # Test for the preservation.xml file.
+        # The expected value is stored in the test folder of this script repo.
+        result = read_preservation_xml(aip.id)
+        with open(os.path.join("expected_xml", f"{aip.id}_preservation.xml"), "r") as expected_file:
+            expected = expected_file.read()
+        self.assertEqual(result, expected, "Problem with test for Hargrett born-digital, variation 4")
+
+    def test_born_digital_hargrett_5(self):
+        """
+        Test for making the preservation.xml file for a Hargrett born-digital AIP.
+        """
+        # Makes the input needed for the function (AIP class instance and AIP folder with test files),
+        # and runs the function.
+        aip = AIP(os.getcwd(), "hargrett", "harg-ms1234", "harg-ms1234er1234", "harg-ms1234er1234",
+                  "Hargrett Born-Digital Title Variation 5", 1, True)
+        make_test_input(aip)
+        make_preservation_xml(aip)
+
+        # Test for the preservation.xml file.
+        # The expected value is stored in the test folder of this script repo.
+        result = read_preservation_xml(aip.id)
+        with open(os.path.join("expected_xml", f"{aip.id}_preservation.xml"), "r") as expected_file:
+            expected = expected_file.read()
+        self.assertEqual(result, expected, "Problem with test for Hargrett born-digital, variation 5")
 
     def test_born_digital_russell(self):
         """
@@ -146,6 +222,60 @@ class TestMakePreservationXML(unittest.TestCase):
         result_log2 = aip.log["Complete"]
         expected_log2 = "Error during processing"
         self.assertEqual(result_log2, expected_log2, "Problem with test for error handling, log: Complete")
+
+    def test_oral_history_hargrett_1(self):
+        """
+        Test for making the preservation.xml file for a Hargrett oral history AIP.
+        """
+        # Makes the input needed for the function (AIP class instance and AIP folder with test files),
+        # and runs the function.
+        aip = AIP(os.getcwd(), "hargrett", "har-ua12-123", "har-ua12-123_1234_media", "har-ua12-123_1234_media",
+                  "Hargrett Oral History Title Variation 1", 1, True)
+        make_test_input(aip)
+        make_preservation_xml(aip)
+
+        # Test for the preservation.xml file.
+        # The expected value is stored in the test folder of this script repo.
+        result = read_preservation_xml(aip.id)
+        with open(os.path.join("expected_xml", f"{aip.id}_preservation.xml"), "r") as expected_file:
+            expected = expected_file.read()
+        self.assertEqual(result, expected, "Problem with test for Hargrett oral history, variation 1")
+
+    def test_oral_history_hargrett_2(self):
+        """
+        Test for making the preservation.xml file for a Hargrett oral history AIP.
+        """
+        # Makes the input needed for the function (AIP class instance and AIP folder with test files),
+        # and runs the function.
+        aip = AIP(os.getcwd(), "hargrett", "har-ua12-123", "har-ua12-123_1234_metadata", "har-ua12-123_1234_metadata",
+                  "Hargrett Oral History Title Variation 2", 1, True)
+        make_test_input(aip)
+        make_preservation_xml(aip)
+
+        # Test for the preservation.xml file.
+        # The expected value is stored in the test folder of this script repo.
+        result = read_preservation_xml(aip.id)
+        with open(os.path.join("expected_xml", f"{aip.id}_preservation.xml"), "r") as expected_file:
+            expected = expected_file.read()
+        self.assertEqual(result, expected, "Problem with test for Hargrett oral history, variation 2")
+
+    def test_oral_history_hargrett_3(self):
+        """
+        Test for making the preservation.xml file for a Hargrett oral history AIP.
+        """
+        # Makes the input needed for the function (AIP class instance and AIP folder with test files),
+        # and runs the function.
+        aip = AIP(os.getcwd(), "hargrett", "har-ua12-123", "har-ua12-123-123-123", "har-ua12-123-123-123",
+                  "Hargrett Oral History Title Variation 3", 1, True)
+        make_test_input(aip)
+        make_preservation_xml(aip)
+
+        # Test for the preservation.xml file.
+        # The expected value is stored in the test folder of this script repo.
+        result = read_preservation_xml(aip.id)
+        with open(os.path.join("expected_xml", f"{aip.id}_preservation.xml"), "r") as expected_file:
+            expected = expected_file.read()
+        self.assertEqual(result, expected, "Problem with test for Hargrett oral history, variation 3")
 
     def test_web_hargrett(self):
         """

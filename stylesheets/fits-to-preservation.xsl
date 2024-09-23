@@ -66,52 +66,25 @@
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
     <xsl:variable name="uri"><xsl:value-of select="$ns" />/<xsl:value-of select="$department" /></xsl:variable>
          
-    <!--file-id: the portion of the file path beginning with the aip id.-->
+    <!--file-id: the portion of the file path beginning with objects (bmac) or the aip id (all other departments.-->
     <!--Gets the file id from each instance of fits/fileinfo/filepath-->
-    <!--Uses department parameter to determine what pattern to match.-->
     <xsl:template name="get-file-id">
-        <xsl:if test="$department='bmac'">
-            <xsl:analyze-string select="fileinfo/filepath" regex="[\\|/]objects[\\|/](.*)">
-                <xsl:matching-substring>
-                    <xsl:value-of select="regex-group(1)" />
-                </xsl:matching-substring>
+        <xsl:choose>
+            <xsl:when test="$department='bmac'">
+                <xsl:analyze-string select="fileinfo/filepath" regex="[\\|/]objects[\\|/](.*)">
+                    <xsl:matching-substring>
+                        <xsl:value-of select="regex-group(1)" />
+                    </xsl:matching-substring>
+                </xsl:analyze-string>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:analyze-string select="fileinfo/filepath" regex="{$aip-id}.*">
+                    <xsl:matching-substring>
+                        <xsl:value-of select="." />
+                    </xsl:matching-substring>
             </xsl:analyze-string>
-        </xsl:if>
-        <xsl:if test="$department='hargrett'">
-            <xsl:analyze-string select="fileinfo/filepath" regex="(harg|guan)[-|_](ms|ua)?(\d{{2}}-)?([a-z]{{4}}_)?\d{{4}}(er|-web-\d{{6}}-|-)\d{{3,4}}.*">
-                <xsl:matching-substring>
-                    <xsl:value-of select="." />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-        <xsl:if test="$department='magil'">
-            <xsl:analyze-string select="fileinfo/filepath" regex="magil-ggp-\d+-\d{{4}}-\d{{2}}.*">
-                <xsl:matching-substring>
-                    <xsl:value-of select="." />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-        <xsl:if test="$department='emory'">
-            <xsl:analyze-string select="fileinfo/filepath" regex="emory_[a-z]{{2}}_\d{{2,4}}_\d{{2,4}}.*">
-                <xsl:matching-substring>
-                    <xsl:value-of select="." />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-        <xsl:if test="$department='russell'">
-            <xsl:analyze-string select="fileinfo/filepath" regex="rbrl-\d{{3}}-(er|web)-\d{{6}}(-\d{{4}})?.*">
-                <xsl:matching-substring>
-                    <xsl:value-of select="." />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
-        <xsl:if test="$department='test'">
-            <xsl:analyze-string select="fileinfo/filepath" regex="test-\d{{3}}-er-\d{{6}}.*">
-                <xsl:matching-substring>
-                    <xsl:value-of select="." />
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:if>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <!-- File count to use in testing when aips are treated differently if they have one or multiple files.-->

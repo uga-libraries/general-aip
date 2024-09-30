@@ -35,7 +35,8 @@ if len(argument_errors) > 0:
 # Makes the current directory the AIPs directory.
 os.chdir(AIPS_DIRECTORY)
 
-# Verifies all the variables from the configuration file are present and all the paths are valid.
+# Verifies all the variables from the configuration file are present, all the paths are valid,
+# and the FITS path is in the same letter directory as AIPS_DIRECTORY.
 # If not, ends the script.
 configuration_errors = a.check_configuration()
 if len(configuration_errors) > 0:

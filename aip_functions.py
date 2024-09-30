@@ -86,13 +86,15 @@ def check_arguments(arguments):
     return aips_directory, to_zip, aip_metadata_csv, errors_list
 
 
-def check_configuration():
+def check_configuration(aips_dir):
     """Verify the variables in the configuration file are correct
 
     - All variables are present
     - Path variables are a valid path
+    - FITS path starts with the same letter as the aips_directory
 
-    Parameters: none
+    Parameters:
+        aips_dir : the path to the folder which contains the folders to be made into AIPs
 
     Returns:
         errors_list : a list of errors, or an empty list if there were no errors

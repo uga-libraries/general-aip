@@ -86,13 +86,15 @@ def check_arguments(arguments):
     return aips_directory, to_zip, aip_metadata_csv, errors_list
 
 
-def check_configuration():
+def check_configuration(aips_dir):
     """Verify the variables in the configuration file are correct
 
     - All variables are present
     - Path variables are a valid path
+    - FITS path starts with the same letter as the aips_directory
 
-    Parameters: none
+    Parameters:
+        aips_dir : the path to the folder which contains the folders to be made into AIPs
 
     Returns:
         errors_list : a list of errors, or an empty list if there were no errors
@@ -106,6 +108,9 @@ def check_configuration():
     try:
         if not os.path.exists(c.FITS):
             errors_list.append(f"FITS path '{c.FITS}' is not correct.")
+        # For FITS, checks that the directory (first character) of the path matches the directory of aips_dir.
+        if not c.FITS[0] == aips_dir[0]:
+            errors_list.append(f"FITS is not in the same directory as the aips_directory '{aips_dir}'.")
     except AttributeError:
         errors_list.append("FITS variable is missing from the configuration file.")
 

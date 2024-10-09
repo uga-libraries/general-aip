@@ -14,7 +14,7 @@
         <xs:complexType>
             <xs:sequence>
                <xs:element ref="dc:title" />
-                <xs:element ref="dc:rights" />
+                <xs:element ref="dc:rights" maxOccurs="unbounded"/>
                 <xs:element name="aip">
                     <xs:complexType>
                         <xs:sequence><xs:element ref="premis:object" /></xs:sequence>

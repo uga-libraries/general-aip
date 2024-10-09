@@ -64,6 +64,28 @@ class TestValidatePreservationXML(unittest.TestCase):
         expected_valid = f"Preservation.xml valid on {datetime.date.today()}"
         self.assertEqual(result_valid, expected_valid, "Problem with valid, log: PresValid")
 
+    def test_valid_multiple_rights(self):
+        """
+        Test for successfully validating the preservation.xml file with multiple rights statements.
+        It includes a required rightsstatement.org and an optional local rights statement.
+        This test was made later and follows a more recent structure (using a pre-existing file)
+        rather than running the other functions. The other tests will be updated later.
+        """
+        # Runs the function being tested.
+        aip = AIP(os.getcwd(), "test", "coll999", "aip-folder", "test-coll999-er3", "title", 1, True)
+        validate_preservation_xml(aip)
+
+        # Test for the AIP Log: preservation.xml is made.
+        result_presxml = aip.log["PresXML"]
+        expected_presxml = "Successfully created preservation.xml"
+        self.assertEqual(result_presxml, expected_presxml, "Problem with valid with multiple rights, log: PresXML")
+
+        # Test for the AIP Log: preservation.xml is valid.
+        # Removes the timestamp (last 16 characters) from result for a consistent expected value.
+        result_valid = aip.log["PresValid"][:-16]
+        expected_valid = f"Preservation.xml valid on {datetime.date.today()}"
+        self.assertEqual(result_valid, expected_valid, "Problem with valid with multiple rights, log: PresValid")
+
     def test_error_missing(self):
         """
         Test for error handling if the preservation.xml file is missing during validation.

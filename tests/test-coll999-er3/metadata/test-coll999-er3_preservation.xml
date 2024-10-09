@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preservation xmlns:dc="http://purl.org/dc/terms/"
+              xmlns:premis="http://www.loc.gov/premis/v3">
+   <dc:title>title</dc:title>
+   <dc:rights>http://rightsstatements.org/vocab/InC/1.0/</dc:rights>
+   <dc:rights>http://local/test/rights1</dc:rights>
+   <dc:rights>http://local/test/rights2</dc:rights>
+   <aip>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://local/test</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>test-coll999-er3</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://local/test/test-coll999-er3</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:size>1265</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Comma-Separated Values (CSV)</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>x-fmt/18</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://local/test</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>coll999</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+   </aip>
+</preservation>

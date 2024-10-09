@@ -66,6 +66,16 @@ For UGA, these values are:
 * Title: AIP title
 * Version: AIP version number, which must be a whole number
 
+### Changing Rights Statements
+
+By default, the fits-to-preservation.xsl stylesheet will assign http://rightsstatements.org/vocab/InC/1.0/ to the AIPs.
+To change this, edit the stylesheet prior to running the script.
+There must be one rightstatement.org or Creative Commons license.
+
+For additional rights, add one <dc:rights> element per rights statement.
+The right must be added to our preservation system (ARCHive) first.
+The element value is the objectIdentifierType/objectIdentifierValue from our preservation system.
+
 ### Script Arguments
 
 To run the script via the command line: python /path/general_aip.py aips_directory [no-zip]

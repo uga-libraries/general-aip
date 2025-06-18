@@ -5,3 +5,4 @@ pylint_output
 *.pyc
 configuration.py
 tests/configuration.py
+/venv

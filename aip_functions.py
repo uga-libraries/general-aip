@@ -39,6 +39,8 @@ def check_arguments(arguments):
 
     Returns:
         aips_directory : the path to the folder which contains the folders to be made into AIPs
+        aip_type : the type of AIP, which influences a few steps
+        workflow : for AV type, the type of AV workflow, which influences a few steps
         to_zip : a boolean for if the AIPs should be zipped as well as tarred (True) or only tarred (False)
         aip_metadata_csv : the path to the metadata.csv file in the aips_directory
         errors_list : a list of errors, or an empty list if there were no errors
@@ -49,27 +51,43 @@ def check_arguments(arguments):
     # These are updated to the correct value from the arguments, if they are provided.
     errors_list = []
     aips_directory = None
+    aip_type = None
+    workflow = None
     to_zip = None
 
     # Checks if arguments were given, besides the default of script name.
     if len(arguments) == 1:
         errors_list.append("AIPs directory argument is missing.")
 
-    # Checks if the required aips_directory argument is present and a valid path.
+    # Checks if the first required argument (aips_directory) is present and a valid path.
     if len(arguments) > 1:
         if os.path.exists(arguments[1]):
             aips_directory = arguments[1]
         else:
             errors_list.append("AIPs directory argument is not a valid directory.")
 
-    # Checks if the optional to_zip argument is present, and if so if it is the expected value.
+    # Checks if the second required argument (aip_type) is present and an expected value.
     if len(arguments) > 2:
-        if arguments[2] == "no-zip":
-            to_zip = False
+        if arguments[2] in ('av', 'general', 'web'):
+            aip_type = arguments[2]
         else:
-            errors_list.append("Unexpected value for the second argument. If provided, should be 'no-zip'.")
-    else:
-        to_zip = True
+            errors_list.append("AIP type is not an expected value.")
+
+    # Checks if the third required argument (to_zip) is present, and if so, if it is the expected value.
+    if len(arguments) > 3:
+        if arguments[3] == "no-zip":
+            to_zip = False
+        elif arguments[3] == "zip":
+            to_zip = True
+        else:
+            errors_list.append("To zip is not an expected value.")
+
+    # Checks if the optional argument (workflow) is present, and if so, if it is the expected value.
+    if len(arguments) > 4:
+        if arguments[4] in ('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mxf', 'wav', 'mp4'):
+            workflow = arguments[4]
+        else:
+            errors_list.append("Unexpected value for the workflow.")
 
     # Calculates the path to the required metadata file and verifies it is present.
     # Only tests if there is a value for aips_directory, which is part of the path.
@@ -83,7 +101,7 @@ def check_arguments(arguments):
         errors_list.append("Cannot check for the metadata.csv because the AIPs directory has an error.")
 
     # The errors list is empty if there were no errors.
-    return aips_directory, to_zip, aip_metadata_csv, errors_list
+    return aips_directory, aip_type, to_zip, workflow, aip_metadata_csv, errors_list
 
 
 def check_configuration(aips_dir):

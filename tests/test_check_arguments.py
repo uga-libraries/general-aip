@@ -1,5 +1,6 @@
 """Testing for the function check_arguments, which tests the correctness of user input from sys.argv and
  returns a tuple with the variable values and error messages, if any."""
+#TODO function updated for AV
 
 import os
 import unittest

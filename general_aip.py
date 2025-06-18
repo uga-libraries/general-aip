@@ -26,12 +26,11 @@ import aip_functions as a
 
 # Verifies the script arguments are correct and calculates the associated variables.
 # If there are errors, ends the script.
-AIPS_DIRECTORY, ZIP, aip_metadata_csv, argument_errors = a.check_arguments(sys.argv)
+AIPS_DIRECTORY, AIP_TYPE, ZIP, WORKFLOW, aip_metadata_csv, argument_errors = a.check_arguments(sys.argv)
 if len(argument_errors) > 0:
     print('\nProblems detected with the provided script arguments:')
     for error in argument_errors:
         print("   * " + error)
-    print('\nScript usage: python "path/general_aip.py" "path/aips_directory" [no-zip]')
     sys.exit()
 
 # Makes the current directory the AIPs directory.

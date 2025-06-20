@@ -10,52 +10,52 @@ class TestMakeOutputDirectories(unittest.TestCase):
 
     def tearDown(self):
         """
-        Deletes the three script output folders.
+        Deletes the three script output folders, if they exist.
         """
-        os.rmdir(os.path.join("..", "aips-to-ingest"))
-        os.rmdir(os.path.join("..", "fits-xml"))
-        os.rmdir(os.path.join("..", "preservation-xml"))
+        output_folders = ['aips-ready-to-ingest', 'fits-xml', 'preservation-xml']
+        for output_folder in output_folders:
+            folder_path = os.path.join(os.getcwd(), 'aip_staging_location', output_folder)
+            if os.path.exists(folder_path):
+                os.rmdir(folder_path)
 
     def test_aips_present(self):
         """
-        Test for running the function when the aips-to-ingest folder already exists.
-        Result for testing is a list of new folders in the parent directory of the current directory.
+        Test for running the function when the aips-ready-to-ingest folder already exists.
         """
-        # Makes the aips-to-ingest folder.
-        os.mkdir(os.path.join("..", "aips-to-ingest"))
+        # Makes the aips-ready-to-ingest folder.
+        aip_staging = os.path.join(os.getcwd(), "aip_staging_location")
+        os.mkdir(os.path.join(aip_staging, "aips-ready-to-ingest"))
 
-        # Saves a list of what is in the parent directory before and after running the function
+        # Saves a list of what is in the aip staging directory before and after running the function
         # to calculate which directories were added by the function.
-        parent_directory_before = os.listdir("..")
-        make_output_directories()
-        parent_directory_after = os.listdir("..")
+        staging_before = os.listdir(aip_staging)
+        make_output_directories(aip_staging, "general")
+        staging_after = os.listdir(aip_staging)
 
-        # Calculates the difference between the two directory prints and sorts so the values are predictable
-        # and compares that to the expected result.
-        result = list(set(parent_directory_after) - set(parent_directory_before))
+        # Calculates the difference between the two lists and sorts so the values are predictable.
+        result = list(set(staging_after) - set(staging_before))
         result.sort()
         expected = ["fits-xml", "preservation-xml"]
-        self.assertEqual(result, expected, "Problem with make_output_directories, aips-to-ingest present")
+        self.assertEqual(result, expected, "Problem with make_output_directories, aips-ready-to-ingest present")
 
     def test_all_present(self):
         """
         Test for running the function when all three folders already exist.
-        Result for testing is a list of new folders in the parent directory of the current directory.
         """
         # Makes the three input folders.
-        os.mkdir(os.path.join("..", "aips-to-ingest"))
-        os.mkdir(os.path.join("..", "fits-xml"))
-        os.mkdir(os.path.join("..", "preservation-xml"))
+        aip_staging = os.path.join(os.getcwd(), "aip_staging_location")
+        os.mkdir(os.path.join(aip_staging, "aips-ready-to-ingest"))
+        os.mkdir(os.path.join(aip_staging, "fits-xml"))
+        os.mkdir(os.path.join(aip_staging, "preservation-xml"))
 
-        # Saves a list of what is in the parent directory before and after running the function
+        # Saves a list of what is in the aip staging directory before and after running the function
         # to calculate which directories were added by the function.
-        parent_directory_before = os.listdir("..")
-        make_output_directories()
-        parent_directory_after = os.listdir("..")
+        staging_before = os.listdir(aip_staging)
+        make_output_directories(aip_staging, "general")
+        staging_after = os.listdir(aip_staging)
 
-        # Calculates the difference between the two directory prints and sorts so the values are predictable
-        # and compares that to the expected result.
-        result = list(set(parent_directory_after) - set(parent_directory_before))
+        # Calculates the difference between the two lists and sorts so the values are predictable.
+        result = list(set(staging_after) - set(staging_before))
         result.sort()
         expected = []
         self.assertEqual(result, expected, "Problem with make_output_directories, all present")
@@ -63,20 +63,19 @@ class TestMakeOutputDirectories(unittest.TestCase):
     def test_none_present(self):
         """
         Test for running the function when none of the three folders already exist.
-        Result for testing is a list of new folders in the parent directory of the current directory.
         """
-        # Saves a list of what is in the parent directory before and after running the function
+        # Saves a list of what is in the aip staging directory before and after running the function
         # to calculate which directories were added by the function.
-        parent_directory_before = os.listdir("..")
-        make_output_directories()
-        parent_directory_after = os.listdir("..")
+        aip_staging = os.path.join(os.getcwd(), "aip_staging_location")
+        staging_before = os.listdir(aip_staging)
+        make_output_directories(aip_staging, "general")
+        staging_after = os.listdir(aip_staging)
 
-        # Calculates the difference between the two directory prints and sorts so the values are predictable
-        # and compares that to the expected result.
-        result = list(set(parent_directory_after) - set(parent_directory_before))
+        # Calculates the difference between the two lists and sorts so the values are predictable.
+        result = list(set(staging_after) - set(staging_before))
         result.sort()
-        expected = ["aips-to-ingest", "fits-xml", "preservation-xml"]
-        self.assertEqual(result, expected, "Problem with make_output_directories")
+        expected = ["aips-ready-to-ingest", "fits-xml", "preservation-xml"]
+        self.assertEqual(result, expected, "Problem with make_output_directories, none present")
 
 
 if __name__ == "__main__":

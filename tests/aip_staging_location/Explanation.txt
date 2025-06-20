@@ -1,0 +1,2 @@
+Placeholder for a folder to act as aip_staging.
+Need the file to pre-exist for some testing.

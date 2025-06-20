@@ -476,7 +476,7 @@ def make_output_directories(staging, aip_type):
                               'mediainfo-xmls/mediainfo-raw-output', 'mediainfo-xmls/pbcore2-xml', 'movs-to-bag',
                               'preservation_xmls']
     else:
-        output_directories = ['aips-to-ingest', 'fits-xml', 'preservation-xml']
+        output_directories = ['aips-ready-to-ingest', 'fits-xml', 'preservation-xml']
 
     # Makes the output directories, if they don't already exist.
     # In some cases, these folders are never deleted and contain output from all AIPs in ARCHive.
@@ -529,14 +529,14 @@ def manifest(aip, staging):
     """
 
     # Makes the path to the packaged AIP, which is different depending on if it is zipped or not.
-    aip_path = os.path.join(staging, "aips-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
+    aip_path = os.path.join(staging, "aips-ready-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
     if aip.to_zip is True:
         aip_path = aip_path + ".bz2"
 
     # Checks if the tar/zip is present in the aips-to-ingest directory.
     # If it isn't, due to errors from package(), logs the event and does not complete the rest of the function.
     if not os.path.exists(aip_path):
-        aip.log["Manifest"] = "Tar/zip file not in aips-to-ingest folder"
+        aip.log["Manifest"] = "Tar/zip file not in aips-ready-for-ingest folder"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
         return
@@ -556,7 +556,7 @@ def manifest(aip, staging):
     # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.
     # Initial output of md5deep is b'md5_value  filename.ext\r\n'
     # Converts to a string and remove the \r linebreak to format the manifest text file as required by ARCHive.
-    manifest_path = os.path.join("..", "aips-to-ingest", f"manifest_{aip.department}.txt")
+    manifest_path = os.path.join("..", "aips-ready-to-ingest", f"manifest_{aip.department}.txt")
     with open(manifest_path, "a", encoding="utf-8") as manifest_file:
         manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
 

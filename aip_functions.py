@@ -257,7 +257,7 @@ def check_metadata_csv(read_metadata):
     return errors_list
 
 
-def combine_metadata(aip):
+def combine_metadata(aip, staging):
     """Make the combined-fits.xml file in the metadata folder, which contains the FITS output for every file in the AIP
 
     It is moved out of the AIP folder and into the fits-xml folder after the preservation.xml is made.
@@ -265,6 +265,7 @@ def combine_metadata(aip):
 
     Parameters:
         aip : instance of the AIP class, used for id and log
+        staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -292,7 +293,7 @@ def combine_metadata(aip):
                 aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
                 aip.log["Complete"] = "Error during processing"
                 log(aip.log)
-                move_error("combining_fits", aip.id)
+                move_error("combining_fits", aip.id, staging)
                 return
 
     # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
@@ -431,14 +432,15 @@ def make_bag(aip):
     os.replace(aip.id, f"{aip.id}_bag")
 
 
-def make_cleaned_fits_xml(aip):
+def make_cleaned_fits_xml(aip, staging):
     """Make a simplified version of the combined-fits.xml in the metadata folder
 
     The cleaned FITS makes the format information is easier to aggregate.
     It is deleted after the preservation.xml is made.
 
     Parameters:
-         aip : instance of the AIP class, used for id and log
+        aip : instance of the AIP class, used for id and log
+        staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -457,7 +459,7 @@ def make_cleaned_fits_xml(aip):
         aip.log["PresXML"] = f"Issue when creating cleaned-fits.xml. Saxon error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("cleaned_fits_saxon_error", aip.id)
+        move_error("cleaned_fits_saxon_error", aip.id, staging)
 
 
 def make_output_directories(staging, aip_type):
@@ -486,11 +488,12 @@ def make_output_directories(staging, aip_type):
             os.mkdir(directory_path)
 
 
-def make_preservation_xml(aip):
+def make_preservation_xml(aip, staging):
     """Make the preservation.xml from the cleaned FITS XML in the metadata folder
 
     Parameters:
-         aip : instance of the AIP class, used for collection_id, department, id, log, title, and version
+        aip : instance of the AIP class, used for collection_id, department, id, log, title, and version
+        staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -511,7 +514,7 @@ def make_preservation_xml(aip):
         aip.log["PresXML"] = f"Issue when creating preservation.xml. Saxon error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("pres_xml_saxon_error", aip.id)
+        move_error("pres_xml_saxon_error", aip.id, staging)
         return
 
 
@@ -575,7 +578,7 @@ def manifest(aip, staging, ingest):
         if "stderr=b''" in str(rsync_result):
             shutil.move(aip, f'{staging}/aips-already-on-ingest-server/{aip_path}')
         else:
-            move_error('copy_to_ingest_failed', aip_path)
+            move_error('copy_to_ingest_failed', aip_path, staging)
 
     # Logs the success of adding the AIP to the manifest and of AIP creation (this is the last step).
     aip.log["Manifest"] = "Successfully added AIP to manifest"
@@ -736,7 +739,7 @@ def structure_directory(aip, staging):
         aip.log["ObjectsError"] = "Objects folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("objects_folder_exists", aip.id)
+        move_error("objects_folder_exists", aip.id, staging)
         return
 
     # Makes the metadata folders within the AIP folder, if it doesn't exist.
@@ -748,7 +751,7 @@ def structure_directory(aip, staging):
         aip.log["MetadataError"] = "Metadata folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("metadata_folder_exists", aip.id)
+        move_error("metadata_folder_exists", aip.id, staging)
         return
 
     # Moves DPX files to the objects folder.
@@ -802,11 +805,12 @@ def structure_directory(aip, staging):
             os.replace(item_path, os.path.join(aip.id, "objects", item))
 
 
-def validate_bag(aip):
+def validate_bag(aip, staging):
     """Validate the AIP's bag
 
     Parameters:
          aip : instance of the AIP class, used for id and log
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -820,7 +824,7 @@ def validate_bag(aip):
         aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("bag_not_valid", f"{aip.id}_bag")
+        move_error("bag_not_valid", f"{aip.id}_bag", staging)
         # Error log is formatted to be easier to read (one error per line) if error information is in details.
         # Otherwise, the entire error output is saved to the log in the errors folder alongside the AIP folder.
         log_path = os.path.join("..", "errors", "bag_not_valid", f"{aip.id}_bag_validation.txt")
@@ -832,11 +836,12 @@ def validate_bag(aip):
                 log_path.write(str(errors))
 
 
-def validate_preservation_xml(aip):
+def validate_preservation_xml(aip, staging):
     """Validate the preservation.xml file against UGA's requirements
 
     Parameters:
          aip : instance of the AIP class, used for id and log
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -854,7 +859,7 @@ def validate_preservation_xml(aip):
         aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("preservationxml_not_found", aip.id)
+        move_error("preservationxml_not_found", aip.id, staging)
         return
     else:
         aip.log["PresXML"] = "Successfully created preservation.xml"
@@ -866,7 +871,7 @@ def validate_preservation_xml(aip):
         aip.log["PresValid"] = "Preservation.xml is not valid (see log in error folder)"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("preservationxml_not_valid", aip.id)
+        move_error("preservationxml_not_valid", aip.id, staging)
         log_path = os.path.join("..", "errors", "preservationxml_not_valid", f"{aip.id}_presxml_validation.txt")
         with open(log_path, "w") as validation_log:
             for line in validation_result.split("\r"):

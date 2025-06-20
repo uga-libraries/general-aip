@@ -104,22 +104,22 @@ for aip_row in read_metadata:
     # Extracts technical metadata from the files using FITS.
     if aip.id in os.listdir('.'):
         a.extract_metadata(aip)
-        a.combine_metadata(aip)
+        a.combine_metadata(aip, configuration.AIP_STAGING)
 
     # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
     if aip.id in os.listdir('.'):
-        a.make_cleaned_fits_xml(aip)
+        a.make_cleaned_fits_xml(aip, configuration.AIP_STAGING)
     if aip.id in os.listdir('.'):
-        a.make_preservation_xml(aip)
+        a.make_preservation_xml(aip, configuration.AIP_STAGING)
     if aip.id in os.listdir('.'):
-        a.validate_preservation_xml(aip)
+        a.validate_preservation_xml(aip, configuration.AIP_STAGING)
     if aip.id in os.listdir('.'):
         a.organize_xml(aip)
 
     # Bags the AIP using bagit.
     if aip.id in os.listdir('.'):
         a.make_bag(aip)
-        a.validate_bag(aip)
+        a.validate_bag(aip, configuration.AIP_STAGING)
 
     # Tars the AIP and also zips (bz2) the AIP if ZIP (optional script argument) is True.
     if f'{aip.id}_bag' in os.listdir('.'):

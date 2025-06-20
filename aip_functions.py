@@ -417,6 +417,9 @@ def make_bag(aip):
     Returns: none
     """
 
+    # Deletes temporary files. These can be re-generated during the AIP creation process.
+    delete_temp(aip)
+
     # Bags the AIP.
     bagit.make_bag(aip.id, checksums=["md5", "sha256"])
 
@@ -617,6 +620,9 @@ def package(aip):
 
     Returns: none
     """
+
+    # Deletes temporary files. These can be re-generated during the AIP creation process.
+    delete_temp(aip)
 
     # Gets the operating system, since the tar and zip commands are different for Windows and Mac/Linux.
     operating_system = platform.system()

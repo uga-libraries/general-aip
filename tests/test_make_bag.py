@@ -14,7 +14,7 @@ class TestMakeBag(unittest.TestCase):
         Makes an AIP instance and corresponding folder to use for testing.
         """
         # Makes the AIP instance and a folder named with the AIP ID.
-        self.aip = AIP(os.getcwd(), "test", "coll-1", "aip-folder", "aip-id", "title", 1, True)
+        self.aip = AIP(os.getcwd(), "test", None, "coll-1", "aip-folder", "general", "aip-id", "title", 1, True)
         os.mkdir(self.aip.id)
 
         # Makes the AIP metadata folder and metadata files.

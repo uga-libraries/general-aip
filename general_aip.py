@@ -99,7 +99,7 @@ for aip_row in read_metadata:
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure (objects and metadata).
     if aip.id in os.listdir('.'):
-        a.structure_directory(aip)
+        a.structure_directory(aip, configuration.AIP_STAGING)
 
     # Extracts technical metadata from the files using FITS.
     if aip.id in os.listdir('.'):
@@ -123,11 +123,11 @@ for aip_row in read_metadata:
 
     # Tars the AIP and also zips (bz2) the AIP if ZIP (optional script argument) is True.
     if f'{aip.id}_bag' in os.listdir('.'):
-        a.package(aip)
+        a.package(aip, configuration.AIP_STAGING)
 
     # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
     if f'{aip.id}_bag' in os.listdir('.'):
-        a.manifest(aip)
+        a.manifest(aip, configuration.AIP_STAGING, configuration.INGEST_SERVER)
 
 # Closes the metadata CSV.
 open_metadata.close()

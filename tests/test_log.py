@@ -61,7 +61,7 @@ class TestLog(unittest.TestCase):
         # Creates the log.
         # To save time, updates some items in the AIP"s log variable without running the workflow steps.
         log("header")
-        aip = AIP(os.getcwd(), "test", "coll-1", "one-tar-folder", "one-tar", "title", 1, to_zip=False)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "one-tar-folder", "general", "one-tar", "title", 1, to_zip=False)
         aip.log["Deletions"] = "No files deleted"
         aip.log["ObjectsError"] = "Objects folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
@@ -85,13 +85,13 @@ class TestLog(unittest.TestCase):
         # Creates the log.
         # To save time, updates some items in each AIP"s log variable without running the workflow steps.
         log("header")
-        aip1 = AIP(os.getcwd(), "test", "coll-1", "aip-1-folder", "aip-1", "title-1", 1, to_zip=False)
+        aip1 = AIP(os.getcwd(), "test", None, "coll-1", "aip-1-folder", "general", "aip-1", "title-1", 1, to_zip=False)
         aip1.log["Deletions"] = "No files deleted"
         aip1.log["ObjectsError"] = "Objects folder already exists in original files"
         aip1.log["Complete"] = "Error during processing"
         log(aip1.log)
 
-        aip2 = AIP(os.getcwd(), "test", "coll-1", "aip-2-folder", "aip-2", "title-2", 1, to_zip=False)
+        aip2 = AIP(os.getcwd(), "test", None, "coll-1", "aip-2-folder", "general", "aip-2", "title-2", 1, to_zip=False)
         aip2.log["Deletions"] = "No files deleted"
         aip2.log["ObjectsError"] = "Successfully created objects folder"
         aip2.log["MetadataError"] = "Successfully created metadata folder"

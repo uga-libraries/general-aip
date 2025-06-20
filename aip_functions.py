@@ -747,7 +747,7 @@ def structure_directory(aip, staging):
                 if file.endswith('.cue'):
                     os.replace(f'{root}/{file}', f'{aip.id}/objects/{file}')
                 if file.endswith('.mov'):
-                    shutil.copy2(f'{root}/{file}', f'{aip}/movs-to-bag')
+                    shutil.copy2(f'{root}/{file}', f'{staging}/movs-to-bag')
                     os.replace(f'{root}/{file}', f'{aip.id}/objects/{file}')
                 if file.endswith('.wav'):
                     os.replace(f'{root}/{file}', f'{aip.id}/objects/{pathlib.Path(file).stem}-dpx.wav')

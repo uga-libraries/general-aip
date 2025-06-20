@@ -20,7 +20,9 @@ class MyTestCase(unittest.TestCase):
         Preliminary test for the function. See note above for details.
         """
         errors_list = check_configuration(os.getcwd())
-        expected = ["FITS path 'Z:\\FITS\\fits.bat' is not correct.",
+        expected = ["AIP_STAGING variable is missing from the configuration file.",
+                    "INGEST_SERVER variable is missing from the configuration file.",
+                    "FITS path 'Z:\\FITS\\fits.bat' is not correct.",
                     f"FITS is not in the same directory as the aips_directory '{os.getcwd()}'.",
                     "SAXON path 'Z:\\Programs\\SaxonHE10-5J\\saxon-he-10.5.jar' is not correct.",
                     "MD5DEEP variable is missing from the configuration file.",

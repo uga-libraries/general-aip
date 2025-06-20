@@ -827,7 +827,7 @@ def validate_bag(aip, staging):
         move_error("bag_not_valid", f"{aip.id}_bag", staging)
         # Error log is formatted to be easier to read (one error per line) if error information is in details.
         # Otherwise, the entire error output is saved to the log in the errors folder alongside the AIP folder.
-        log_path = os.path.join("..", "errors", "bag_not_valid", f"{aip.id}_bag_validation.txt")
+        log_path = os.path.join(staging, "aips-with-errors", "bag_not_valid", f"{aip.id}_bag_validation.txt")
         with open(log_path, "w") as log_path:
             if errors.details:
                 for error_type in errors.details:

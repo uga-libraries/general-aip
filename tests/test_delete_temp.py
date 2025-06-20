@@ -99,7 +99,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", "coll-1", "no-temp", "none-id", "title", 1, True)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "no-temp", "general", "none-id", "title", 1, True)
         make_aip_directory(aip.id)
         delete_temp(aip)
 
@@ -121,7 +121,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", "coll-1", "ds-store", "ds-store-id", "title", 1, True)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "ds-store", "general", "ds-store-id", "title", 1, True)
         make_aip_directory(aip.id)
         delete_temp(aip)
 
@@ -155,7 +155,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", "coll-1", "ds-store-2", "ds-store-2-id", "title", 1, True)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "ds-store-2", "general", "ds-store-2-id", "title", 1, True)
         make_aip_directory(aip.id)
         delete_temp(aip)
 
@@ -189,7 +189,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", "coll-1", "thumbs-db", "thumbs-id", "title", 1, True)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "thumbs-db", "general", "thumbs-id", "title", 1, True)
         make_aip_directory(aip.id)
         delete_temp(aip)
 
@@ -223,7 +223,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", "coll-1", "dot-filename", "dot-id", "title", 1, True)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "dot-filename", "general", "dot-id", "title", 1, True)
         make_aip_directory(aip.id)
         delete_temp(aip)
 
@@ -257,7 +257,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", "coll-1", "filename-tmp", "tmp-id", "title", 1, True)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "filename-tmp", "general", "tmp-id", "title", 1, True)
         make_aip_directory(aip.id)
         delete_temp(aip)
 

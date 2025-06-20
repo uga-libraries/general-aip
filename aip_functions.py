@@ -1,7 +1,7 @@
 """Functions used to make AIPs from folders of digital objects"""
 
 import csv
-import datetime
+from datetime import datetime
 import os
 import pathlib
 import platform
@@ -29,7 +29,7 @@ class AIP:
         self.version = version
         self.to_zip = to_zip
         self.size = None
-        self.log = {"Started": datetime.datetime.now(), "AIP": self.id, "Deletions": "n/a",
+        self.log = {"Started": datetime.now(), "AIP": self.id, "Deletions": "n/a",
                     "ObjectsError": "n/a", "MetadataError": "n/a", "FITSTool": "n/a", "FITSError": "n/a",
                     "PresXML": "n/a", "PresValid": "n/a", "BagValid": "n/a", "Package": "n/a", "Manifest": "n/a",
                     "Complete": "n/a"}
@@ -334,7 +334,7 @@ def delete_temp(aip):
     # The log contains the path, filename, size in bytes and date/time last modified of every deleted file.
     # Also adds event information for deletion to the script log.
     if len(deleted_files) > 0:
-        filename = f"{aip.id}_files-deleted_{datetime.datetime.today().date()}_del.csv"
+        filename = f"{aip.id}_files-deleted_{datetime.today().date()}_del.csv"
         with open(os.path.join(aip.id, filename), "w", newline="") as deleted_log:
             deleted_log_writer = csv.writer(deleted_log)
             deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
@@ -556,7 +556,7 @@ def manifest(aip, staging):
     # Adds the md5 and AIP filename to the appropriate manifest in staging.
     # Initial output of md5deep is b'md5_value  filename.ext\r\n'
     # Converts to a string and remove the \r linebreak to format the manifest text file as required by ARCHive.
-    manifest_name = f'manifest_{os.path.basename(aip.directory)}_{aip.department}_{datetime.datetime.strftime("%Y-%m-%d-%H%M")}.txt'
+    manifest_name = f'manifest_{os.path.basename(aip.directory)}_{aip.department}_{datetime.strftime("%Y-%m-%d-%H%M")}.txt'
     if aip.type == "av":
         manifest_path = os.path.join(staging, "md5-manifests-for-aips", manifest_name)
     else:
@@ -808,7 +808,7 @@ def validate_bag(aip):
     new_bag = bagit.Bag(f"{aip.id}_bag")
     try:
         new_bag.validate()
-        aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
+        aip.log["BagValid"] = f"Bag valid on {datetime.now()}"
     except bagit.BagValidationError as errors:
         aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
         aip.log["Complete"] = "Error during processing"
@@ -866,4 +866,4 @@ def validate_preservation_xml(aip):
                 validation_log.write(line + "\n")
         return
     else:
-        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.datetime.now()}"
+        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.now()}"

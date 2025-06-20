@@ -23,6 +23,7 @@ import csv
 import os
 import sys
 import aip_functions as a
+import configuration
 
 # Verifies the script arguments are correct and calculates the associated variables.
 # If there are errors, ends the script.
@@ -64,8 +65,8 @@ if len(metadata_errors) > 0:
 if not os.path.exists(os.path.join('..', 'aip_log.csv')):
     a.log("header")
 
-# Makes directories used to store script outputs in the parent folder of the AIPs directory.
-a.make_output_directories()
+# Makes directories used to store script outputs in the AIP_STAGING directory.
+a.make_output_directories(configuration.AIP_STAGING, AIP_TYPE)
 
 # Starts counters for tracking the script progress.
 # Some steps are time-consuming, so this shows the script is not stuck.

@@ -515,7 +515,7 @@ def make_preservation_xml(aip):
         return
 
 
-def manifest(aip):
+def manifest(aip, staging):
     """Calculate the MD5 checksum for the AIP and add it to the department's manifest in the aips-to-ingest folder
 
     One manifest is made for each department so that AIPs may be made for multiple departments simultaneously.
@@ -523,12 +523,13 @@ def manifest(aip):
 
     Parameters:
          aip : instance of the AIP class, used for department, id, log, size, and to_zip
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
 
     # Makes the path to the packaged AIP, which is different depending on if it is zipped or not.
-    aip_path = os.path.join("..", "aips-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
+    aip_path = os.path.join(staging, "aips-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
     if aip.to_zip is True:
         aip_path = aip_path + ".bz2"
 

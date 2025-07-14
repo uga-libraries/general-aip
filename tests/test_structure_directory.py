@@ -10,70 +10,7 @@ We will be removing reliance on current working directory soon, which will resol
 import os
 import shutil
 import unittest
-from aip_functions import AIP, log, structure_directory
-
-
-# def make_aip_directory(aip_id):
-#     """
-#     Makes a folder for an AIP with test files in the current working directory.
-#     All have at least three text files and one folder.
-#     Some have additional files and folders needed for their test.
-#     """
-#     # Folders and files used in every test.
-#     os.mkdir(aip_id)
-#     os.mkdir(os.path.join(aip_id, "Test Dir"))
-#     with open(os.path.join(aip_id, "Text.txt"), "w") as test_file:
-#         test_file.write("Test File")
-#     with open(os.path.join(aip_id, "Text 2.txt"), "w") as test_file:
-#         test_file.write("Test File 2")
-#     with open(os.path.join(aip_id, "Test Dir", "Test Dir Text.txt"), "w") as test_file:
-#         test_file.write("Test File 3")
-#
-#     # Folders and files used for a specific test.
-#     if aip_id == "err-objects":
-#         os.mkdir(os.path.join(aip_id, "objects"))
-#         with open(os.path.join(aip_id, "objects", "Objects Text.txt"), "w") as test_file:
-#             test_file.write("Test File Objects")
-#     elif aip_id == "err-both":
-#         os.mkdir(os.path.join(aip_id, "objects"))
-#         with open(os.path.join(aip_id, "objects", "Objects Text.txt"), "w") as test_file:
-#             test_file.write("Test File Objects")
-#         os.mkdir(os.path.join(aip_id, "metadata"))
-#         with open(os.path.join(aip_id, "metadata", "Metadata Text.txt"), "w") as test_file:
-#             test_file.write("Test File Metadata")
-#     elif aip_id == "err-metadata":
-#         os.mkdir(os.path.join(aip_id, "metadata"))
-#         with open(os.path.join(aip_id, "metadata", "Metadata Text.txt"), "w") as test_file:
-#             test_file.write("Test File Metadata")
-#     elif aip_id == "sort-coll":
-#         with open(os.path.join(aip_id, "sort-coll_coll.csv"), "w") as test_file:
-#             test_file.write("Collection Test File")
-#     elif aip_id == "sort-collscope":
-#         with open(os.path.join(aip_id, "sort-collscope_collscope.csv"), "w") as test_file:
-#             test_file.write("Collection Scope Test File")
-#     elif aip_id == "sort-crawldef":
-#         with open(os.path.join(aip_id, "sort-crawldef_crawldef.csv"), "w") as test_file:
-#             test_file.write("Crawl Definition Test File")
-#     elif aip_id == "sort-crawljob":
-#         with open(os.path.join(aip_id, "sort-crawljob_crawljob.csv"), "w") as test_file:
-#             test_file.write("Crawl Job Test File")
-#     elif aip_id == "sort-emory":
-#         with open(os.path.join(aip_id, "EmoryMD_Test.txt"), "w") as test_file:
-#             test_file.write("Emory Metadata Test File")
-#     elif aip_id == "sort-none":
-#         with open(os.path.join(aip_id, "EmoryMD_Test.txt"), "w") as test_file:
-#             test_file.write("Emory Metadata Test File: should not sort")
-#         with open(os.path.join(aip_id, "sort-seed_seed.csv"), "w") as test_file:
-#             test_file.write("Seed Test File: short not sort")
-#     elif aip_id == "sort-seed":
-#         with open(os.path.join(aip_id, "sort-seed_seed.csv"), "w") as test_file:
-#             test_file.write("Seed Test File")
-#     elif aip_id == "sort-seedscope":
-#         with open(os.path.join(aip_id, "sort-seedscope_seedscope.csv"), "w") as test_file:
-#             test_file.write("Seed Scope Test File")
-#     elif aip_id == "sort-log":
-#         with open(os.path.join(aip_id, "sort-log_files-deleted_2022-10-31_del.csv"), "w") as test_file:
-#             test_file.write("Deletion Log Test File")
+from aip_functions import AIP, structure_directory
 
 
 def aip_directory_list(folder):
@@ -100,7 +37,7 @@ class TestStructureDirectory(unittest.TestCase):
             os.remove(os.path.join('..', 'aip_log.csv'))
 
         folders = ('aips-with-errors', 'deletion-aip-1', 'emory-aip-1', 'error-aip-1', 'error-aip-2',
-                   'error-aip-3', 'web-aip-1')
+                   'error-aip-3', 'objects-aip-1', 'web-aip-1')
         for folder in folders:
             if os.path.exists(folder):
                 shutil.rmtree(folder)
@@ -291,41 +228,39 @@ class TestStructureDirectory(unittest.TestCase):
         expected_log2 = 'Successfully created metadata folder'
         self.assertEqual(result_log2, expected_log2, "Problem with sort files deleted log, log: MetadataError")
 
-    # def test_sort_none(self):
-    #     """
-    #     Test for structuring an AIP with no metadata files. All files will go in the objects subfolder.
-    #     Includes files that would be sorted to metadata if the department or AIP ID was different.
-    #     """
-    #     # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
-    #     # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
-    #     aip_dir = os.path.join(os.getcwd(), "structure_directory")
-    #     os.chdir(aip_dir)
-    #     aip = AIP(os.getcwd(), "test", "coll-1", "sort-none", "sort-none", "title", 1, True)
-    #     make_aip_directory("sort-none")
-    #     structure_directory(aip)
-    #
-    #     # Test for the contents of the AIP folder.
-    #     result = aip_directory_list(aip.folder_name)
-    #     expected = [os.path.join("sort-none", "metadata"),
-    #                 os.path.join("sort-none", "objects"),
-    #                 os.path.join("sort-none", "objects", "Test Dir"),
-    #                 os.path.join("sort-none", "objects", "EmoryMD_Test.txt"),
-    #                 os.path.join("sort-none", "objects", "sort-seed_seed.csv"),
-    #                 os.path.join("sort-none", "objects", "Text 2.txt"),
-    #                 os.path.join("sort-none", "objects", "Text.txt"),
-    #                 os.path.join("sort-none", "objects", "Test Dir", "Test Dir Text.txt")]
-    #     self.assertEqual(result, expected, "Problem with sort no metadata, AIP folder")
-    #
-    #     # Test for the AIP log: ObjectsError.
-    #     result_log = aip.log["ObjectsError"]
-    #     expected_log = "Successfully created objects folder"
-    #     self.assertEqual(result_log, expected_log, "Problem with sort no metadata, log: ObjectsError")
-    #
-    #     # Test for the AIP log: MetadataError.
-    #     result_log2 = aip.log["MetadataError"]
-    #     expected_log2 = "Successfully created metadata folder"
-    #     self.assertEqual(result_log2, expected_log2, "Problem with sort no metadata, log: MetadataError")
-    #
+    def test_sort_none(self):
+        """
+        Test for structuring an AIP with no metadata files. All files will go in the objects subfolder.
+        Includes files that would be sorted to metadata if the department or AIP ID was different.
+        """
+        # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
+        # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
+        aip_dir = os.path.join(os.getcwd(), 'structure_directory')
+        os.chdir(aip_dir)
+        aip = AIP(aip_dir, 'dept', None, 'coll', 'folder', 'genera', 'objects-aip-1', 'title', 1, True)
+        shutil.copytree('objects-aip-1_copy', 'objects-aip-1')
+        structure_directory(aip, os.getcwd())
+
+        # Test for the contents of the AIP folder.
+        result = aip_directory_list('objects-aip-1')
+        expected = [os.path.join('objects-aip-1', 'metadata'),
+                    os.path.join('objects-aip-1', 'objects'),
+                    os.path.join('objects-aip-1', 'objects', 'Test Dir'),
+                    os.path.join('objects-aip-1', 'objects', 'Text 2.txt'),
+                    os.path.join('objects-aip-1', 'objects', 'Text.txt'),
+                    os.path.join('objects-aip-1', 'objects', 'Test Dir', 'Test Dir Text.txt')]
+        self.assertEqual(result, expected, "Problem with sort none (no metadata), AIP folder")
+
+        # Test for the AIP log: ObjectsError.
+        result_log = aip.log['ObjectsError']
+        expected_log = 'Successfully created objects folder'
+        self.assertEqual(result_log, expected_log, "Problem with sort none (no metadata), log: ObjectsError")
+
+        # Test for the AIP log: MetadataError.
+        result_log2 = aip.log['MetadataError']
+        expected_log2 = 'Successfully created metadata folder'
+        self.assertEqual(result_log2, expected_log2, "Problem with sort none (no metadata), log: MetadataError")
+
     def test_sort_web(self):
         """
         Test for structuring an AIP which contains the six Archive-It reports,

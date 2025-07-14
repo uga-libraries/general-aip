@@ -776,6 +776,8 @@ def structure_directory(aip, staging):
     # Metadata files are matched as specifically as possible to reduce the risk of incorrect identifications.
     web_metadata = ("_coll.csv", "_collscope.csv", "_crawldef.csv", "_crawljob.csv", "_seed.csv", "_seedscope.csv")
     for item in os.listdir(aip.id):
+        if item in ('metadata', 'objects'):
+            continue
         item_path = os.path.join(aip.id, item)
         metadata_path = os.path.join(aip.id, "metadata", item)
         # AV metadata files.

@@ -479,13 +479,12 @@ def make_output_directories(staging, aip_type):
                               'preservation_xmls']
     else:
         output_directories = ['aips-ready-to-ingest', 'fits-xml', 'preservation-xml']
-
     # Makes the output directories, if they don't already exist.
     # In some cases, these folders are never deleted and contain output from all AIPs in ARCHive.
     for directory in output_directories:
         directory_path = os.path.join(staging, directory)
         if not os.path.exists(directory_path):
-            os.mkdir(directory_path)
+            os.makedirs(directory_path)
 
 
 def make_preservation_xml(aip, staging):

@@ -12,7 +12,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         """
         Deletes the three script output folders, if they exist.
         """
-        output_folders = ['aips-ready-to-ingest', 'fits-xml', 'preservation-xml']
+        output_folders = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
         for output_folder in output_folders:
             folder_path = os.path.join(os.getcwd(), 'aip_staging_location', output_folder)
             if os.path.exists(folder_path):
@@ -35,7 +35,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         # Calculates the difference between the two lists and sorts so the values are predictable.
         result = list(set(staging_after) - set(staging_before))
         result.sort()
-        expected = ["fits-xml", "preservation-xml"]
+        expected = ["fits-xmls", "preservation-xmls"]
         self.assertEqual(result, expected, "Problem with make_output_directories, aips-ready-to-ingest present")
 
     def test_all_present(self):
@@ -45,8 +45,8 @@ class TestMakeOutputDirectories(unittest.TestCase):
         # Makes the three input folders.
         aip_staging = os.path.join(os.getcwd(), "aip_staging_location")
         os.mkdir(os.path.join(aip_staging, "aips-ready-to-ingest"))
-        os.mkdir(os.path.join(aip_staging, "fits-xml"))
-        os.mkdir(os.path.join(aip_staging, "preservation-xml"))
+        os.mkdir(os.path.join(aip_staging, "fits-xmls"))
+        os.mkdir(os.path.join(aip_staging, "preservation-xmls"))
 
         # Saves a list of what is in the aip staging directory before and after running the function
         # to calculate which directories were added by the function.
@@ -74,7 +74,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         # Calculates the difference between the two lists and sorts so the values are predictable.
         result = list(set(staging_after) - set(staging_before))
         result.sort()
-        expected = ["aips-ready-to-ingest", "fits-xml", "preservation-xml"]
+        expected = ["aips-ready-to-ingest", "fits-xmls", "preservation-xmls"]
         self.assertEqual(result, expected, "Problem with make_output_directories, none present")
 
 

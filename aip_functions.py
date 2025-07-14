@@ -474,11 +474,11 @@ def make_output_directories(staging, aip_type):
 
     # Determine the output directories needed, based on the AIP type.
     if aip_type == 'av':
-        output_directories = ['aips-already-on-ingest-server', 'aips-ready-to-ingest', 'md5-manifests-for-aips',
-                              'mediainfo-xmls/mediainfo-raw-output', 'mediainfo-xmls/pbcore2-xml', 'movs-to-bag',
-                              'preservation_xmls']
+        output_directories = ['aips-already-on-ingest-server', 'aips-ready-to-ingest', 'fits-xmls',
+                              'md5-manifests-for-aips', 'mediainfo-xmls/mediainfo-raw-output',
+                              'mediainfo-xmls/pbcore2-xml', 'movs-to-bag', 'preservation-xmls']
     else:
-        output_directories = ['aips-ready-to-ingest', 'fits-xml', 'preservation-xml']
+        output_directories = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
     # Makes the output directories, if they don't already exist.
     # In some cases, these folders are never deleted and contain output from all AIPs in ARCHive.
     for directory in output_directories:

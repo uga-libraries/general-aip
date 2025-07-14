@@ -257,39 +257,39 @@ class TestStructureDirectory(unittest.TestCase):
         expected_log2 = 'Successfully created metadata folder'
         self.assertEqual(result_log2, expected_log2, "Problem with sort Emory metadata, log: MetadataError")
 
-    # def test_sort_files_deleted(self):
-    #     """
-    #     Test for structuring an AIP which contains a deletion log, which goes in the metadata subfolder.
-    #     All other files will go to the objects subfolder.
-    #     """
-    #     # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
-    #     # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
-    #     aip_dir = os.path.join(os.getcwd(), "structure_directory")
-    #     os.chdir(aip_dir)
-    #     aip = AIP(os.getcwd(), "test", "coll-1", "sort-log", "sort-log", "title", 1, True)
-    #     make_aip_directory("sort-log")
-    #     structure_directory(aip)
-    #
-    #     # Test for the contents of the AIP folder.
-    #     result = aip_directory_list(aip.folder_name)
-    #     expected = [os.path.join("sort-log", "metadata"),
-    #                 os.path.join("sort-log", "objects"),
-    #                 os.path.join("sort-log", "metadata", "sort-log_files-deleted_2022-10-31_del.csv"),
-    #                 os.path.join("sort-log", "objects", "Test Dir"),
-    #                 os.path.join("sort-log", "objects", "Text 2.txt"),
-    #                 os.path.join("sort-log", "objects", "Text.txt"),
-    #                 os.path.join("sort-log", "objects", "Test Dir", "Test Dir Text.txt")]
-    #     self.assertEqual(result, expected, "Problem with sort files deleted log, AIP folder")
-    #
-    #     # Test for the AIP log: ObjectsError.
-    #     result_log = aip.log["ObjectsError"]
-    #     expected_log = "Successfully created objects folder"
-    #     self.assertEqual(result_log, expected_log, "Problem with sort files deleted log, log: ObjectsError")
-    #
-    #     # Test for the AIP log: MetadataError.
-    #     result_log2 = aip.log["MetadataError"]
-    #     expected_log2 = "Successfully created metadata folder"
-    #     self.assertEqual(result_log2, expected_log2, "Problem with sort files deleted log, log: MetadataError")
+    def test_sort_files_deleted(self):
+        """
+        Test for structuring an AIP which contains a deletion log, which goes in the metadata subfolder.
+        All other files will go to the objects subfolder.
+        """
+        # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
+        # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
+        aip_dir = os.path.join(os.getcwd(), 'structure_directory')
+        os.chdir(aip_dir)
+        aip = AIP(aip_dir, 'dept', None, 'coll-delete', 'folder', 'general', 'deletion-aip-1', 'title', 1, True)
+        shutil.copytree('deletion-aip-1_copy', 'deletion-aip-1')
+        structure_directory(aip, os.getcwd())
+
+        # Test for the contents of the AIP folder.
+        result = aip_directory_list('deletion-aip-1')
+        expected = [os.path.join('deletion-aip-1', 'metadata'),
+                    os.path.join('deletion-aip-1', 'objects'),
+                    os.path.join('deletion-aip-1', 'metadata', 'deletion-aip-1_files-deleted_2022-10-31_del.csv'),
+                    os.path.join('deletion-aip-1', 'objects', 'Test Dir'),
+                    os.path.join('deletion-aip-1', 'objects', 'Text 2.txt'),
+                    os.path.join('deletion-aip-1', 'objects', 'Text.txt'),
+                    os.path.join('deletion-aip-1', 'objects', 'Test Dir', 'Test Dir Text.txt')]
+        self.assertEqual(result, expected, "Problem with sort files deleted log, AIP folder")
+
+        # Test for the AIP log: ObjectsError.
+        result_log = aip.log['ObjectsError']
+        expected_log = 'Successfully created objects folder'
+        self.assertEqual(result_log, expected_log, "Problem with sort files deleted log, log: ObjectsError")
+
+        # Test for the AIP log: MetadataError.
+        result_log2 = aip.log['MetadataError']
+        expected_log2 = 'Successfully created metadata folder'
+        self.assertEqual(result_log2, expected_log2, "Problem with sort files deleted log, log: MetadataError")
 
     # def test_sort_none(self):
     #     """

@@ -223,40 +223,40 @@ class TestStructureDirectory(unittest.TestCase):
         expected_log3 = 'Error during processing'
         self.assertEqual(result_log3, expected_log3, "Problem with error - metadata exists, log: Complete")
 
-    # def test_sort_emory(self):
-    #     """
-    #     Test for structuring an AIP which contains an Emory metadata file, which goes in the metadata subfolder.
-    #     All other files will go in the objects subfolder.
-    #     """
-    #     # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
-    #     # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
-    #     aip_dir = os.path.join(os.getcwd(), "structure_directory")
-    #     os.chdir(aip_dir)
-    #     aip = AIP(os.getcwd(), "emory", "coll-1", "sort-emory", "sort-emory", "title", 1, True)
-    #     make_aip_directory("sort-emory")
-    #     structure_directory(aip)
-    #
-    #     # Test for the contents of the AIP folder.
-    #     result = aip_directory_list(aip.folder_name)
-    #     expected = [os.path.join("sort-emory", "metadata"),
-    #                 os.path.join("sort-emory", "objects"),
-    #                 os.path.join("sort-emory", "metadata", "EmoryMD_Test.txt"),
-    #                 os.path.join("sort-emory", "objects", "Test Dir"),
-    #                 os.path.join("sort-emory", "objects", "Text 2.txt"),
-    #                 os.path.join("sort-emory", "objects", "Text.txt"),
-    #                 os.path.join("sort-emory", "objects", "Test Dir", "Test Dir Text.txt")]
-    #     self.assertEqual(result, expected, "Problem with sort Emory metadata, AIP folder")
-    #
-    #     # Test for the AIP log: ObjectsError.
-    #     result_log = aip.log["ObjectsError"]
-    #     expected_log = "Successfully created objects folder"
-    #     self.assertEqual(result_log, expected_log, "Problem with sort Emory metadata, log: ObjectsError")
-    #
-    #     # Test for the AIP log: MetadataError.
-    #     result_log2 = aip.log["MetadataError"]
-    #     expected_log2 = "Successfully created metadata folder"
-    #     self.assertEqual(result_log2, expected_log2, "Problem with sort Emory metadata, log: MetadataError")
-    #
+    def test_sort_emory(self):
+        """
+        Test for structuring an AIP which contains an Emory metadata file, which goes in the metadata subfolder.
+        All other files will go in the objects subfolder.
+        """
+        # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
+        # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
+        aip_dir = os.path.join(os.getcwd(), 'structure_directory')
+        os.chdir(aip_dir)
+        aip = AIP(aip_dir, 'emory', None, 'coll-emory', 'folder', 'general', 'emory-aip-1', 'title', 1, True)
+        shutil.copytree('emory-aip-1_copy', 'emory-aip-1')
+        structure_directory(aip, os.getcwd())
+
+        # Test for the contents of the AIP folder.
+        result = aip_directory_list('emory-aip-1')
+        expected = [os.path.join('emory-aip-1', 'metadata'),
+                    os.path.join('emory-aip-1', 'objects'),
+                    os.path.join('emory-aip-1', 'metadata', 'EmoryMD_Text.txt'),
+                    os.path.join('emory-aip-1', 'objects', 'Test Dir'),
+                    os.path.join('emory-aip-1', 'objects', 'Text 2.txt'),
+                    os.path.join('emory-aip-1', 'objects', 'Text.txt'),
+                    os.path.join('emory-aip-1', 'objects', 'Test Dir', 'Test Dir Text.txt')]
+        self.assertEqual(result, expected, "Problem with sort Emory metadata, AIP folder")
+
+        # Test for the AIP log: ObjectsError.
+        result_log = aip.log['ObjectsError']
+        expected_log = 'Successfully created objects folder'
+        self.assertEqual(result_log, expected_log, "Problem with sort Emory metadata, log: ObjectsError")
+
+        # Test for the AIP log: MetadataError.
+        result_log2 = aip.log['MetadataError']
+        expected_log2 = 'Successfully created metadata folder'
+        self.assertEqual(result_log2, expected_log2, "Problem with sort Emory metadata, log: MetadataError")
+
     # def test_sort_files_deleted(self):
     #     """
     #     Test for structuring an AIP which contains a deletion log, which goes in the metadata subfolder.
@@ -290,7 +290,7 @@ class TestStructureDirectory(unittest.TestCase):
     #     result_log2 = aip.log["MetadataError"]
     #     expected_log2 = "Successfully created metadata folder"
     #     self.assertEqual(result_log2, expected_log2, "Problem with sort files deleted log, log: MetadataError")
-    #
+
     # def test_sort_none(self):
     #     """
     #     Test for structuring an AIP with no metadata files. All files will go in the objects subfolder.
@@ -335,7 +335,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
         aip_dir = os.path.join(os.getcwd(), 'structure_directory')
         os.chdir(aip_dir)
-        aip = AIP(aip_dir, 'dept', None, 'coll-web', 'folder', 'web', 'web-aip-1', 'title', 1, True)
+        aip = AIP(aip_dir, 'magil', None, 'coll-web', 'folder', 'web', 'web-aip-1', 'title', 1, True)
         shutil.copy('web-aip-1_copy', 'web-aip-1')
         structure_directory(aip, os.getcwd())
 

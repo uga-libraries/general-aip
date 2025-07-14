@@ -608,7 +608,7 @@ def move_error(error_name, item, staging):
     os.replace(item, os.path.join(error_path, item))
 
 
-def organize_xml(aip):
+def organize_xml(aip, staging):
     """Organize the XML files after the preservation.xml is successfully made
 
     - A copy of the preservation.xml is made in the preservation-xml folder
@@ -617,18 +617,18 @@ def organize_xml(aip):
 
     Parameters:
          aip : instance of the AIP class, used for id
-
+         staging : path to the aip_staging folder from configuration.py, where copies are saved
     Returns: none
     """
 
     # Copies the preservation.xml file to the preservation-xml folder for staff reference.
     shutil.copy2(os.path.join(aip.id, "metadata", f"{aip.id}_preservation.xml"),
-                 os.path.join("..", "preservation-xml"))
+                 os.path.join(staging, "preservation-xmls"))
 
     # Moves the combined-fits.xml file to the fits-xml folder for staff reference.
-    # Only the FITS for individual files is kept in the metatadata folder.
+    # Only the FITS for individual files is kept in the metadata folder.
     os.replace(os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml"),
-               os.path.join("..", "fits-xml", f"{aip.id}_combined-fits.xml"))
+               os.path.join(staging, "fits-xmls", f"{aip.id}_combined-fits.xml"))
 
     # Deletes the cleaned-fits.xml file because it is a temporary file.
     os.remove(os.path.join(aip.id, "metadata", f"{aip.id}_cleaned-fits.xml"))

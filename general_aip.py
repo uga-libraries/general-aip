@@ -114,7 +114,7 @@ for aip_row in read_metadata:
     if aip.id in os.listdir('.'):
         a.validate_preservation_xml(aip, configuration.AIP_STAGING)
     if aip.id in os.listdir('.'):
-        a.organize_xml(aip)
+        a.organize_xml(aip, configuration.AIP_STAGING)
 
     # Bags the AIP using bagit.
     if aip.id in os.listdir('.'):

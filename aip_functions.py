@@ -567,17 +567,17 @@ def manifest(aip, staging, ingest):
     with open(manifest_path, "a", encoding="utf-8") as manifest_file:
         manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
 
-    # # For AV, copies to ARCHive ingest to be ready to schedule.
-    # # TODO: is there an rsync-like option for Windows for the other workflows?
-    # if aip.type == 'av':
-    #     rsync_result = subprocess.run(f'rsync -v --progress {aip_path} {ingest}', stderr=subprocess.PIPE, shell=True)
-    #
-    #     # If copied correctly, move to a different folder on AIPs staging. Otherwise, move to an error folder.
-    #     # TODO: add to log
-    #     if "stderr=b''" in str(rsync_result):
-    #         shutil.move(aip, f'{staging}/aips-already-on-ingest-server/{aip_path}')
-    #     else:
-    #         move_error('copy_to_ingest_failed', aip_path, staging)
+    # For AV, copies to ARCHive ingest to be ready to schedule.
+    # TODO: is there an rsync-like option for Windows for the other workflows?
+    if aip.type == 'av':
+        rsync_result = subprocess.run(f'rsync -v --progress {aip_path} {ingest}', stderr=subprocess.PIPE, shell=True)
+
+        # If copied correctly, move to a different folder on AIPs staging. Otherwise, move to an error folder.
+        # TODO: add to log
+        if "stderr=b''" in str(rsync_result):
+            shutil.move(aip, f'{staging}/aips-already-on-ingest-server/{aip_path}')
+        else:
+            move_error('copy_to_ingest_failed', aip_path, staging)
 
     # Logs the success of adding the AIP to the manifest and of AIP creation (this is the last step).
     aip.log["Manifest"] = "Successfully added AIP to manifest"

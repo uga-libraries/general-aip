@@ -756,8 +756,8 @@ def structure_directory(aip, staging):
     # Moves DPX files to the objects folder.
     # DPX files are already in bags, so have to navigate to the data folder to find the content to move into objects.
     if aip.workflow == 'dpx':
-        aip_path = os.path.join(aip.directory, aip.id, 'data')
-        for root, dirs, files in os.walk(aip_path):
+        data_path = os.path.join(aip.directory, aip.id, 'data')
+        for root, dirs, files in os.walk(data_path):
             for folder in dirs:
                 os.replace(f'{root}/{folder}', f'{aip.id}/objects/{folder}-dpx')
             for file in files:
@@ -768,8 +768,10 @@ def structure_directory(aip, staging):
                     os.replace(f'{root}/{file}', f'{aip.id}/objects/{file}')
                 if file.endswith('.wav'):
                     os.replace(f'{root}/{file}', f'{aip.id}/objects/{pathlib.Path(file).stem}-dpx.wav')
-        # deletes the original folder after moving all the preservation files into the AIP directory.
-        shutil.rmtree(aip_path)
+        # Deletes the bag metadata files and data folder, now that the rest is organized into the AIP directory.
+        for metadata_file in ('bag-info.txt', 'bagit.txt', 'manifest-md5.txt', 'tagmanifest-md5.txt'):
+            os.remove(os.path.join(aip.directory, aip.id, metadata_file))
+        shutil.rmtree(data_path)
 
     # Moves any metadata files to the metadata folder and then the rest to the objects folder, with renaming as needed.
     # Metadata files are matched as specifically as possible to reduce the risk of incorrect identifications.

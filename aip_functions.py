@@ -559,7 +559,7 @@ def manifest(aip, staging, ingest):
     # Adds the md5 and AIP filename to the appropriate manifest in staging.
     # Initial output of md5deep is b'md5_value  filename.ext\r\n'
     # Converts to a string and remove the \r linebreak to format the manifest text file as required by ARCHive.
-    manifest_name = f'manifest_{os.path.basename(aip.directory)}_{aip.department}_{datetime.now().strftime("%Y-%m-%d-%H%M")}.txt'
+    manifest_name = f'manifest_{os.path.basename(aip.directory)}_{aip.department}_{datetime.now().strftime("%Y-%m-%d")}.txt'
     if aip.type == "av":
         manifest_path = os.path.join(staging, "md5-manifests-for-aips", manifest_name)
     else:

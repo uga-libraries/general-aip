@@ -16,8 +16,8 @@ class TestExtractMetadata(unittest.TestCase):
         """
         if os.path.exists(os.path.join("..", "aip_log.csv")):
             os.remove(os.path.join("..", "aip_log.csv"))
-        
-        directory_paths = (os.path.join("..", "errors"), "one_file", "multi_file", "tool_error")
+
+        directory_paths = (os.path.join("..", "errors"), "aip-id-one", "aip-id-multi", "aip-id-error")
         for directory_path in directory_paths:
             if os.path.exists(directory_path):
                 shutil.rmtree(directory_path)
@@ -26,15 +26,15 @@ class TestExtractMetadata(unittest.TestCase):
         """
         Test for an AIP with one file.
         """
-        aip = AIP(os.getcwd(), "test", "coll-1", "one_file", "one_file", "title", 1, True)
-        os.mkdir("one_file")
-        with open(os.path.join("one_file", "Text.txt"), "w") as file:
+        aip = AIP(os.getcwd(), "dept", None, "coll-1", "one_folder", "general", "aip-id-one", "title", 1, True)
+        os.mkdir("one_folder")
+        with open(os.path.join("one_folder", "Text.txt"), "w") as file:
             file.write("Test File")
-        structure_directory(aip)
+        structure_directory(aip, os.getcwd())
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.
-        result = os.listdir(os.path.join("one_file", "metadata"))
+        result = os.listdir(os.path.join("aip-id-one", "metadata"))
         expected = ["Text.txt_fits.xml"]
         self.assertEqual(result, expected, "Problem with one file, metadata folder")
 
@@ -47,19 +47,19 @@ class TestExtractMetadata(unittest.TestCase):
         """
         Test for an AIP with multiple files of different formats (CSV, JSON, Plain text).
         """
-        aip = AIP(os.getcwd(), "test", "coll-1", "multi_file", "multi_file", "title", 1, True)
-        os.mkdir("multi_file")
-        with open(os.path.join("multi_file", "Text.txt"), "w") as file:
+        aip = AIP(os.getcwd(), "dept", None, "coll-1", "multi_folder", "general", "aip-id-multi", "title", 1, True)
+        os.mkdir("multi_folder")
+        with open(os.path.join("multi_folder", "Text.txt"), "w") as file:
             file.write("Test File")
-        os.mkdir(os.path.join("multi_file", "Pandas Output"))
+        os.mkdir(os.path.join("multi_folder", "Pandas Output"))
         df = pd.DataFrame({"First": ["a", "b", "c", "d"], "Second": [1, 2, 3, 4], "Third": [0.1, 0.2, 0.3, 0.4]})
-        df.to_csv(os.path.join("multi_file", "Pandas Output", "output.csv"), index=False)
-        df.to_json(os.path.join("multi_file", "Pandas Output", "output.json"))
-        structure_directory(aip)
+        df.to_csv(os.path.join("multi_folder", "Pandas Output", "output.csv"), index=False)
+        df.to_json(os.path.join("multi_folder", "Pandas Output", "output.json"))
+        structure_directory(aip, os.getcwd())
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.
-        result = os.listdir(os.path.join("multi_file", "metadata"))
+        result = os.listdir(os.path.join("aip-id-multi", "metadata"))
         expected = ["output.csv_fits.xml", "output.json_fits.xml", "Text.txt_fits.xml"]
         self.assertEqual(result, expected, "Problem with multiple files, metadata folder")
 
@@ -75,16 +75,16 @@ class TestExtractMetadata(unittest.TestCase):
         # Makes the test AIP, including making the initial AIP instance, folder and file and
         # running the first two functions for the AIP workflow.
         # Generates error by making a text file with an XML extension.
-        aip = AIP(os.getcwd(), "test", "coll-1", "tool_error", "tool_error", "title", 1, True)
-        os.mkdir("tool_error")
-        with open(os.path.join("tool_error", "not.xml"), "w") as file:
+        aip = AIP(os.getcwd(), "dept", None, "coll-1", "tool_error_folder", "general", "aip-id-error", "title", 1, True)
+        os.mkdir("tool_error_folder")
+        with open(os.path.join("tool_error_folder", "not.xml"), "w") as file:
             file.write("This is not XML")
         structure_directory(aip)
         extract_metadata(aip)
 
         # Test for the FITS error log, which is if 3 phrases are in the file.
         # The contents of the entire file cannot be tested, since most are variable (timestamps and file paths).
-        with open(os.path.join("tool_error", "metadata", "tool_error_fits-tool-errors_fitserr.txt")) as file:
+        with open(os.path.join("tool_error_folder", "metadata", "tool_error_fits-tool-errors_fitserr.txt")) as file:
             content = file.read()
             result = ("org.jdom.input.JDOMParseException" in content,
                       "Tool error processing file" in content,

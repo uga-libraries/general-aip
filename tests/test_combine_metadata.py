@@ -1,5 +1,5 @@
 """Testing for the function combine_metadata, which takes an AIP class instance as input and
-combines the FITS files in the AIP"s metadata folder into a single XML file."""
+combines the FITS files in the AIP's metadata folder into a single XML file."""
 
 import os
 import pandas as pd
@@ -11,7 +11,8 @@ from aip_functions import AIP, structure_directory, extract_metadata, combine_me
 
 def read_xml(path):
     """
-    Reads an XML file so that function about can be compared to the expected output (stored as a file in the repo).
+    Reads an XML file, either from the function output or the expected file stored in the repo,
+    so they can be fully compared with each other
     """
     with open(path, 'r') as result_file:
         read_file = result_file.read()
@@ -42,17 +43,17 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the AIP instance and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aips_dir, "test", None, "coll-1", "one_file", "general", "one_file", "title", 1, True)
+        aip = AIP(aips_dir, 'test', None, 'coll-1', 'one_file', 'general', 'one_file', 'title', 1, True)
         combine_metadata(aip, os.getcwd())
 
         # Test for combined-fits.xml produced by the function.
-        result = read_xml(os.path.join(aips_dir, "one_file", "metadata", "one_file_combined-fits.xml"))
-        expected = read_xml(os.path.join(aips_dir, "expected_xml", "one_file_combined-fits.xml"))
+        result = read_xml(os.path.join(aips_dir, 'one_file', 'metadata', 'one_file_combined-fits.xml'))
+        expected = read_xml(os.path.join(aips_dir, 'expected_xml', 'one_file_combined-fits.xml'))
         self.assertEqual(result, expected, "Problem with one file, combined-fits.xml")
 
         # Test for AIP log.
-        result_log = aip.log["FITSError"]
-        expected_log = "Successfully created combined-fits.xml"
+        result_log = aip.log['FITSError']
+        expected_log = 'Successfully created combined-fits.xml'
         self.assertEqual(result_log, expected_log, "Problem with one file, log")
 
     def test_multiple_files(self):
@@ -61,17 +62,17 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the AIP instance and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aips_dir, "test", None, "coll-1", "multi_file", "general", "multi_file", "title", 1, True)
+        aip = AIP(aips_dir, 'test', None, 'coll-1', 'multi_file', 'general', 'multi_file', 'title', 1, True)
         combine_metadata(aip, os.getcwd())
 
         # Test for combined-fits.xml produced by the function.
-        result = read_xml(os.path.join(aips_dir, "multi_file", "metadata", "multi_file_combined-fits.xml"))
-        expected = read_xml(os.path.join(aips_dir, "expected_xml", "multi_file_combined-fits.xml"))
+        result = read_xml(os.path.join(aips_dir, 'multi_file', 'metadata', 'multi_file_combined-fits.xml'))
+        expected = read_xml(os.path.join(aips_dir, 'expected_xml', 'multi_file_combined-fits.xml'))
         self.assertEqual(result, expected, "Problem with multiple files, combined-fits.xml")
 
         # Test for AIP log.
-        result_log = aip.log["FITSError"]
-        expected_log = "Successfully created combined-fits.xml"
+        result_log = aip.log['FITSError']
+        expected_log = 'Successfully created combined-fits.xml'
         self.assertEqual(result_log, expected_log, "Problem with multiple files, log")
 
     def test_error_et_parse(self):
@@ -81,25 +82,25 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the AIP instance, a copy of the aip folder (moved by test) and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aips_dir, "test", None, "coll-1", "et_error", "general", "et_error", "title", 1, True)
+        aip = AIP(aips_dir, 'test', None, 'coll-1', 'et_error', 'general', 'et_error', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'et_error_copy'), os.path.join(aips_dir, 'et_error'))
         combine_metadata(aip, os.getcwd())
 
         # Test for if the folder is moved, both that it is in the error folder
         # and is not in the original location (AIPs directory).
-        result = (os.path.exists(os.path.join("aips-with-errors", "combining_fits", "et_error")),
-                  os.path.exists(os.path.join(aips_dir, "et_error")))
+        result = (os.path.exists(os.path.join('aips-with-errors', 'combining_fits', 'et_error')),
+                  os.path.exists(os.path.join(aips_dir, 'et_error')))
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with ET parse error, move to error folder")
 
         # Test for the AIP log, FITSError.
-        result_log = aip.log["FITSError"]
-        expected_log = "Issue when creating combined-fits.xml: syntax error: line 1, column 0"
+        result_log = aip.log['FITSError']
+        expected_log = 'Issue when creating combined-fits.xml: syntax error: line 1, column 0'
         self.assertEqual(result_log, expected_log, "Problem with ET parse error, log: FITSError")
 
         # Test for the AIP log, Complete.
-        result_log2 = aip.log["Complete"]
-        expected_log2 = "Error during processing"
+        result_log2 = aip.log['Complete']
+        expected_log2 = 'Error during processing'
         self.assertEqual(result_log2, expected_log2, "Problem with ET parse error, log: Complete")
 
 

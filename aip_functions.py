@@ -180,7 +180,7 @@ def check_configuration(aips_dir):
     return errors_list
 
 
-def check_metadata_csv(read_metadata):
+def check_metadata_csv(read_metadata, aips_dir):
     """Verify the content of the metadata.csv is correct
 
     - Columns are in the required order
@@ -190,6 +190,7 @@ def check_metadata_csv(read_metadata):
 
     Parameters:
         read_metadata : contents of the metadata.csv file, read with the csv library
+        aips_dir : the path to the folder which contains the folders to be made into AIPs
 
     Returns:
         errors_list : a list of errors, or an empty list if there were no errors
@@ -227,8 +228,8 @@ def check_metadata_csv(read_metadata):
 
     # Makes a list of every folder name in the AIPs directory.
     aips_directory_list = []
-    for item in os.listdir("."):
-        if os.path.isdir(item):
+    for item in os.listdir(aips_dir):
+        if os.path.isdir(os.path.join(aips_dir, item)):
             aips_directory_list.append(item)
 
     # Checks for any folder names that are in the CSV more than once.

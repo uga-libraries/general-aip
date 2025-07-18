@@ -34,9 +34,6 @@ if len(argument_errors) > 0:
         print("   * " + error)
     sys.exit()
 
-# Makes the current directory the AIPs directory.
-os.chdir(AIPS_DIRECTORY)
-
 # Verifies all the variables from the configuration file are present, all the paths are valid,
 # and the FITS path is in the same letter directory as AIPS_DIRECTORY.
 # If not, ends the script.
@@ -98,35 +95,35 @@ for aip_row in read_metadata:
     a.delete_temp(aip)
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure (objects and metadata).
-    if aip.id in os.listdir('.'):
+    if aip.id in os.listdir(AIPS_DIRECTORY):
         a.structure_directory(aip, configuration.AIP_STAGING)
 
     # Extracts technical metadata from the files using FITS.
-    if aip.id in os.listdir('.'):
+    if aip.id in os.listdir(AIPS_DIRECTORY):
         a.extract_metadata(aip)
         a.combine_metadata(aip, configuration.AIP_STAGING)
 
     # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
-    if aip.id in os.listdir('.'):
+    if aip.id in os.listdir(AIPS_DIRECTORY):
         a.make_cleaned_fits_xml(aip, configuration.AIP_STAGING)
-    if aip.id in os.listdir('.'):
+    if aip.id in os.listdir(AIPS_DIRECTORY):
         a.make_preservation_xml(aip, configuration.AIP_STAGING)
-    if aip.id in os.listdir('.'):
+    if aip.id in os.listdir(AIPS_DIRECTORY):
         a.validate_preservation_xml(aip, configuration.AIP_STAGING)
-    if aip.id in os.listdir('.'):
+    if aip.id in os.listdir(AIPS_DIRECTORY):
         a.organize_xml(aip, configuration.AIP_STAGING)
 
     # Bags the AIP using bagit.
-    if aip.id in os.listdir('.'):
+    if aip.id in os.listdir(AIPS_DIRECTORY):
         a.make_bag(aip)
         a.validate_bag(aip, configuration.AIP_STAGING)
 
     # Tars the AIP and also zips (bz2) the AIP if ZIP (optional script argument) is True.
-    if f'{aip.id}_bag' in os.listdir('.'):
+    if f'{aip.id}_bag' in os.listdir(AIPS_DIRECTORY):
         a.package(aip, configuration.AIP_STAGING)
 
     # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
-    if f'{aip.id}_bag' in os.listdir('.'):
+    if f'{aip.id}_bag' in os.listdir(AIPS_DIRECTORY):
         a.manifest(aip, configuration.AIP_STAGING, configuration.INGEST_SERVER)
 
 # Closes the metadata CSV.

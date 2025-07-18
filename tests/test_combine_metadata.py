@@ -9,44 +9,11 @@ import xml.etree.ElementTree as ET
 from aip_functions import AIP, structure_directory, extract_metadata, combine_metadata
 
 
-def update_fits(path):
+def read_xml(path):
     """
-    Reads the FITS XML and edits the data to remove data that varies each time the test is run
-    so that it can be compared to expected results.
-    Saves the updated XML so it can later be read and compared to another file with the expected results.
+    Reads an XML file so that function about can be compared to the expected output (stored as a file in the repo).
     """
-
-    # Reads data from XML produced by the function.
-    tree = ET.parse(path)
-    root = tree.getroot()
-
-    # Changes the timestamp attribute of every fits element.
-    for fits in root.iter("{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}fits"):
-        fits.set("timestamp", "VARIES")
-
-    # Changes the beginning of the filepath of every filepath element.
-    for filepath in root.iter("{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}filepath"):
-        new_path = filepath.text.replace(os.getcwd(), "CURRENT-DIRECTORY")
-        filepath.text = new_path
-
-    # Changes the value of every fslastmodified element.
-    for date in root.iter("{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}fslastmodified"):
-        date.text = "0000000000000"
-
-    # Changes the fitsExecutionTime attribute of every statistics element.
-    for stats in root.iter("{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}statistics"):
-        stats.set("fitsExecutionTime", "000")
-
-    # Changes the executionTime attribute of every tool element with that attribute.
-    for tool in root.iter("{http://hul.harvard.edu/ois/xml/ns/fits/fits_output}tool"):
-        if "executionTime" in tool.attrib:
-            tool.set("executionTime", "000")
-
-    # Saves the changes to the combined-fits.xml file.
-    tree.write(path, xml_declaration=True, encoding="UTF-8")
-
-    # Reads and returns the value of reading the combined-fits.xml file.
-    with open(path, "r") as result_file:
+    with open(path, 'r') as result_file:
         read_file = result_file.read()
     return read_file
 
@@ -71,7 +38,7 @@ class TestCombineMetadata(unittest.TestCase):
 
     def test_one_file(self):
         """
-        Test for an AIP with one file.
+        Test for an AIP with one file (Plain text).
         """
         # Makes the AIP instance and runs the function.
         aip_dir = os.path.join(os.getcwd(), 'combine_metadata')
@@ -79,9 +46,8 @@ class TestCombineMetadata(unittest.TestCase):
         combine_metadata(aip, os.getcwd())
 
         # Test for combined-fits.xml produced by the function.
-        result = update_fits(os.path.join("one_file", "metadata", "one_file_combined-fits.xml"))
-        with open(os.path.join("expected_xml", "one_file_combined-fits.xml")) as expected_file:
-            expected = expected_file.read()
+        result = read_xml(os.path.join(aip_dir, "one_file", "metadata", "one_file_combined-fits.xml"))
+        expected = read_xml(os.path.join(aip_dir, "expected_xml", "one_file_combined-fits.xml"))
         self.assertEqual(result, expected, "Problem with one file, combined-fits.xml")
 
         # Test for AIP log.
@@ -99,9 +65,8 @@ class TestCombineMetadata(unittest.TestCase):
         combine_metadata(aip, os.getcwd())
 
         # Test for combined-fits.xml produced by the function.
-        result = update_fits(os.path.join("multi_file", "metadata", "multi_file_combined-fits.xml"))
-        with open(os.path.join("expected_xml", "multi_file_combined-fits.xml")) as expected_file:
-            expected = expected_file.read()
+        result = read_xml(os.path.join(aip_dir, "multi_file", "metadata", "multi_file_combined-fits.xml"))
+        expected = read_xml(os.path.join(aip_dir, "expected_xml", "multi_file_combined-fits.xml"))
         self.assertEqual(result, expected, "Problem with multiple files, combined-fits.xml")
 
         # Test for AIP log.

@@ -276,7 +276,8 @@ def combine_metadata(aip, staging):
     combo_root = combo_tree.getroot()
 
     # Gets each of the FITS documents in the AIP's metadata folder.
-    for doc in os.listdir(os.path.join(aip.id, "metadata")):
+    metadata_path = os.path.join(aip.directory, aip.id, "metadata")
+    for doc in os.listdir(metadata_path):
         if doc.endswith("_fits.xml"):
 
             # Makes Python aware of the FITS namespace (it is the default and has no prefix).
@@ -284,7 +285,7 @@ def combine_metadata(aip, staging):
 
             # Gets the FITS element and its children and makes it a child of the root, combined-fits.
             try:
-                tree = et.parse(os.path.join(aip.id, "metadata", doc))
+                tree = et.parse(os.path.join(metadata_path, doc))
                 root = tree.getroot()
                 combo_root.append(root)
                 aip.log["FITSError"] = "Successfully created combined-fits.xml"
@@ -294,11 +295,11 @@ def combine_metadata(aip, staging):
                 aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
                 aip.log["Complete"] = "Error during processing"
                 log(aip.log)
-                move_error("combining_fits", aip.id, staging)
+                move_error("combining_fits", os.path.join(aip.directory, aip.id), staging)
                 return
 
     # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
-    fits_path = os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml")
+    fits_path = os.path.join(metadata_path, f"{aip.id}_combined-fits.xml")
     combo_tree.write(fits_path, xml_declaration=True, encoding="UTF-8")
 
 
@@ -606,7 +607,7 @@ def move_error(error_name, item, staging):
         os.makedirs(error_path)
 
     # Moves the AIP to the error folder.
-    os.replace(item, os.path.join(error_path, item))
+    os.replace(item, os.path.join(error_path, os.path.basename(item)))
 
 
 def organize_xml(aip, staging):
@@ -733,7 +734,7 @@ def structure_directory(aip, staging):
     # Makes the objects folder within the AIP folder, if it doesn't exist.
     # If it does, moves the AIP to an error folder so the original directory structure is not altered.
     try:
-        os.mkdir(os.path.join(aip.id, "objects"))
+        os.mkdir(os.path.join(aip.directory, aip.id, "objects"))
         aip.log["ObjectsError"] = "Successfully created objects folder"
     except FileExistsError:
         aip.log["ObjectsError"] = "Objects folder already exists in original files"
@@ -745,7 +746,7 @@ def structure_directory(aip, staging):
     # Makes the metadata folders within the AIP folder, if it doesn't exist.
     # If it does, moves the AIP to an error folder so the original directory structure is not altered.
     try:
-        os.mkdir(os.path.join(aip.id, "metadata"))
+        os.mkdir(os.path.join(aip.directory, aip.id, "metadata"))
         aip.log["MetadataError"] = "Successfully created metadata folder"
     except FileExistsError:
         aip.log["MetadataError"] = "Metadata folder already exists in original files"
@@ -777,15 +778,15 @@ def structure_directory(aip, staging):
     # Moves any metadata files to the metadata folder and then the rest to the objects folder, with renaming as needed.
     # Metadata files are matched as specifically as possible to reduce the risk of incorrect identifications.
     web_metadata = ("_coll.csv", "_collscope.csv", "_crawldef.csv", "_crawljob.csv", "_seed.csv", "_seedscope.csv")
-    for item in os.listdir(aip.id):
+    for item in os.listdir(os.path.join(aip.directory, aip.id)):
         if item in ('metadata', 'objects'):
             continue
-        item_path = os.path.join(aip.id, item)
-        metadata_path = os.path.join(aip.id, "metadata", item)
+        item_path = os.path.join(aip.directory, aip.id, item)
+        metadata_path = os.path.join(aip.directory, aip.id, "metadata", item)
         # AV metadata files.
         av_metadata = (".qctools.mkv", ".qctools.xml.gz", ".framemd5", ".srt")
         if aip.type == "av" and item.endswith(av_metadata):
-            os.replace(item_path, os.path.join(aip.id, "metadata", f"bmac_{item}"))
+            os.replace(item_path, os.path.join(aip.directory, aip.id, "metadata", f"bmac_{item}"))
         # Deletion log, created by the script when deleting temp files.
         elif item.startswith(f"{aip.id}_files-deleted_"):
             os.replace(item_path, metadata_path)
@@ -806,7 +807,7 @@ def structure_directory(aip, staging):
             os.replace(item_path, os.path.join(aip.id, "objects", f"bmac_{item}"))
         # Moves all remaining files and folders to the objects folder.
         else:
-            os.replace(item_path, os.path.join(aip.id, "objects", item))
+            os.replace(item_path, os.path.join(aip.directory, aip.id, "objects", item))
 
 
 def validate_bag(aip, staging):

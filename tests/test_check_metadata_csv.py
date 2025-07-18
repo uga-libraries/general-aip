@@ -22,27 +22,6 @@ def run_function(csv_name):
 
 class TestCheckMetadataCSV(unittest.TestCase):
 
-    def setUp(self):
-        """
-        Makes folders to use as test data.
-        """
-        # Makes a folder for the AIPs directory and makes it the current directory.
-        os.mkdir('aips_directory')
-        os.chdir('aips_directory')
-
-        # Makes three folders to represent AIPs.
-        os.mkdir('aip-1')
-        os.mkdir('aip-2')
-        os.mkdir('aip-3')
-
-    def tearDown(self):
-        """
-        Deletes the files and folders used for testing, which are all in the AIPs directory.
-        Changes the current directory first to avoid a permissions error.
-        """
-        os.chdir('..')
-        shutil.rmtree('aips_directory')
-
     def test_correct(self):
         """
         Test for a metadata.csv with valid information 

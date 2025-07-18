@@ -71,7 +71,7 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the test AIP, including making the initial AIP instance, folder and file and
         # running the first functions for the AIP workflow.
-        aip = AIP(os.getcwd(), "test", "coll-1", "one_file", "one_file", "title", 1, True)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "one_file", "general", "one_file", "title", 1, True)
         os.mkdir("one_file")
         with open(os.path.join("one_file", "Text.txt"), "w") as file:
             file.write("Test File")
@@ -96,7 +96,7 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the test AIP, including making the initial AIP instance, folders and files and
         # running the first two functions for the AIP workflow.
-        aip = AIP(os.getcwd(), "test", "coll-1", "multi_file", "multi_file", "title", 1, True)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "multi_file", "general", "multi_file", "title", 1, True)
         os.mkdir("multi_file")
         with open(os.path.join("multi_file", "Text.txt"), "w") as file:
             file.write("Test File")
@@ -126,7 +126,7 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the test AIP, including making the initial AIP instance, folder and file and
         # running the first function for the AIP workflow.
-        aip = AIP(os.getcwd(), "test", "coll-1", "et_error", "et_error", "title", 1, True)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "et_error", "general", "et_error", "title", 1, True)
         os.mkdir("et_error")
         with open(os.path.join("et_error", "Text.txt"), "w") as file:
             file.write("Test File")

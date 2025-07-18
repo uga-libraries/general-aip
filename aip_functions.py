@@ -310,13 +310,10 @@ def delete_temp(aip):
     Types of files deleted: DS_Store, Thumbs.db, ends with .tmp, and starts with '.'
 
     Parameters:
-         aip : instance of the AIP class, used for id and log
+         aip : instance of the AIP class, used for directory, id and log
 
     Returns: none
     """
-
-    # List of files to be deleted where the filename can be matched in its entirety.
-    delete_list = [".DS_Store", "._.DS_Store", "Thumbs.db"]
 
     # List of files that were deleted, to save to a log.
     deleted_files = []
@@ -324,7 +321,8 @@ def delete_temp(aip):
     # Checks all files at any level in the AIP folder against the deletion criteria.
     # Deletes DS_Store, Thumbs.db, starts with a dot, or ends with .tmp.
     # Gets information for the deletion log and then deletes the file.
-    for root, directories, files in os.walk(aip.id):
+    delete_list = [".DS_Store", "._.DS_Store", "Thumbs.db"]
+    for root, directories, files in os.walk(os.path.join(aip.directory, aip.id)):
         for item in files:
             if item in delete_list or item.endswith(".tmp") or item.startswith("."):
                 path = os.path.join(root, item)
@@ -338,7 +336,7 @@ def delete_temp(aip):
     # Also adds event information for deletion to the script log.
     if len(deleted_files) > 0:
         filename = f"{aip.id}_files-deleted_{datetime.today().date()}_del.csv"
-        with open(os.path.join(aip.id, filename), "w", newline="") as deleted_log:
+        with open(os.path.join(aip.directory, aip.id, filename), "w", newline="") as deleted_log:
             deleted_log_writer = csv.writer(deleted_log)
             deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
             for file_data in deleted_files:

@@ -57,7 +57,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "no-temp", "general", "aip-id", "title", 1, True)
+        aip = AIP(os.getcwd(), "dept", None, "coll-1", "folder", "general", "aip-id", "title", 1, True)
         delete_temp(aip)
 
         # Test for the AIP folder.
@@ -78,7 +78,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "ds-store", "general", "aip-id_ds-store", "title", 1, True)
+        aip = AIP(os.getcwd(), "dept", None, "coll-1", "folder", "general", "aip-id_ds-store", "title", 1, True)
         delete_temp(aip)
 
         # Variables used throughout the test: the path to the deletion log and today"s date formatted YYYY-M-D.
@@ -111,7 +111,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "ds-store-2", "general", "aip-id_ds-store-2", "title", 1, True)
+        aip = AIP(os.getcwd(), "dept", None, "coll-1", "folder", "general", "aip-id_ds-store-2", "title", 1, True)
         delete_temp(aip)
 
         # Variables used throughout the test: the path to the deletion log and today"s date formatted YYYY-M-D.
@@ -144,7 +144,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "thumbs-db", "general", "aip-id_thumbs", "title", 1, True)
+        aip = AIP(os.getcwd(), "dept", None, "coll-1", "folder", "general", "aip-id_thumbs", "title", 1, True)
         delete_temp(aip)
 
         # Variables used throughout the test: the path to the deletion log and today"s date formatted YYYY-M-D.
@@ -177,7 +177,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "dot-filename", "general", "aip-id_dot", "title", 1, True)
+        aip = AIP(os.getcwd(), "dept", None, "coll-1", "folder", "general", "aip-id_dot", "title", 1, True)
         delete_temp(aip)
 
         # Variables used throughout the test: the path to the deletion log and today"s date formatted YYYY-M-D.
@@ -210,7 +210,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "filename-tmp", "general", "aip-id_tmp", "title", 1, True)
+        aip = AIP(os.getcwd(), "dept", None, "coll-1", "folder", "general", "aip-id_tmp", "title", 1, True)
         delete_temp(aip)
 
         # Variables used throughout the test: the path to the deletion log and today"s date formatted YYYY-M-D.

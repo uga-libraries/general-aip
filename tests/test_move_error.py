@@ -35,7 +35,7 @@ class TestMoveError(unittest.TestCase):
         Result for testing is a list of paths for every folder in the aips-with-errors folder.
         """
         os.mkdir("aip_one")
-        move_error("test_error", "aip_one")
+        move_error("test_error", "aip_one", os.path.join(os.getcwd(), 'aip_staging_location'))
 
         result = errors_directory_print()
 
@@ -52,7 +52,7 @@ class TestMoveError(unittest.TestCase):
         """
         os.makedirs(os.path.join("..", "aips-with-errors", "test_error", "aip_one"))
         os.mkdir("aip_two")
-        move_error("test_two", "aip_two")
+        move_error("test_two", "aip_two", os.path.join(os.getcwd(), 'aip_staging_location'))
 
         result = errors_directory_print()
 
@@ -71,7 +71,7 @@ class TestMoveError(unittest.TestCase):
         """
         os.makedirs(os.path.join("..", "aips-with-errors", "test_error", "aip_one"))
         os.mkdir("aip_two")
-        move_error("test_error", "aip_two")
+        move_error("test_error", "aip_two", os.path.join(os.getcwd(), 'aip_staging_location'))
 
         result = errors_directory_print()
 

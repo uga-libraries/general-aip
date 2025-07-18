@@ -588,27 +588,26 @@ def manifest(aip, staging, ingest):
     log(aip.log, aip.directory)
 
 
-def move_error(error_name, item, staging):
+def move_error(error_name, aip_path, staging):
     """Move the AIP folder to an error folder, named with the error type
 
     The AIP is moved so the rest of the workflow steps are not attempted on it.
 
     Parameters:
         error_name : the name of the error folder
-        item : the name of the AIP folder with the error
+        aip_path : the path of the AIP folder with the error
         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
 
     # Makes the error folder, if it does not already exist.
-    # Error folders are in the folder "errors", which is in the parent folder of the AIPs directory.
     error_path = os.path.join(staging, "aips-with-errors", error_name)
     if not os.path.exists(error_path):
         os.makedirs(error_path)
 
     # Moves the AIP to the error folder.
-    os.replace(item, os.path.join(error_path, os.path.basename(item)))
+    os.replace(aip_path, os.path.join(error_path, os.path.basename(aip_path)))
 
 
 def organize_xml(aip, staging):

@@ -15,7 +15,7 @@ def aip_log_list():
     Reads a aip_log.csv and returns a list of lists, where each list is a row in the CSV.
     Fills na with text for easier comparison.
     """
-    df = pd.read_csv(os.path.join('..', 'aip_log.csv'))
+    df = pd.read_csv(os.path.join(os.getcwd(), 'aip_log.csv'))
     df = df.fillna('n/a')
     row_list = [df.columns.to_list()] + df.values.tolist()
     return row_list
@@ -36,14 +36,14 @@ class TestLog(unittest.TestCase):
         """
         Deletes the log so a new one can be made for the next test.
         """
-        os.remove(os.path.join('..', 'aip_log.csv'))
+        os.remove('aip_log.csv')
 
     def test_header(self):
         """
         Test for making the log file with a header.
         """
         # Creates the log.
-        log('header')
+        log('header', os.getcwd())
 
         # Test for the log contents.
         result = aip_log_list()
@@ -61,12 +61,12 @@ class TestLog(unittest.TestCase):
         # Creates the log.
         # To save time, updates some items in the AIP's log variable without running the workflow steps.
         aips_dir = os.getcwd()
-        log('header')
+        log('header', aips_dir)
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'aip-folder', 'general', 'aip-1', 'title', 1, to_zip=False)
         aip.log['Deletions'] = 'No files deleted'
         aip.log['ObjectsError'] = 'Objects folder already exists in original files'
         aip.log['Complete'] = 'Error during processing'
-        log(aip.log)
+        log(aip.log, aips_dir)
 
         # Test for the log contents.
         result = aip_log_list()
@@ -86,12 +86,12 @@ class TestLog(unittest.TestCase):
         # Creates the log.
         # To save time, updates some items in each AIP's log variable without running the workflow steps.
         aips_dir = os.getcwd()
-        log('header')
+        log('header', aips_dir)
         aip1 = AIP(aips_dir, 'dept', None, 'coll-1', 'aip-1-folder', 'general', 'aip-1', 'title-1', 1, to_zip=False)
         aip1.log['Deletions'] = 'No files deleted'
         aip1.log['ObjectsError'] = 'Objects folder already exists in original files'
         aip1.log['Complete'] = 'Error during processing'
-        log(aip1.log)
+        log(aip1.log, aips_dir)
 
         aip2 = AIP(os.getcwd(), 'dept', None, 'coll-1', 'aip-2-folder', 'general', 'aip-2', 'title-2', 1, to_zip=False)
         aip2.log['Deletions'] = 'No files deleted'
@@ -105,7 +105,7 @@ class TestLog(unittest.TestCase):
         aip2.log['Package'] = 'Successfully made package'
         aip2.log['Manifest'] = 'Successfully added AIP to manifest.'
         aip2.log['Complete'] = 'Successfully completed processing'
-        log(aip2.log)
+        log(aip2.log, aips_dir)
 
         # Test for the log contents.
         result = aip_log_list()

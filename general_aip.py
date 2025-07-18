@@ -59,7 +59,7 @@ if len(metadata_errors) > 0:
 
 # If there isn't already a log from running this script on a previous batch,
 # starts a log for tracking script success and adds a header row.
-if not os.path.exists(os.path.join('..', 'aip_log.csv')):
+if not os.path.exists(os.path.join(AIPS_DIRECTORY, 'aip_log.csv')):
     a.log("header")
 
 # Makes directories used to store script outputs in the AIP_STAGING directory.

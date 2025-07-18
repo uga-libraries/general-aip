@@ -12,30 +12,31 @@ class TestExtractMetadata(unittest.TestCase):
 
     def tearDown(self):
         """
-        Deletes the log, error folder, and AIP test folders, if present.
+        Deletes the FITS error log and FITS files in the metadata folders, if present.
         """
-        if os.path.exists(os.path.join("..", "aip_log.csv")):
-            os.remove(os.path.join("..", "aip_log.csv"))
-
-        directory_paths = (os.path.join("..", "errors"), "aip-id-one", "aip-id-multi", "aip-id-error")
-        for directory_path in directory_paths:
-            if os.path.exists(directory_path):
-                shutil.rmtree(directory_path)
+        aips_directory = os.path.join(os.getcwd(), 'extract_metadata')
+        file_paths = [os.path.join(aips_directory, 'aip-id-error', 'metadata', 'aip-id-error_fits-tool-errors_fitserr.txt'),
+                      os.path.join(aips_directory, 'aip-id-error', 'metadata', 'not.xml_fits.xml'),
+                      os.path.join(aips_directory, 'aip-id-multi', 'metadata', 'output.csv_fits.xml'),
+                      os.path.join(aips_directory, 'aip-id-multi', 'metadata', 'output.json_fits.xml'),
+                      os.path.join(aips_directory, 'aip-id-multi', 'metadata', 'Text.txt_fits.xml'),
+                      os.path.join(aips_directory, 'aip-id-one', 'metadata', 'Text.txt_fits.xml')]
+        for file_path in file_paths:
+            if os.path.exists(file_path):
+                os.remove(file_path)
 
     def test_one_file(self):
         """
         Test for an AIP with one file.
         """
-        aip = AIP(os.getcwd(), "dept", None, "coll-1", "one_folder", "general", "aip-id-one", "title", 1, True)
-        os.mkdir("one_folder")
-        with open(os.path.join("one_folder", "Text.txt"), "w") as file:
-            file.write("Test File")
-        structure_directory(aip, os.getcwd())
+        # Makes test input and runs the function being tested.
+        aips_dir = os.path.join(os.getcwd(), 'extract_metadata')
+        aip = AIP(aips_dir, "dept", None, "coll-1", "one_folder", "general", "aip-id-one", "title", 1, True)
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.
-        result = os.listdir(os.path.join("aip-id-one", "metadata"))
-        expected = ["Text.txt_fits.xml"]
+        result = os.listdir(os.path.join(aips_dir, "aip-id-one", "metadata"))
+        expected = ["metadata.txt", "Text.txt_fits.xml"]
         self.assertEqual(result, expected, "Problem with one file, metadata folder")
 
         # Test for the AIP log.
@@ -47,20 +48,14 @@ class TestExtractMetadata(unittest.TestCase):
         """
         Test for an AIP with multiple files of different formats (CSV, JSON, Plain text).
         """
-        aip = AIP(os.getcwd(), "dept", None, "coll-1", "multi_folder", "general", "aip-id-multi", "title", 1, True)
-        os.mkdir("multi_folder")
-        with open(os.path.join("multi_folder", "Text.txt"), "w") as file:
-            file.write("Test File")
-        os.mkdir(os.path.join("multi_folder", "Pandas Output"))
-        df = pd.DataFrame({"First": ["a", "b", "c", "d"], "Second": [1, 2, 3, 4], "Third": [0.1, 0.2, 0.3, 0.4]})
-        df.to_csv(os.path.join("multi_folder", "Pandas Output", "output.csv"), index=False)
-        df.to_json(os.path.join("multi_folder", "Pandas Output", "output.json"))
-        structure_directory(aip, os.getcwd())
+        # Makes test input and runs the function being tested.
+        aips_dir = os.path.join(os.getcwd(), 'extract_metadata')
+        aip = AIP(aips_dir, "dept", None, "coll-1", "multi_folder", "general", "aip-id-multi", "title", 1, True)
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.
-        result = os.listdir(os.path.join("aip-id-multi", "metadata"))
-        expected = ["output.csv_fits.xml", "output.json_fits.xml", "Text.txt_fits.xml"]
+        result = os.listdir(os.path.join(aips_dir, "aip-id-multi", "metadata"))
+        expected = ["metadata.txt", "output.csv_fits.xml", "output.json_fits.xml", "Text.txt_fits.xml"]
         self.assertEqual(result, expected, "Problem with multiple files, metadata folder")
 
         # Test for the AIP log.
@@ -70,21 +65,21 @@ class TestExtractMetadata(unittest.TestCase):
 
     def test_error_fits_tool(self):
         """
-        Test for an AIP with a format that causes FITS to generate an error.
+        Test for an AIP with a format that causes FITS to generate an error (text file with XML extension).
         """
-        # Makes the test AIP, including making the initial AIP instance, folder and file and
-        # running the first two functions for the AIP workflow.
-        # Generates error by making a text file with an XML extension.
-        aip = AIP(os.getcwd(), "dept", None, "coll-1", "tool_error_folder", "general", "aip-id-error", "title", 1, True)
-        os.mkdir("tool_error_folder")
-        with open(os.path.join("tool_error_folder", "not.xml"), "w") as file:
-            file.write("This is not XML")
-        structure_directory(aip)
+        # Makes test input and runs the function being tested.
+        aips_dir = os.path.join(os.getcwd(), 'extract_metadata')
+        aip = AIP(aips_dir, "dept", None, "coll-1", "tool_error_folder", "general", "aip-id-error", "title", 1, True)
         extract_metadata(aip)
+
+        # Test for the contents of the metadata folder.
+        result = os.listdir(os.path.join(aips_dir, "aip-id-error", "metadata"))
+        expected = ["aip-id-error_fits-tool-errors_fitserr.txt", "metadata.txt", "not.xml_fits.xml"]
+        self.assertEqual(result, expected, "Problem with error, metadata folder")
 
         # Test for the FITS error log, which is if 3 phrases are in the file.
         # The contents of the entire file cannot be tested, since most are variable (timestamps and file paths).
-        with open(os.path.join("tool_error_folder", "metadata", "tool_error_fits-tool-errors_fitserr.txt")) as file:
+        with open(os.path.join(aips_dir, "aip-id-error", "metadata", "aip-id-error_fits-tool-errors_fitserr.txt")) as file:
             content = file.read()
             result = ("org.jdom.input.JDOMParseException" in content,
                       "Tool error processing file" in content,

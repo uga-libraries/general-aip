@@ -27,8 +27,8 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Deletes files created by the function.
         file_paths = [os.path.join('combine_metadata', 'aip_log.csv'),
-                      os.path.join('combine_metadata', 'multi_file', 'metadata', 'multi_file_combined-fits.xml'),
-                      os.path.join('combine_metadata', 'one_file', 'metadata', 'one_file_combined-fits.xml')]
+                      os.path.join('combine_metadata', 'aip-2', 'metadata', 'aip-2_combined-fits.xml'),
+                      os.path.join('combine_metadata', 'aip-1', 'metadata', 'aip-1_combined-fits.xml')]
         for file_path in file_paths:
             if os.path.exists(file_path):
                 os.remove(file_path)
@@ -43,12 +43,12 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the AIP instance and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aips_dir, 'test', None, 'coll-1', 'one_file', 'general', 'one_file', 'title', 1, True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-1', 'general', 'aip-1', 'title', 1, True)
         combine_metadata(aip, os.getcwd())
 
         # Test for combined-fits.xml produced by the function.
-        result = read_xml(os.path.join(aips_dir, 'one_file', 'metadata', 'one_file_combined-fits.xml'))
-        expected = read_xml(os.path.join(aips_dir, 'expected_xml', 'one_file_combined-fits.xml'))
+        result = read_xml(os.path.join(aips_dir, 'aip-1', 'metadata', 'aip-1_combined-fits.xml'))
+        expected = read_xml(os.path.join(aips_dir, 'expected_xml', 'aip-1_combined-fits.xml'))
         self.assertEqual(result, expected, "Problem with one file, combined-fits.xml")
 
         # Test for AIP log.
@@ -62,12 +62,12 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the AIP instance and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aips_dir, 'test', None, 'coll-1', 'multi_file', 'general', 'multi_file', 'title', 1, True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-2', 'general', 'aip-2', 'title', 1, True)
         combine_metadata(aip, os.getcwd())
 
         # Test for combined-fits.xml produced by the function.
-        result = read_xml(os.path.join(aips_dir, 'multi_file', 'metadata', 'multi_file_combined-fits.xml'))
-        expected = read_xml(os.path.join(aips_dir, 'expected_xml', 'multi_file_combined-fits.xml'))
+        result = read_xml(os.path.join(aips_dir, 'aip-2', 'metadata', 'aip-2_combined-fits.xml'))
+        expected = read_xml(os.path.join(aips_dir, 'expected_xml', 'aip-2_combined-fits.xml'))
         self.assertEqual(result, expected, "Problem with multiple files, combined-fits.xml")
 
         # Test for AIP log.
@@ -82,14 +82,14 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the AIP instance, a copy of the aip folder (moved by test) and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aips_dir, 'test', None, 'coll-1', 'et_error', 'general', 'et_error', 'title', 1, True)
-        shutil.copytree(os.path.join(aips_dir, 'et_error_copy'), os.path.join(aips_dir, 'et_error'))
+        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-error', 'general', 'aip-0', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'aip-0_copy'), os.path.join(aips_dir, 'aip-0'))
         combine_metadata(aip, os.getcwd())
 
         # Test for if the folder is moved, both that it is in the error folder
         # and is not in the original location (AIPs directory).
-        result = (os.path.exists(os.path.join('aips-with-errors', 'combining_fits', 'et_error')),
-                  os.path.exists(os.path.join(aips_dir, 'et_error')))
+        result = (os.path.exists(os.path.join('aips-with-errors', 'combining_fits', 'aip-0')),
+                  os.path.exists(os.path.join(aips_dir, 'aip-0')))
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with ET parse error, move to error folder")
 

@@ -7,7 +7,7 @@
     </identity>
   </identification>
   <fileinfo>
-    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">CURRENT-DIRECTORY\combine_metadata\multi_file\objects\Pandas Output\output.csv</filepath>
+    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">CURRENT-DIRECTORY\combine_metadata\aip-2\objects\Pandas Output\output.csv</filepath>
     <filename toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">output.csv</filename>
     <size toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">56</size>
     <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">c1ba0d48bdba30ca540b4dcf3249692f</md5checksum>

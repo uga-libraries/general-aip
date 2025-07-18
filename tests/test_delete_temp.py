@@ -13,50 +13,6 @@ import unittest
 from aip_functions import AIP, delete_temp
 
 
-def make_aip_directory(aip_id):
-    """
-    Makes a folder for an AIP with test files in the current working directory.
-    All have at least two text files and one folder.
-    Most have additional files that will be identified as temporary and deleted.
-    """
-    # Folders and files used in every test.
-    os.mkdir(aip_id)
-    with open(os.path.join(aip_id, "Text.txt"), "w") as file:
-        file.write("Test File")
-    os.mkdir(os.path.join(aip_id, "Test Dir"))
-    with open(os.path.join(aip_id, "Test Dir", "Test Dir Text.txt"), "w") as file:
-        file.write("Test File 2")
-
-    # Temporary files specific to each test.
-    # These aren't real temp files, but the filenames are all that need to match to test the script.
-    # One file is put in the main AIP folder and another in the Test Dir folder.
-    if aip_id == "ds-store-id":
-        with open(os.path.join(aip_id, ".DS_Store"), "w") as temp_file:
-            temp_file.write("Text")
-        with open(os.path.join(aip_id, "Test Dir", ".DS_Store"), "w") as temp_file:
-            temp_file.write("Text")
-    elif aip_id == "ds-store-2-id":
-        with open(os.path.join(aip_id, "._.DS_Store"), "w") as temp_file:
-            temp_file.write("Text")
-        with open(os.path.join(aip_id, "Test Dir", "._.DS_Store"), "w") as temp_file:
-            temp_file.write("Text")
-    elif aip_id == "thumbs-id":
-        with open(os.path.join(aip_id, "Thumbs.db"), "w") as temp_file:
-            temp_file.write("Text")
-        with open(os.path.join(aip_id, "Test Dir", "Thumbs.db"), "w") as temp_file:
-            temp_file.write("Text")
-    elif aip_id == "dot-id":
-        with open(os.path.join(aip_id, ".temporary.txt"), "w") as temp_file:
-            temp_file.write("Text")
-        with open(os.path.join(aip_id, "Test Dir", ".temporary.txt"), "w") as temp_file:
-            temp_file.write("Text")
-    elif aip_id == "tmp-id":
-        with open(os.path.join(aip_id, "temporary.tmp"), "w") as temp_file:
-            temp_file.write("Text")
-        with open(os.path.join(aip_id, "Test Dir", "temporary.tmp"), "w") as temp_file:
-            temp_file.write("Text")
-
-
 def aip_directory_print(folder):
     """
     Makes and returns a list with the filepath for every folder and file in an AIP folder.
@@ -89,9 +45,11 @@ class TestDeleteTemp(unittest.TestCase):
         """
         Deletes the AIP folders created by each test.
         """
-        for path in ("dot-id", "ds-store-id", "ds-store-2-id", "none-id", "tmp-id", "thumbs-id"):
-            if os.path.exists(path):
-                shutil.rmtree(path)
+        aip_folders = ['aip-id_dot', 'aip-id_ds-store', 'aip-id_ds-store-2', 'aip-id_tmp', 'aip-id_thumbs']
+        for aip_folder in aip_folders:
+            aip_path = os.path.join(os.getcwd(), 'delete_temp', aip_folder)
+            if os.path.exists(aip_path):
+                shutil.rmtree(aip_path)
 
     def test_no_temp(self):
         """
@@ -99,8 +57,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "no-temp", "general", "none-id", "title", 1, True)
-        make_aip_directory(aip.id)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "no-temp", "general", "aip-id", "title", 1, True)
         delete_temp(aip)
 
         # Test for the AIP folder.
@@ -121,8 +78,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "ds-store", "general", "ds-store-id", "title", 1, True)
-        make_aip_directory(aip.id)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "ds-store", "general", "aip-id_ds-store", "title", 1, True)
         delete_temp(aip)
 
         # Variables used throughout the test: the path to the deletion log and today"s date formatted YYYY-M-D.
@@ -155,8 +111,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "ds-store-2", "general", "ds-store-2-id", "title", 1, True)
-        make_aip_directory(aip.id)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "ds-store-2", "general", "aip-id_ds-store-2", "title", 1, True)
         delete_temp(aip)
 
         # Variables used throughout the test: the path to the deletion log and today"s date formatted YYYY-M-D.
@@ -189,8 +144,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "thumbs-db", "general", "thumbs-id", "title", 1, True)
-        make_aip_directory(aip.id)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "thumbs-db", "general", "aip-id_thumbs", "title", 1, True)
         delete_temp(aip)
 
         # Variables used throughout the test: the path to the deletion log and today"s date formatted YYYY-M-D.
@@ -223,8 +177,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "dot-filename", "general", "dot-id", "title", 1, True)
-        make_aip_directory(aip.id)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "dot-filename", "general", "aip-id_dot", "title", 1, True)
         delete_temp(aip)
 
         # Variables used throughout the test: the path to the deletion log and today"s date formatted YYYY-M-D.
@@ -257,8 +210,7 @@ class TestDeleteTemp(unittest.TestCase):
         """
         # Makes the input needed for the function (AIP class instance and AIP folder with test files)
         # and runs the function being tested.
-        aip = AIP(os.getcwd(), "test", None, "coll-1", "filename-tmp", "general", "tmp-id", "title", 1, True)
-        make_aip_directory(aip.id)
+        aip = AIP(os.getcwd(), "test", None, "coll-1", "filename-tmp", "general", "aip-id_tmp", "title", 1, True)
         delete_temp(aip)
 
         # Variables used throughout the test: the path to the deletion log and today"s date formatted YYYY-M-D.

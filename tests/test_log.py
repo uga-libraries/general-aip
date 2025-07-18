@@ -47,10 +47,7 @@ class TestLog(unittest.TestCase):
 
         # Test for the log contents.
         result = aip_log_list()
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
-                     'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
-                     'Processing Complete']]
+        expected = [self.header]
         self.assertEqual(result, expected, "Problem with header")
 
     def test_one_aip(self):
@@ -70,10 +67,7 @@ class TestLog(unittest.TestCase):
 
         # Test for the log contents.
         result = aip_log_list()
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
-                     'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
-                     'Processing Complete'],
+        expected = [self.header,
                     [str(aip.log['Started']), 'aip-1', 'No files deleted',
                      'Objects folder already exists in original files',
                      'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'Error during processing']]
@@ -109,10 +103,7 @@ class TestLog(unittest.TestCase):
 
         # Test for the log contents.
         result = aip_log_list()
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
-                     'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
-                     'Processing Complete'],
+        expected = [self.header,
                     [str(aip1.log['Started']), 'aip-1', 'No files deleted',
                      'Objects folder already exists in original files',
                      'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'Error during processing'],

@@ -335,7 +335,7 @@ def delete_temp(aip):
     # The log contains the path, filename, size in bytes and date/time last modified of every deleted file.
     # Also adds event information for deletion to the script log.
     if len(deleted_files) > 0:
-        filename = f"{aip.id}_files-deleted_{datetime.today().date()}_del.csv"
+        filename = f"{aip.id}_files-deleted_{datetime.today().strftime('%Y-%#m-%#d')}_del.csv"
         with open(os.path.join(aip.directory, aip.id, filename), "w", newline="") as deleted_log:
             deleted_log_writer = csv.writer(deleted_log)
             deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])

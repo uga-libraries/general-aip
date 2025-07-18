@@ -12,11 +12,11 @@ from aip_functions import AIP, log
 
 def aip_log_list():
     """
-    Reads a aip_log.csv and returns a list of lists, where each list is a row in the CSV.
+    Reads an aip_log.csv and returns a list of lists, where each list is a row in the CSV.
     Fills na with text for easier comparison.
     """
     df = pd.read_csv(os.path.join(os.getcwd(), 'aip_log.csv'))
-    df = df.fillna('n/a')
+    df = df.fillna('BLANK')
     row_list = [df.columns.to_list()] + df.values.tolist()
     return row_list
 
@@ -69,8 +69,8 @@ class TestLog(unittest.TestCase):
         result = aip_log_list()
         expected = [self.header,
                     [str(aip.log['Started']), 'aip-1', 'No files deleted',
-                     'Objects folder already exists in original files',
-                     'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'Error during processing']]
+                     'Objects folder already exists in original files', 'BLANK', 'BLANK', 'BLANK', 'BLANK',
+                     'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
         self.assertEqual(result, expected, "Problem with one aip")
 
     def test_multiple_aips(self):
@@ -105,8 +105,8 @@ class TestLog(unittest.TestCase):
         result = aip_log_list()
         expected = [self.header,
                     [str(aip1.log['Started']), 'aip-1', 'No files deleted',
-                     'Objects folder already exists in original files',
-                     'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'n/a', 'Error during processing'],
+                     'Objects folder already exists in original files', 'BLANK', 'BLANK', 'BLANK', 'BLANK',
+                     'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing'],
                     [str(aip2.log['Started']), 'aip-2', 'No files deleted', 'Successfully created objects folder',
                      'Successfully created metadata folder', 'No FITS tool errors',
                      'Successfully created combined-fits.xml', 'Successfully created preservation.xml',

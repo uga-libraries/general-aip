@@ -15,7 +15,7 @@
   </identification>
   <fileinfo>
     <size toolname="Jhove" toolversion="1.20.1">120</size>
-    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">C:\Users\ahanson\Documents\GitHub\general-aip\tests\combine_metadata\multi_file\objects\Pandas Output\output.json</filepath>
+    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">CURRENT-DIRECTORY\combine_metadata\multi_file\objects\Pandas Output\output.json</filepath>
     <filename toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">output.json</filename>
     <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">525216486df22ea55e7ab7c17acc3cf8</md5checksum>
     <fslastmodified toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">1752845261635</fslastmodified>

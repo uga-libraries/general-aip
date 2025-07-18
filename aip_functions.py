@@ -294,7 +294,7 @@ def combine_metadata(aip, staging):
             except et.ParseError as error:
                 aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
                 aip.log["Complete"] = "Error during processing"
-                log(aip.log)
+                log(aip.log, aip.directory)
                 move_error("combining_fits", os.path.join(aip.directory, aip.id), staging)
                 return
 
@@ -382,13 +382,14 @@ def extract_metadata(aip):
             os.rename(os.path.join(metadata, item), os.path.join(metadata, new_name))
 
 
-def log(log_data):
+def log(log_data, aips_dir):
     """Save the result about each step done on an AIP to a CSV file
 
     Information is saved to the log after the AIP either finishes processing or encounters an anticipated error.
 
     Parameters:
         log_data : "header" or dictionary with log information for the AIP
+        aips_dir : the path to the folder which contains the folders to be made into AIPs
 
     Returns: none
     """
@@ -407,7 +408,7 @@ def log(log_data):
                    log_data["Manifest"], log_data["Complete"]]
 
     # Saves the data for the row to the log CSV.
-    with open(os.path.join("..", "aip_log.csv"), "a", newline="") as log_file:
+    with open(os.path.join(aips_dir, "aip_log.csv"), "a", newline="") as log_file:
         log_writer = csv.writer(log_file)
         log_writer.writerow(log_row)
 
@@ -460,7 +461,7 @@ def make_cleaned_fits_xml(aip, staging):
         error_msg = saxon_output.stderr.decode("utf-8")
         aip.log["PresXML"] = f"Issue when creating cleaned-fits.xml. Saxon error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         move_error("cleaned_fits_saxon_error", aip.id, staging)
 
 
@@ -514,7 +515,7 @@ def make_preservation_xml(aip, staging):
         error_msg = saxon_output.stderr.decode("utf-8")
         aip.log["PresXML"] = f"Issue when creating preservation.xml. Saxon error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         move_error("pres_xml_saxon_error", aip.id, staging)
         return
 
@@ -543,7 +544,7 @@ def manifest(aip, staging, ingest):
     if not os.path.exists(aip_path):
         aip.log["Manifest"] = "Tar/zip file not in aips-ready-for-ingest folder"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         return
 
     # Calculates the MD5 of the packaged AIP.
@@ -555,7 +556,7 @@ def manifest(aip, staging, ingest):
         error_msg = md5deep_output.stderr.decode("utf-8")
         aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         return
 
     # Adds the md5 and AIP filename to the appropriate manifest in staging.
@@ -584,7 +585,7 @@ def manifest(aip, staging, ingest):
     # Logs the success of adding the AIP to the manifest and of AIP creation (this is the last step).
     aip.log["Manifest"] = "Successfully added AIP to manifest"
     aip.log["Complete"] = "Successfully completed processing"
-    log(aip.log)
+    log(aip.log, aip.directory)
 
 
 def move_error(error_name, item, staging):
@@ -686,7 +687,7 @@ def package(aip, staging):
             error_msg = tar_output.stderr.decode("utf-8")
             aip.log["Package"] = f"Could not tar. 7zip error: {error_msg}"
             aip.log["Complete"] = "Error during processing"
-            log(aip.log)
+            log(aip.log, aip.directory)
             return
     else:
         subprocess.run(f'tar -cf "{tar_path}" "{bag_path}"', shell=True)
@@ -739,7 +740,7 @@ def structure_directory(aip, staging):
     except FileExistsError:
         aip.log["ObjectsError"] = "Objects folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         move_error("objects_folder_exists", aip.id, staging)
         return
 
@@ -751,7 +752,7 @@ def structure_directory(aip, staging):
     except FileExistsError:
         aip.log["MetadataError"] = "Metadata folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         move_error("metadata_folder_exists", aip.id, staging)
         return
 
@@ -828,7 +829,7 @@ def validate_bag(aip, staging):
     except bagit.BagValidationError as errors:
         aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         move_error("bag_not_valid", f"{aip.id}_bag", staging)
         # Error log is formatted to be easier to read (one error per line) if error information is in details.
         # Otherwise, the entire error output is saved to the log in the errors folder alongside the AIP folder.
@@ -863,7 +864,7 @@ def validate_preservation_xml(aip, staging):
     if "failed to load" in validation_result:
         aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         move_error("preservationxml_not_found", aip.id, staging)
         return
     else:
@@ -875,7 +876,7 @@ def validate_preservation_xml(aip, staging):
     if "fails to validate" in validation_result:
         aip.log["PresValid"] = "Preservation.xml is not valid (see log in error folder)"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         move_error("preservationxml_not_valid", aip.id, staging)
         log_path = os.path.join("..", "errors", "preservationxml_not_valid", f"{aip.id}_presxml_validation.txt")
         with open(log_path, "w") as validation_log:

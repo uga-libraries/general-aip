@@ -11,10 +11,7 @@ from aip_functions import AIP, log
 
 
 def aip_log_list():
-    """
-    Reads an aip_log.csv and returns a list of lists, where each list is a row in the CSV.
-    Fills na with text for easier comparison.
-    """
+    """Reads an aip_log.csv and returns a list of lists (each row), replacing na with text for easier comparison"""
     df = pd.read_csv(os.path.join(os.getcwd(), 'aip_log.csv'))
     df = df.fillna('BLANK')
     row_list = [df.columns.to_list()] + df.values.tolist()
@@ -24,24 +21,19 @@ def aip_log_list():
 class TestLog(unittest.TestCase):
 
     def setUp(self):
-        """
-        Variable with the header row value, which is used in each test.
-        """
+        """Variable with the header row value, which is used in each test"""
         self.header = ['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                        'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
                        'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
                        'Processing Complete']
 
     def tearDown(self):
-        """
-        Deletes the log so a new one can be made for the next test.
-        """
-        os.remove('aip_log.csv')
+        """Deletes the log, if present"""
+        if os.path.exists('aip_log.csv'):
+            os.remove('aip_log.csv')
 
     def test_header(self):
-        """
-        Test for making the log file with a header.
-        """
+        """Test for making a new log file with a header"""
         # Creates the log.
         log('header', os.getcwd())
 
@@ -51,12 +43,8 @@ class TestLog(unittest.TestCase):
         self.assertEqual(result, expected, "Problem with header")
 
     def test_one_aip(self):
-        """
-        Test for making the log file with information from one AIP.
-        Result for testing is the content of the log file.
-        """
-        # Creates the log.
-        # To save time, updates some items in the AIP's log variable without running the workflow steps.
+        """Test for making a log file with information from one AIP"""
+        # Creates the log and ass values for the AIP.
         aips_dir = os.getcwd()
         log('header', aips_dir)
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'aip-folder', 'general', 'aip-1', 'title', 1, to_zip=False)
@@ -74,11 +62,8 @@ class TestLog(unittest.TestCase):
         self.assertEqual(result, expected, "Problem with one aip")
 
     def test_multiple_aips(self):
-        """
-        Test for making the log file with information from two AIPs.
-        """
-        # Creates the log.
-        # To save time, updates some items in each AIP's log variable without running the workflow steps.
+        """Test for making the log file with information from two AIPs"""
+        # Creates the log and adds values for the first AIP.
         aips_dir = os.getcwd()
         log('header', aips_dir)
         aip1 = AIP(aips_dir, 'dept', None, 'coll-1', 'aip-1-folder', 'general', 'aip-1', 'title-1', 1, to_zip=False)
@@ -87,6 +72,7 @@ class TestLog(unittest.TestCase):
         aip1.log['Complete'] = 'Error during processing'
         log(aip1.log, aips_dir)
 
+        # Adds values for the second AIP to the log.
         aip2 = AIP(os.getcwd(), 'dept', None, 'coll-1', 'aip-2-folder', 'general', 'aip-2', 'title-2', 1, to_zip=False)
         aip2.log['Deletions'] = 'No files deleted'
         aip2.log['ObjectsError'] = 'Successfully created objects folder'

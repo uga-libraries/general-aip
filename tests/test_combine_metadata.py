@@ -41,13 +41,13 @@ class TestCombineMetadata(unittest.TestCase):
         Test for an AIP with one file (Plain text).
         """
         # Makes the AIP instance and runs the function.
-        aip_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aip_dir, "test", None, "coll-1", "one_file", "general", "one_file", "title", 1, True)
+        aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
+        aip = AIP(aips_dir, "test", None, "coll-1", "one_file", "general", "one_file", "title", 1, True)
         combine_metadata(aip, os.getcwd())
 
         # Test for combined-fits.xml produced by the function.
-        result = read_xml(os.path.join(aip_dir, "one_file", "metadata", "one_file_combined-fits.xml"))
-        expected = read_xml(os.path.join(aip_dir, "expected_xml", "one_file_combined-fits.xml"))
+        result = read_xml(os.path.join(aips_dir, "one_file", "metadata", "one_file_combined-fits.xml"))
+        expected = read_xml(os.path.join(aips_dir, "expected_xml", "one_file_combined-fits.xml"))
         self.assertEqual(result, expected, "Problem with one file, combined-fits.xml")
 
         # Test for AIP log.
@@ -60,13 +60,13 @@ class TestCombineMetadata(unittest.TestCase):
         Test for an AIP with multiple files of different formats (CSV, JSON, Plain text).
         """
         # Makes the AIP instance and runs the function.
-        aip_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aip_dir, "test", None, "coll-1", "multi_file", "general", "multi_file", "title", 1, True)
+        aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
+        aip = AIP(aips_dir, "test", None, "coll-1", "multi_file", "general", "multi_file", "title", 1, True)
         combine_metadata(aip, os.getcwd())
 
         # Test for combined-fits.xml produced by the function.
-        result = read_xml(os.path.join(aip_dir, "multi_file", "metadata", "multi_file_combined-fits.xml"))
-        expected = read_xml(os.path.join(aip_dir, "expected_xml", "multi_file_combined-fits.xml"))
+        result = read_xml(os.path.join(aips_dir, "multi_file", "metadata", "multi_file_combined-fits.xml"))
+        expected = read_xml(os.path.join(aips_dir, "expected_xml", "multi_file_combined-fits.xml"))
         self.assertEqual(result, expected, "Problem with multiple files, combined-fits.xml")
 
         # Test for AIP log.
@@ -76,18 +76,19 @@ class TestCombineMetadata(unittest.TestCase):
 
     def test_error_et_parse(self):
         """
-        Test for an AIP where the FITS XML can"t be parsed correctly by ElementTree.
-        Generates error by making a fake FITS file that is not real XML.
+        Test for an AIP where the FITS XML can't be parsed correctly by ElementTree.
+        The metadata folder has a file with the correct name but not the expected contents.
         """
-        # Makes the AIP instance and runs the function.
-        aip_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aip_dir, "test", None, "coll-1", "et_error", "general", "et_error", "title", 1, True)
+        # Makes the AIP instance, a copy of the aip folder (moved by test) and runs the function.
+        aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
+        aip = AIP(aips_dir, "test", None, "coll-1", "et_error", "general", "et_error", "title", 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'et_error_copy'), os.path.join(aips_dir, 'et_error'))
         combine_metadata(aip, os.getcwd())
 
         # Test for if the folder is moved, both that it is in the error folder
         # and is not in the original location (AIPs directory).
-        result = (os.path.exists(os.path.join("..", "errors", "combining_fits", "et_error")),
-                  os.path.exists("et_error"))
+        result = (os.path.exists(os.path.join("aips-with-errors", "combining_fits", "et_error")),
+                  os.path.exists(os.path.join(aips_dir, "et_error")))
         expected = (True, False)
         self.assertEqual(result, expected, "Problem with ET parse error, move to error folder")
 

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preservation xmlns:dc="http://purl.org/dc/terms/"
+              xmlns:premis="http://www.loc.gov/premis/v3">
+   <dc:title>Single File</dc:title>
+   <dc:rights>http://rightsstatements.org/vocab/InC/1.0/</dc:rights>
+   <aip>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://archive.libs.uga.edu/russell</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>rbrl-025-er-000001</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://archive.libs.uga.edu/russell/rbrl-025-er-000001</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:size>12011</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Office Open XML Document</premis:formatName>
+                  <premis:formatVersion>2007 onwards</premis:formatVersion>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>fmt/189</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+               <premis:formatNote>Format identified by Exiftool version 11.54</premis:formatNote>
+               <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
+            </premis:format>
+            <premis:creatingApplication>
+               <premis:creatingApplicationName>Microsoft Office Word</premis:creatingApplicationName>
+            </premis:creatingApplication>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://archive.libs.uga.edu/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>rbrl-025</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+   </aip>
+</preservation>

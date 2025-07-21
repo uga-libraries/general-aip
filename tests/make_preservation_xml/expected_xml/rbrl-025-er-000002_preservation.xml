@@ -6,11 +6,11 @@
    <aip>
       <premis:object>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://archive.libs.uga.edu/russell</premis:objectIdentifierType>
+            <premis:objectIdentifierType>http://uri/russell</premis:objectIdentifierType>
             <premis:objectIdentifierValue>rbrl-025-er-000002</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://archive.libs.uga.edu/russell/rbrl-025-er-000002</premis:objectIdentifierType>
+            <premis:objectIdentifierType>http://uri/russell/rbrl-025-er-000002</premis:objectIdentifierType>
             <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>representation</premis:objectCategory>
@@ -70,7 +70,7 @@
             <premis:relationshipType>structural</premis:relationshipType>
             <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
             <premis:relatedObjectIdentifier>
-               <premis:relatedObjectIdentifierType>http://archive.libs.uga.edu/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierType>http://uri/russell</premis:relatedObjectIdentifierType>
                <premis:relatedObjectIdentifierValue>rbrl-025</premis:relatedObjectIdentifierValue>
             </premis:relatedObjectIdentifier>
          </premis:relationship>
@@ -79,7 +79,7 @@
    <filelist>
       <premis:object>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://archive.libs.uga.edu/russell/rbrl-025-er-000002</premis:objectIdentifierType>
+            <premis:objectIdentifierType>http://uri/russell/rbrl-025-er-000002</premis:objectIdentifierType>
             <premis:objectIdentifierValue>rbrl-025-er-000002/objects/Test File Spreadsheet.csv</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>file</premis:objectCategory>
@@ -106,14 +106,14 @@
             <premis:relationshipType>structural</premis:relationshipType>
             <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
             <premis:relatedObjectIdentifier>
-               <premis:relatedObjectIdentifierType>http://archive.libs.uga.edu/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierType>http://uri/russell</premis:relatedObjectIdentifierType>
                <premis:relatedObjectIdentifierValue>rbrl-025-er-000002</premis:relatedObjectIdentifierValue>
             </premis:relatedObjectIdentifier>
          </premis:relationship>
       </premis:object>
       <premis:object>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://archive.libs.uga.edu/russell/rbrl-025-er-000002</premis:objectIdentifierType>
+            <premis:objectIdentifierType>http://uri/russell/rbrl-025-er-000002</premis:objectIdentifierType>
             <premis:objectIdentifierValue>rbrl-025-er-000002/objects/Docs/Test File Word.docx</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>file</premis:objectCategory>
@@ -150,14 +150,14 @@
             <premis:relationshipType>structural</premis:relationshipType>
             <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
             <premis:relatedObjectIdentifier>
-               <premis:relatedObjectIdentifierType>http://archive.libs.uga.edu/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierType>http://uri/russell</premis:relatedObjectIdentifierType>
                <premis:relatedObjectIdentifierValue>rbrl-025-er-000002</premis:relatedObjectIdentifierValue>
             </premis:relatedObjectIdentifier>
          </premis:relationship>
       </premis:object>
       <premis:object>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://archive.libs.uga.edu/russell/rbrl-025-er-000002</premis:objectIdentifierType>
+            <premis:objectIdentifierType>http://uri/russell/rbrl-025-er-000002</premis:objectIdentifierType>
             <premis:objectIdentifierValue>rbrl-025-er-000002/objects/Docs/Test File.pdf</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>file</premis:objectCategory>
@@ -197,7 +197,7 @@
             <premis:relationshipType>structural</premis:relationshipType>
             <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
             <premis:relatedObjectIdentifier>
-               <premis:relatedObjectIdentifierType>http://archive.libs.uga.edu/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierType>http://uri/russell</premis:relatedObjectIdentifierType>
                <premis:relatedObjectIdentifierValue>rbrl-025-er-000002</premis:relatedObjectIdentifierValue>
             </premis:relatedObjectIdentifier>
          </premis:relationship>

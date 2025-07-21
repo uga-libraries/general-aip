@@ -6,11 +6,11 @@
    <aip>
       <premis:object>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://archive.libs.uga.edu/magil</premis:objectIdentifierType>
+            <premis:objectIdentifierType>http://uri/magil</premis:objectIdentifierType>
             <premis:objectIdentifierValue>magil-ggp-2472041-2022-05</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://archive.libs.uga.edu/magil/magil-ggp-2472041-2022-05</premis:objectIdentifierType>
+            <premis:objectIdentifierType>http://uri/magil/magil-ggp-2472041-2022-05</premis:objectIdentifierType>
             <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>representation</premis:objectCategory>
@@ -39,7 +39,7 @@
    <filelist>
       <premis:object>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://archive.libs.uga.edu/magil/magil-ggp-2472041-2022-05</premis:objectIdentifierType>
+            <premis:objectIdentifierType>http://uri/magil/magil-ggp-2472041-2022-05</premis:objectIdentifierType>
             <premis:objectIdentifierValue>magil-ggp-2472041-2022-05/objects/coll.csv</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>file</premis:objectCategory>
@@ -66,14 +66,14 @@
             <premis:relationshipType>structural</premis:relationshipType>
             <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
             <premis:relatedObjectIdentifier>
-               <premis:relatedObjectIdentifierType>http://archive.libs.uga.edu/magil</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierType>http://uri/magil</premis:relatedObjectIdentifierType>
                <premis:relatedObjectIdentifierValue>magil-ggp-2472041-2022-05</premis:relatedObjectIdentifierValue>
             </premis:relatedObjectIdentifier>
          </premis:relationship>
       </premis:object>
       <premis:object>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://archive.libs.uga.edu/magil/magil-ggp-2472041-2022-05</premis:objectIdentifierType>
+            <premis:objectIdentifierType>http://uri/magil/magil-ggp-2472041-2022-05</premis:objectIdentifierType>
             <premis:objectIdentifierValue>magil-ggp-2472041-2022-05/objects/warc001_placeholder.warc</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>file</premis:objectCategory>
@@ -95,14 +95,14 @@
             <premis:relationshipType>structural</premis:relationshipType>
             <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
             <premis:relatedObjectIdentifier>
-               <premis:relatedObjectIdentifierType>http://archive.libs.uga.edu/magil</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierType>http://uri/magil</premis:relatedObjectIdentifierType>
                <premis:relatedObjectIdentifierValue>magil-ggp-2472041-2022-05</premis:relatedObjectIdentifierValue>
             </premis:relatedObjectIdentifier>
          </premis:relationship>
       </premis:object>
       <premis:object>
          <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://archive.libs.uga.edu/magil/magil-ggp-2472041-2022-05</premis:objectIdentifierType>
+            <premis:objectIdentifierType>http://uri/magil/magil-ggp-2472041-2022-05</premis:objectIdentifierType>
             <premis:objectIdentifierValue>magil-ggp-2472041-2022-05/objects/warc002_placeholder.warc</premis:objectIdentifierValue>
          </premis:objectIdentifier>
          <premis:objectCategory>file</premis:objectCategory>
@@ -124,7 +124,7 @@
             <premis:relationshipType>structural</premis:relationshipType>
             <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
             <premis:relatedObjectIdentifier>
-               <premis:relatedObjectIdentifierType>http://archive.libs.uga.edu/magil</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierType>http://uri/magil</premis:relatedObjectIdentifierType>
                <premis:relatedObjectIdentifierValue>magil-ggp-2472041-2022-05</premis:relatedObjectIdentifierValue>
             </premis:relatedObjectIdentifier>
          </premis:relationship>

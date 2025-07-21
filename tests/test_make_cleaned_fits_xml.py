@@ -43,31 +43,31 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         expected = read_xml(os.path.join(aip_dir, 'aip1_cleaned-fits_expected.xml'))
         self.assertEqual(result, expected, "Problem with correct")
 
-    # def test_error(self):
-    #     """
-    #     Test for error handling while making the cleaned-fits.xml file.
-    #     """
-    #     # Causes the error by deleting the combined-fits.xml file used as the saxon input.
-    #     os.remove(os.path.join("aip-id", "metadata", "aip-id_combined-fits.xml"))
-    #     make_cleaned_fits_xml(self.aip)
-    #
-    #     # Test for if the folder is moved, both that it is in the error folder
-    #     # and is not in the original location (AIPs directory).
-    #     result = (os.path.exists(os.path.join("..", "errors", "cleaned_fits_saxon_error", "aip-id")),
-    #               os.path.exists("aip-id"))
-    #     expected = (True, False)
-    #     self.assertEqual(result, expected, "Problem with cleaned fits error handling, move to error folder")
-    #
-    #     # Test for the AIP log, PresXML.
-    #     result_log = self.aip.log["PresXML"]
-    #     expected_log = "Issue when creating cleaned-fits.xml. " \
-    #                    "Saxon error: Source file aip-id\\metadata\\aip-id_combined-fits.xml does not exist\r\n"
-    #     self.assertEqual(result_log, expected_log, "Problem with cleaned fits error handling, log: PresXML")
-    #
-    #     # Test for the AIP log, Complete.
-    #     result_log2 = self.aip.log["Complete"]
-    #     expected_log2 = "Error during processing"
-    #     self.assertEqual(result_log2, expected_log2, "Problem with cleaned fits error handling, log: Complete")
+    def test_error(self):
+        """Test for error handling (no combined-fits.xml present) while making the cleaned-fits.xml file."""
+        # Makes the input variables and runs the function being tested.
+        aip_dir = os.path.join(os.getcwd(), 'make_cleaned_fits_xml')
+        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aip_dir, 'dept', None, 'coll-1', 'aip_folder', 'general', 'aip0', 'title', '1', 'zip')
+        shutil.copytree(os.path.join(aip_dir, 'aip0_copy'), os.path.join(aip_dir, 'aip0'))
+        make_cleaned_fits_xml(aip, staging_dir)
+
+        # Test for if the folder is moved (in error folder and not in aips directory).
+        result = (os.path.exists(os.path.join(staging_dir, 'aips-with-errors', 'cleaned_fits_saxon_error', 'aip0')),
+                  os.path.exists(os.path.join(aip_dir, 'aip0')))
+        expected = (True, False)
+        self.assertEqual(result, expected, "Problem with error handling, move to error folder")
+
+        # Test for the AIP log, PresXML.
+        result_log = aip.log["PresXML"]
+        expected_log = (f"Issue when creating cleaned-fits.xml. Saxon error: Source file "
+                        f"{aip_dir}\\aip0\\metadata\\aip0_combined-fits.xml does not exist\r\n")
+        self.assertEqual(result_log, expected_log, "Problem with error handling, log: PresXML")
+
+        # Test for the AIP log, Complete.
+        result_log2 = aip.log["Complete"]
+        expected_log2 = "Error during processing"
+        self.assertEqual(result_log2, expected_log2, "Problem with error handling, log: Complete")
 
 
 if __name__ == "__main__":

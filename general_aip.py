@@ -89,7 +89,8 @@ for aip_row in read_metadata:
     print(f'\n>>>Processing {aip.id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
 
     # Renames the folder to the AIP ID.
-    os.replace(aip.folder_name, aip.id)
+    os.replace(os.path.join(aip.directory, aip.folder_name),
+               os.path.join(aip.directory, aip.id))
 
     # Deletes any temporary files and makes a log of each deleted file.
     a.delete_temp(aip)

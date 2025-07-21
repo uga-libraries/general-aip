@@ -798,10 +798,10 @@ def structure_directory(aip, staging):
             os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # MXF files (renaming required, different from other AV)
         elif aip.department == "bmac" and aip.workflow == "mxf":
-            os.replace(item_path, os.path.join(aip.id, "objects", f"bmac_wsb-video_{item.lower()}"))
+            os.replace(item_path, os.path.join(aip_path, "objects", f"bmac_wsb-video_{item.lower()}"))
         # Moves all other BMA files to the objects folder, with renaming.
         elif aip.department == "bmac":
-            os.replace(item_path, os.path.join(aip.id, "objects", f"bmac_{item}"))
+            os.replace(item_path, os.path.join(aip_path, "objects", f"bmac_{item}"))
         # Moves all remaining files and folders to the objects folder.
         else:
             os.replace(item_path, os.path.join(aip_path, "objects", item))

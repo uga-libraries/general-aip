@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<combined-fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:16 PM">
+  <identification status="SINGLE_RESULT">
+    <identity format="Comma-Separated Values (CSV)" mimetype="text/csv" toolname="FITS" toolversion="1.5.0">
+      <tool toolname="Droid" toolversion="6.4" />
+      <externalIdentifier toolname="Droid" toolversion="6.4" type="puid">x-fmt/18</externalIdentifier>
+    </identity>
+  </identification>
+  <fileinfo>
+    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">C:\path\tests\make_preservation_xml\not_done\rbrl-025-er-000002\objects\Test File Spreadsheet.csv</filepath>
+    <filename toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">Test File Spreadsheet.csv</filename>
+    <size toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">52</size>
+    <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">ccb180a0df1578edbc073dda4e4dd597</md5checksum>
+    <fslastmodified toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">1753127734657</fslastmodified>
+  </fileinfo>
+  <filestatus />
+  <metadata />
+  <statistics fitsExecutionTime="304">
+    <tool toolname="OIS Audio Information" toolversion="0.1" status="did not run" />
+    <tool toolname="ADL Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="VTT Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="Droid" toolversion="6.4" executionTime="5" />
+    <tool toolname="Jhove" toolversion="1.20.1" status="did not run" />
+    <tool toolname="file utility" toolversion="5.03" status="did not run" />
+    <tool toolname="Exiftool" toolversion="11.54" executionTime="302" />
+    <tool toolname="NLNZ Metadata Extractor" toolversion="3.6GA" status="did not run" />
+    <tool toolname="OIS File Information" toolversion="1.0" executionTime="3" />
+    <tool toolname="OIS XML Metadata" toolversion="0.2" status="did not run" />
+    <tool toolname="ffident" toolversion="0.2" executionTime="7" />
+    <tool toolname="Tika" toolversion="1.21" executionTime="23" />
+  </statistics>
+</fits><fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:16 PM">
+  <identification>
+    <identity format="Office Open XML Document" mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document" toolname="FITS" toolversion="1.5.0">
+      <tool toolname="Droid" toolversion="6.4" />
+      <tool toolname="Exiftool" toolversion="11.54" />
+      <tool toolname="Tika" toolversion="1.21" />
+      <version toolname="Droid" toolversion="6.4">2007 onwards</version>
+      <externalIdentifier toolname="Droid" toolversion="6.4" type="puid">fmt/189</externalIdentifier>
+    </identity>
+  </identification>
+  <fileinfo>
+    <lastmodified toolname="Exiftool" toolversion="11.54" status="CONFLICT">2025:07:21 19:53:00Z</lastmodified>
+    <lastmodified toolname="Tika" toolversion="1.21" status="CONFLICT">2025-07-21T19:53:00Z</lastmodified>
+    <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025:07:21 19:53:00Z</created>
+    <creatingApplicationName toolname="Tika" toolversion="1.21" status="SINGLE_RESULT">Microsoft Office Word</creatingApplicationName>
+    <creatingApplicationVersion toolname="Exiftool" toolversion="11.54">16.0000</creatingApplicationVersion>
+    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">C:\path\tests\make_preservation_xml\not_done\rbrl-025-er-000002\objects\Docs\Test File Word.docx</filepath>
+    <filename toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">Test File Word.docx</filename>
+    <size toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">12011</size>
+    <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">b89f3a67c897515f5e0758d9523a8ddf</md5checksum>
+    <fslastmodified toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">1753127603535</fslastmodified>
+  </fileinfo>
+  <filestatus />
+  <metadata>
+    <document>
+      <pageCount toolname="Exiftool" toolversion="11.54">1</pageCount>
+      <wordCount toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">0</wordCount>
+      <characterCount toolname="Exiftool" toolversion="11.54">4</characterCount>
+      <author toolname="Exiftool" toolversion="11.54">Adriane M Hanson</author>
+      <lineCount toolname="Exiftool" toolversion="11.54">1</lineCount>
+      <paragraphCount toolname="Exiftool" toolversion="11.54">1</paragraphCount>
+    </document>
+  </metadata>
+  <statistics fitsExecutionTime="700">
+    <tool toolname="OIS Audio Information" toolversion="0.1" status="did not run" />
+    <tool toolname="ADL Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="VTT Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="Droid" toolversion="6.4" executionTime="104" />
+    <tool toolname="Jhove" toolversion="1.20.1" status="did not run" />
+    <tool toolname="file utility" toolversion="5.03" executionTime="483" />
+    <tool toolname="Exiftool" toolversion="11.54" executionTime="503" />
+    <tool toolname="NLNZ Metadata Extractor" toolversion="3.6GA" status="did not run" />
+    <tool toolname="OIS File Information" toolversion="1.0" executionTime="100" />
+    <tool toolname="OIS XML Metadata" toolversion="0.2" status="did not run" />
+    <tool toolname="ffident" toolversion="0.2" executionTime="425" />
+    <tool toolname="Tika" toolversion="1.21" executionTime="684" />
+  </statistics>
+</fits><fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:16 PM">
+  <identification>
+    <identity format="Portable Document Format" mimetype="application/pdf" toolname="FITS" toolversion="1.5.0">
+      <tool toolname="Droid" toolversion="6.4" />
+      <tool toolname="Jhove" toolversion="1.20.1" />
+      <tool toolname="file utility" toolversion="5.03" />
+      <tool toolname="Exiftool" toolversion="11.54" />
+      <tool toolname="NLNZ Metadata Extractor" toolversion="3.6GA" />
+      <tool toolname="ffident" toolversion="0.2" />
+      <tool toolname="Tika" toolversion="1.21" />
+      <version toolname="Droid" toolversion="6.4">1.6</version>
+      <externalIdentifier toolname="Droid" toolversion="6.4" type="puid">fmt/20</externalIdentifier>
+    </identity>
+  </identification>
+  <fileinfo>
+    <size toolname="Jhove" toolversion="1.20.1">33061</size>
+    <creatingApplicationName toolname="Exiftool" toolversion="11.54">Adobe PDF Library 25.1.97/Acrobat PDFMaker 25 for Word</creatingApplicationName>
+    <lastmodified toolname="Exiftool" toolversion="11.54" status="CONFLICT">2025:07:21 15:53:51-04:00</lastmodified>
+    <lastmodified toolname="Tika" toolversion="1.21" status="CONFLICT">2025-07-21T19:53:51Z</lastmodified>
+    <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025:07:21 15:53:50-04:00</created>
+    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">C:\path\tests\make_preservation_xml\not_done\rbrl-025-er-000002\objects\Docs\Test File.pdf</filepath>
+    <filename toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">Test File.pdf</filename>
+    <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">b31d8b32acb497c725201d1ccbff2163</md5checksum>
+    <fslastmodified toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">1753127631682</fslastmodified>
+  </fileinfo>
+  <filestatus>
+    <well-formed toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</well-formed>
+    <valid toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</valid>
+  </filestatus>
+  <metadata>
+    <document>
+      <author toolname="Exiftool" toolversion="11.54">Adriane M Hanson</author>
+      <language toolname="Jhove" toolversion="1.20.1">EN-US</language>
+      <pageCount toolname="Jhove" toolversion="1.20.1">1</pageCount>
+      <isTagged toolname="Jhove" toolversion="1.20.1" status="CONFLICT">yes</isTagged>
+      <isTagged toolname="NLNZ Metadata Extractor" toolversion="3.6GA" status="CONFLICT">no</isTagged>
+      <hasOutline toolname="Jhove" toolversion="1.20.1">no</hasOutline>
+      <hasAnnotations toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">no</hasAnnotations>
+      <font toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">
+        <fontName>Calibri</fontName>
+      </font>
+      <hasForms toolname="NLNZ Metadata Extractor" toolversion="3.6GA" status="SINGLE_RESULT">no</hasForms>
+    </document>
+  </metadata>
+  <statistics fitsExecutionTime="527">
+    <tool toolname="OIS Audio Information" toolversion="0.1" status="did not run" />
+    <tool toolname="ADL Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="VTT Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="Droid" toolversion="6.4" executionTime="11" />
+    <tool toolname="Jhove" toolversion="1.20.1" executionTime="239" />
+    <tool toolname="file utility" toolversion="5.03" executionTime="221" />
+    <tool toolname="Exiftool" toolversion="11.54" executionTime="512" />
+    <tool toolname="NLNZ Metadata Extractor" toolversion="3.6GA" executionTime="201" />
+    <tool toolname="OIS File Information" toolversion="1.0" executionTime="5" />
+    <tool toolname="OIS XML Metadata" toolversion="0.2" status="did not run" />
+    <tool toolname="ffident" toolversion="0.2" executionTime="10" />
+    <tool toolname="Tika" toolversion="1.21" executionTime="428" />
+  </statistics>
+</fits></combined-fits>

@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<combined-fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:03 PM">
+  <identification status="SINGLE_RESULT">
+    <identity format="Comma-Separated Values (CSV)" mimetype="text/csv" toolname="FITS" toolversion="1.5.0">
+      <tool toolname="Droid" toolversion="6.4" />
+      <externalIdentifier toolname="Droid" toolversion="6.4" type="puid">x-fmt/18</externalIdentifier>
+    </identity>
+  </identification>
+  <fileinfo>
+    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">C:\path\tests\make_preservation_xml\magil-ggp-2472041-2022-05\objects\coll.csv</filepath>
+    <filename toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">coll.csv</filename>
+    <size toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">104</size>
+    <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">829bdf76c4575b65bc8eb641c242d876</md5checksum>
+    <fslastmodified toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">1753127484695</fslastmodified>
+  </fileinfo>
+  <filestatus />
+  <metadata />
+  <statistics fitsExecutionTime="445">
+    <tool toolname="OIS Audio Information" toolversion="0.1" status="did not run" />
+    <tool toolname="ADL Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="VTT Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="Droid" toolversion="6.4" executionTime="88" />
+    <tool toolname="Jhove" toolversion="1.20.1" status="did not run" />
+    <tool toolname="file utility" toolversion="5.03" status="did not run" />
+    <tool toolname="Exiftool" toolversion="11.54" executionTime="440" />
+    <tool toolname="NLNZ Metadata Extractor" toolversion="3.6GA" status="did not run" />
+    <tool toolname="OIS File Information" toolversion="1.0" executionTime="87" />
+    <tool toolname="OIS XML Metadata" toolversion="0.2" status="did not run" />
+    <tool toolname="ffident" toolversion="0.2" executionTime="388" />
+    <tool toolname="Tika" toolversion="1.21" executionTime="400" />
+  </statistics>
+</fits><fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:03 PM">
+  <identification status="PARTIAL">
+    <identity format="Unknown Binary" mimetype="text/plain; charset=ISO-8859-1" toolname="FITS" toolversion="1.5.0">
+      <tool toolname="Tika" toolversion="1.21" />
+    </identity>
+  </identification>
+  <fileinfo>
+    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">C:\path\tests\make_preservation_xml\magil-ggp-2472041-2022-05\objects\warc001_placeholder.warc</filepath>
+    <filename toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">warc001_placeholder.warc</filename>
+    <size toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">16</size>
+    <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">7df3ceba8483a50580a28d84c42b51c6</md5checksum>
+    <fslastmodified toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">1753127428123</fslastmodified>
+  </fileinfo>
+  <filestatus />
+  <metadata />
+  <statistics fitsExecutionTime="314">
+    <tool toolname="OIS Audio Information" toolversion="0.1" status="did not run" />
+    <tool toolname="ADL Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="VTT Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="Droid" toolversion="6.4" executionTime="2" />
+    <tool toolname="Jhove" toolversion="1.20.1" status="did not run" />
+    <tool toolname="file utility" toolversion="5.03" status="did not run" />
+    <tool toolname="Exiftool" toolversion="11.54" executionTime="313" />
+    <tool toolname="NLNZ Metadata Extractor" toolversion="3.6GA" status="did not run" />
+    <tool toolname="OIS File Information" toolversion="1.0" executionTime="1" />
+    <tool toolname="OIS XML Metadata" toolversion="0.2" status="did not run" />
+    <tool toolname="ffident" toolversion="0.2" executionTime="11" />
+    <tool toolname="Tika" toolversion="1.21" executionTime="6" />
+  </statistics>
+</fits><fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:03 PM">
+  <identification status="PARTIAL">
+    <identity format="Unknown Binary" mimetype="text/plain; charset=ISO-8859-1" toolname="FITS" toolversion="1.5.0">
+      <tool toolname="Tika" toolversion="1.21" />
+    </identity>
+  </identification>
+  <fileinfo>
+    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">C:\path\tests\make_preservation_xml\magil-ggp-2472041-2022-05\objects\warc002_placeholder.warc</filepath>
+    <filename toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">warc002_placeholder.warc</filename>
+    <size toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">16</size>
+    <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">7df3ceba8483a50580a28d84c42b51c6</md5checksum>
+    <fslastmodified toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">1753127428123</fslastmodified>
+  </fileinfo>
+  <filestatus />
+  <metadata />
+  <statistics fitsExecutionTime="303">
+    <tool toolname="OIS Audio Information" toolversion="0.1" status="did not run" />
+    <tool toolname="ADL Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="VTT Tool" toolversion="0.1" status="did not run" />
+    <tool toolname="Droid" toolversion="6.4" executionTime="3" />
+    <tool toolname="Jhove" toolversion="1.20.1" status="did not run" />
+    <tool toolname="file utility" toolversion="5.03" status="did not run" />
+    <tool toolname="Exiftool" toolversion="11.54" executionTime="301" />
+    <tool toolname="NLNZ Metadata Extractor" toolversion="3.6GA" status="did not run" />
+    <tool toolname="OIS File Information" toolversion="1.0" executionTime="2" />
+    <tool toolname="OIS XML Metadata" toolversion="0.2" status="did not run" />
+    <tool toolname="ffident" toolversion="0.2" executionTime="7" />
+    <tool toolname="Tika" toolversion="1.21" executionTime="4" />
+  </statistics>
+</fits></combined-fits>

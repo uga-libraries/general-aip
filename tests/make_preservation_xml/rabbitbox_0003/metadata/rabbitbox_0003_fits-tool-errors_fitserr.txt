@@ -1,0 +1,18 @@
+java.io.IOException: Negative seek offset
+	at java.io.RandomAccessFile.seek(Unknown Source)
+	at org.farng.mp3.id3.ID3v1.seek(Unknown Source)
+	at org.farng.mp3.id3.ID3v1.read(Unknown Source)
+	at org.farng.mp3.id3.ID3v1.<init>(Unknown Source)
+	at org.farng.mp3.MP3File.<init>(Unknown Source)
+	at org.farng.mp3.MP3File.<init>(Unknown Source)
+	at nz.govt.natlib.adapter.jID3LibMp3.ID3TagLibMP3Adapter.adapt(ID3TagLibMP3Adapter.java:89)
+	at edu.harvard.hul.ois.fits.tools.nlnz.MetadataExtractor.extractInfo(MetadataExtractor.java:105)
+	at edu.harvard.hul.ois.fits.tools.ToolBase.run(ToolBase.java:284)
+	at java.lang.Thread.run(Unknown Source)
+2025-07-21 16:16:46 - ERROR - MetadataExtractor:114 - NLNZ Metadata Extractor error while harvesting file: java.lang.RuntimeException
+2025-07-21 16:16:47 - ERROR - Fits:677 - Tool error processing file: bmac_FirstLast.mp3
+NLNZ Metadata Extractor error while harvesting file bmac_FirstLast.mp3 (java.io.IOException: Negative seek offset)
+edu.harvard.hul.ois.fits.exceptions.FitsToolException: NLNZ Metadata Extractor error while harvesting file bmac_FirstLast.mp3 (java.io.IOException: Negative seek offset)
+	at edu.harvard.hul.ois.fits.tools.nlnz.MetadataExtractor.extractInfo(MetadataExtractor.java:115)
+	at edu.harvard.hul.ois.fits.tools.ToolBase.run(ToolBase.java:284)
+	at java.lang.Thread.run(Unknown Source)

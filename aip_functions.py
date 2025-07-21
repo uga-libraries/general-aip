@@ -440,7 +440,7 @@ def make_cleaned_fits_xml(aip, staging):
     It is deleted after the preservation.xml is made.
 
     Parameters:
-        aip : instance of the AIP class, used for id and log
+        aip : instance of the AIP class, used for directory, id and log
         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
@@ -449,7 +449,7 @@ def make_cleaned_fits_xml(aip, staging):
     # Uses saxon and a stylesheet to make the cleaned-fits.xml from the combined-fits.xml.
     input_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_combined-fits.xml")
     stylesheet = os.path.join(c.STYLESHEETS, "fits-cleanup.xsl")
-    output_file = os.path.join(aip.id, "metadata", f"{aip.id}_cleaned-fits.xml")
+    output_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_cleaned-fits.xml")
     saxon_output = subprocess.run(f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{input_file}" '
                                   f'-xsl:"{stylesheet}" -o:"{output_file}"',
                                   stderr=subprocess.PIPE, shell=True)

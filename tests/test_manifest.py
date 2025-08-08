@@ -47,6 +47,16 @@ class TestManifest(unittest.TestCase):
         shutil.rmtree(os.path.join("..", "fits-xml"))
         shutil.rmtree(os.path.join("..", "preservation-xml"))
 
+    # def test_av(self):
+    #     """
+    #     Temporary test to replicate an error with moving to aips-already-on-ingest-server.
+    #     To use in Windows, need to adjust rsync result and test for it.
+    #     """
+    #     aip = AIP(os.getcwd(), "bmac", "mov", "coll", "folder", "av", "bmac_test_1", "title", 1, False)
+    #     aip.size = 4
+    #     manifest(aip, os.path.join(os.getcwd(), 'aip_staging_location'), os.getcwd())
+    #     self.assertEqual(True, True)
+
     def test_one_tar(self):
         """
         Test for adding a single tar file to the manifest.

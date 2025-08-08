@@ -575,7 +575,8 @@ def manifest(aip, staging, ingest):
         # If copied correctly, move to a different folder on AIPs staging. Otherwise, move to an error folder.
         # TODO: add to log
         if "stderr=b''" in str(rsync_result):
-            shutil.move(aip, f'{staging}/aips-already-on-ingest-server/{aip_path}')
+            aip_zip_name = os.path.basename(aip_path)
+            shutil.move(aip_path, f'{staging}/aips-already-on-ingest-server/{aip_zip_name}')
         else:
             move_error('copy_to_ingest_failed', aip_path, staging)
 

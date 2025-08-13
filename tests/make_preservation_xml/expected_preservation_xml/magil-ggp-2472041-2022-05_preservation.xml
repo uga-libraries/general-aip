@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <preservation xmlns:dc="http://purl.org/dc/terms/"
               xmlns:premis="http://www.loc.gov/premis/v3">
-   <dc:title>Magil Web</dc:title>
+   <dc:title>Web</dc:title>
    <dc:rights>http://rightsstatements.org/vocab/InC/1.0/</dc:rights>
    <aip>
       <premis:object>

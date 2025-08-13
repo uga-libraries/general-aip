@@ -76,9 +76,8 @@ class TestMakePreservationXML(unittest.TestCase):
         aip = AIP(aips_dir, 'test', None, 'test', 'folder', 'general', 'test-er-01', 'title', 1, True)
         aip.log = {'Started': '2025-08-13 2:15PM', 'AIP': 'test-er-01', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
-                   'PresXML': 'Issue when creating preservation.xml. Saxon error:',
-                   'PresValid': 'n/a', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
-                   'Complete': 'Error during processing'}
+                   'PresXML': 'n/a', 'PresValid': 'n/a', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
+                   'Complete': 'n/a'}
         log('header', aips_dir)
         shutil.copytree(os.path.join(aips_dir, 'test-er-01_copy'), os.path.join(aips_dir, 'test-er-01'))
         make_preservation_xml(aip, staging_dir)

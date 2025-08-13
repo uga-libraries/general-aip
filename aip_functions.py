@@ -622,16 +622,16 @@ def organize_xml(aip, staging):
     """
 
     # Copies the preservation.xml file to the preservation-xml folder for staff reference.
-    shutil.copy2(os.path.join(aip.id, "metadata", f"{aip.id}_preservation.xml"),
+    shutil.copy2(os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_preservation.xml"),
                  os.path.join(staging, "preservation-xmls"))
 
     # Moves the combined-fits.xml file to the fits-xml folder for staff reference.
     # Only the FITS for individual files is kept in the metadata folder.
-    os.replace(os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml"),
+    os.replace(os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_combined-fits.xml"),
                os.path.join(staging, "fits-xmls", f"{aip.id}_combined-fits.xml"))
 
     # Deletes the cleaned-fits.xml file because it is a temporary file.
-    os.remove(os.path.join(aip.id, "metadata", f"{aip.id}_cleaned-fits.xml"))
+    os.remove(os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_cleaned-fits.xml"))
 
 
 def package(aip, staging):

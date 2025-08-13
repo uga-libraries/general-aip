@@ -861,7 +861,7 @@ def validate_preservation_xml(aip, staging):
         aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
         aip.log["Complete"] = "Error during processing"
         log(aip.log, aip.directory)
-        move_error("preservationxml_not_found", aip.id, staging)
+        move_error("preservationxml_not_found", os.path.join(aip.directory, aip.id), staging)
         return
     else:
         aip.log["PresXML"] = "Successfully created preservation.xml"

@@ -874,7 +874,8 @@ def validate_preservation_xml(aip, staging):
         aip.log["Complete"] = "Error during processing"
         log(aip.log, aip.directory)
         move_error("preservationxml_not_valid", os.path.join(aip.directory, aip.id), staging)
-        log_path = os.path.join("..", "errors", "preservationxml_not_valid", f"{aip.id}_presxml_validation.txt")
+        log_path = os.path.join(staging, "aips-with-errors", "preservationxml_not_valid",
+                                f"{aip.id}_presxml_validation.txt")
         with open(log_path, "w") as validation_log:
             for line in validation_result.split("\r"):
                 validation_log.write(line + "\n")

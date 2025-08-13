@@ -7,10 +7,11 @@ uses the ID to calculate additional values."""
 
 import fileinput
 import os
+import pandas as pd
 import shutil
 import unittest
 from configuration import NAMESPACE
-from aip_functions import AIP, make_preservation_xml
+from aip_functions import AIP, log, make_preservation_xml
 from test_combine_metadata import read_xml
 
 
@@ -64,6 +65,40 @@ class TestMakePreservationXML(unittest.TestCase):
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
         self.assertEqual(result, expected, "Problem with test for bmac")
+
+    def test_error(self):
+        """Test for an AIP without the cleaned FITS XML, which causes a Saxon error"""
+        # Makes the test input and runs the function.
+        # A copy of the AIP is made since this test should move it to an error folder.
+        # The AIP log is updated as if previous steps have run correctly.
+        aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
+        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'test', None, 'test', 'folder', 'general', 'test-er-01', 'title', 1, True)
+        aip.log = {'Started': '2025-08-13 2:15PM', 'AIP': 'test-er-01', 'Deletions': 'No files deleted',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'PresXML': 'Issue when creating preservation.xml. Saxon error:',
+                   'PresValid': 'n/a', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
+                   'Complete': 'Error during processing'}
+        log('header', aips_dir)
+        shutil.copytree(os.path.join(aips_dir, 'test-er-01_copy'), os.path.join(aips_dir, 'test-er-01'))
+        make_preservation_xml(aip, staging_dir)
+
+        # Verifies the log is created and has the expected values.
+        log_df = pd.read_csv(os.path.join(aips_dir, 'aip_log.csv'))
+        log_df = log_df.fillna('BLANK')
+        result = [log_df.columns.tolist()] + log_df.values.tolist()
+        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                    ['2025-08-13 2:15PM', 'test-er-01', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
+                     f'Issue when creating preservation.xml. Saxon error: Source file '
+                     f'{aips_dir}\\test-er-01\\metadata\\test-er-01_cleaned-fits.xml does not exist\r\n',
+                     'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
+        self.assertEqual(result, expected, "Problem with test for error, log")
+
+        # Verifies the AIP folder was moved to the error folder.
+        result = os.path.exists(os.path.join(staging_dir, 'aips-with-errors', 'pres_xml_saxon_error', 'test-er-01'))
+        self.assertEqual(result, True, "Problem with test for error, error folder")
 
     def test_format_dup(self):
         """Test for an AIP with multiple files of the same format"""

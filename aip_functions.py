@@ -654,26 +654,32 @@ def package(aip, staging):
     # Gets the operating system, since the tar and zip commands are different for Windows and Mac/Linux.
     operating_system = platform.system()
 
-    # Makes a variable for the AIP folder name, which is reused a lot.
+    # Makes variables for the AIP folder name and AIP full path.
     aip_bag = f"{aip.id}_bag"
+    bag_path = os.path.join(aip.directory, aip_bag)
 
     # Gets the total size of the bag:
     # sum of the bag payload (data folder) from bag-info.txt and the size of the bag metadata files.
     # It saves time to use the bag payload instead of recalculating the size of a large data folder.
+    try:
+        bag_info = open(os.path.join(bag_path, "bag-info.txt"), "r")
+    except FileNotFoundError:
+        aip.log["Package"] = f"Could not tar. Bag not in expected location: {bag_path}"
+        aip.log["Complete"] = "Error during processing"
+        log(aip.log, aip.directory)
+        return
     bag_size = 0
-    bag_info = open(os.path.join(aip_bag, "bag-info.txt"), "r")
     for line in bag_info:
         if line.startswith("Payload-Oxum"):
             payload = line.split()[1]
             bag_size += float(payload)
-    for file in os.listdir(aip_bag):
+    for file in os.listdir(bag_path):
         if file.endswith(".txt"):
-            bag_size += os.path.getsize(os.path.join(aip_bag, file))
+            bag_size += os.path.getsize(os.path.join(bag_path, file))
     bag_info.close()
     bag_size = int(bag_size)
 
     # Tars the file, using the command appropriate for the operating system.
-    bag_path = os.path.join(aip.directory, aip_bag)
     tar_path = os.path.join(staging, 'aips-ready-to-ingest', f"{aip_bag}.tar")
     if operating_system == "Windows":
         # Does not print the progress to the terminal (stdout), which is a lot of text. [subprocess.DEVNULL]

@@ -541,7 +541,7 @@ def manifest(aip, staging, ingest):
     # Checks if the tar/zip is present in the aips-to-ingest directory.
     # If it isn't, due to errors from package(), logs the event and does not complete the rest of the function.
     if not os.path.exists(aip_path):
-        aip.log["Manifest"] = "Tar/zip file not in aips-ready-for-ingest folder"
+        aip.log["Manifest"] = f"Tar/zip file '{aip_path}' not in aips-ready-for-ingest folder"
         aip.log["Complete"] = "Error during processing"
         log(aip.log, aip.directory)
         return

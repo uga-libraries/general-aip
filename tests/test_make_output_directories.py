@@ -2,80 +2,65 @@
 It does not have any inputs and returns nothing."""
 
 import os
+import shutil
 import unittest
 from aip_functions import make_output_directories
+
+
+def directory_print(path):
+    """Makes a list of folders within the directory to compare to expected results"""
+    folder_list = []
+    for folder in os.listdir(path):
+        if os.path.isdir(os.path.join(path, folder)):
+            folder_list.append(folder)
+    return folder_list
 
 
 class TestMakeOutputDirectories(unittest.TestCase):
 
     def tearDown(self):
-        """
-        Deletes the three script output folders, if they exist.
-        """
-        output_folders = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
-        for output_folder in output_folders:
-            folder_path = os.path.join(os.getcwd(), 'aip_staging_location', output_folder)
-            if os.path.exists(folder_path):
-                os.rmdir(folder_path)
+        """Deletes the staging folder (copy of data made for each test)"""
+        staging_folders = ['staging_general_all', 'staging_general_none', 'staging_general_partial']
+        for staging_folder in staging_folders:
+            staging_path = os.path.join(os.getcwd(), 'make_output_directories', staging_folder)
+            if os.path.exists(staging_path):
+                shutil.rmtree(staging_path)
 
-    def test_aips_present(self):
-        """
-        Test for running the function when the aips-ready-to-ingest folder already exists.
-        """
-        # Makes the aips-ready-to-ingest folder.
-        aip_staging = os.path.join(os.getcwd(), "aip_staging_location")
-        os.mkdir(os.path.join(aip_staging, "aips-ready-to-ingest"))
+    def test_general_all(self):
+        """Test for general mode when all three folders already exist"""
+        # Makes a copy of the test input and runs the function.
+        staging = os.path.join(os.getcwd(), 'make_output_directories', 'staging_general_all')
+        shutil.copytree(f'{staging}_copy', staging)
+        make_output_directories(staging, 'general')
 
-        # Saves a list of what is in the aip staging directory before and after running the function
-        # to calculate which directories were added by the function.
-        staging_before = os.listdir(aip_staging)
-        make_output_directories(aip_staging, "general")
-        staging_after = os.listdir(aip_staging)
+        # Verifies that staging has the expected folders.
+        result = directory_print(staging)
+        expected = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
+        self.assertEqual(result, expected, "Problem with general_all")
 
-        # Calculates the difference between the two lists and sorts so the values are predictable.
-        result = list(set(staging_after) - set(staging_before))
-        result.sort()
-        expected = ["fits-xmls", "preservation-xmls"]
-        self.assertEqual(result, expected, "Problem with make_output_directories, aips-ready-to-ingest present")
+    def test_general_none(self):
+        """Test for general mode when none of the three folders already exist"""
+        # Makes a copy of the test input and runs the function.
+        staging = os.path.join(os.getcwd(), 'make_output_directories', 'staging_general_none')
+        shutil.copytree(f'{staging}_copy', staging)
+        make_output_directories(staging, 'general')
 
-    def test_all_present(self):
-        """
-        Test for running the function when all three folders already exist.
-        """
-        # Makes the three input folders.
-        aip_staging = os.path.join(os.getcwd(), "aip_staging_location")
-        os.mkdir(os.path.join(aip_staging, "aips-ready-to-ingest"))
-        os.mkdir(os.path.join(aip_staging, "fits-xmls"))
-        os.mkdir(os.path.join(aip_staging, "preservation-xmls"))
+        # Verifies that staging has the expected folders.
+        result = directory_print(staging)
+        expected = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
+        self.assertEqual(result, expected, "Problem with general_none")
 
-        # Saves a list of what is in the aip staging directory before and after running the function
-        # to calculate which directories were added by the function.
-        staging_before = os.listdir(aip_staging)
-        make_output_directories(aip_staging, "general")
-        staging_after = os.listdir(aip_staging)
+    def test_general_partial(self):
+        """Test for general mode when one of the three folders (aips-ready-to-ingest) already exists."""
+        # Makes a copy of the test input and runs the function.
+        staging = os.path.join(os.getcwd(), 'make_output_directories', 'staging_general_partial')
+        shutil.copytree(f'{staging}_copy', staging)
+        make_output_directories(staging, 'general')
 
-        # Calculates the difference between the two lists and sorts so the values are predictable.
-        result = list(set(staging_after) - set(staging_before))
-        result.sort()
-        expected = []
-        self.assertEqual(result, expected, "Problem with make_output_directories, all present")
-
-    def test_none_present(self):
-        """
-        Test for running the function when none of the three folders already exist.
-        """
-        # Saves a list of what is in the aip staging directory before and after running the function
-        # to calculate which directories were added by the function.
-        aip_staging = os.path.join(os.getcwd(), "aip_staging_location")
-        staging_before = os.listdir(aip_staging)
-        make_output_directories(aip_staging, "general")
-        staging_after = os.listdir(aip_staging)
-
-        # Calculates the difference between the two lists and sorts so the values are predictable.
-        result = list(set(staging_after) - set(staging_before))
-        result.sort()
-        expected = ["aips-ready-to-ingest", "fits-xmls", "preservation-xmls"]
-        self.assertEqual(result, expected, "Problem with make_output_directories, none present")
+        # Verifies that staging has the expected folders.
+        result = directory_print(staging)
+        expected = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
+        self.assertEqual(result, expected, "Problem with general_partial")
 
 
 if __name__ == "__main__":

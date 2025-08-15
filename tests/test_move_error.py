@@ -45,8 +45,8 @@ class TestMoveError(unittest.TestCase):
         result = errors_directory_print()
         expected = [os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'error_two'),
                     os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'error_type'),
-                    os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'error_type', 'aip1'),
-                    os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'error_two', 'aip2')]
+                    os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'error_two', 'aip2'),
+                    os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'error_type', 'aip1')]
         self.assertEqual(result, expected, "Problem with previous error, different type")
 
     def test_previous_error_same_type(self):

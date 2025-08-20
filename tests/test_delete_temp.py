@@ -104,8 +104,9 @@ class TestDeleteTemp(unittest.TestCase):
         # Test for the deletion log.
         result_del_log = deletion_log_rows(deletion_log)
         expected_del_log = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
-                            [os.path.join(aips_dir, 'aip-id_ds-store', '.DS_Store'), '.DS_Store', 0, today],
-                            [os.path.join(aips_dir, 'aip-id_ds-store', 'Test Dir', '.DS_Store'), '.DS_Store', 0, today]]
+                            [os.path.join(aips_dir, 'aip-id_ds-store', '.DS_Store'), '.DS_Store', 0, '2025-8-14'],
+                            [os.path.join(aips_dir, 'aip-id_ds-store', 'Test Dir', '.DS_Store'), '.DS_Store', 0,
+                             '2025-8-14']]
         self.assertEqual(result_del_log, expected_del_log, "Problem with test for .DS_Store, deletion log")
 
     def test_ds_store_2(self):
@@ -139,9 +140,9 @@ class TestDeleteTemp(unittest.TestCase):
         # Test for the deletion log.
         result_del_log = deletion_log_rows(deletion_log)
         expected_del_log = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
-                            [os.path.join(aips_dir, 'aip-id_ds-store-2', '._.DS_Store'), '._.DS_Store', 0, today],
+                            [os.path.join(aips_dir, 'aip-id_ds-store-2', '._.DS_Store'), '._.DS_Store', 0, '2025-8-14'],
                             [os.path.join(aips_dir, 'aip-id_ds-store-2', 'Test Dir', '._.DS_Store'),
-                             '._.DS_Store', 0, today]]
+                             '._.DS_Store', 0, '2025-8-14']]
         self.assertEqual(result_del_log, expected_del_log, "Problem with test for .DS_Store, deletion log")
 
     def test_thumbs_db(self):
@@ -175,9 +176,9 @@ class TestDeleteTemp(unittest.TestCase):
         # Test for the deletion log.
         result_del_log = deletion_log_rows(deletion_log)
         expected_del_log = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
-                            [os.path.join(aips_dir, 'aip-id_thumbs', 'Thumbs.db'), 'Thumbs.db', 25, today],
+                            [os.path.join(aips_dir, 'aip-id_thumbs', 'Thumbs.db'), 'Thumbs.db', 25, '2025-8-14'],
                             [os.path.join(aips_dir, 'aip-id_thumbs', 'Test Dir', 'Thumbs.db'),
-                             'Thumbs.db', 2590, today]]
+                             'Thumbs.db', 2590, '2025-8-14']]
         self.assertEqual(result_del_log, expected_del_log, "Problem with test for Thumbs.db, deletion log")
 
     def test_dot_prefix(self):
@@ -211,8 +212,9 @@ class TestDeleteTemp(unittest.TestCase):
         # Test for the deletion log.
         result_del_log = deletion_log_rows(deletion_log)
         expected_del_log = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
-                            [os.path.join(aips_dir, 'aip-id_dot', '.temp.txt'), '.temp.txt', 0, today],
-                            [os.path.join(aips_dir, 'aip-id_dot', 'Test Dir', '.temp.txt'), '.temp.txt', 0, today]]
+                            [os.path.join(aips_dir, 'aip-id_dot', '.temp.txt'), '.temp.txt', 0, '2025-8-14'],
+                            [os.path.join(aips_dir, 'aip-id_dot', 'Test Dir', '.temp.txt'), '.temp.txt', 0,
+                             '2025-8-14']]
         self.assertEqual(result_del_log, expected_del_log, "Problem with test for dot prefix, deletion log")
 
     def test_tmp_extension(self):
@@ -246,9 +248,9 @@ class TestDeleteTemp(unittest.TestCase):
         # Test for the deletion log.
         result_del_log = deletion_log_rows(deletion_log)
         expected_del_log = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
-                            [os.path.join(aip_path, 'Text.tmp'), 'Text.tmp', 9, today],
+                            [os.path.join(aip_path, 'Text.tmp'), 'Text.tmp', 9, '2025-8-14'],
                             [os.path.join(aip_path, 'Test Dir', 'Test Dir Text.tmp'),
-                             'Test Dir Text.tmp', 1615, today]]
+                             'Test Dir Text.tmp', 1615, '2025-8-14']]
         self.assertEqual(result_del_log, expected_del_log, "Problem with test for .tmp extension, deletion log")
 
 

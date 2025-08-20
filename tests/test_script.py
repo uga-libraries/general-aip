@@ -105,7 +105,16 @@ class TestFullScript(unittest.TestCase):
         # Runs the script.
         script_path = os.path.join('..', 'general_aip.py')
         aip_dir = os.path.join(os.getcwd(), 'script', 'general', 'aip_directory')
-        subprocess.run(f'python "{script_path}" "{aip_dir}" general zip')
+        printed = subprocess.run(f'python "{script_path}" "{aip_dir}" general zip',
+                                 shell=True, capture_output=True, text=True)
+
+        # Test for the script print statements.
+        result = printed.stdout
+        expected = ('\n>>>Processing test-001-er-000001 (1 of 3).\n'
+                    '\n>>>Processing test-001-er-000002 (2 of 3).\n'
+                    '\n>>>Processing test-001-er-000003 (3 of 3).\n'
+                    '\nScript is finished running.\n')
+        self.assertEqual(result, expected, "Problem with test for general, print statements")
 
         # Test for the contents of the AIP directory.
         result = path_list(aip_dir)
@@ -200,7 +209,7 @@ class TestFullScript(unittest.TestCase):
                          'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
                          f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
                          'Successfully added AIP to manifest', 'Successfully completed processing']]
-        self.assertEqual(result_log, expected_log, "Problem with test for born-digital, log")
+        self.assertEqual(result_log, expected_log, "Problem with test for general, aip log")
 
     def test_web(self):
         """

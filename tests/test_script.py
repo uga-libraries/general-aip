@@ -1,6 +1,8 @@
 """
 Testing for the entire script, with input that represents the different workflows that use the script.
 It does not currently include tests for error handling.
+
+BEFORE RUNNING THIS TEST: in configuration.py, make aip_staging the path to aip_staging_location in the GitHub repo
 """
 
 import csv
@@ -13,10 +15,8 @@ import unittest
 
 
 def path_list(dir_name):
-    """
-    Makes and returns a list of the paths of every file and folder in a directory.
-    Paths are relative, starting with the provided directory.
-    """
+    """ Makes and returns a list of the paths of every file and folder in a directory.
+    Paths are relative, starting with the provided directory."""
     paths_list = []
 
     # Navigates all levels in the AIPs directory.
@@ -30,13 +30,15 @@ def path_list(dir_name):
         # Makes changes to create consistent data for comparison to the expected.
         for file in files:
 
-            # Edits the file size that is part of zipped AIP filenames, since that varies each time.
-            if root.endswith("aips-to-ingest") and file.endswith(".tar.bz2"):
+            # Edits the file size that is part of zipped AIP filenames, since that varies each time,
+            # even though the files are the same.
+            if root.endswith("aips-ready-to-ingest") and file.endswith(".tar.bz2"):
                 file = re.sub(r"_bag.\d+.", "_bag.1000.", file)
 
-            # Skips the FITS tool error log because FITS does not always have a tool error on the test files.
+            # Skips the FITS tool error log because FITS does not always have a tool error on the test files
+            # and the placeholder files in aip_staging_location that let the folders sync to GitHub.
             # Adds all other files to the list.
-            if file.endswith("_fits-tool-errors_fitserr.txt"):
+            if file.endswith("_fits-tool-errors_fitserr.txt") or file == 'Explanation.txt' or file == 'placeholder.txt':
                 continue
             paths_list.append(os.path.join(root, file))
 
@@ -44,9 +46,7 @@ def path_list(dir_name):
 
 
 def log_list(log_path):
-    """
-    Reads the aip_log.csv file and returns a list of the rows in the log.
-    """
+    """Reads the aip_log.csv file and returns a list of the rows in the log."""
     # Reads the log into a list, where each list item is a list with the row data.
     with open(log_path, newline="") as log:
         log_read = csv.reader(log)
@@ -80,116 +80,127 @@ def log_list(log_path):
 class TestFullScript(unittest.TestCase):
 
     def tearDown(self):
-        """
-        Deletes the copy of files used for testing, along with the script outputs for the test.
-        """
-        if os.path.exists("born_digital_current"):
-            shutil.rmtree("born_digital_current")
-        elif os.path.exists("web_current"):
-            shutil.rmtree("web_current")
+        """Deletes the copy of files used for testing and the script outputs for the test"""
+        # Test files
+        modes = ['av', 'general', 'web']
+        for mode in modes:
+            mode_path = os.path.join(os.getcwd(), 'script', mode)
+            if os.path.exists(mode_path):
+                shutil.rmtree(mode_path)
 
-    def test_born_digital(self):
-        """
-        Runs the entire script on born-digital test files.
-        """
+        # Deletes everything but placeholder.txt from the output folders in staging.
+        output_dirs = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
+        for output_dir in output_dirs:
+            output_path = os.path.join(os.getcwd(), 'aip_staging_location', output_dir)
+            for file in os.listdir(output_path):
+                if not file == 'placeholder.txt':
+                    os.remove(os.path.join(output_path, file))
+
+    def test_general(self):
+        """Test for the general mode (born-digital archives)"""
         # Make a copy of the test files stored in the script repo, since the test will alter the files.
-        shutil.copytree("born_digital_files", "born_digital_current")
+        shutil.copytree(os.path.join(os.getcwd(), 'script', 'general_mode'), 
+                        os.path.join(os.getcwd(), 'script', 'general'))
 
         # Runs the script.
-        script_path = os.path.join("..", "general_aip.py")
-        aip_dir = os.path.join(os.getcwd(), "born_digital_current", "aip_directory")
-        subprocess.run(f'python "{script_path}" "{aip_dir}"', shell=True)
+        script_path = os.path.join('..', 'general_aip.py')
+        aip_dir = os.path.join(os.getcwd(), 'script', 'general', 'aip_directory')
+        subprocess.run(f'python "{script_path}" "{aip_dir}" general zip')
 
-        # Test for the contents of the test_current folder.
-        actual = path_list("born_digital_current")
-        bag_one = os.path.join("born_digital_current", "aip_directory", "test-001-er-000001_bag")
-        bag_two = os.path.join("born_digital_current", "aip_directory", "test-001-er-000002_bag")
-        bag_three = os.path.join("born_digital_current", "aip_directory", "test-001-er-000003_bag")
-        expected = [os.path.join("born_digital_current", "aips-to-ingest"),
-                    os.path.join("born_digital_current", "aip_directory"),
-                    os.path.join("born_digital_current", "fits-xml"),
-                    os.path.join("born_digital_current", "preservation-xml"),
-                    os.path.join("born_digital_current", "aip_log.csv"),
-                    os.path.join("born_digital_current", "aips-to-ingest", "manifest_test.txt"),
-                    os.path.join("born_digital_current", "aips-to-ingest", "test-001-er-000001_bag.1000.tar.bz2"),
-                    os.path.join("born_digital_current", "aips-to-ingest", "test-001-er-000002_bag.1000.tar.bz2"),
-                    os.path.join("born_digital_current", "aips-to-ingest", "test-001-er-000003_bag.1000.tar.bz2"),
-                    bag_one,
+        # Test for the contents of the AIP directory.
+        result = path_list(aip_dir)
+        bag_one = os.path.join(aip_dir, 'test-001-er-000001_bag')
+        bag_two = os.path.join(aip_dir, 'test-001-er-000002_bag')
+        bag_three = os.path.join(aip_dir, 'test-001-er-000003_bag')
+        expected = [bag_one,
                     bag_two,
                     bag_three,
-                    os.path.join("born_digital_current", "aip_directory", "metadata.csv"),
-                    os.path.join(bag_one, "data"),
-                    os.path.join(bag_one, "bag-info.txt"),
-                    os.path.join(bag_one, "bagit.txt"),
-                    os.path.join(bag_one, "manifest-md5.txt"),
-                    os.path.join(bag_one, "manifest-sha256.txt"),
-                    os.path.join(bag_one, "tagmanifest-md5.txt"),
-                    os.path.join(bag_one, "tagmanifest-sha256.txt"),
-                    os.path.join(bag_one, "data", "metadata"),
-                    os.path.join(bag_one, "data", "objects"),
-                    os.path.join(bag_one, "data", "metadata", "Flower2.JPG_fits.xml"),
-                    os.path.join(bag_one, "data", "metadata", "test-001-er-000001_preservation.xml"),
-                    os.path.join(bag_one, "data", "objects", "Flower2.JPG"),
-                    os.path.join(bag_two, "data"),
-                    os.path.join(bag_two, "bag-info.txt"),
-                    os.path.join(bag_two, "bagit.txt"),
-                    os.path.join(bag_two, "manifest-md5.txt"),
-                    os.path.join(bag_two, "manifest-sha256.txt"),
-                    os.path.join(bag_two, "tagmanifest-md5.txt"),
-                    os.path.join(bag_two, "tagmanifest-sha256.txt"),
-                    os.path.join(bag_two, "data", "metadata"),
-                    os.path.join(bag_two, "data", "objects"),
-                    os.path.join(bag_two, "data", "metadata", "New Text Document.txt_fits.xml"),
-                    os.path.join(bag_two, "data", "metadata", "overview-tree.html_fits.xml"),
-                    os.path.join(bag_two, "data", "metadata", "test-001-er-000002_preservation.xml"),
-                    os.path.join(bag_two, "data", "objects", "New Text Document.txt"),
-                    os.path.join(bag_two, "data", "objects", "overview-tree.html"),
-                    os.path.join(bag_three, "data"),
-                    os.path.join(bag_three, "bag-info.txt"),
-                    os.path.join(bag_three, "bagit.txt"),
-                    os.path.join(bag_three, "manifest-md5.txt"),
-                    os.path.join(bag_three, "manifest-sha256.txt"),
-                    os.path.join(bag_three, "tagmanifest-md5.txt"),
-                    os.path.join(bag_three, "tagmanifest-sha256.txt"),
-                    os.path.join(bag_three, "data", "metadata"),
-                    os.path.join(bag_three, "data", "objects"),
-                    os.path.join(bag_three, "data", "metadata", "Test PDF.pdf_fits.xml"),
-                    os.path.join(bag_three, "data", "metadata", "test-001-er-000003_preservation.xml"),
-                    os.path.join(bag_three, "data", "metadata", "Worksheet.csv_fits.xml"),
-                    os.path.join(bag_three, "data", "objects", "Spreadsheet"),
-                    os.path.join(bag_three, "data", "objects", "Test PDF.pdf"),
-                    os.path.join(bag_three, "data", "objects", "Spreadsheet", "Worksheet.csv"),
-                    os.path.join("born_digital_current", "fits-xml", "test-001-er-000001_combined-fits.xml"),
-                    os.path.join("born_digital_current", "fits-xml", "test-001-er-000002_combined-fits.xml"),
-                    os.path.join("born_digital_current", "fits-xml", "test-001-er-000003_combined-fits.xml"),
-                    os.path.join("born_digital_current", "preservation-xml", "test-001-er-000001_preservation.xml"),
-                    os.path.join("born_digital_current", "preservation-xml", "test-001-er-000002_preservation.xml"),
-                    os.path.join("born_digital_current", "preservation-xml", "test-001-er-000003_preservation.xml")]
-        self.assertEqual(actual, expected, "Problem with test for born-digital, folder")
+                    os.path.join(aip_dir, 'aip_log.csv'),
+                    os.path.join(aip_dir, 'metadata.csv'),
+                    os.path.join(bag_one, 'data'),
+                    os.path.join(bag_one, 'bag-info.txt'),
+                    os.path.join(bag_one, 'bagit.txt'),
+                    os.path.join(bag_one, 'manifest-md5.txt'),
+                    os.path.join(bag_one, 'manifest-sha256.txt'),
+                    os.path.join(bag_one, 'tagmanifest-md5.txt'),
+                    os.path.join(bag_one, 'tagmanifest-sha256.txt'),
+                    os.path.join(bag_one, 'data', 'metadata'),
+                    os.path.join(bag_one, 'data', 'objects'),
+                    os.path.join(bag_one, 'data', 'metadata', 'Flower2.JPG_fits.xml'),
+                    os.path.join(bag_one, 'data', 'metadata', 'test-001-er-000001_preservation.xml'),
+                    os.path.join(bag_one, 'data', 'objects', 'Flower2.JPG'),
+                    os.path.join(bag_two, 'data'),
+                    os.path.join(bag_two, 'bag-info.txt'),
+                    os.path.join(bag_two, 'bagit.txt'),
+                    os.path.join(bag_two, 'manifest-md5.txt'),
+                    os.path.join(bag_two, 'manifest-sha256.txt'),
+                    os.path.join(bag_two, 'tagmanifest-md5.txt'),
+                    os.path.join(bag_two, 'tagmanifest-sha256.txt'),
+                    os.path.join(bag_two, 'data', 'metadata'),
+                    os.path.join(bag_two, 'data', 'objects'),
+                    os.path.join(bag_two, 'data', 'metadata', 'New Text Document.txt_fits.xml'),
+                    os.path.join(bag_two, 'data', 'metadata', 'overview-tree.html_fits.xml'),
+                    os.path.join(bag_two, 'data', 'metadata', 'test-001-er-000002_preservation.xml'),
+                    os.path.join(bag_two, 'data', 'objects', 'New Text Document.txt'),
+                    os.path.join(bag_two, 'data', 'objects', 'overview-tree.html'),
+                    os.path.join(bag_three, 'data'),
+                    os.path.join(bag_three, 'bag-info.txt'),
+                    os.path.join(bag_three, 'bagit.txt'),
+                    os.path.join(bag_three, 'manifest-md5.txt'),
+                    os.path.join(bag_three, 'manifest-sha256.txt'),
+                    os.path.join(bag_three, 'tagmanifest-md5.txt'),
+                    os.path.join(bag_three, 'tagmanifest-sha256.txt'),
+                    os.path.join(bag_three, 'data', 'metadata'),
+                    os.path.join(bag_three, 'data', 'objects'),
+                    os.path.join(bag_three, 'data', 'metadata', 'Test PDF.pdf_fits.xml'),
+                    os.path.join(bag_three, 'data', 'metadata', 'test-001-er-000003_preservation.xml'),
+                    os.path.join(bag_three, 'data', 'metadata', 'Worksheet.csv_fits.xml'),
+                    os.path.join(bag_three, 'data', 'objects', 'Spreadsheet'),
+                    os.path.join(bag_three, 'data', 'objects', 'Test PDF.pdf'),
+                    os.path.join(bag_three, 'data', 'objects', 'Spreadsheet', 'Worksheet.csv')]
+        self.assertEqual(result, expected, 'Problem with test for general, aip directory')
+
+        # Test for the contents of the staging directory.
+        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        today = datetime.date.today().strftime('%Y-%m-%d')
+        result = path_list(staging_dir)
+        expected = [os.path.join(staging_dir, 'aips-ready-to-ingest'),
+                    os.path.join(staging_dir, 'fits-xmls'),
+                    os.path.join(staging_dir, 'preservation-xmls'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest', f'manifest_aip_directory_test_{today}.txt'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000001_bag.1000.tar.bz2'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000002_bag.1000.tar.bz2'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000003_bag.1000.tar.bz2'),
+                    os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000001_combined-fits.xml'),
+                    os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000002_combined-fits.xml'),
+                    os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000003_combined-fits.xml'),
+                    os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000001_preservation.xml'),
+                    os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000002_preservation.xml'),
+                    os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000003_preservation.xml')]
+        self.assertEqual(result, expected, 'Problem with test for general, staging directory')
 
         # Test for the contents of the aip_log.csv file.
-        actual_log = log_list(os.path.join("born_digital_current", "aip_log.csv"))
-        today = datetime.date.today().strftime("%Y-%m-%d")
-        expected_log = [["Time Started", "AIP ID", "Files Deleted", "Objects Folder", "Metadata Folder",
-                         "FITS Tool Errors", "FITS Combination Errors", "Preservation.xml Made",
-                         "Preservation.xml Valid", "Bag Valid", "Package Errors", "Manifest Errors",
-                         "Processing Complete"],
-                        [today, "test-001-er-000001", "No files deleted", "Successfully created objects folder",
-                         "Successfully created metadata folder", "No FITS tools errors",
-                         "Successfully created combined-fits.xml", "Successfully created preservation.xml",
-                         f"Preservation.xml valid on {today}", f"Bag valid on {today}", "Successfully made package",
-                         "Successfully added AIP to manifest", "Successfully completed processing"],
-                        [today, "test-001-er-000002", "No files deleted", "Successfully created objects folder",
-                        "Successfully created metadata folder", "No FITS tools errors",
-                         "Successfully created combined-fits.xml", "Successfully created preservation.xml",
-                         f"Preservation.xml valid on {today}", f"Bag valid on {today}", "Successfully made package",
-                         "Successfully added AIP to manifest", "Successfully completed processing"],
-                        [today, "test-001-er-000003", "No files deleted", "Successfully created objects folder",
-                         "Successfully created metadata folder", "No FITS tools errors",
-                         "Successfully created combined-fits.xml", "Successfully created preservation.xml",
-                         f"Preservation.xml valid on {today}", f"Bag valid on {today}", "Successfully made package",
-                         "Successfully added AIP to manifest", "Successfully completed processing"]]
-        self.assertEqual(actual_log, expected_log, "Problem with test for born-digital, log")
+        result_log = log_list(os.path.join(aip_dir, 'aip_log.csv'))
+        expected_log = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                         'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
+                         'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
+                         'Processing Complete'],
+                        [today, 'test-001-er-000001', 'No files deleted', 'Successfully created objects folder',
+                         'Successfully created metadata folder', 'No FITS tools errors',
+                         'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
+                         f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
+                         'Successfully added AIP to manifest', 'Successfully completed processing'],
+                        [today, 'test-001-er-000002', 'No files deleted', 'Successfully created objects folder',
+                        'Successfully created metadata folder', 'No FITS tools errors',
+                         'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
+                         f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
+                         'Successfully added AIP to manifest', 'Successfully completed processing'],
+                        [today, 'test-001-er-000003', 'No files deleted', 'Successfully created objects folder',
+                         'Successfully created metadata folder', 'No FITS tools errors',
+                         'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
+                         f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
+                         'Successfully added AIP to manifest', 'Successfully completed processing']]
+        self.assertEqual(result_log, expected_log, "Problem with test for born-digital, log")
 
     def test_web(self):
         """
@@ -204,7 +215,7 @@ class TestFullScript(unittest.TestCase):
         subprocess.run(f'python "{script_path}" "{aip_dir}"', shell=True)
 
         # Test for the contents of the test_current folder.
-        actual = path_list("web_current")
+        result = path_list("web_current")
         bag_one = os.path.join("web_current", "preservation_download", "rbrl-377-web-201907-0001_bag")
         warc_one = "ARCHIVEIT-12264-TEST-JOB943446-SEED2027776-20190710131748634-00000-h3.warc"
         bag_two = os.path.join("web_current", "preservation_download", "rbrl-498-web-201907-0001_bag")
@@ -259,10 +270,10 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_two, "data", "metadata", "rbrl-498-web-201907-0001_seed.csv"),
                     os.path.join(bag_two, "data", "metadata", "rbrl-498-web-201907-0001_seedscope.csv"),
                     os.path.join(bag_two, "data", "objects", warc_two)]
-        self.assertEqual(actual, expected, "Problem with test for web, folder")
+        self.assertEqual(result, expected, "Problem with test for web, folder")
 
         # Test for the contents of the aip_log.csv file.
-        actual_log = log_list(os.path.join("web_current", "aip_log.csv"))
+        result_log = log_list(os.path.join("web_current", "aip_log.csv"))
         today = datetime.date.today().strftime("%Y-%m-%d")
         expected_log = [["Time Started", "AIP ID", "Files Deleted", "Objects Folder", "Metadata Folder",
                          "FITS Tool Errors", "FITS Combination Errors", "Preservation.xml Made",
@@ -278,7 +289,7 @@ class TestFullScript(unittest.TestCase):
                          "Successfully created combined-fits.xml", "Successfully created preservation.xml",
                          f"Preservation.xml valid on {today}", f"Bag valid on {today}", "Successfully made package",
                          "Successfully added AIP to manifest", "Successfully completed processing"]]
-        self.assertEqual(actual_log, expected_log, "Problem with test for web, log")
+        self.assertEqual(result_log, expected_log, "Problem with test for web, log")
 
 
 if __name__ == "__main__":

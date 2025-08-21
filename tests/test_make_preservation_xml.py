@@ -91,8 +91,8 @@ class TestMakePreservationXML(unittest.TestCase):
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
                     ['2025-08-13 2:15PM', 'test-er-01', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
                      f'Issue when creating preservation.xml. Saxon error: Source file '
-                     f'{aips_dir}\\test-er-01\\metadata\\test-er-01_cleaned-fits.xml does not exist\r\n',
-                     'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
+                     f'{os.path.join(aips_dir, "test-er-01", "metadata", "test-er-01_cleaned-fits.xml")} '
+                     f'does not exist\r\n', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
         self.assertEqual(result, expected, "Problem with test for error, log")
 
         # Verifies the AIP folder was moved to the error folder.

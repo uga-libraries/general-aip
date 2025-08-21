@@ -61,7 +61,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         # Test for the AIP log, PresXML.
         result_log = aip.log['PresXML']
         expected_log = (f'Issue when creating cleaned-fits.xml. Saxon error: Source file '
-                        f'{aip_dir}\\aip0\\metadata\\aip0_combined-fits.xml does not exist\r\n')
+                        f'{os.path.join(aip_dir, "aip0", "metadata", "aip0_combined-fits.xml")} does not exist\r\n')
         self.assertEqual(result_log, expected_log, "Problem with error handling, log: PresXML")
 
         # Test for the AIP log, Complete.

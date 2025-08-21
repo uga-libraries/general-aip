@@ -15,6 +15,7 @@ from aip_functions import AIP, structure_directory
 def aips_directory_list(folder):
     """
     Makes and returns a list with the filepath for every folder and file in an AIP folder.
+    The list is sorted because the list can be in a different order depending on the operating system.
     This is used to compare the structure_directory function's actual results to the expected results.
     """
     directory_list = []
@@ -23,6 +24,7 @@ def aips_directory_list(folder):
             directory_list.append(os.path.join(root, directory))
         for file in files:
             directory_list.append(os.path.join(root, file))
+    directory_list.sort(key=str.lower)
     return directory_list
 
 
@@ -65,11 +67,11 @@ class TestStructureDirectory(unittest.TestCase):
         aip_path = os.path.join(staging_dir, 'aips-with-errors', 'objects_folder_exists', 'error-aip-1')
         result = aips_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'objects'),
-                    os.path.join(aip_path, 'Test Dir'),
-                    os.path.join(aip_path, 'Text 2.txt'),
-                    os.path.join(aip_path, 'Text.txt'),
                     os.path.join(aip_path, 'objects', 'Objects Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'Test Dir'),
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
+                    os.path.join(aip_path, 'Text 2.txt'),
+                    os.path.join(aip_path, 'Text.txt')]
         self.assertEqual(result, expected, "Problem with error - objects exists, AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -102,13 +104,13 @@ class TestStructureDirectory(unittest.TestCase):
         aip_path = os.path.join(staging_dir, 'aips-with-errors', 'objects_folder_exists', 'error-aip-2')
         result = aips_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
-                    os.path.join(aip_path, 'objects'),
-                    os.path.join(aip_path, 'Test Dir'),
-                    os.path.join(aip_path, 'Text 2.txt'),
-                    os.path.join(aip_path, 'Text.txt'),
                     os.path.join(aip_path, 'metadata', 'Metadata Text.txt'),
+                    os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'objects', 'Objects Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'Test Dir'),
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
+                    os.path.join(aip_path, 'Text 2.txt'),
+                    os.path.join(aip_path, 'Text.txt')]
         self.assertEqual(result, expected, "Problem with error - both exist, AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -142,12 +144,12 @@ class TestStructureDirectory(unittest.TestCase):
         aip_path = os.path.join(staging_dir, 'aips-with-errors', 'metadata_folder_exists', 'error-aip-3')
         result = aips_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
+                    os.path.join(aip_path, 'metadata', 'Metadata Text.txt'),
                     os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'Test Dir'),
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text 2.txt'),
-                    os.path.join(aip_path, 'Text.txt'),
-                    os.path.join(aip_path, 'metadata', 'Metadata Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'Text.txt')]
         self.assertEqual(result, expected, "Problem with error - metadata exists, AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -181,12 +183,12 @@ class TestStructureDirectory(unittest.TestCase):
         aip_path = os.path.join(staging_dir, aips_dir, aip.id)
         result = aips_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
-                    os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'metadata', 'EmoryMD_Text.txt'),
+                    os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'objects', 'Test Dir'),
+                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'objects', 'Text 2.txt'),
-                    os.path.join(aip_path, 'objects', 'Text.txt'),
-                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'objects', 'Text.txt')]
         self.assertEqual(result, expected, "Problem with sort Emory metadata, AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -215,12 +217,12 @@ class TestStructureDirectory(unittest.TestCase):
         aip_path = os.path.join(staging_dir, aips_dir, aip.id)
         result = aips_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
-                    os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'metadata', 'deletion-aip-1_files-deleted_2022-10-31_del.csv'),
+                    os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'objects', 'Test Dir'),
+                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'objects', 'Text 2.txt'),
-                    os.path.join(aip_path, 'objects', 'Text.txt'),
-                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'objects', 'Text.txt')]
         self.assertEqual(result, expected, "Problem with sort files deleted log, AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -251,9 +253,9 @@ class TestStructureDirectory(unittest.TestCase):
         expected = [os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'objects', 'Test Dir'),
+                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'objects', 'Text 2.txt'),
-                    os.path.join(aip_path, 'objects', 'Text.txt'),
-                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'objects', 'Text.txt')]
         self.assertEqual(result, expected, "Problem with sort none (no metadata), AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -283,17 +285,17 @@ class TestStructureDirectory(unittest.TestCase):
         aip_path = os.path.join(staging_dir, aips_dir, aip.id)
         result = aips_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
-                    os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'metadata', 'web-aip-1_coll.csv'),
                     os.path.join(aip_path, 'metadata', 'web-aip-1_collscope.csv'),
                     os.path.join(aip_path, 'metadata', 'web-aip-1_crawldef.csv'),
                     os.path.join(aip_path, 'metadata', 'web-aip-1_crawljob.csv'),
                     os.path.join(aip_path, 'metadata', 'web-aip-1_seed.csv'),
                     os.path.join(aip_path, 'metadata', 'web-aip-1_seedscope.csv'),
+                    os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'objects', 'Test Dir'),
+                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'objects', 'Text 2.txt'),
-                    os.path.join(aip_path, 'objects', 'Text.txt'),
-                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'objects', 'Text.txt')]
         self.assertEqual(result, expected, "Problem with sort seed, AIP folder")
 
         # Test for the AIP log: ObjectsError.

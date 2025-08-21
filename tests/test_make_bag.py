@@ -9,11 +9,13 @@ from aip_functions import AIP, make_bag
 
 
 def make_bag_list(bag_path):
-    """Make a list of all files within the bag to compare against the expected results"""
+    """Make a list of all files within the bag to compare against the expected results
+    The list is sorted because the list can be in a different order depending on the operating system."""
     bag_list = []
     for root, dirs, files in os.walk(bag_path):
         for file in files:
             bag_list.append(os.path.join(root, file))
+    bag_list.sort()
     return bag_list
 
 
@@ -43,10 +45,10 @@ class TestMakeBag(unittest.TestCase):
         date = datetime.today().strftime('%Y-%#m-%#d')
         expected = [os.path.join(aips_dir, f'{aip.id}_bag', 'bag-info.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'bagit.txt'),
-                    os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-md5.txt'),
-                    os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'data', 'Placeholder for AIP content.txt'),
-                    os.path.join(aips_dir, f'{aip.id}_bag', 'data', f'{aip.id}_files-deleted_{date}_del.csv')]
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'data', f'{aip.id}_files-deleted_{date}_del.csv'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-md5.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt')]
         self.assertEqual(result, expected, "Problem with av_bmac")
 
     def test_av_russell(self):
@@ -62,11 +64,11 @@ class TestMakeBag(unittest.TestCase):
         result = make_bag_list(os.path.join(aips_dir, f'{aip.id}_bag'))
         expected = [os.path.join(aips_dir, f'{aip.id}_bag', 'bag-info.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'bagit.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'data', 'Placeholder for AIP content.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-md5.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-sha256.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt'),
-                    os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-sha256.txt'),
-                    os.path.join(aips_dir, f'{aip.id}_bag', 'data', 'Placeholder for AIP content.txt')]
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-sha256.txt')]
         self.assertEqual(result, expected, "Problem with av_russell")
 
     def test_general(self):
@@ -82,11 +84,11 @@ class TestMakeBag(unittest.TestCase):
         result = make_bag_list(os.path.join(aips_dir, f'{aip.id}_bag'))
         expected = [os.path.join(aips_dir, f'{aip.id}_bag', 'bag-info.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'bagit.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'data', 'Placeholder for AIP content.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-md5.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-sha256.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt'),
-                    os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-sha256.txt'),
-                    os.path.join(aips_dir, f'{aip.id}_bag', 'data', 'Placeholder for AIP content.txt')]
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-sha256.txt')]
         self.assertEqual(result, expected, "Problem with general")
 
 

@@ -16,6 +16,7 @@ from aip_functions import AIP, delete_temp
 def aip_directory_print(folder):
     """
     Makes and returns a list with the filepath for every folder and file in an AIP folder.
+    The list is sorted because the list can be in a different order depending on the operating system.
     This is used to test that only the expected file is deleted from the AIP folder.
     """
     result = []
@@ -24,6 +25,7 @@ def aip_directory_print(folder):
             result.append(os.path.join(root, directory))
         for file in files:
             result.append(os.path.join(root, file))
+    result.sort()
     return result
 
 
@@ -64,8 +66,8 @@ class TestDeleteTemp(unittest.TestCase):
         aip_path = os.path.join(aips_dir, aip.id)
         result = aip_directory_print(os.path.join(aip_path))
         expected = [os.path.join(aip_path, 'Test Dir'),
-                    os.path.join(aip_path, 'Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
+                    os.path.join(aip_path, 'Text.txt')]
         self.assertEqual(result, expected, "Problem with test for no temporary files, AIP folder")
 
         # Test for the AIP log.
@@ -91,9 +93,9 @@ class TestDeleteTemp(unittest.TestCase):
         # Test for the AIP folder.
         result = aip_directory_print(os.path.join(aip_path))
         expected = [os.path.join(aip_path, 'Test Dir'),
-                    deletion_log,
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    deletion_log]
         self.assertEqual(result, expected, "Problem with test for .DS_Store, AIP folder")
 
         # Test for the AIP log.
@@ -127,9 +129,9 @@ class TestDeleteTemp(unittest.TestCase):
         # Test for the AIP folder.
         result = aip_directory_print(os.path.join(aip_path))
         expected = [os.path.join(aip_path, 'Test Dir'),
-                    deletion_log,
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    deletion_log]
         self.assertEqual(result, expected, "Problem with test for ._.DS_Store, AIP folder")
 
         # Test for the AIP log.
@@ -163,9 +165,9 @@ class TestDeleteTemp(unittest.TestCase):
         # Test for the AIP folder.
         result = aip_directory_print(os.path.join(aip_path))
         expected = [os.path.join(aip_path, 'Test Dir'),
-                    deletion_log,
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    deletion_log]
         self.assertEqual(result, expected, "Problem with test for Thumbs.db, AIP folder")
 
         # Test for the AIP log.
@@ -199,9 +201,9 @@ class TestDeleteTemp(unittest.TestCase):
         # Test for the AIP folder.
         result = aip_directory_print(os.path.join(aip_path))
         expected = [os.path.join(aip_path, 'Test Dir'),
-                    deletion_log,
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    deletion_log]
         self.assertEqual(result, expected, "Problem with test for dot prefix, AIP folder")
 
         # Test for the AIP log.
@@ -235,9 +237,9 @@ class TestDeleteTemp(unittest.TestCase):
         # Test for the AIP folder.
         result = aip_directory_print(os.path.join(aip_path))
         expected = [os.path.join(aip_path, 'Test Dir'),
-                    deletion_log,
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    deletion_log]
         self.assertEqual(result, expected, "Problem with test for .tmp extension, AIP folder")
 
         # Test for the AIP log.

@@ -8,6 +8,13 @@ import unittest
 from aip_functions import AIP, structure_directory, extract_metadata
 
 
+def sorted_list(dir_path):
+    """Returns a sorted list of the contents of a metadata folder to compare to expected results"""
+    dir_list = os.listdir(dir_path)
+    dir_list.sort(key=str.lower)
+    return dir_list
+
+
 class TestExtractMetadata(unittest.TestCase):
 
     def tearDown(self):
@@ -35,7 +42,7 @@ class TestExtractMetadata(unittest.TestCase):
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.
-        result = os.listdir(os.path.join(aips_dir, 'aip-id-one', 'metadata'))
+        result = sorted_list(os.path.join(aips_dir, 'aip-id-one', 'metadata'))
         expected = ['metadata.txt', 'Text.txt_fits.xml']
         self.assertEqual(result, expected, "Problem with one file, metadata folder")
 
@@ -54,7 +61,7 @@ class TestExtractMetadata(unittest.TestCase):
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.
-        result = os.listdir(os.path.join(aips_dir, 'aip-id-multi', 'metadata'))
+        result = sorted_list(os.path.join(aips_dir, 'aip-id-multi', 'metadata'))
         expected = ['metadata.txt', 'output.csv_fits.xml', 'output.json_fits.xml', 'Text.txt_fits.xml']
         self.assertEqual(result, expected, "Problem with multiple files, metadata folder")
 
@@ -73,7 +80,7 @@ class TestExtractMetadata(unittest.TestCase):
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.
-        result = os.listdir(os.path.join(aips_dir, 'aip-id-error', 'metadata'))
+        result = sorted_list(os.path.join(aips_dir, 'aip-id-error', 'metadata'))
         expected = ['aip-id-error_fits-tool-errors_fitserr.txt', 'metadata.txt', 'not.xml_fits.xml']
         self.assertEqual(result, expected, "Problem with error, metadata folder")
 

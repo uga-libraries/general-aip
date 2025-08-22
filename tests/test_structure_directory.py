@@ -268,7 +268,6 @@ class TestStructureDirectory(unittest.TestCase):
         expected_log2 = 'Successfully created metadata folder'
         self.assertEqual(result_log2, expected_log2, "Problem with sort none (no metadata), log: MetadataError")
 
-    # TODO resolve permissions error with copying test data.
     def test_sort_web(self):
         """
         Test for structuring an AIP which contains the six Archive-It reports,
@@ -278,7 +277,7 @@ class TestStructureDirectory(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
         aip = AIP(aips_dir, 'magil', None, 'coll-web', 'folder', 'web', 'web-aip-1', 'title', 1, True)
-        shutil.copy(os.path.join(aips_dir, 'web-aip-1_copy'), os.path.join(aips_dir, 'web-aip-1'))
+        shutil.copytree(os.path.join(aips_dir, 'web-aip-1_copy'), os.path.join(aips_dir, 'web-aip-1'))
         structure_directory(aip, staging_dir)
 
         # Test for the contents of the AIP folder.

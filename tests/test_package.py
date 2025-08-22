@@ -57,7 +57,7 @@ class TestPackage(unittest.TestCase):
         package(aip, aip_staging)
 
         # Test that the tar file is in the aips-to-ingest folder.
-        result = (os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.663.tar.bz2')) or
+        result = (os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.663.tar')) or
                   os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.673.tar')))
         self.assertEqual(result, True, "Problem with tar, aips-ready-to-ingest")
 

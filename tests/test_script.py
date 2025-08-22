@@ -42,6 +42,7 @@ def path_list(dir_name):
                 continue
             paths_list.append(os.path.join(root, file))
 
+    paths_list.sort(key=str.lower)
     return paths_list
 
 
@@ -121,52 +122,52 @@ class TestFullScript(unittest.TestCase):
         bag_one = os.path.join(aip_dir, 'test-001-er-000001_bag')
         bag_two = os.path.join(aip_dir, 'test-001-er-000002_bag')
         bag_three = os.path.join(aip_dir, 'test-001-er-000003_bag')
-        expected = [bag_one,
-                    bag_two,
-                    bag_three,
-                    os.path.join(aip_dir, 'aip_log.csv'),
+        expected = [os.path.join(aip_dir, 'aip_log.csv'),
                     os.path.join(aip_dir, 'metadata.csv'),
-                    os.path.join(bag_one, 'data'),
+                    bag_one,
                     os.path.join(bag_one, 'bag-info.txt'),
                     os.path.join(bag_one, 'bagit.txt'),
+                    os.path.join(bag_one, 'data'),
+                    os.path.join(bag_one, 'data', 'metadata'),
+                    os.path.join(bag_one, 'data', 'metadata', 'Flower2.JPG_fits.xml'),
+                    os.path.join(bag_one, 'data', 'metadata', 'test-001-er-000001_preservation.xml'),
+                    os.path.join(bag_one, 'data', 'objects'),
+                    os.path.join(bag_one, 'data', 'objects', 'Flower2.JPG'),
                     os.path.join(bag_one, 'manifest-md5.txt'),
                     os.path.join(bag_one, 'manifest-sha256.txt'),
                     os.path.join(bag_one, 'tagmanifest-md5.txt'),
                     os.path.join(bag_one, 'tagmanifest-sha256.txt'),
-                    os.path.join(bag_one, 'data', 'metadata'),
-                    os.path.join(bag_one, 'data', 'objects'),
-                    os.path.join(bag_one, 'data', 'metadata', 'Flower2.JPG_fits.xml'),
-                    os.path.join(bag_one, 'data', 'metadata', 'test-001-er-000001_preservation.xml'),
-                    os.path.join(bag_one, 'data', 'objects', 'Flower2.JPG'),
-                    os.path.join(bag_two, 'data'),
+                    bag_two,
                     os.path.join(bag_two, 'bag-info.txt'),
                     os.path.join(bag_two, 'bagit.txt'),
+                    os.path.join(bag_two, 'data'),
+                    os.path.join(bag_two, 'data', 'metadata'),
+                    os.path.join(bag_two, 'data', 'metadata', 'New Text Document.txt_fits.xml'),
+                    os.path.join(bag_two, 'data', 'metadata', 'overview-tree.html_fits.xml'),
+                    os.path.join(bag_two, 'data', 'metadata', 'test-001-er-000002_preservation.xml'),
+                    os.path.join(bag_two, 'data', 'objects'),
+                    os.path.join(bag_two, 'data', 'objects', 'New Text Document.txt'),
+                    os.path.join(bag_two, 'data', 'objects', 'overview-tree.html'),
                     os.path.join(bag_two, 'manifest-md5.txt'),
                     os.path.join(bag_two, 'manifest-sha256.txt'),
                     os.path.join(bag_two, 'tagmanifest-md5.txt'),
                     os.path.join(bag_two, 'tagmanifest-sha256.txt'),
-                    os.path.join(bag_two, 'data', 'metadata'),
-                    os.path.join(bag_two, 'data', 'objects'),
-                    os.path.join(bag_two, 'data', 'metadata', 'New Text Document.txt_fits.xml'),
-                    os.path.join(bag_two, 'data', 'metadata', 'overview-tree.html_fits.xml'),
-                    os.path.join(bag_two, 'data', 'metadata', 'test-001-er-000002_preservation.xml'),
-                    os.path.join(bag_two, 'data', 'objects', 'New Text Document.txt'),
-                    os.path.join(bag_two, 'data', 'objects', 'overview-tree.html'),
-                    os.path.join(bag_three, 'data'),
+                    bag_three,
                     os.path.join(bag_three, 'bag-info.txt'),
                     os.path.join(bag_three, 'bagit.txt'),
-                    os.path.join(bag_three, 'manifest-md5.txt'),
-                    os.path.join(bag_three, 'manifest-sha256.txt'),
-                    os.path.join(bag_three, 'tagmanifest-md5.txt'),
-                    os.path.join(bag_three, 'tagmanifest-sha256.txt'),
+                    os.path.join(bag_three, 'data'),
                     os.path.join(bag_three, 'data', 'metadata'),
-                    os.path.join(bag_three, 'data', 'objects'),
                     os.path.join(bag_three, 'data', 'metadata', 'Test PDF.pdf_fits.xml'),
                     os.path.join(bag_three, 'data', 'metadata', 'test-001-er-000003_preservation.xml'),
                     os.path.join(bag_three, 'data', 'metadata', 'Worksheet.csv_fits.xml'),
+                    os.path.join(bag_three, 'data', 'objects'),
                     os.path.join(bag_three, 'data', 'objects', 'Spreadsheet'),
+                    os.path.join(bag_three, 'data', 'objects', 'Spreadsheet', 'Worksheet.csv'),
                     os.path.join(bag_three, 'data', 'objects', 'Test PDF.pdf'),
-                    os.path.join(bag_three, 'data', 'objects', 'Spreadsheet', 'Worksheet.csv')]
+                    os.path.join(bag_three, 'manifest-md5.txt'),
+                    os.path.join(bag_three, 'manifest-sha256.txt'),
+                    os.path.join(bag_three, 'tagmanifest-md5.txt'),
+                    os.path.join(bag_three, 'tagmanifest-sha256.txt')]
         self.assertEqual(result, expected, "Problem with test for general, aip directory")
 
         # Test for the contents of the staging directory.
@@ -174,15 +175,15 @@ class TestFullScript(unittest.TestCase):
         today = datetime.date.today().strftime('%Y-%m-%d')
         result = path_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-ready-to-ingest'),
-                    os.path.join(staging_dir, 'fits-xmls'),
-                    os.path.join(staging_dir, 'preservation-xmls'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', f'manifest_aip_directory_test_{today}.txt'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000001_bag.1000.tar.bz2'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000002_bag.1000.tar.bz2'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000003_bag.1000.tar.bz2'),
+                    os.path.join(staging_dir, 'fits-xmls'),
                     os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000001_combined-fits.xml'),
                     os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000002_combined-fits.xml'),
                     os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000003_combined-fits.xml'),
+                    os.path.join(staging_dir, 'preservation-xmls'),
                     os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000001_preservation.xml'),
                     os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000002_preservation.xml'),
                     os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000003_preservation.xml')]
@@ -234,19 +235,13 @@ class TestFullScript(unittest.TestCase):
         result = path_list(aip_dir)
         bag_one = os.path.join(aip_dir, 'rbrl-377-web-201907-0001_bag')
         bag_two = os.path.join(aip_dir, 'rbrl-498-web-201907-0001_bag')
-        expected = [bag_one,
-                    bag_two,
-                    os.path.join(aip_dir, 'aip_log.csv'),
+        expected = [os.path.join(aip_dir, 'aip_log.csv'),
                     os.path.join(aip_dir, 'metadata.csv'),
-                    os.path.join(bag_one, 'data'),
+                    bag_one,
                     os.path.join(bag_one, 'bag-info.txt'),
                     os.path.join(bag_one, 'bagit.txt'),
-                    os.path.join(bag_one, 'manifest-md5.txt'),
-                    os.path.join(bag_one, 'manifest-sha256.txt'),
-                    os.path.join(bag_one, 'tagmanifest-md5.txt'),
-                    os.path.join(bag_one, 'tagmanifest-sha256.txt'),
+                    os.path.join(bag_one, 'data'),
                     os.path.join(bag_one, 'data', 'metadata'),
-                    os.path.join(bag_one, 'data', 'objects'),
                     os.path.join(bag_one, 'data', 'metadata',
                                  'ARCHIVEIT-12264-TEST-JOB943446-SEED2027776-20190710131748634-00000-h3.warc_fits.xml'),
                     os.path.join(bag_one, 'data', 'metadata', 'rbrl-377-web-201907-0001_31104250884_crawldef.csv'),
@@ -255,17 +250,18 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_one, 'data', 'metadata', 'rbrl-377-web-201907-0001_collscope.csv'),
                     os.path.join(bag_one, 'data', 'metadata', 'rbrl-377-web-201907-0001_preservation.xml'),
                     os.path.join(bag_one, 'data', 'metadata', 'rbrl-377-web-201907-0001_seed.csv'),
+                    os.path.join(bag_one, 'data', 'objects'),
                     os.path.join(bag_one, 'data', 'objects',
                                  'ARCHIVEIT-12264-TEST-JOB943446-SEED2027776-20190710131748634-00000-h3.warc'),
-                    os.path.join(bag_two, 'data'),
+                    os.path.join(bag_one, 'manifest-md5.txt'),
+                    os.path.join(bag_one, 'manifest-sha256.txt'),
+                    os.path.join(bag_one, 'tagmanifest-md5.txt'),
+                    os.path.join(bag_one, 'tagmanifest-sha256.txt'),
+                    bag_two,
                     os.path.join(bag_two, 'bag-info.txt'),
                     os.path.join(bag_two, 'bagit.txt'),
-                    os.path.join(bag_two, 'manifest-md5.txt'),
-                    os.path.join(bag_two, 'manifest-sha256.txt'),
-                    os.path.join(bag_two, 'tagmanifest-md5.txt'),
-                    os.path.join(bag_two, 'tagmanifest-sha256.txt'),
+                    os.path.join(bag_two, 'data'),
                     os.path.join(bag_two, 'data', 'metadata'),
-                    os.path.join(bag_two, 'data', 'objects'),
                     os.path.join(bag_two, 'data', 'metadata',
                                  'ARCHIVEIT-12265-TEST-JOB943048-SEED2027707-20190709144234143-00000-h3.warc_fits.xml'),
                     os.path.join(bag_two, 'data', 'metadata', 'rbrl-498-web-201907-0001_31104250630_crawldef.csv'),
@@ -275,8 +271,13 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_two, 'data', 'metadata', 'rbrl-498-web-201907-0001_preservation.xml'),
                     os.path.join(bag_two, 'data', 'metadata', 'rbrl-498-web-201907-0001_seed.csv'),
                     os.path.join(bag_two, 'data', 'metadata', 'rbrl-498-web-201907-0001_seedscope.csv'),
+                    os.path.join(bag_two, 'data', 'objects'),
                     os.path.join(bag_two, 'data', 'objects',
-                                 'ARCHIVEIT-12265-TEST-JOB943048-SEED2027707-20190709144234143-00000-h3.warc')]
+                                 'ARCHIVEIT-12265-TEST-JOB943048-SEED2027707-20190709144234143-00000-h3.warc'),
+                    os.path.join(bag_two, 'manifest-md5.txt'),
+                    os.path.join(bag_two, 'manifest-sha256.txt'),
+                    os.path.join(bag_two, 'tagmanifest-md5.txt'),
+                    os.path.join(bag_two, 'tagmanifest-sha256.txt')]
         self.assertEqual(result, expected, "Problem with test for web, aip directory")
 
         # Test for the contents of the staging directory.
@@ -284,14 +285,14 @@ class TestFullScript(unittest.TestCase):
         today = datetime.date.today().strftime('%Y-%m-%d')
         result = path_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-ready-to-ingest'),
-                    os.path.join(staging_dir, 'fits-xmls'),
-                    os.path.join(staging_dir, 'preservation-xmls'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest',
                                  f'manifest_preservation_download_russell_{today}.txt'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'rbrl-377-web-201907-0001_bag.1000.tar.bz2'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'rbrl-498-web-201907-0001_bag.1000.tar.bz2'),
+                    os.path.join(staging_dir, 'fits-xmls'),
                     os.path.join(staging_dir, 'fits-xmls', 'rbrl-377-web-201907-0001_combined-fits.xml'),
                     os.path.join(staging_dir, 'fits-xmls', 'rbrl-498-web-201907-0001_combined-fits.xml'),
+                    os.path.join(staging_dir, 'preservation-xmls'),
                     os.path.join(staging_dir, 'preservation-xmls', 'rbrl-377-web-201907-0001_preservation.xml'),
                     os.path.join(staging_dir, 'preservation-xmls', 'rbrl-498-web-201907-0001_preservation.xml')]
         self.assertEqual(result, expected, "Problem with test for web, staging directory")

@@ -1,5 +1,9 @@
 """Testing for the function package, which tars and (optionally) zips the bag for the AIP,
-renames it to add the unzipped size, and saves to the aips-ready-to-ingest folder."""
+renames it to add the unzipped size, and saves to the aips-ready-to-ingest folder.
+
+NOTE: The packaged AIPs have a different size depending on if the tests were run on Windows or Mac,
+so the expected results and the tearDown look for either possible size.
+"""
 
 import os
 import unittest
@@ -15,10 +19,11 @@ class TestPackage(unittest.TestCase):
         if os.path.exists(log_path):
             os.remove(log_path)
 
-        ready_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-ready-to-ingest')
-        for pkg in ['test-aip-1_bag.673.tar', 'test-aip-1_bag.673.tar.bz2']:
-            if os.path.exists(os.path.join(ready_path, pkg)):
-                os.remove(os.path.join(ready_path, pkg))
+        aips_ready_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-ready-to-ingest')
+        for pkg in ['test-aip-1_bag.663.tar', 'test-aip-1_bag.663.tar.bz2',
+                    'test-aip-1_bag.673.tar', 'test-aip-1_bag.673.tar.bz2']:
+            if os.path.exists(os.path.join(aips_ready_path, pkg)):
+                os.remove(os.path.join(aips_ready_path, pkg))
 
     def test_tar_zip(self):
         """Test for an AIP that should be tarred and zipped."""
@@ -29,12 +34,14 @@ class TestPackage(unittest.TestCase):
         package(aip, aip_staging)
 
         # Test that the tar.bz2 file is in the aips-to-ingest folder.
-        result = os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.673.tar.bz2'))
+        result = (os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.663.tar.bz2')) or
+                  os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.673.tar.bz2')))
         self.assertEqual(result, True, "Problem with tar_zip, aips-ready-to-ingest")
         
         # Test that the AIP size is updated.
         result = aip.size
-        self.assertEqual(result, 673, "Problem with tar_zip, AIP size")
+        expected = [663, 673]
+        self.assertIn(result, expected, "Problem with tar_zip, AIP size")
 
         # Test that the AIP log is updated.
         result_log = aip.log['Package']
@@ -50,12 +57,14 @@ class TestPackage(unittest.TestCase):
         package(aip, aip_staging)
 
         # Test that the tar file is in the aips-to-ingest folder.
-        result = os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.673.tar'))
+        result = (os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.663.tar.bz2')) or
+                  os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.673.tar')))
         self.assertEqual(result, True, "Problem with tar, aips-ready-to-ingest")
 
         # Test that the AIP size is updated.
         result = aip.size
-        self.assertEqual(result, 673, "Problem with tar, AIP size")
+        expected = [663, 673]
+        self.assertIn(result, expected, "Problem with tar, AIP size")
 
         # Test that the AIP log is updated.
         result_log = aip.log['Package']

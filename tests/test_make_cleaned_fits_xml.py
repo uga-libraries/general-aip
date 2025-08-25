@@ -59,10 +59,13 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         self.assertEqual(result, expected, "Problem with error handling, move to error folder")
 
         # Test for the AIP log, PresXML.
-        result_log = aip.log['PresXML']
-        expected_log = (f'Issue when creating cleaned-fits.xml. Saxon error: Source file '
-                        f'{os.path.join(aip_dir, "aip0", "metadata", "aip0_combined-fits.xml")} does not exist\r\n')
-        self.assertEqual(result_log, expected_log, "Problem with error handling, log: PresXML")
+        # Output has a different line separator depending on the OS the test is run on.
+        result = aip.log['PresXML']
+        expected = [(f'Issue when creating cleaned-fits.xml. Saxon error: Source file '
+                     f'{os.path.join(aip_dir, "aip0", "metadata", "aip0_combined-fits.xml")} does not exist\r\n'),
+                    (f'Issue when creating cleaned-fits.xml. Saxon error: Source file '
+                     f'{os.path.join(aip_dir, "aip0", "metadata", "aip0_combined-fits.xml")} does not exist\n')]
+        self.assertIn(result, expected, "Problem with error handling, log: PresXML")
 
         # Test for the AIP log, Complete.
         result_log2 = aip.log['Complete']

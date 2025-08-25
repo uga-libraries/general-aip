@@ -177,7 +177,7 @@ class TestDeleteTemp(unittest.TestCase):
                       self.modified]],
                     [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
                      [os.path.join(aips_dir, 'aip-id_thumbs', 'Thumbs.db'), 'Thumbs.db', 25, self.modified],
-                     [os.path.join(aips_dir, 'aip-id_thumbs', 'Test Dir', 'Thumbs.db'), 'Thumbs.db', 2595,
+                     [os.path.join(aips_dir, 'aip-id_thumbs', 'Test Dir', 'Thumbs.db'), 'Thumbs.db', 2495,
                       self.modified]]]
         self.assertIn(result, expected, "Problem with test for Thumbs.db, deletion log")
 

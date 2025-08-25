@@ -83,16 +83,24 @@ class TestMakePreservationXML(unittest.TestCase):
         make_preservation_xml(aip, staging_dir)
 
         # Verifies the log is created and has the expected values.
+        # Output has a different line separator (\r\n or \n) depending on the OS the test is run on.
         log_df = pd.read_csv(os.path.join(aips_dir, 'aip_log.csv'))
         log_df = log_df.fillna('BLANK')
         result = [log_df.columns.tolist()] + log_df.values.tolist()
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
-                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-13 2:15PM', 'test-er-01', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
-                     f'Issue when creating preservation.xml. Saxon error: Source file '
-                     f'{os.path.join(aips_dir, "test-er-01", "metadata", "test-er-01_cleaned-fits.xml")} '
-                     f'does not exist\r\n', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
+        expected = [[['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                     ['2025-08-13 2:15PM', 'test-er-01', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
+                      f'Issue when creating preservation.xml. Saxon error: Source file '
+                      f'{os.path.join(aips_dir, "test-er-01", "metadata", "test-er-01_cleaned-fits.xml")} '
+                      f'does not exist\r\n', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']],
+                    [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                     ['2025-08-13 2:15PM', 'test-er-01', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
+                      f'Issue when creating preservation.xml. Saxon error: Source file '
+                      f'{os.path.join(aips_dir, "test-er-01", "metadata", "test-er-01_cleaned-fits.xml")} '
+                      f'does not exist\n', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]]
         self.assertEqual(result, expected, "Problem with test for error, log")
 
         # Verifies the AIP folder was moved to the error folder.

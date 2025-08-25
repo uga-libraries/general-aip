@@ -90,6 +90,7 @@ class TestValidatePreservationXML(unittest.TestCase):
         log_df = log_df.fillna('BLANK')
         log_df['Preservation.xml Made'] = log_df['Preservation.xml Made'].str.replace('/', '\\')
         result = [log_df.columns.tolist()] + log_df.values.tolist()
+        aips_dir_backward = aips_dir.replace('/', '\\')
         expected = [[['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
@@ -102,7 +103,7 @@ class TestValidatePreservationXML(unittest.TestCase):
                       'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
                      ['2025-08-13 2:35PM', 'test_c01_003', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
                       f'Preservation.xml was not created. xmllint error: warning: failed to load external entity '
-                      f'"{aips_dir.replace('/', '\\')}\\test_c01_003\\metadata\\test_c01_003_preservation.xml"\n',
+                      f'"{aips_dir_backward}\\test_c01_003\\metadata\\test_c01_003_preservation.xml"\n',
                       'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]]
         self.assertIn(result, expected, "Problem with error: missing, log")
 

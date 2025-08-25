@@ -85,18 +85,26 @@ class TestValidatePreservationXML(unittest.TestCase):
 
         # Test for the contents of the AIP log.
         # Must change the "/" in the xmllint output to "\" for it to match aips_dir.
+        # Output is formatted differently depending on the OS the test is run on.
         log_df = pd.read_csv(os.path.join(aips_dir, 'aip_log.csv'))
         log_df = log_df.fillna('BLANK')
         log_df['Preservation.xml Made'] = log_df['Preservation.xml Made'].str.replace('/', '\\')
         result = [log_df.columns.tolist()] + log_df.values.tolist()
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+        expected = [[['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
                     ['2025-08-13 2:35PM', 'test_c01_003', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
                      f'Preservation.xml was not created. xmllint error: warning: failed to load external entity '
                      f'"file:\\{aips_dir}\\test_c01_003\\metadata\\test_c01_003_preservation.xml"\r\n',
-                     'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
-        self.assertEqual(result, expected, "Problem with error: missing, log")
+                     'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']],
+                    [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                     ['2025-08-13 2:35PM', 'test_c01_003', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
+                      f'Preservation.xml was not created. xmllint error: warning: failed to load external entity '
+                      f'"{aips_dir.replace('/', '\\')}\\test_c01_003\\metadata\\test_c01_003_preservation.xml"\n',
+                      'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]]
+        self.assertIn(result, expected, "Problem with error: missing, log")
 
     def test_error_not_valid(self):
         """Test for error handling if the preservation.xml file is not valid"""
@@ -132,44 +140,68 @@ class TestValidatePreservationXML(unittest.TestCase):
         self.assertEqual(result, expected, "Problem with error: missing, aip log")
 
         # Test for the validation log.
+        # Output is formatted differently depending on the OS the test is run on.
         log_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'preservationxml_not_valid',
                                 'test_c01_004_presxml_validation.txt')
         with open(log_path, 'r') as f:
             result = f.readlines()
         aips_dir_forward = aips_dir.replace('\\', '/')
-        expected = [f'file:/{aips_dir_forward}/test_c01_004/metadata/test_c01_004_preservation.xml:20: '
-                    'element formatDesignation: Schemas validity error : Element '
-                    "'{http://www.loc.gov/premis/v3}formatDesignation': Missing child element(s). "
-                    'Expected is ( {http://www.loc.gov/premis/v3}formatName ).\n',
-                    '\n',
-                    f'file:/{aips_dir_forward}/test_c01_004/metadata/test_c01_004_preservation.xml:25: '
-                    'element formatRegistryKey: Schemas validity error : Element '
-                    "'{http://www.loc.gov/premis/v3}formatRegistryKey': This element is not "
-                    'expected. Expected is ( {http://www.loc.gov/premis/v3}formatRegistryRole '
-                    ').\n',
-                    '\n',
-                    f'file:/{aips_dir_forward}/test_c01_004/metadata/test_c01_004_preservation.xml:45: '
-                    'element objectIdentifier: Schemas validity error : Element '
-                    "'{http://www.loc.gov/premis/v3}objectIdentifier': Missing child element(s). "
-                    'Expected is ( {http://www.loc.gov/premis/v3}objectIdentifierValue ).\n',
-                    '\n',
-                    f'file:/{aips_dir_forward}/test_c01_004/metadata/test_c01_004_preservation.xml:48: '
-                    'element objectCategory: Schemas validity error : Element '
-                    "'{http://www.loc.gov/premis/v3}objectCategory': [facet 'enumeration'] The "
-                    "value 'error' is not an element of the set {'bitstream', 'file', "
-                    "'intellectual entity', 'representation'}.\n",
-                    '\n',
-                    f'file:/{aips_dir_forward}/test_c01_004/metadata/test_c01_004_preservation.xml:60: '
-                    'element formatDesignation: Schemas validity error : Element '
-                    "'{http://www.loc.gov/premis/v3}formatDesignation': This element is not "
-                    'expected. Expected is one of ( {http://www.loc.gov/premis/v3}formatRegistry, '
-                    '{http://www.loc.gov/premis/v3}formatNote ).\n',
-                    '\n',
-                    f'{aips_dir}\\test_c01_004\\metadata\\test_c01_004_preservation.xml '
-                    'fails to validate\n',
-                    '\n',
-                    '\n']
-        self.assertEqual(result, expected, "Problem with error: not valid, validation log")
+        expected = [[f'file:/{aips_dir_forward}/test_c01_004/metadata/test_c01_004_preservation.xml:20: '
+                     'element formatDesignation: Schemas validity error : Element '
+                     "'{http://www.loc.gov/premis/v3}formatDesignation': Missing child element(s). "
+                     'Expected is ( {http://www.loc.gov/premis/v3}formatName ).\n',
+                     '\n',
+                     f'file:/{aips_dir_forward}/test_c01_004/metadata/test_c01_004_preservation.xml:25: '
+                     'element formatRegistryKey: Schemas validity error : Element '
+                     "'{http://www.loc.gov/premis/v3}formatRegistryKey': This element is not "
+                     'expected. Expected is ( {http://www.loc.gov/premis/v3}formatRegistryRole '
+                     ').\n',
+                     '\n',
+                     f'file:/{aips_dir_forward}/test_c01_004/metadata/test_c01_004_preservation.xml:45: '
+                     'element objectIdentifier: Schemas validity error : Element '
+                     "'{http://www.loc.gov/premis/v3}objectIdentifier': Missing child element(s). "
+                     'Expected is ( {http://www.loc.gov/premis/v3}objectIdentifierValue ).\n',
+                     '\n',
+                     f'file:/{aips_dir_forward}/test_c01_004/metadata/test_c01_004_preservation.xml:48: '
+                     'element objectCategory: Schemas validity error : Element '
+                     "'{http://www.loc.gov/premis/v3}objectCategory': [facet 'enumeration'] The "
+                     "value 'error' is not an element of the set {'bitstream', 'file', "
+                     "'intellectual entity', 'representation'}.\n",
+                     '\n',
+                     f'file:/{aips_dir_forward}/test_c01_004/metadata/test_c01_004_preservation.xml:60: '
+                     'element formatDesignation: Schemas validity error : Element '
+                     "'{http://www.loc.gov/premis/v3}formatDesignation': This element is not "
+                     'expected. Expected is one of ( {http://www.loc.gov/premis/v3}formatRegistry, '
+                     '{http://www.loc.gov/premis/v3}formatNote ).\n',
+                     '\n',
+                     f'{aips_dir}\\test_c01_004\\metadata\\test_c01_004_preservation.xml '
+                     'fails to validate\n',
+                     '\n',
+                     '\n'],
+                    [f"{aips_dir}/test_c01_004/metadata/test_c01_004_preservation.xml:20: "
+                     "element formatDesignation: Schemas validity error : Element "
+                     "'{http://www.loc.gov/premis/v3}formatDesignation': Missing child element(s). "
+                     "Expected is ( {http://www.loc.gov/premis/v3}formatName ).\n",
+                     f"{aips_dir}/test_c01_004/metadata/test_c01_004_preservation.xml:25: "
+                     "element formatRegistryKey: Schemas validity error : Element "
+                     "'{http://www.loc.gov/premis/v3}formatRegistryKey': This element is not "
+                     "expected. Expected is ( {http://www.loc.gov/premis/v3}formatRegistryRole ).\n",
+                     f"{aips_dir}/test_c01_004/metadata/test_c01_004_preservation.xml:45: "
+                     "element objectIdentifier: Schemas validity error : Element "
+                     "'{http://www.loc.gov/premis/v3}objectIdentifier': Missing child element(s). "
+                     "Expected is ( {http://www.loc.gov/premis/v3}objectIdentifierValue ).\n",
+                     f"{aips_dir}/test_c01_004/metadata/test_c01_004_preservation.xml:48: "
+                     'element objectCategory: Schemas validity error : Element '
+                     "'{http://www.loc.gov/premis/v3}objectCategory': [facet 'enumeration'] The "
+                     "value 'error' is not an element of the set {'bitstream', 'file', "
+                     "'intellectual entity', 'representation'}.\n",
+                     f"{aips_dir}/test_c01_004/metadata/test_c01_004_preservation.xml:60: "
+                     "element formatDesignation: Schemas validity error : Element "
+                     "'{http://www.loc.gov/premis/v3}formatDesignation': This element is not "
+                     "expected. Expected is one of ( {http://www.loc.gov/premis/v3}formatRegistry, "
+                     "{http://www.loc.gov/premis/v3}formatNote ).\n",
+                     f"{aips_dir}/test_c01_004/metadata/test_c01_004_preservation.xml fails to validate\n", "\n"]]
+        self.assertIn(result, expected, "Problem with error: not valid, validation log")
 
 
 if __name__ == "__main__":

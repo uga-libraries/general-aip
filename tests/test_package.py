@@ -6,6 +6,7 @@ so the expected results and the tearDown look for either possible size.
 """
 
 import os
+import tarfile
 import unittest
 from aip_functions import AIP, log, package
 from test_validate_bag import aip_log_list
@@ -60,6 +61,27 @@ class TestPackage(unittest.TestCase):
         result = (os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.663.tar')) or
                   os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.673.tar')))
         self.assertEqual(result, True, "Problem with tar, aips-ready-to-ingest")
+
+        # Test that the tar file contains the expected file paths.
+        # Catches errors in how the tar is constructed, like if it contains unnecessary folders.
+        try:
+            with tarfile.open(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.663.tar')) as tar:
+                result = tar.getnames()
+        except FileNotFoundError:
+            with tarfile.open(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.673.tar')) as tar:
+                result = tar.getnames()
+        result.sort()
+        # TODO: known issue, on Mac the input has lots of invisible temp files that need to be deleted
+        expected = [os.path.join('.', 'bag-info.txt'),
+                    os.path.join('.', 'bagit.txt'),
+                    os.path.join('.', 'data'),
+                    os.path.join('.', 'data', 'metadata'),
+                    os.path.join('.', 'data', 'metadata', 'Placeholder for metadata.txt'),
+                    os.path.join('.', 'data', 'objects'),
+                    os.path.join('.', 'data', 'objects', 'Placeholder for content.txt'),
+                    os.path.join('.', 'manifest-md5.txt'),
+                    os.path.join('.', 'tagmanifest-md5.txt')]
+        self.assertEqual(result, expected, "Problem with tar, tar contents")
 
         # Test that the AIP size is updated.
         result = aip.size

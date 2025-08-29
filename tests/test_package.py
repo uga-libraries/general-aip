@@ -72,11 +72,16 @@ class TestPackage(unittest.TestCase):
             with tarfile.open(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.673.tar')) as tar:
                 result = tar.getnames()
         result.sort()
-        expected = ['./bag-info.txt', './bagit.txt', './data',
-                    './data/metadata', './data/metadata/Placeholder for metadata.txt',
-                    '.data/objects', './data/objects/Placeholder for content.txt',
-                    './manifest-md5.txt', './tagmanifest-md5.txt']
-        self.assertEqual(result, expected, "Problem with tar, tar contents")
+        # Windows includes bag name in path and Mac has "." instead.
+        expected = [['.', './bag-info.txt', './bagit.txt', './data',
+                     './data/metadata', './data/metadata/Placeholder for metadata.txt',
+                     './data/objects', './data/objects/Placeholder for content.txt',
+                     './manifest-md5.txt', './tagmanifest-md5.txt'],
+                    ['test-aip-1_bag', 'test-aip-1_bag/bag-info.txt', 'test-aip-1_bag/bagit.txt', 'test-aip-1_bag/data',
+                     'test-aip-1_bag/data/metadata', 'test-aip-1_bag/data/metadata/Placeholder for metadata.txt',
+                     'test-aip-1_bag/data/objects', 'test-aip-1_bag/data/objects/Placeholder for content.txt',
+                     'test-aip-1_bag/manifest-md5.txt', 'test-aip-1_bag/tagmanifest-md5.txt']]
+        self.assertIn(result, expected, "Problem with tar, tar contents")
 
         # Test that the AIP size is updated.
         result = aip.size

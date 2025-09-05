@@ -1,221 +1,171 @@
 """Testing for the function manifest, which takes an AIP class instance as input,
 calculates the MD5 for the tar.bz2 version of the AIP, and adds that to the manifest.
-There is error handling for if the .tar.bz2 version of the AIP doesn"t exist and
+There is error handling for if the .tar.bz2 version of the AIP doesn't exist and
 for errors from the tool which generates the MD5.
-
-In the production script, the manifest is made or edited after each AIP is made.
-For faster testing, this makes the output of the previous steps (a tar and/or zip file in aips-to-ingest),
-instead of using the functions to do that.
-Also for faster testing, the tar and/or zip file is a text file with the ".tar" or ".tar.bz2" extensions.
-The tests only require that the file name be correct.
 
 NOTE: was not able to make a test for md5deep error handling.
 The only way to cause an error is give it an incorrect path, but that is caught at an earlier step.
 We plan to stop using md5deep fairly soon, so leaving that without a test.
 """
 
+from datetime import datetime
 import os
 import pandas as pd
-import shutil
 import unittest
-from aip_functions import AIP, log, make_output_directories, manifest
+from aip_functions import AIP, log, manifest
+from test_validate_bag import aip_log_list
 
 
 def manifest_to_list(path):
-    """
-    Reads the manifest and returns a list of lists, where each list is a row in the manifest.
-    """
-    df = pd.read_csv(path, delim_whitespace=True)
+    """Reads the manifest and returns a list of lists, where each list is a row in the manifest"""
+    df = pd.read_csv(path, sep='\s+')
     row_list = [df.columns.to_list()] + df.values.tolist()
     return row_list
 
 
 class TestManifest(unittest.TestCase):
 
-    def setUp(self):
-        """
-        Makes the script output folders.
-        """
-        make_output_directories()
-
     def tearDown(self):
-        """
-        Deletes the log and script output folders.
-        """
-        os.remove(os.path.join("..", "aip_log.csv"))
-        shutil.rmtree(os.path.join("..", "aips-to-ingest"))
-        shutil.rmtree(os.path.join("..", "fits-xml"))
-        shutil.rmtree(os.path.join("..", "preservation-xml"))
+        """Deletes the AIP log and manifest, if made"""
+        log_path = os.path.join(os.getcwd(), 'aip_log.csv')
+        if os.path.exists(log_path):
+            os.remove(log_path)
 
-    # def test_av(self):
-    #     """
-    #     Temporary test to replicate an error with moving to aips-already-on-ingest-server.
-    #     To use in Windows, need to adjust rsync result and test for it.
-    #     """
-    #     aip = AIP(os.getcwd(), "bmac", "mov", "coll", "folder", "av", "bmac_test_1", "title", 1, False)
-    #     aip.size = 4
-    #     manifest(aip, os.path.join(os.getcwd(), 'aip_staging_location'), os.getcwd())
-    #     self.assertEqual(True, True)
+        date = datetime.now().strftime("%Y-%m-%d")
+        manifest_list = [f'manifest_tests_bmac_{date}.txt', f'manifest_tests_hargrett_{date}.txt',
+                         f'manifest_tests_russell_{date}.txt']
+        for manifest_name in manifest_list:
+            manifest_path = os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-ready-to-ingest', manifest_name)
+            if os.path.exists(manifest_path):
+                os.remove(manifest_path)
 
-    def test_one_tar(self):
-        """
-        Test for adding a single tar file to the manifest.
-        Result for testing is the contents of the manifest plus the AIP log.
-        """
-        # Makes 1 AIP instance, an AIP tar placeholder, and the manifest.
-        aip = AIP(os.getcwd(), "test", "coll-1", "one-tar-folder", "one-tar", "title", 1, to_zip=False)
-        aip.size = 4000
-        with open(os.path.join("..", "aips-to-ingest", f"{aip.id}_bag.4000.tar"), "w") as fake_file:
-            fake_file.write("Test")
-        manifest(aip)
+    def test_bz2(self):
+        """Test for an AIP that is tarred and zipped"""
+        # Makes the test input and runs the function.
+        # The AIP log is updated as if previous steps have run correctly.
+        aips_dir = os.getcwd()
+        aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
+        aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'har-ua01-001-001', 'title', 1, True)
+        aip.size = 1000
+        aip.log = {'Started': '2025-08-14 11:45AM', 'AIP': 'har-ua01-001-001', 'Deletions': 'No files deleted',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
+                   'Manifest': 'n/a', 'Complete': 'n/a'}
+        log('header', aips_dir)
+        manifest(aip, aip_staging, os.path.join(os.getcwd(), 'archive_ingest'))
 
         # Test for the manifest.
-        result = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
-        expected = [["0cbc6611f5540bd0809a388dc95a615b", "one-tar_bag.4000.tar"]]
-        self.assertEqual(expected, result, "Problem with one tar, manifest")
+        manifest_name = f'manifest_tests_hargrett_{datetime.now().strftime("%Y-%m-%d")}.txt'
+        result = manifest_to_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
+        expected = [['8a88e2fe7d8fa98e978fcbcc59b4e352', 'har-ua01-001-001_bag.1000.tar.bz2']]
+        self.assertEqual(expected, result, "Problem with bz2, manifest")
 
-        # Test for the AIP log: Manifest.
-        result_log = aip.log["Manifest"]
-        expected_log = "Successfully added AIP to manifest"
-        self.assertEqual(result_log, expected_log, "Problem with one tar, log: Manifest")
+        # Test for the AIP log.
+        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                    ['2025-08-14 11:45AM', 'har-ua01-001-001', 'No files deleted', 'Success', 'Success', 'BLANK',
+                     'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
+                     'Successfully completed processing']]
+        self.assertEqual(result, expected, "Problem with bz2, AIP log")
 
-        # Test for the AIP log: Complete.
-        result_log2 = aip.log["Complete"]
-        expected_log2 = "Successfully completed processing"
-        self.assertEqual(result_log2, expected_log2, "Problem with one tar, log: Complete")
+    def test_error_missing(self):
+        """Test for when the AIP is not in the expected location"""
+        # Makes the test input and runs the function.
+        # The AIP log is updated as if previous steps have run correctly.
+        aips_dir = os.getcwd()
+        aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
+        aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'harg-missing-001', 'title', 1, True)
+        aip.size = 999
+        aip.log = {'Started': '2025-08-14 2:30PM', 'AIP': 'harg-missing-001', 'Deletions': 'No files deleted',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
+                   'Manifest': 'n/a', 'Complete': 'n/a'}
+        log('header', aips_dir)
+        manifest(aip, aip_staging, os.path.join(os.getcwd(), 'archive_ingest'))
 
-    def test_one_zip(self):
-        """
-        Test for adding a single tarred and zipped file to the manifest.
-        Result for testing is the contents of the manifest plus the AIP log.
-        """
-        # Makes 1 AIP instance, an AIP tar.bz2 placeholder, and the manifest.
-        aip = AIP(os.getcwd(), "test", "coll-1", "one-zip-folder", "one-zip", "title", 1, to_zip=True)
-        aip.size = 4000
-        with open(os.path.join("..", "aips-to-ingest", f"{aip.id}_bag.4000.tar.bz2"), "w") as fake_file:
-            fake_file.write("Test")
-        manifest(aip)
+        # Test that the manifest was not created.
+        manifest_name = f'manifest_tests_hargrett_{datetime.now().strftime("%Y-%m-%d")}.txt'
+        result = os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
+        self.assertEqual(result, False, "Problem with error_missing, manifest")
 
-        # Test for the manifest.
-        result = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
-        expected = [["0cbc6611f5540bd0809a388dc95a615b", "one-zip_bag.4000.tar.bz2"]]
-        self.assertEqual(expected, result, "Problem with one zip, manifest")
+        # Test for the AIP log.
+        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        aip_path = os.path.join(aip_staging, 'aips-ready-to-ingest', 'harg-missing-001_bag.999.tar.bz2')
+        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                    ['2025-08-14 2:30PM', 'harg-missing-001', 'No files deleted', 'Success', 'Success', 'BLANK',
+                     'Success', 'Success', 'Valid', 'Valid', 'Success',
+                     f"Tar/zip file '{aip_path}' not in aips-ready-for-ingest folder", 'Error during processing']]
+        self.assertEqual(result, expected, "Problem with error_missing, AIP log")
 
-        # Test for the AIP log: Manifest.
-        result_log = aip.log["Manifest"]
-        expected_log = "Successfully added AIP to manifest"
-        self.assertEqual(result_log, expected_log, "Problem with one zip, log: Manifest")
-
-        # Test for the AIP log: Complete.
-        result_log2 = aip.log["Complete"]
-        expected_log2 = "Successfully completed processing"
-        self.assertEqual(result_log2, expected_log2, "Problem with one zip, log: Complete")
-
-    def test_multiple_departments(self):
-        """
-        Test for adding files from multiple departments to the manifest.
-        Result for testing is the contents of the manifest plus the AIP log.
-        """
-        # Makes 1 AIP instance for department bmac and 2 for department test.
-        aip1 = AIP(os.getcwd(), "test", "coll", "aip1-folder", "aip1", "title", 1, to_zip=True)
-        aip2 = AIP(os.getcwd(), "bmac", "coll", "aip2-folder", "aip2", "title", 1, to_zip=True)
-        aip3 = AIP(os.getcwd(), "test", "coll", "aip3-folder", "aip3", "title", 1, to_zip=True)
-
-        # Makes an AIP tar.bz2 placeholder for all three of the AIP instances and makes the manifest.
-        for aip in (aip1, aip2, aip3):
-            aip.size = 4000
-            with open(os.path.join("..", "aips-to-ingest", f"{aip.id}_bag.4000.tar.bz2"), "w") as fake_file:
-                fake_file.write("Test")
-            manifest(aip)
-
-        # Test for the bmac manifest.
-        result_bmac = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_bmac.txt"))
-        expected_bmac = [["0cbc6611f5540bd0809a388dc95a615b", "aip2_bag.4000.tar.bz2"]]
-        self.assertEqual(result_bmac, expected_bmac, "Problem with multiple depts: bmac, manifest")
-
-        # Test for the bmac AIP log: Manifest.
-        result_bmac_log = aip2.log["Manifest"]
-        expected_bmac_log = "Successfully added AIP to manifest"
-        self.assertEqual(result_bmac_log, expected_bmac_log, "Problem with multiple depts: bmac, log: Manifest")
-
-        # Test for the bmac AIP log: Complete.
-        result_bmac_log2 = aip2.log["Complete"]
-        expected_bmac_log2 = "Successfully completed processing"
-        self.assertEqual(result_bmac_log2, expected_bmac_log2, "Problem with multiple depts: bmac, log: Complete")
-
-        # Test for the test manifest.
-        result_test = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
-        expected_test = [["0cbc6611f5540bd0809a388dc95a615b", "aip1_bag.4000.tar.bz2"],
-                         ["0cbc6611f5540bd0809a388dc95a615b", "aip3_bag.4000.tar.bz2"]]
-        self.assertEqual(result_test, expected_test, "Problem with multiple depts: test, manifest")
-
-        # Test for the test AIP log: Manifest.
-        result_test_log = (aip1.log["Manifest"], aip3.log["Manifest"])
-        expected_test_log = ("Successfully added AIP to manifest", "Successfully added AIP to manifest")
-        self.assertEqual(result_test_log, expected_test_log, "Problem with multiple depts: test, log: Manifest")
-
-        # Test for the test AIP log: Complete.
-        result_test_log2 = (aip1.log["Complete"], aip3.log["Complete"])
-        expected_test_log2 = ("Successfully completed processing", "Successfully completed processing")
-        self.assertEqual(result_test_log2, expected_test_log2, "Problem with multiple depts: test, log: Complete")
-
-    def test_error_one_missing(self):
-        """
-        Test for error handling of a tarred file missing from aips-to-ingest.
-        The tar for another AIP is present, so the manifest is made.
-        """
-        # Makes two AIP instances for department test.
-        aip1 = AIP(os.getcwd(), "test", "coll-1", "aip1-folder", "aip1", "title", 1, to_zip=False)
-        aip2 = AIP(os.getcwd(), "test", "coll-1", "aip2-folder", "aip2", "title", 1, to_zip=False)
-
-        # Only makes an AIP tar placeholder for one AIP instance and makes the manifest for both.
-        aip1.size = 4000
-        with open(os.path.join("..", "aips-to-ingest", f"{aip1.id}_bag.4000.tar"), "w") as fake_file:
-            fake_file.write("Test")
-        manifest(aip1)
-        manifest(aip2)
+    def test_manifest_exists(self):
+        """Test for when a manifest already exists and the AIP needs to be added to it"""
+        # Makes the test input and runs the function.
+        # The AIP log is updated as if previous steps have run correctly.
+        # The manifest is made by the test instead of being in the GitHub repo already so the date matches.
+        aips_dir = os.getcwd()
+        aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
+        aip = AIP(aips_dir, 'russell', None, 'rbrl-123', 'folder', 'general', 'rbrl-123-er-123456', 'title', 1, True)
+        aip.size = 300
+        aip.log = {'Started': '2025-08-14 2:40PM', 'AIP': 'rbrl-123-er-123456', 'Deletions': 'No files deleted',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
+                   'Manifest': 'n/a', 'Complete': 'n/a'}
+        log('header', aips_dir)
+        manifest_name = f'manifest_tests_russell_{datetime.now().strftime("%Y-%m-%d")}.txt'
+        with open(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name), 'w', encoding="utf-8") as file:
+            file.write('629f0e1886f6e7d53291fae720e737dd  rbrl-123-er-111111_bag.22.tar.bz2\n')
+        manifest(aip, aip_staging, os.path.join(os.getcwd(), 'archive_ingest'))
 
         # Test for the manifest.
-        result = manifest_to_list(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
-        expected = [["0cbc6611f5540bd0809a388dc95a615b", "aip1_bag.4000.tar"]]
-        self.assertEqual(result, expected, "Problem with error: one missing, manifest")
+        result = manifest_to_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
+        expected = [['629f0e1886f6e7d53291fae720e737dd', 'rbrl-123-er-111111_bag.22.tar.bz2'],
+                    ['8a88e2fe7d8fa98e978fcbcc59b4e352', 'rbrl-123-er-123456_bag.300.tar.bz2']]
+        self.assertEqual(expected, result, "Problem with manifest_exists, manifest")
 
-        # Test for the AIP log: Manifest.
-        result_log = (aip1.log["Manifest"], aip2.log["Manifest"])
-        expected_log = ("Successfully added AIP to manifest", "Tar/zip file not in aips-to-ingest folder")
-        self.assertEqual(result_log, expected_log, "Problem with error: one missing, log: Manifest")
+        # Test for the AIP log.
+        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                    ['2025-08-14 2:40PM', 'rbrl-123-er-123456', 'No files deleted', 'Success', 'Success', 'BLANK',
+                     'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
+                     'Successfully completed processing']]
+        self.assertEqual(result, expected, "Problem with manifest_exists, AIP log")
 
-        # Test for the AIP log: Complete.
-        result_log2 = (aip1.log["Complete"], aip2.log["Complete"])
-        expected_log2 = ("Successfully completed processing", "Error during processing")
-        self.assertEqual(result_log2, expected_log2, "Problem with error: one missing, log: Complete")
+    def test_tar(self):
+        """Test for an AIP that is tarred but not zipped"""
+        # Makes the test input and runs the function.
+        # The AIP log is updated as if previous steps have run correctly.
+        aips_dir = os.getcwd()
+        aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
+        aip = AIP(aips_dir, 'bmac', 'mp4', 'rabbitbox', 'folder', 'general', 'rabbitbox_010', 'title', 1, False)
+        aip.size = 20000
+        aip.log = {'Started': '2025-08-14 2:25PM', 'AIP': 'rabbitbox_010', 'Deletions': 'No files deleted',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
+                   'Manifest': 'n/a', 'Complete': 'n/a'}
+        log('header', aips_dir)
+        manifest(aip, aip_staging, os.path.join(os.getcwd(), 'archive_ingest'))
 
-    def test_error_all_missing(self):
-        """
-        Test for error handling of a tarred file missing from aips-to-ingest.
-        There are no other AIPs, so the manifest is not made.
-        """
-        # Makes two AIP instances for department test.
-        aip1 = AIP(os.getcwd(), "test", "coll-1", "aip1-folder", "aip1", "title", 1, to_zip=False)
-        aip2 = AIP(os.getcwd(), "test", "coll-1", "aip2-folder", "aip2", "title", 1, to_zip=False)
+        # Test for the manifest.
+        manifest_name = f'manifest_tests_bmac_{datetime.now().strftime("%Y-%m-%d")}.txt'
+        result = manifest_to_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
+        expected = [['629f0e1886f6e7d53291fae720e737dd', 'rabbitbox_010_bag.20000.tar']]
+        self.assertEqual(expected, result, "Problem with tar, manifest")
 
-        # Does not make an AIP tar placeholder for either AIP instance and makes the manifest for both.
-        manifest(aip1)
-        manifest(aip2)
-
-        # Test for the manifest not being made.
-        result = os.path.exists(os.path.join("..", "aips-to-ingest", "manifest_test.txt"))
-        self.assertEqual(result, False, "Problem with error: all missing, manifest")
-
-        # Test for the AIP log: Manifest.
-        result_log = (aip1.log["Manifest"], aip2.log["Manifest"])
-        expected_log = ("Tar/zip file not in aips-to-ingest folder", "Tar/zip file not in aips-to-ingest folder")
-        self.assertEqual(result_log, expected_log, "Problem with error: all missing, log: Manifest")
-
-        # Test for the AIP log: Complete.
-        result_log2 = (aip1.log["Complete"], aip2.log["Complete"])
-        expected_log2 = ("Error during processing", "Error during processing")
-        self.assertEqual(result_log2, expected_log2, "Problem with error: all missing, log: Complete")
+        # Test for the AIP log.
+        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                    ['2025-08-14 2:25PM', 'rabbitbox_010', 'No files deleted', 'Success', 'Success', 'BLANK',
+                     'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
+                     'Successfully completed processing']]
+        self.assertEqual(result, expected, "Problem with tar, AIP log")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,2 @@
+AIP contents are not needed for this test.
+It just verifies if the folder is there.

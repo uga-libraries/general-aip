@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<combined-fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd"
+         version="1.5.0"
+         timestamp="7/21/25 4:16 PM">
+      <identification>
+         <identity format="Office Open XML Document">
+            <tool toolname="Droid" toolversion="6.4"/>
+            <tool toolname="Exiftool" toolversion="11.54"/>
+            <tool toolname="Tika" toolversion="1.21"/>
+            <version toolname="Droid" toolversion="6.4">2007 onwards</version>
+            <externalIdentifier type="puid">fmt/189</externalIdentifier>
+         </identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/Users/ahanson/Documents/GitHub/general-aip/tests/make_preservation_xml/not_done/rbrl-025-er-000001/objects/Test File.docx</filepath>
+         <size toolname="OIS File Information"
+               toolversion="1.0"
+               status="SINGLE_RESULT">12011</size>
+         <md5checksum toolname="OIS File Information"
+                      toolversion="1.0"
+                      status="SINGLE_RESULT">b89f3a67c897515f5e0758d9523a8ddf</md5checksum>
+         <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025:07:21 19:53:00Z</created>
+            <creatingApplicationVersion toolname="Exiftool" toolversion="11.54">16.0000</creatingApplicationVersion>
+         </creatingApplication>
+         <creatingApplication tool="Tika">
+            <creatingApplicationName toolname="Tika" toolversion="1.21" status="SINGLE_RESULT">Microsoft Office Word</creatingApplicationName>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+</combined-fits>

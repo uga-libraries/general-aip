@@ -7,125 +7,203 @@ because we don"t know how to force that to happen.
 
 import datetime
 import os
+import pandas as pd
 import shutil
 import unittest
-from aip_functions import AIP, make_bag, validate_bag
+from aip_functions import AIP, log, validate_bag
+
+
+def aip_log_list(log_path):
+    """Make a list of rows within an aip log for comparing to the expected results"""
+    log_df = pd.read_csv(log_path)
+    log_df = log_df.fillna('BLANK')
+    log_list = [log_df.columns.tolist()] + log_df.values.tolist()
+    return log_list
+
+
+def validation_log_list(aip_id):
+    """Make a list of rows within a validation log for comparing to the expected results,
+    sorting the list since bagit validation outputs are in an unpredictable order"""
+    log_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'bag_not_valid',
+                            f'{aip_id}_bag_validation.txt')
+    with open(log_path, 'r') as open_file:
+        log_list = open_file.readlines()
+        log_list.sort()
+        return log_list
 
 
 class TestValidateBag(unittest.TestCase):
 
-    def setUp(self):
-        """
-        Makes an AIP instance and corresponding bag to use for testing.
-        """
-        # Makes the AIP instance and a folder named with the AIP ID.
-        self.aip = AIP(os.getcwd(), "test", None, "coll-1", "aip-folder", "general", "aip-id", "title", 1, True)
-        os.mkdir(self.aip.id)
-
-        # Makes the AIP metadata folder and metadata files.
-        # To save time, since they are not used for the test, the metadata files are text files and not real.
-        os.mkdir(os.path.join(self.aip.id, "metadata"))
-        with open(os.path.join(self.aip.id, "metadata", "file_fits.xml"), "w") as file:
-            file.write("Text")
-        with open(os.path.join(self.aip.id, "metadata", f"{self.aip.id}_preservation.xml"), "w") as file:
-            file.write("Text")
-
-        # Makes the AIP object folder and a test file.
-        os.mkdir(os.path.join(self.aip.id, "objects"))
-        with open(os.path.join(self.aip.id, "objects", "file.txt"), "w") as file:
-            file.write("Test")
-
-        # Makes a bag from the AIP folder.
-        make_bag(self.aip)
-
     def tearDown(self):
-        """
-        If they are present, deletes the test AIP (if correctly renamed to add "_bag" or if it isn't),
-        the AIP log and the errors folder.
-        """
-        if os.path.exists(f"{self.aip.id}_bag"):
-            shutil.rmtree(f"{self.aip.id}_bag")
-        elif os.path.exists(self.aip.id):
-            shutil.rmtree(self.aip.id)
+        """Deletes the AIP log and bag_not_valid errors folder if they were made"""
+        log_path = os.path.join(os.getcwd(), 'validate_bag', 'aip_log.csv')
+        if os.path.exists(log_path):
+            os.remove(log_path)
 
-        if os.path.exists(os.path.join("..", "aip_log.csv")):
-            os.remove(os.path.join("..", "aip_log.csv"))
+        error_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'bag_not_valid')
+        if os.path.exists(error_path):
+            shutil.rmtree(error_path)
 
-        aip_staging = os.path.join(os.getcwd(), "aip_staging_location")
-        if os.path.exists(os.path.join(aip_staging, "aips-with-errors")):
-            shutil.rmtree(os.path.join(aip_staging, "aips-with-errors"))
+    def test_not_valid_added(self):
+        """Test for when a bag is not valid because files were added after it was bagged"""
+        # Makes the test input and runs the function.
+        # The AIP log is updated as if previous steps have run correctly.
+        # A copy of the bag is made since this test should move it to an error folder.
+        aips_dir = os.path.join(os.getcwd(), 'validate_bag')
+        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_001', 'title', 1, True)
+        aip.log = {'Started': '2025-08-14 9:30AM', 'AIP': 'test_not_001', 'Deletions': 'No files deleted',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
+                   'Complete': 'n/a'}
+        log('header', aips_dir)
+        shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
+        validate_bag(aip, aip_staging)
 
-    def test_valid_bag(self):
-        """
-        Test for validating a valid bag.
-        """
-        # Runs the function being tested.
-        aip_staging = os.path.join(os.getcwd(), "aip_staging_location")
-        validate_bag(self.aip, aip_staging)
+        # Test that the AIP log has the expected contents.
+        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                    ['2025-08-14 9:30AM', 'test_not_001', 'No files deleted', 'Success', 'Success', 'BLANK',
+                     'Success', 'Success', 'Valid', 'Bag not valid (see log in bag_not_valid error folder)',
+                     'BLANK', 'BLANK', 'Error during processing']]
+        self.assertEqual(result, expected, "Problem with test for not_valid_added, AIP log")
+
+        # Test that the AIP folder was moved to the error folder.
+        result = os.path.exists(os.path.join(aip_staging, 'aips-with-errors', 'bag_not_valid', f'{aip.id}_bag'))
+        self.assertEqual(result, True, "Problem with test for not_valid_added, error folder")
+
+        # Test that the validation log has the expected contents.
+        result = validation_log_list(aip.id)
+        expected = ['Payload-Oxum validation failed. Expected 5 files and 122 bytes but found 7 files and 201 bytes']
+        self.assertEqual(result, expected, "Problem with test for not_valid_added, validation log")
+
+    def test_not_valid_deleted(self):
+        """Test for when a bag is not valid because a file was deleted after it was bagged"""
+        # Makes the test input and runs the function.
+        # The AIP log is updated as if previous steps have run correctly.
+        # A copy of the bag is made since this test should move it to an error folder.
+        aips_dir = os.path.join(os.getcwd(), 'validate_bag')
+        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_002', 'title', 1, True)
+        aip.log = {'Started': '2025-08-14 9:50AM', 'AIP': 'test_not_002', 'Deletions': 'No files deleted',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
+                   'Complete': 'n/a'}
+        log('header', aips_dir)
+        shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
+        validate_bag(aip, aip_staging)
+
+        # Test that the AIP log has the expected contents.
+        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                    ['2025-08-14 9:50AM', 'test_not_002', 'No files deleted', 'Success', 'Success', 'BLANK',
+                     'Success', 'Success', 'Valid', 'Bag not valid (see log in bag_not_valid error folder)',
+                     'BLANK', 'BLANK', 'Error during processing']]
+        self.assertEqual(result, expected, "Problem with test for not_valid_deleted, AIP log")
+
+        # Test that the AIP folder was moved to the error folder.
+        result = os.path.exists(os.path.join(aip_staging, 'aips-with-errors', 'bag_not_valid', f'{aip.id}_bag'))
+        self.assertEqual(result, True, "Problem with test for not_valid_deleted, error folder")
+
+        # Test that the validation log has the expected contents.
+        result = validation_log_list(aip.id)
+        expected = ['Payload-Oxum validation failed. Expected 5 files and 122 bytes but found 4 files and 116 bytes']
+        self.assertEqual(result, expected, "Problem with test for not_valid_deleted, validation log")
+
+    def test_not_valid_edited(self):
+        """Test for when a bag is not valid because files were edited after it was bagged"""
+        # Makes the test input and runs the function.
+        # The AIP log is updated as if previous steps have run correctly.
+        # A copy of the bag is made since this test should move it to an error folder.
+        aips_dir = os.path.join(os.getcwd(), 'validate_bag')
+        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_003', 'title', 1, True)
+        aip.log = {'Started': '2025-08-14 9:55AM', 'AIP': 'test_not_003', 'Deletions': 'No files deleted',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
+                   'Complete': 'n/a'}
+        log('header', aips_dir)
+        shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
+        validate_bag(aip, aip_staging)
+
+        # Test that the AIP log has the expected contents.
+        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                    ['2025-08-14 9:55AM', 'test_not_003', 'No files deleted', 'Success', 'Success', 'BLANK',
+                     'Success', 'Success', 'Valid', 'Bag not valid (see log in bag_not_valid error folder)',
+                     'BLANK', 'BLANK', 'Error during processing']]
+        self.assertEqual(result, expected, "Problem with test for not_valid_edited, AIP log")
+
+        # Test that the AIP folder was moved to the error folder.
+        result = os.path.exists(os.path.join(aip_staging, 'aips-with-errors', 'bag_not_valid', f'{aip.id}_bag'))
+        self.assertEqual(result, True, "Problem with test for not_valid_edited, error folder")
+
+        # Test that the validation log has the expected contents.
+        result = validation_log_list(aip.id)
+        expected = ['Payload-Oxum validation failed. Expected 5 files and 122 bytes but found 5 files and 143 bytes']
+        self.assertEqual(result, expected, "Problem with test for not_valid_edited, validation log")
+
+    def test_not_valid_md5(self):
+        """Test for when a bag is not valid because the md5 changed for files after it was bagged"""
+        # Makes the test input and runs the function.
+        # The AIP log is updated as if previous steps have run correctly.
+        # A copy of the bag is made since this test should move it to an error folder.
+        aips_dir = os.path.join(os.getcwd(), 'validate_bag')
+        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_004', 'title', 1, True)
+        aip.log = {'Started': '2025-08-14 10:00AM', 'AIP': 'test_not_004', 'Deletions': 'No files deleted',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
+                   'Complete': 'n/a'}
+        log('header', aips_dir)
+        shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
+        validate_bag(aip, aip_staging)
+
+        # Test that the AIP log has the expected contents.
+        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                    ['2025-08-14 10:00AM', 'test_not_004', 'No files deleted', 'Success', 'Success', 'BLANK',
+                     'Success', 'Success', 'Valid', 'Bag not valid (see log in bag_not_valid error folder)',
+                     'BLANK', 'BLANK', 'Error during processing']]
+        self.assertEqual(result, expected, "Problem with test for not_valid_md5, AIP log")
+
+        # Test that the AIP folder was moved to the error folder.
+        result = os.path.exists(os.path.join(aip_staging, 'aips-with-errors', 'bag_not_valid', f'{aip.id}_bag'))
+        self.assertEqual(result, True, "Problem with test for not_valid_md5, error folder")
+
+        # Test that the validation log has the expected contents.
+        result = validation_log_list(aip.id)
+        expected = ['data\\metadata\\file.txt_fits.xml md5 validation failed: '
+                    'expected="5d1bcdb4b339b3ebbe1de5eb002bf202" found="5d1bcdb4b339b3ebbe1de5eb772bf272"\n',
+                    'data\\metadata\\test_valid_001_preservation.xml md5 validation failed: '
+                    'expected="e0a3eddf0f12620b231bab4ea0fe4cc0" found="e7a3eddf0f12620b231bab4ea0fe4cc0"\n',
+                    'data\\objects\\file1.txt md5 validation failed: expected="2f03b03630bf162930093f056f0f1583" '
+                    'found="2f03b03637bf162937793f756f0f1583"\n',
+                    'data\\objects\\file2.txt md5 validation failed: expected="d10ec0d49f924ed60c041089491b099e" '
+                    'found="d17ec7d49f924ed60c041789491b099e"\n']
+        self.assertEqual(result, expected, "Problem with test for not_valid_md5, validation log")
+
+    def test_valid(self):
+        """Test for when the bag is valid"""
+        # Makes the test input and runs the function.
+        aips_dir = os.path.join(os.getcwd(), 'validate_bag')
+        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'test', None, 'valid', 'folder', 'general', 'test_valid_001', 'title', 1, True)
+        validate_bag(aip, aip_staging)
 
         # Test for the AIP log.
         # Since the log for bagging includes a timestamp, assert cannot require an exact match.
-        result = self.aip.log["BagValid"]
-        expected = f"Bag valid on {datetime.date.today()}"
-        self.assertIn(expected, result, "Problem with validating a valid bag")
-
-    def test_not_valid_bag(self):
-        """
-        Test for validating a bag that is not valid.
-        NOTE: bagit will also print validation result to the terminal in red.
-        """
-
-        # Makes the bag not valid by replacing the MD5 manifest with incorrect information.
-        # Fixity is changed for file.txt, which also changes the fixity of manifest-md5.txt.
-        # If the files are changed instead, it produces a one-line payload error, which doesn't test log formatting.
-        with open(os.path.join(f"{self.aip.id}_bag", "manifest-md5.txt"), "w") as file:
-            file.write("9dffbf69ffba8bc38bc4e01abf4b1675  data/metadata/aip-id_preservation.xml\n")
-            file.write("9dffbf69ffba8bc38bc4e01abf4b1675  data/metadata/file_fits.xml\n")
-            file.write("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  data/objects/file.txt")
-
-        # Runs the function being tested.
-        aip_staging = os.path.join(os.getcwd(), "aip_staging_location")
-        validate_bag(self.aip, aip_staging)
-
-        # Test for the validation log.
-        # If the validation log is present, the contents of the log are the test result.
-        # The contents are sorted because bagit saves the errors in an inconsistent order.
-        # Otherwise, default error language is the result.
-        log_path = os.path.join(aip_staging, "aips-with-errors", "bag_not_valid", "aip-id_bag_validation.txt")
-        try:
-            with open(log_path, "r") as file:
-                result = file.readlines()
-                result.sort()
-        except FileNotFoundError:
-            result = "The validation log was not found"
-        expected = ['data\\objects\\file.txt md5 validation failed: expected="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" '
-                    'found="0cbc6611f5540bd0809a388dc95a615b"\n',
-                    'manifest-md5.txt md5 validation failed: expected="ca30eea54d30b25cca192fb4a38efbc3" '
-                    'found="7fd32d6a82c9ba59534103d4a877e3d8"\n',
-                    'manifest-md5.txt sha256 validation failed: '
-                    'expected="ce73cc2e81ad3cc1b9f24d84a57984b96a4322914f7b02067a11c81b739ae548" '
-                    'found="0752123baadbf461f459b56be3c91b84548582d6ef6f4497f5ee6c528afdca10"\n']
-        self.assertEqual(result, expected, "Problem with validating a bag that is not valid, validation log")
-
-        # Test for if the folder is moved, both that it is in the error folder
-        # and is not in the original location (AIPs directory).
-        result_move = (os.path.exists(os.path.join(aip_staging, "aips-with-errors", "bag_not_valid", "aip-id_bag")),
-                       os.path.exists("aip-id"))
-        expected_move = (True, False)
-        self.assertEqual(result_move, expected_move,
-                         "Problem with validating a bag that is not valid, move to error folder")
-
-        # Test for the AIP log: BagValid.
-        result_log = self.aip.log["BagValid"]
-        expected_log = "Bag not valid (see log in bag_not_valid error folder)"
-        self.assertEqual(result_log, expected_log,
-                         "Problem with validating a bag that is not valid, AIP log: BagValid")
-
-        # Test for the AIP log: Complete.
-        result_log2 = self.aip.log["Complete"]
-        expected_log2 = "Error during processing"
-        self.assertEqual(result_log2, expected_log2,
-                         "Problem with validating a bag that is not valid, AIP log: Complete")
+        result = aip.log['BagValid']
+        expected = f'Bag valid on {datetime.date.today()}'
+        self.assertIn(expected, result, "Problem with valid")
 
 
 if __name__ == "__main__":

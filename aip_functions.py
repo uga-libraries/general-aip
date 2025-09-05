@@ -153,11 +153,13 @@ def check_configuration(aips_dir):
     except AttributeError:
         errors_list.append("SAXON variable is missing from the configuration file.")
 
-    try:
-        if not os.path.exists(c.MD5DEEP):
-            errors_list.append(f"MD5DEEP path '{c.MD5DEEP}' is not correct.")
-    except AttributeError:
-        errors_list.append("MD5DEEP variable is missing from the configuration file.")
+    # MD5DEEP is a path in Windows but just "md5deep" in Mac.
+    if not c.MD5DEEP == 'md5deep':
+        try:
+            if not os.path.exists(c.MD5DEEP):
+                errors_list.append(f"MD5DEEP path '{c.MD5DEEP}' is not correct.")
+        except AttributeError:
+            errors_list.append("MD5DEEP variable is missing from the configuration file.")
 
     try:
         if not os.path.exists(c.STYLESHEETS):
@@ -180,7 +182,7 @@ def check_configuration(aips_dir):
     return errors_list
 
 
-def check_metadata_csv(read_metadata):
+def check_metadata_csv(read_metadata, aips_dir):
     """Verify the content of the metadata.csv is correct
 
     - Columns are in the required order
@@ -190,6 +192,7 @@ def check_metadata_csv(read_metadata):
 
     Parameters:
         read_metadata : contents of the metadata.csv file, read with the csv library
+        aips_dir : the path to the folder which contains the folders to be made into AIPs
 
     Returns:
         errors_list : a list of errors, or an empty list if there were no errors
@@ -227,8 +230,8 @@ def check_metadata_csv(read_metadata):
 
     # Makes a list of every folder name in the AIPs directory.
     aips_directory_list = []
-    for item in os.listdir("."):
-        if os.path.isdir(item):
+    for item in os.listdir(aips_dir):
+        if os.path.isdir(os.path.join(aips_dir, item)):
             aips_directory_list.append(item)
 
     # Checks for any folder names that are in the CSV more than once.
@@ -275,7 +278,8 @@ def combine_metadata(aip, staging):
     combo_root = combo_tree.getroot()
 
     # Gets each of the FITS documents in the AIP's metadata folder.
-    for doc in os.listdir(os.path.join(aip.id, "metadata")):
+    metadata_path = os.path.join(aip.directory, aip.id, "metadata")
+    for doc in os.listdir(metadata_path):
         if doc.endswith("_fits.xml"):
 
             # Makes Python aware of the FITS namespace (it is the default and has no prefix).
@@ -283,7 +287,7 @@ def combine_metadata(aip, staging):
 
             # Gets the FITS element and its children and makes it a child of the root, combined-fits.
             try:
-                tree = et.parse(os.path.join(aip.id, "metadata", doc))
+                tree = et.parse(os.path.join(metadata_path, doc))
                 root = tree.getroot()
                 combo_root.append(root)
                 aip.log["FITSError"] = "Successfully created combined-fits.xml"
@@ -292,12 +296,12 @@ def combine_metadata(aip, staging):
             except et.ParseError as error:
                 aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
                 aip.log["Complete"] = "Error during processing"
-                log(aip.log)
-                move_error("combining_fits", aip.id, staging)
+                log(aip.log, aip.directory)
+                move_error("combining_fits", os.path.join(aip.directory, aip.id), staging)
                 return
 
     # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
-    fits_path = os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml")
+    fits_path = os.path.join(metadata_path, f"{aip.id}_combined-fits.xml")
     combo_tree.write(fits_path, xml_declaration=True, encoding="UTF-8")
 
 
@@ -308,13 +312,10 @@ def delete_temp(aip):
     Types of files deleted: DS_Store, Thumbs.db, ends with .tmp, and starts with '.'
 
     Parameters:
-         aip : instance of the AIP class, used for id and log
+         aip : instance of the AIP class, used for directory, id and log
 
     Returns: none
     """
-
-    # List of files to be deleted where the filename can be matched in its entirety.
-    delete_list = [".DS_Store", "._.DS_Store", "Thumbs.db"]
 
     # List of files that were deleted, to save to a log.
     deleted_files = []
@@ -322,7 +323,8 @@ def delete_temp(aip):
     # Checks all files at any level in the AIP folder against the deletion criteria.
     # Deletes DS_Store, Thumbs.db, starts with a dot, or ends with .tmp.
     # Gets information for the deletion log and then deletes the file.
-    for root, directories, files in os.walk(aip.id):
+    delete_list = [".DS_Store", "._.DS_Store", "Thumbs.db"]
+    for root, directories, files in os.walk(os.path.join(aip.directory, aip.id)):
         for item in files:
             if item in delete_list or item.endswith(".tmp") or item.startswith("."):
                 path = os.path.join(root, item)
@@ -335,8 +337,8 @@ def delete_temp(aip):
     # The log contains the path, filename, size in bytes and date/time last modified of every deleted file.
     # Also adds event information for deletion to the script log.
     if len(deleted_files) > 0:
-        filename = f"{aip.id}_files-deleted_{datetime.today().date()}_del.csv"
-        with open(os.path.join(aip.id, filename), "w", newline="") as deleted_log:
+        filename = f"{aip.id}_files-deleted_{datetime.today().strftime('%Y-%#m-%#d')}_del.csv"
+        with open(os.path.join(aip.directory, aip.id, filename), "w", newline="") as deleted_log:
             deleted_log_writer = csv.writer(deleted_log)
             deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
             for file_data in deleted_files:
@@ -380,13 +382,14 @@ def extract_metadata(aip):
             os.rename(os.path.join(metadata, item), os.path.join(metadata, new_name))
 
 
-def log(log_data):
+def log(log_data, aips_dir):
     """Save the result about each step done on an AIP to a CSV file
 
     Information is saved to the log after the AIP either finishes processing or encounters an anticipated error.
 
     Parameters:
         log_data : "header" or dictionary with log information for the AIP
+        aips_dir : the path to the folder which contains the folders to be made into AIPs
 
     Returns: none
     """
@@ -405,7 +408,7 @@ def log(log_data):
                    log_data["Manifest"], log_data["Complete"]]
 
     # Saves the data for the row to the log CSV.
-    with open(os.path.join("..", "aip_log.csv"), "a", newline="") as log_file:
+    with open(os.path.join(aips_dir, "aip_log.csv"), "a", newline="") as log_file:
         log_writer = csv.writer(log_file)
         log_writer.writerow(log_row)
 
@@ -423,13 +426,14 @@ def make_bag(aip):
     delete_temp(aip)
 
     # Bags the AIP. To save time, BMAC AV only generates md5 checksums.
+    aip_path = os.path.join(aip.directory, aip.id)
     if aip.type == "av" and aip.department == "bmac":
-        bagit.make_bag(aip.id, checksums=["md5"])
+        bagit.make_bag(aip_path, checksums=["md5"])
     else:
-        bagit.make_bag(aip.id, checksums=["md5", "sha256"])
+        bagit.make_bag(aip_path, checksums=["md5", "sha256"])
 
     # Renames the AIP folder to add _bag (common naming convention for the standard).
-    os.replace(aip.id, f"{aip.id}_bag")
+    os.replace(aip_path, os.path.join(aip.directory, f"{aip.id}_bag"))
 
 
 def make_cleaned_fits_xml(aip, staging):
@@ -439,16 +443,16 @@ def make_cleaned_fits_xml(aip, staging):
     It is deleted after the preservation.xml is made.
 
     Parameters:
-        aip : instance of the AIP class, used for id and log
+        aip : instance of the AIP class, used for directory, id and log
         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
 
     # Uses saxon and a stylesheet to make the cleaned-fits.xml from the combined-fits.xml.
-    input_file = os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml")
+    input_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_combined-fits.xml")
     stylesheet = os.path.join(c.STYLESHEETS, "fits-cleanup.xsl")
-    output_file = os.path.join(aip.id, "metadata", f"{aip.id}_cleaned-fits.xml")
+    output_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_cleaned-fits.xml")
     saxon_output = subprocess.run(f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{input_file}" '
                                   f'-xsl:"{stylesheet}" -o:"{output_file}"',
                                   stderr=subprocess.PIPE, shell=True)
@@ -458,8 +462,8 @@ def make_cleaned_fits_xml(aip, staging):
         error_msg = saxon_output.stderr.decode("utf-8")
         aip.log["PresXML"] = f"Issue when creating cleaned-fits.xml. Saxon error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("cleaned_fits_saxon_error", aip.id, staging)
+        log(aip.log, aip.directory)
+        move_error("cleaned_fits_saxon_error", os.path.join(aip.directory, aip.id), staging)
 
 
 def make_output_directories(staging, aip_type):
@@ -491,16 +495,16 @@ def make_preservation_xml(aip, staging):
     """Make the preservation.xml from the cleaned FITS XML in the metadata folder
 
     Parameters:
-        aip : instance of the AIP class, used for collection_id, department, id, log, title, and version
+        aip : instance of the AIP class, used for collection_id, department, directory, id, log, title, and version
         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
 
     # Uses saxon and a stylesheet to make the preservation.xml file from the cleaned-fits.xml.
-    input_file = os.path.join(aip.id, "metadata", f"{aip.id}_cleaned-fits.xml")
+    input_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_cleaned-fits.xml")
     stylesheet = os.path.join(c.STYLESHEETS, "fits-to-preservation.xsl")
-    output_file = os.path.join(aip.id, "metadata", f"{aip.id}_preservation.xml")
+    output_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_preservation.xml")
     args = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
            f'department="{aip.department}" version={aip.version} ns={c.NAMESPACE}'
     saxon_output = subprocess.run(f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{input_file}" '
@@ -512,8 +516,8 @@ def make_preservation_xml(aip, staging):
         error_msg = saxon_output.stderr.decode("utf-8")
         aip.log["PresXML"] = f"Issue when creating preservation.xml. Saxon error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("pres_xml_saxon_error", aip.id, staging)
+        log(aip.log, aip.directory)
+        move_error("pres_xml_saxon_error", os.path.join(aip.directory, aip.id), staging)
         return
 
 
@@ -539,9 +543,9 @@ def manifest(aip, staging, ingest):
     # Checks if the tar/zip is present in the aips-to-ingest directory.
     # If it isn't, due to errors from package(), logs the event and does not complete the rest of the function.
     if not os.path.exists(aip_path):
-        aip.log["Manifest"] = "Tar/zip file not in aips-ready-for-ingest folder"
+        aip.log["Manifest"] = f"Tar/zip file '{aip_path}' not in aips-ready-for-ingest folder"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         return
 
     # Calculates the MD5 of the packaged AIP.
@@ -553,7 +557,7 @@ def manifest(aip, staging, ingest):
         error_msg = md5deep_output.stderr.decode("utf-8")
         aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         return
 
     # Adds the md5 and AIP filename to the appropriate manifest in staging.
@@ -583,30 +587,29 @@ def manifest(aip, staging, ingest):
     # Logs the success of adding the AIP to the manifest and of AIP creation (this is the last step).
     aip.log["Manifest"] = "Successfully added AIP to manifest"
     aip.log["Complete"] = "Successfully completed processing"
-    log(aip.log)
+    log(aip.log, aip.directory)
 
 
-def move_error(error_name, item, staging):
+def move_error(error_name, aip_path, staging):
     """Move the AIP folder to an error folder, named with the error type
 
     The AIP is moved so the rest of the workflow steps are not attempted on it.
 
     Parameters:
         error_name : the name of the error folder
-        item : the name of the AIP folder with the error
+        aip_path : the path of the AIP folder with the error
         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
 
     # Makes the error folder, if it does not already exist.
-    # Error folders are in the folder "errors", which is in the parent folder of the AIPs directory.
     error_path = os.path.join(staging, "aips-with-errors", error_name)
     if not os.path.exists(error_path):
         os.makedirs(error_path)
 
     # Moves the AIP to the error folder.
-    os.replace(item, os.path.join(error_path, item))
+    os.replace(aip_path, os.path.join(error_path, os.path.basename(aip_path)))
 
 
 def organize_xml(aip, staging):
@@ -623,16 +626,16 @@ def organize_xml(aip, staging):
     """
 
     # Copies the preservation.xml file to the preservation-xml folder for staff reference.
-    shutil.copy2(os.path.join(aip.id, "metadata", f"{aip.id}_preservation.xml"),
+    shutil.copy2(os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_preservation.xml"),
                  os.path.join(staging, "preservation-xmls"))
 
     # Moves the combined-fits.xml file to the fits-xml folder for staff reference.
     # Only the FITS for individual files is kept in the metadata folder.
-    os.replace(os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml"),
+    os.replace(os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_combined-fits.xml"),
                os.path.join(staging, "fits-xmls", f"{aip.id}_combined-fits.xml"))
 
     # Deletes the cleaned-fits.xml file because it is a temporary file.
-    os.remove(os.path.join(aip.id, "metadata", f"{aip.id}_cleaned-fits.xml"))
+    os.remove(os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_cleaned-fits.xml"))
 
 
 def package(aip, staging):
@@ -654,26 +657,32 @@ def package(aip, staging):
     # Gets the operating system, since the tar and zip commands are different for Windows and Mac/Linux.
     operating_system = platform.system()
 
-    # Makes a variable for the AIP folder name, which is reused a lot.
+    # Makes variables for the AIP folder name and AIP full path.
     aip_bag = f"{aip.id}_bag"
+    bag_path = os.path.join(aip.directory, aip_bag)
 
     # Gets the total size of the bag:
     # sum of the bag payload (data folder) from bag-info.txt and the size of the bag metadata files.
     # It saves time to use the bag payload instead of recalculating the size of a large data folder.
+    try:
+        bag_info = open(os.path.join(bag_path, "bag-info.txt"), "r")
+    except FileNotFoundError:
+        aip.log["Package"] = f"Could not tar. Bag not in expected location: {bag_path}"
+        aip.log["Complete"] = "Error during processing"
+        log(aip.log, aip.directory)
+        return
     bag_size = 0
-    bag_info = open(os.path.join(aip_bag, "bag-info.txt"), "r")
     for line in bag_info:
         if line.startswith("Payload-Oxum"):
             payload = line.split()[1]
             bag_size += float(payload)
-    for file in os.listdir(aip_bag):
+    for file in os.listdir(bag_path):
         if file.endswith(".txt"):
-            bag_size += os.path.getsize(os.path.join(aip_bag, file))
+            bag_size += os.path.getsize(os.path.join(bag_path, file))
     bag_info.close()
     bag_size = int(bag_size)
 
     # Tars the file, using the command appropriate for the operating system.
-    bag_path = os.path.join(aip.directory, aip_bag)
     tar_path = os.path.join(staging, 'aips-ready-to-ingest', f"{aip_bag}.tar")
     if operating_system == "Windows":
         # Does not print the progress to the terminal (stdout), which is a lot of text. [subprocess.DEVNULL]
@@ -685,10 +694,10 @@ def package(aip, staging):
             error_msg = tar_output.stderr.decode("utf-8")
             aip.log["Package"] = f"Could not tar. 7zip error: {error_msg}"
             aip.log["Complete"] = "Error during processing"
-            log(aip.log)
+            log(aip.log, aip.directory)
             return
     else:
-        subprocess.run(f'tar -cf "{tar_path}" "{bag_path}"', shell=True)
+        subprocess.run(f'tar -C "{bag_path}" -cf "{tar_path}" .', shell=True)
 
     # Renames the file to include the size.
     tar_size_path = os.path.join(staging, "aips-ready-to-ingest", f"{aip_bag}.{bag_size}.tar")
@@ -724,7 +733,7 @@ def structure_directory(aip, staging):
     that directory structure is maintained within the objects folder.
 
     Parameters:
-         aip : instance of the AIP class, used for workflow, department, id, and log
+         aip : instance of the AIP class, used for directory, workflow, department, id, and log
          staging : path to the aip_staging folder from configuration.py
 
     Returns: none
@@ -732,81 +741,80 @@ def structure_directory(aip, staging):
 
     # Makes the objects folder within the AIP folder, if it doesn't exist.
     # If it does, moves the AIP to an error folder so the original directory structure is not altered.
+    aip_path = os.path.join(aip.directory, aip.id)
     try:
-        os.mkdir(os.path.join(aip.id, "objects"))
+        os.mkdir(os.path.join(aip_path, "objects"))
         aip.log["ObjectsError"] = "Successfully created objects folder"
     except FileExistsError:
         aip.log["ObjectsError"] = "Objects folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("objects_folder_exists", aip.id, staging)
+        log(aip.log, aip.directory)
+        move_error("objects_folder_exists", aip_path, staging)
         return
 
     # Makes the metadata folders within the AIP folder, if it doesn't exist.
     # If it does, moves the AIP to an error folder so the original directory structure is not altered.
     try:
-        os.mkdir(os.path.join(aip.id, "metadata"))
+        os.mkdir(os.path.join(aip_path, "metadata"))
         aip.log["MetadataError"] = "Successfully created metadata folder"
     except FileExistsError:
         aip.log["MetadataError"] = "Metadata folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("metadata_folder_exists", aip.id, staging)
+        log(aip.log, aip.directory)
+        move_error("metadata_folder_exists", aip_path, staging)
         return
 
     # Moves DPX files to the objects folder.
     # DPX files are already in bags, so have to navigate to the data folder to find the content to move into objects.
     if aip.workflow == 'dpx':
-        data_path = os.path.join(aip.directory, aip.id, 'data')
-        for root, dirs, files in os.walk(data_path):
+        for root, dirs, files in os.walk(os.path.join(aip_path, 'data')):
             for folder in dirs:
-                os.replace(f'{root}/{folder}', f'{aip.id}/objects/{folder}-dpx')
+                os.replace(os.path.join(root, folder), os.path.join(aip_path, 'objects', f'{folder}-dpx'))
             for file in files:
                 if file.endswith('.cue'):
-                    os.replace(f'{root}/{file}', f'{aip.id}/objects/{file}')
+                    os.replace(os.path.join(root, file), os.path.join(aip_path, 'objects', file))
                 if file.endswith('.mov'):
-                    shutil.copy2(f'{root}/{file}', f'{staging}/movs-to-bag')
-                    os.replace(f'{root}/{file}', f'{aip.id}/objects/{file}')
+                    shutil.copy2(os.path.join(root, file), os.path.join(staging, 'movs-to-bag'))
+                    os.replace(os.path.join(root, file), os.path.join(aip_path, 'objects', file))
                 if file.endswith('.wav'):
-                    os.replace(f'{root}/{file}', f'{aip.id}/objects/{pathlib.Path(file).stem}-dpx.wav')
+                    os.replace(os.path.join(root, file), os.path.join(aip_path, 'objects', f'{pathlib.Path(file).stem}-dpx.wav'))
         # Deletes the bag metadata files and data folder, now that the rest is organized into the AIP directory.
         for metadata_file in ('bag-info.txt', 'bagit.txt', 'manifest-md5.txt', 'tagmanifest-md5.txt'):
-            os.remove(os.path.join(aip.directory, aip.id, metadata_file))
-        shutil.rmtree(data_path)
+            os.remove(os.path.join(aip_path, metadata_file))
+        shutil.rmtree(os.path.join(aip_path, 'data'))
 
     # Moves any metadata files to the metadata folder and then the rest to the objects folder, with renaming as needed.
     # Metadata files are matched as specifically as possible to reduce the risk of incorrect identifications.
     web_metadata = ("_coll.csv", "_collscope.csv", "_crawldef.csv", "_crawljob.csv", "_seed.csv", "_seedscope.csv")
-    for item in os.listdir(aip.id):
+    for item in os.listdir(aip_path):
         if item in ('metadata', 'objects'):
             continue
-        item_path = os.path.join(aip.id, item)
-        metadata_path = os.path.join(aip.id, "metadata", item)
+        item_path = os.path.join(aip_path, item)
         # AV metadata files.
         av_metadata = (".qctools.mkv", ".qctools.xml.gz", ".framemd5", ".srt")
         if aip.type == "av" and item.endswith(av_metadata):
-            os.replace(item_path, os.path.join(aip.id, "metadata", f"bmac_{item}"))
+            os.replace(item_path, os.path.join(aip_path, "metadata", f"bmac_{item}"))
         # Deletion log, created by the script when deleting temp files.
         elif item.startswith(f"{aip.id}_files-deleted_"):
-            os.replace(item_path, metadata_path)
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # Metadata file used by Emory with disk images.
         elif aip.department == "emory" and item.startswith("EmoryMD"):
-            os.replace(item_path, metadata_path)
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # Website metadata files from downloading WARCs from Archive-It.
         # Hargrett and Russell both have -web- in the AIP ID, but MAGIL does not and can only check for the department.
         elif "-web-" in aip.id and item.endswith(web_metadata):
-            os.replace(item_path, metadata_path)
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
         elif aip.department == "magil" and item.endswith(web_metadata):
-            os.replace(item_path, metadata_path)
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # MXF files (renaming required, different from other AV)
         elif aip.department == "bmac" and aip.workflow == "mxf":
-            os.replace(item_path, os.path.join(aip.id, "objects", f"bmac_wsb-video_{item.lower()}"))
+            os.replace(item_path, os.path.join(aip_path, "objects", f"bmac_wsb-video_{item.lower()}"))
         # Moves all other BMA files to the objects folder, with renaming.
         elif aip.department == "bmac":
-            os.replace(item_path, os.path.join(aip.id, "objects", f"bmac_{item}"))
+            os.replace(item_path, os.path.join(aip_path, "objects", f"bmac_{item}"))
         # Moves all remaining files and folders to the objects folder.
         else:
-            os.replace(item_path, os.path.join(aip.id, "objects", item))
+            os.replace(item_path, os.path.join(aip_path, "objects", item))
 
 
 def validate_bag(aip, staging):
@@ -820,15 +828,16 @@ def validate_bag(aip, staging):
     """
 
     # Validate the bag with bagit, and save an errors in a separate log.
-    new_bag = bagit.Bag(f"{aip.id}_bag")
+    bag_path = os.path.join(aip.directory, f"{aip.id}_bag")
+    new_bag = bagit.Bag(bag_path)
     try:
         new_bag.validate()
         aip.log["BagValid"] = f"Bag valid on {datetime.now()}"
     except bagit.BagValidationError as errors:
         aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("bag_not_valid", f"{aip.id}_bag", staging)
+        log(aip.log, aip.directory)
+        move_error("bag_not_valid", bag_path, staging)
         # Error log is formatted to be easier to read (one error per line) if error information is in details.
         # Otherwise, the entire error output is saved to the log in the errors folder alongside the AIP folder.
         log_path = os.path.join(staging, "aips-with-errors", "bag_not_valid", f"{aip.id}_bag_validation.txt")
@@ -851,7 +860,7 @@ def validate_preservation_xml(aip, staging):
     """
 
     # Uses xmllint and an XSD file to validate the preservation.xml.
-    input_file = os.path.join(aip.id, "metadata", f"{aip.id}_preservation.xml")
+    input_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_preservation.xml")
     stylesheet = os.path.join(c.STYLESHEETS, "preservation.xsd")
     xmllint_output = subprocess.run(f'xmllint --noout -schema "{stylesheet}" "{input_file}"',
                                     stderr=subprocess.PIPE, shell=True)
@@ -862,8 +871,8 @@ def validate_preservation_xml(aip, staging):
     if "failed to load" in validation_result:
         aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("preservationxml_not_found", aip.id, staging)
+        log(aip.log, aip.directory)
+        move_error("preservationxml_not_found", os.path.join(aip.directory, aip.id), staging)
         return
     else:
         aip.log["PresXML"] = "Successfully created preservation.xml"
@@ -874,9 +883,10 @@ def validate_preservation_xml(aip, staging):
     if "fails to validate" in validation_result:
         aip.log["PresValid"] = "Preservation.xml is not valid (see log in error folder)"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("preservationxml_not_valid", aip.id, staging)
-        log_path = os.path.join("..", "errors", "preservationxml_not_valid", f"{aip.id}_presxml_validation.txt")
+        log(aip.log, aip.directory)
+        move_error("preservationxml_not_valid", os.path.join(aip.directory, aip.id), staging)
+        log_path = os.path.join(staging, "aips-with-errors", "preservationxml_not_valid",
+                                f"{aip.id}_presxml_validation.txt")
         with open(log_path, "w") as validation_log:
             for line in validation_result.split("\r"):
                 validation_log.write(line + "\n")

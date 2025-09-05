@@ -1,0 +1,1 @@
+For testing purpose, archive_ingest takes the place of networked storage that connects to ARCHive.

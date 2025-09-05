@@ -3,8 +3,7 @@ organizes the contents of the AIP folder into metadata and objects subfolders.
 There is error handling for if a folder named objects or metadata already exists in the AIP folder.
 There are a few files that are sorted into metadata and everything else goes into objects.
 
-KNOWN ISSUE: these tests must be run one at a time, due to how setting the current directory to aips_directory is done.
-We will be removing reliance on current working directory soon, which will resolve this issue.
+KNOWN ISSUE: permissions error for copying web, so that test isn't working.
 """
 
 import os
@@ -13,9 +12,10 @@ import unittest
 from aip_functions import AIP, structure_directory
 
 
-def aip_directory_list(folder):
+def aips_directory_list(folder):
     """
     Makes and returns a list with the filepath for every folder and file in an AIP folder.
+    The list is sorted because the list can be in a different order depending on the operating system.
     This is used to compare the structure_directory function's actual results to the expected results.
     """
     directory_list = []
@@ -24,6 +24,7 @@ def aip_directory_list(folder):
             directory_list.append(os.path.join(root, directory))
         for file in files:
             directory_list.append(os.path.join(root, file))
+    directory_list.sort(key=str.lower)
     return directory_list
 
 
@@ -33,36 +34,44 @@ class TestStructureDirectory(unittest.TestCase):
         """
         Deletes the aip log, errors folder, and test AIPs folders, if present.
         """
-        if os.path.exists(os.path.join('..', 'aip_log.csv')):
-            os.remove(os.path.join('..', 'aip_log.csv'))
+        # Deletes error folder from staging.
+        error_folder = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors')
+        if os.path.exists(error_folder):
+            shutil.rmtree(error_folder)
 
-        folders = ('aips-with-errors', 'deletion-aip-1', 'emory-aip-1', 'error-aip-1', 'error-aip-2',
-                   'error-aip-3', 'objects-aip-1', 'web-aip-1')
-        for folder in folders:
-            if os.path.exists(folder):
-                shutil.rmtree(folder)
+        # Deletes log from aips_directory
+        log_path = os.path.join(os.getcwd(), 'structure_directory', 'aip_log.csv')
+        if os.path.exists(log_path):
+            os.remove(log_path)
+
+        # Deletes AIP folders from aips_directory.
+        aip_folders = ('deletion-aip-1', 'emory-aip-1', 'error-aip-1', 'error-aip-2',
+                       'error-aip-3', 'objects-aip-1', 'web-aip-1')
+        for aip_folder in aip_folders:
+            aip_folder_path = os.path.join(os.getcwd(), 'structure_directory', aip_folder)
+            if os.path.exists(aip_folder_path):
+                shutil.rmtree(aip_folder_path)
 
     def test_error_objects_exists(self):
         """
         Test for error handling when the AIP folder already contains a folder named objects.
         """
         # Makes test input and runs the function being tested.
-        # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
-        aip_dir = os.path.join(os.getcwd(), 'structure_directory')
-        os.chdir(aip_dir)
-        aip = AIP(aip_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-1', 'title', 1, True)
-        shutil.copytree('error-aip-1_copy', 'error-aip-1')
-        structure_directory(aip, os.getcwd())
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-1', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'error-aip-1_copy'), os.path.join(aips_dir, 'error-aip-1'))
+        structure_directory(aip, staging_dir)
 
         # Test for the contents of the AIP folder.
-        aip_path = os.path.join('aips-with-errors', 'objects_folder_exists', 'error-aip-1')
-        result = aip_directory_list(aip_path)
+        aip_path = os.path.join(staging_dir, 'aips-with-errors', 'objects_folder_exists', 'error-aip-1')
+        result = aips_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'objects'),
-                    os.path.join(aip_path, 'Test Dir'),
-                    os.path.join(aip_path, 'Text 2.txt'),
-                    os.path.join(aip_path, 'Text.txt'),
                     os.path.join(aip_path, 'objects', 'Objects Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'Test Dir'),
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
+                    os.path.join(aip_path, 'Text 2.txt'),
+                    os.path.join(aip_path, 'Text.txt')]
         self.assertEqual(result, expected, "Problem with error - objects exists, AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -85,24 +94,23 @@ class TestStructureDirectory(unittest.TestCase):
         Test for error handling when the AIP folder already contains folders named metadata and objects.
         """
         # Makes test input and runs the function being tested.
-        # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
-        aip_dir = os.path.join(os.getcwd(), 'structure_directory')
-        os.chdir(aip_dir)
-        aip = AIP(aip_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-2', 'title', 1, True)
-        shutil.copytree('error-aip-2_copy', 'error-aip-2')
-        structure_directory(aip, os.getcwd())
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-2', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'error-aip-2_copy'), os.path.join(aips_dir, 'error-aip-2'))
+        structure_directory(aip, staging_dir)
 
         # Test for the contents of the AIP folder.
-        aip_path = os.path.join('aips-with-errors', 'objects_folder_exists', 'error-aip-2')
-        result = aip_directory_list(aip_path)
+        aip_path = os.path.join(staging_dir, 'aips-with-errors', 'objects_folder_exists', 'error-aip-2')
+        result = aips_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
-                    os.path.join(aip_path, 'objects'),
-                    os.path.join(aip_path, 'Test Dir'),
-                    os.path.join(aip_path, 'Text 2.txt'),
-                    os.path.join(aip_path, 'Text.txt'),
                     os.path.join(aip_path, 'metadata', 'Metadata Text.txt'),
+                    os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'objects', 'Objects Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'Test Dir'),
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
+                    os.path.join(aip_path, 'Text 2.txt'),
+                    os.path.join(aip_path, 'Text.txt')]
         self.assertEqual(result, expected, "Problem with error - both exist, AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -125,24 +133,23 @@ class TestStructureDirectory(unittest.TestCase):
         Test for error handling when the AIP folder already contains a folder named metadata.
         """
         # Makes test input and runs the function being tested.
-        # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
-        aip_dir = os.path.join(os.getcwd(), 'structure_directory')
-        os.chdir(aip_dir)
-        aip = AIP(aip_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-3', 'title', 1, True)
-        shutil.copytree('error-aip-3_copy', 'error-aip-3')
-        structure_directory(aip, os.getcwd())
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-3', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'error-aip-3_copy'), os.path.join(aips_dir, 'error-aip-3'))
+        structure_directory(aip, staging_dir)
 
         # Test for the contents of the AIP folder.
         # It contains the objects folder because the script made it before finding the metadata folder exists error.
-        aip_path = os.path.join('aips-with-errors', 'metadata_folder_exists', 'error-aip-3')
-        result = aip_directory_list(aip_path)
+        aip_path = os.path.join(staging_dir, 'aips-with-errors', 'metadata_folder_exists', 'error-aip-3')
+        result = aips_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
+                    os.path.join(aip_path, 'metadata', 'Metadata Text.txt'),
                     os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'Test Dir'),
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text 2.txt'),
-                    os.path.join(aip_path, 'Text.txt'),
-                    os.path.join(aip_path, 'metadata', 'Metadata Text.txt'),
-                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt')]
+                    os.path.join(aip_path, 'Text.txt')]
         self.assertEqual(result, expected, "Problem with error - metadata exists, AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -166,22 +173,22 @@ class TestStructureDirectory(unittest.TestCase):
         All other files will go in the objects subfolder.
         """
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
-        # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
-        aip_dir = os.path.join(os.getcwd(), 'structure_directory')
-        os.chdir(aip_dir)
-        aip = AIP(aip_dir, 'emory', None, 'coll-emory', 'folder', 'general', 'emory-aip-1', 'title', 1, True)
-        shutil.copytree('emory-aip-1_copy', 'emory-aip-1')
-        structure_directory(aip, os.getcwd())
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'emory', None, 'coll-emory', 'folder', 'general', 'emory-aip-1', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'emory-aip-1_copy'), os.path.join(aips_dir, 'emory-aip-1'))
+        structure_directory(aip, staging_dir)
 
         # Test for the contents of the AIP folder.
-        result = aip_directory_list('emory-aip-1')
-        expected = [os.path.join('emory-aip-1', 'metadata'),
-                    os.path.join('emory-aip-1', 'objects'),
-                    os.path.join('emory-aip-1', 'metadata', 'EmoryMD_Text.txt'),
-                    os.path.join('emory-aip-1', 'objects', 'Test Dir'),
-                    os.path.join('emory-aip-1', 'objects', 'Text 2.txt'),
-                    os.path.join('emory-aip-1', 'objects', 'Text.txt'),
-                    os.path.join('emory-aip-1', 'objects', 'Test Dir', 'Test Dir Text.txt')]
+        aip_path = os.path.join(staging_dir, aips_dir, aip.id)
+        result = aips_directory_list(aip_path)
+        expected = [os.path.join(aip_path, 'metadata'),
+                    os.path.join(aip_path, 'metadata', 'EmoryMD_Text.txt'),
+                    os.path.join(aip_path, 'objects'),
+                    os.path.join(aip_path, 'objects', 'Test Dir'),
+                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
+                    os.path.join(aip_path, 'objects', 'Text 2.txt'),
+                    os.path.join(aip_path, 'objects', 'Text.txt')]
         self.assertEqual(result, expected, "Problem with sort Emory metadata, AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -200,22 +207,22 @@ class TestStructureDirectory(unittest.TestCase):
         All other files will go to the objects subfolder.
         """
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
-        # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
-        aip_dir = os.path.join(os.getcwd(), 'structure_directory')
-        os.chdir(aip_dir)
-        aip = AIP(aip_dir, 'dept', None, 'coll-delete', 'folder', 'general', 'deletion-aip-1', 'title', 1, True)
-        shutil.copytree('deletion-aip-1_copy', 'deletion-aip-1')
-        structure_directory(aip, os.getcwd())
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'dept', None, 'coll-delete', 'folder', 'general', 'deletion-aip-1', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'deletion-aip-1_copy'), os.path.join(aips_dir, 'deletion-aip-1'))
+        structure_directory(aip, staging_dir)
 
         # Test for the contents of the AIP folder.
-        result = aip_directory_list('deletion-aip-1')
-        expected = [os.path.join('deletion-aip-1', 'metadata'),
-                    os.path.join('deletion-aip-1', 'objects'),
-                    os.path.join('deletion-aip-1', 'metadata', 'deletion-aip-1_files-deleted_2022-10-31_del.csv'),
-                    os.path.join('deletion-aip-1', 'objects', 'Test Dir'),
-                    os.path.join('deletion-aip-1', 'objects', 'Text 2.txt'),
-                    os.path.join('deletion-aip-1', 'objects', 'Text.txt'),
-                    os.path.join('deletion-aip-1', 'objects', 'Test Dir', 'Test Dir Text.txt')]
+        aip_path = os.path.join(staging_dir, aips_dir, aip.id)
+        result = aips_directory_list(aip_path)
+        expected = [os.path.join(aip_path, 'metadata'),
+                    os.path.join(aip_path, 'metadata', 'deletion-aip-1_files-deleted_2022-10-31_del.csv'),
+                    os.path.join(aip_path, 'objects'),
+                    os.path.join(aip_path, 'objects', 'Test Dir'),
+                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
+                    os.path.join(aip_path, 'objects', 'Text 2.txt'),
+                    os.path.join(aip_path, 'objects', 'Text.txt')]
         self.assertEqual(result, expected, "Problem with sort files deleted log, AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -234,21 +241,21 @@ class TestStructureDirectory(unittest.TestCase):
         Includes files that would be sorted to metadata if the department or AIP ID was different.
         """
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
-        # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
-        aip_dir = os.path.join(os.getcwd(), 'structure_directory')
-        os.chdir(aip_dir)
-        aip = AIP(aip_dir, 'dept', None, 'coll', 'folder', 'genera', 'objects-aip-1', 'title', 1, True)
-        shutil.copytree('objects-aip-1_copy', 'objects-aip-1')
-        structure_directory(aip, os.getcwd())
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'dept', None, 'coll', 'folder', 'genera', 'objects-aip-1', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'objects-aip-1_copy'), os.path.join(aips_dir, 'objects-aip-1'))
+        structure_directory(aip, staging_dir)
 
         # Test for the contents of the AIP folder.
-        result = aip_directory_list('objects-aip-1')
-        expected = [os.path.join('objects-aip-1', 'metadata'),
-                    os.path.join('objects-aip-1', 'objects'),
-                    os.path.join('objects-aip-1', 'objects', 'Test Dir'),
-                    os.path.join('objects-aip-1', 'objects', 'Text 2.txt'),
-                    os.path.join('objects-aip-1', 'objects', 'Text.txt'),
-                    os.path.join('objects-aip-1', 'objects', 'Test Dir', 'Test Dir Text.txt')]
+        aip_path = os.path.join(staging_dir, aips_dir, aip.id)
+        result = aips_directory_list(aip_path)
+        expected = [os.path.join(aip_path, 'metadata'),
+                    os.path.join(aip_path, 'objects'),
+                    os.path.join(aip_path, 'objects', 'Test Dir'),
+                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
+                    os.path.join(aip_path, 'objects', 'Text 2.txt'),
+                    os.path.join(aip_path, 'objects', 'Text.txt')]
         self.assertEqual(result, expected, "Problem with sort none (no metadata), AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -267,27 +274,27 @@ class TestStructureDirectory(unittest.TestCase):
         which goes in the metadata subfolder. All other files will go in the objects subfolder.
         """
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
-        # Current directory needs to be aip_dir until update structure_directory() to use absolute paths.
-        aip_dir = os.path.join(os.getcwd(), 'structure_directory')
-        os.chdir(aip_dir)
-        aip = AIP(aip_dir, 'magil', None, 'coll-web', 'folder', 'web', 'web-aip-1', 'title', 1, True)
-        shutil.copy('web-aip-1_copy', 'web-aip-1')
-        structure_directory(aip, os.getcwd())
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip = AIP(aips_dir, 'magil', None, 'coll-web', 'folder', 'web', 'web-aip-1', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'web-aip-1_copy'), os.path.join(aips_dir, 'web-aip-1'))
+        structure_directory(aip, staging_dir)
 
         # Test for the contents of the AIP folder.
-        result = aip_directory_list(aip.folder_name)
-        expected = [os.path.join('web-aip-1', 'metadata'),
-                    os.path.join('web-aip-1', 'objects'),
-                    os.path.join('web-aip-1', 'metadata', 'web-aip-1_coll.csv'),
-                    os.path.join('web-aip-1', 'metadata', 'web-aip-1_collscope.csv'),
-                    os.path.join('web-aip-1', 'metadata', 'web-aip-1_crawldef.csv'),
-                    os.path.join('web-aip-1', 'metadata', 'web-aip-1_crawljob.csv'),
-                    os.path.join('web-aip-1', 'metadata', 'web-aip-1_seed.csv'),
-                    os.path.join('web-aip-1', 'metadata', 'web-aip-1_seedscope.csv'),
-                    os.path.join('web-aip-1', 'objects', 'Test Dir'),
-                    os.path.join('web-aip-1', 'objects', 'Text 2.txt'),
-                    os.path.join('web-aip-1', 'objects', 'Text.txt'),
-                    os.path.join('web-aip-1', 'objects', 'Test Dir', 'Test Dir Text.txt')]
+        aip_path = os.path.join(staging_dir, aips_dir, aip.id)
+        result = aips_directory_list(aip_path)
+        expected = [os.path.join(aip_path, 'metadata'),
+                    os.path.join(aip_path, 'metadata', 'web-aip-1_coll.csv'),
+                    os.path.join(aip_path, 'metadata', 'web-aip-1_collscope.csv'),
+                    os.path.join(aip_path, 'metadata', 'web-aip-1_crawldef.csv'),
+                    os.path.join(aip_path, 'metadata', 'web-aip-1_crawljob.csv'),
+                    os.path.join(aip_path, 'metadata', 'web-aip-1_seed.csv'),
+                    os.path.join(aip_path, 'metadata', 'web-aip-1_seedscope.csv'),
+                    os.path.join(aip_path, 'objects'),
+                    os.path.join(aip_path, 'objects', 'Test Dir'),
+                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
+                    os.path.join(aip_path, 'objects', 'Text 2.txt'),
+                    os.path.join(aip_path, 'objects', 'Text.txt')]
         self.assertEqual(result, expected, "Problem with sort seed, AIP folder")
 
         # Test for the AIP log: ObjectsError.

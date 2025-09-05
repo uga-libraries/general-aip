@@ -2,11 +2,10 @@
 combines the FITS files in the AIP's metadata folder into a single XML file."""
 
 import os
-import pandas as pd
 import shutil
 import unittest
 import xml.etree.ElementTree as ET
-from aip_functions import AIP, structure_directory, extract_metadata, combine_metadata
+from aip_functions import AIP, combine_metadata
 
 
 def read_xml(path):
@@ -15,7 +14,8 @@ def read_xml(path):
     so they can be fully compared with each other
     """
     with open(path, 'r') as result_file:
-        read_file = result_file.read()
+        tree = ET.parse(result_file)
+    read_file = ET.tostring(tree.getroot())
     return read_file
 
 

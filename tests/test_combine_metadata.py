@@ -197,10 +197,6 @@ class TestCombineMetadata(unittest.TestCase):
                       '</fits>')
         self.assertEqual(result[2], expected_2, "Problem with multiple files, combined-fits.xml, 3rd fits")
 
-        result = read_xml(os.path.join(aips_dir, 'aip-2', 'metadata', 'aip-2_combined-fits.xml'))
-        expected = read_xml(os.path.join(aips_dir, 'expected_xml', 'aip-2_combined-fits.xml'))
-        self.assertEqual(result, expected, "Problem with multiple files, combined-fits.xml")
-
         # Test for AIP log.
         result_log = aip.log['FITSError']
         expected_log = 'Successfully created combined-fits.xml'

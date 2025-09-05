@@ -64,7 +64,6 @@ class TestPackage(unittest.TestCase):
 
         # Test that the tar file contains the expected file paths.
         # Catches errors in how the tar is constructed, like if it contains unnecessary folders.
-        # Known issue: Mac bag has a number of temp files that I haven't been able to delete from syncing the repo.
         try:
             with tarfile.open(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.663.tar')) as tar:
                 result = tar.getnames()
@@ -73,9 +72,13 @@ class TestPackage(unittest.TestCase):
                 result = tar.getnames()
         result.sort()
         # Windows includes bag name in path and Mac has "." instead.
-        expected = [['.', './bag-info.txt', './bagit.txt', './data',
-                     './data/metadata', './data/metadata/Placeholder for metadata.txt',
-                     './data/objects', './data/objects/Placeholder for content.txt',
+        # Mac also has a copy of every file and folder with "._" prefix, which seems to be from the tar command.
+        # The bag is still valid and does now show any of these in the manifest.
+        expected = [['.', './._bag-info.txt', './._bagit.txt', './._data', './._manifest-md5.txt',
+                     './._tagmanifest-md5.txt', './bag-info.txt', './bagit.txt', './data', './data/._metadata',
+                     './data/._objects', './data/metadata', './data/metadata/._Placeholder for metadata.txt',
+                     './data/metadata/Placeholder for metadata.txt', './data/objects',
+                     './data/objects/._Placeholder for content.txt', './data/objects/Placeholder for content.txt',
                      './manifest-md5.txt', './tagmanifest-md5.txt'],
                     ['test-aip-1_bag', 'test-aip-1_bag/bag-info.txt', 'test-aip-1_bag/bagit.txt', 'test-aip-1_bag/data',
                      'test-aip-1_bag/data/metadata', 'test-aip-1_bag/data/metadata/Placeholder for metadata.txt',

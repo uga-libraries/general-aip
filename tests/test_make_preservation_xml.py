@@ -12,7 +12,6 @@ import shutil
 import unittest
 from configuration import NAMESPACE
 from aip_functions import AIP, log, make_preservation_xml
-from test_combine_metadata import read_xml
 
 
 def read_preservation_xml(aip):
@@ -27,6 +26,16 @@ def read_preservation_xml(aip):
     with open(xml_path, 'r') as open_xml:
         read_pres_xml = open_xml.read()
     return read_pres_xml
+
+
+def read_xml(path):
+    """
+    Reads an XML file, either from the function output or the expected file stored in the repo,
+    so they can be fully compared with each other
+    """
+    with open(path, 'r') as result_file:
+        read_file = result_file.read()
+    return read_file
 
 
 class TestMakePreservationXML(unittest.TestCase):

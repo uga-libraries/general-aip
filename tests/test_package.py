@@ -6,6 +6,7 @@ so the expected results and the tearDown look for either possible size.
 """
 
 import os
+import tarfile
 import unittest
 from aip_functions import AIP, log, package
 from test_validate_bag import aip_log_list
@@ -60,6 +61,30 @@ class TestPackage(unittest.TestCase):
         result = (os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.663.tar')) or
                   os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.673.tar')))
         self.assertEqual(result, True, "Problem with tar, aips-ready-to-ingest")
+
+        # Test that the tar file contains the expected file paths.
+        # Catches errors in how the tar is constructed, like if it contains unnecessary folders.
+        try:
+            with tarfile.open(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.663.tar')) as tar:
+                result = tar.getnames()
+        except FileNotFoundError:
+            with tarfile.open(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-1_bag.673.tar')) as tar:
+                result = tar.getnames()
+        result.sort()
+        # Windows includes bag name in path and Mac has "." instead.
+        # Mac also has a copy of every file and folder with "._" prefix, which seems to be from the tar command.
+        # The bag is still valid and does now show any of these in the manifest.
+        expected = [['.', './._bag-info.txt', './._bagit.txt', './._data', './._manifest-md5.txt',
+                     './._tagmanifest-md5.txt', './bag-info.txt', './bagit.txt', './data', './data/._metadata',
+                     './data/._objects', './data/metadata', './data/metadata/._Placeholder for metadata.txt',
+                     './data/metadata/Placeholder for metadata.txt', './data/objects',
+                     './data/objects/._Placeholder for content.txt', './data/objects/Placeholder for content.txt',
+                     './manifest-md5.txt', './tagmanifest-md5.txt'],
+                    ['test-aip-1_bag', 'test-aip-1_bag/bag-info.txt', 'test-aip-1_bag/bagit.txt', 'test-aip-1_bag/data',
+                     'test-aip-1_bag/data/metadata', 'test-aip-1_bag/data/metadata/Placeholder for metadata.txt',
+                     'test-aip-1_bag/data/objects', 'test-aip-1_bag/data/objects/Placeholder for content.txt',
+                     'test-aip-1_bag/manifest-md5.txt', 'test-aip-1_bag/tagmanifest-md5.txt']]
+        self.assertIn(result, expected, "Problem with tar, tar contents")
 
         # Test that the AIP size is updated.
         result = aip.size

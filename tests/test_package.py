@@ -79,7 +79,7 @@ class TestPackage(unittest.TestCase):
                      './data/._objects', './data/metadata', './data/metadata/._Placeholder for metadata.txt',
                      './data/metadata/Placeholder for metadata.txt', './data/objects',
                      './data/objects/._Placeholder for content.txt', './data/objects/Placeholder for content.txt',
-                     './manifest-md5.txt', './tagmanifest-md5.txt'],
+                     './manifest-md5.txt', './tagmanifest-md5.txt', '._.'],
                     ['test-aip-1_bag', 'test-aip-1_bag/bag-info.txt', 'test-aip-1_bag/bagit.txt', 'test-aip-1_bag/data',
                      'test-aip-1_bag/data/metadata', 'test-aip-1_bag/data/metadata/Placeholder for metadata.txt',
                      'test-aip-1_bag/data/objects', 'test-aip-1_bag/data/objects/Placeholder for content.txt',

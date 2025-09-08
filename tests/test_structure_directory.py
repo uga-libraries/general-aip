@@ -12,8 +12,8 @@ import unittest
 from aip_functions import AIP, structure_directory
 
 
-def aips_directory_list(folder):
-    """Make and returns a list with the filepath for every folder and file in an AIP folder
+def make_directory_list(folder):
+    """Make and returns a list with the filepath for every folder and file in a folder
     The list is sorted because the list can be in a different order depending on the operating system.
     This is used to compare the structure_directory function's actual results to the expected results."""
     directory_list = []
@@ -21,7 +21,8 @@ def aips_directory_list(folder):
         for directory in dirs:
             directory_list.append(os.path.join(root, directory))
         for file in files:
-            directory_list.append(os.path.join(root, file))
+            if file != 'empty-folder-placeholder.txt':
+                directory_list.append(os.path.join(root, file))
     directory_list.sort(key=str.lower)
     return directory_list
 
@@ -41,12 +42,18 @@ class TestStructureDirectory(unittest.TestCase):
             os.remove(log_path)
 
         # Deletes AIP folders from aips_directory.
-        aip_folders = ('deletion-aip-1', 'emory-aip-1', 'error-aip-1', 'error-aip-2',
-                       'error-aip-3', 'none-aip-1', 'web-aip-1', 'web-aip-2')
+        aip_folders = ('av-aip-1', 'av-aip-2', 'av-aip-3', 'av-aip-4', 'deletion-aip-1', 'emory-aip-1',
+                       'error-aip-1', 'error-aip-2', 'error-aip-3', 'none-aip-1', 'web-aip-1', 'web-aip-2')
         for aip_folder in aip_folders:
             aip_folder_path = os.path.join(os.getcwd(), 'structure_directory', aip_folder)
             if os.path.exists(aip_folder_path):
                 shutil.rmtree(aip_folder_path)
+
+        # Deletes files copied to movs-to-bag:
+        mov_folder = os.path.join(os.getcwd(), 'staging', 'movs-to-bag')
+        for file in os.listdir(mov_folder):
+            if file.endswith('.mov'):
+                os.remove(os.path.join(mov_folder, file))
 
     def test_error_objects_exists(self):
         """Test for error handling when the AIP folder already contains a folder named objects"""
@@ -59,7 +66,7 @@ class TestStructureDirectory(unittest.TestCase):
 
         # Test for the contents of the AIP folder.
         aip_path = os.path.join(staging_dir, 'aips-with-errors', 'objects_folder_exists', 'error-aip-1')
-        result = aips_directory_list(aip_path)
+        result = make_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'objects', 'Objects Text.txt'),
                     os.path.join(aip_path, 'Test Dir'),
@@ -94,7 +101,7 @@ class TestStructureDirectory(unittest.TestCase):
 
         # Test for the contents of the AIP folder.
         aip_path = os.path.join(staging_dir, 'aips-with-errors', 'objects_folder_exists', 'error-aip-2')
-        result = aips_directory_list(aip_path)
+        result = make_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'metadata', 'Metadata Text.txt'),
                     os.path.join(aip_path, 'objects'),
@@ -132,7 +139,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Test for the contents of the AIP folder.
         # It contains the objects folder because the script made it before finding the metadata folder exists error.
         aip_path = os.path.join(staging_dir, 'aips-with-errors', 'metadata_folder_exists', 'error-aip-3')
-        result = aips_directory_list(aip_path)
+        result = make_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'metadata', 'Metadata Text.txt'),
                     os.path.join(aip_path, 'objects'),
@@ -157,6 +164,134 @@ class TestStructureDirectory(unittest.TestCase):
         expected = 'Error during processing'
         self.assertEqual(expected, result, "Problem with error - metadata exists, log: Complete")
 
+    def test_sort_av(self):
+        """Test for an AV AIP with no metadata files"""
+        # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
+        aip = AIP(aips_dir, 'bmac', 'wav', 'coll-bmac', 'folder', 'av', 'av-aip-1', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'av-aip-1_copy'), os.path.join(aips_dir, 'av-aip-1'))
+        structure_directory(aip, staging_dir)
+
+        # Test for the contents of the AIP folder.
+        aip_path = os.path.join(staging_dir, aips_dir, aip.id)
+        result = make_directory_list(aip_path)
+        expected = [os.path.join(aip_path, 'metadata'),
+                    os.path.join(aip_path, 'objects'),
+                    os.path.join(aip_path, 'objects', 'bmac_av-placeholder1.txt'),
+                    os.path.join(aip_path, 'objects', 'bmac_av-placeholder2.txt')]
+        self.assertEqual(expected, result, "Problem with sort_av, AIP folder")
+
+        # Test for the AIP log: ObjectsError.
+        result = aip.log['ObjectsError']
+        expected = 'Successfully created objects folder'
+        self.assertEqual(expected, result, "Problem with sort_av, log: ObjectsError")
+
+        # Test for the AIP log: MetadataError.
+        result = aip.log['MetadataError']
+        expected = 'Successfully created metadata folder'
+        self.assertEqual(expected, result, "Problem with sort_av, log: MetadataError")
+
+    def test_sort_av_dpx(self):
+        """Test for an AV AIP from workflow dpx, which starts in a bag and has multiple sort and renaming patterns"""
+        # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
+        aip = AIP(aips_dir, 'bmac', 'dpx', 'coll-bmac', 'folder', 'av', 'av-aip-2', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'av-aip-2_copy'), os.path.join(aips_dir, 'av-aip-2'))
+        structure_directory(aip, staging_dir)
+
+        # Test for the contents of the AIP folder.
+        aip_path = os.path.join(staging_dir, aips_dir, aip.id)
+        result = make_directory_list(aip_path)
+        expected = [os.path.join(aip_path, 'metadata'),
+                    os.path.join(aip_path, 'objects'),
+                    os.path.join(aip_path, 'objects', 'av-aip-2-dpx'),
+                    os.path.join(aip_path, 'objects', 'av-aip-2-dpx', 'av-placeholder1.txt'),
+                    os.path.join(aip_path, 'objects', 'av-aip-2-dpx', 'av-placeholder2.txt'),
+                    os.path.join(aip_path, 'objects', 'av-aip-2-dpx', 'av-placeholder3.txt'),
+                    os.path.join(aip_path, 'objects', 'placeholder-dpx.wav'),
+                    os.path.join(aip_path, 'objects', 'placeholder.cue'),
+                    os.path.join(aip_path, 'objects', 'placeholder.mov'),
+                    os.path.join(aip_path, 'objects', 'placeholder2-dpx.wav'),
+                    os.path.join(aip_path, 'objects', 'placeholder2.mov')]
+        self.assertEqual(expected, result, "Problem with sort_av_dpx, AIP folder")
+
+        # Test for contents of the movs-to-bag folder on staging.
+        movs_path = os.path.join(staging_dir, 'movs-to-bag')
+        result = make_directory_list(movs_path)
+        expected = [os.path.join(movs_path, 'placeholder.mov'), os.path.join(movs_path, 'placeholder2.mov')]
+        self.assertEqual(expected, result, "Problem with sort_av_dpx, MOVs folder")
+
+        # Test for the AIP log: ObjectsError.
+        result = aip.log['ObjectsError']
+        expected = 'Successfully created objects folder'
+        self.assertEqual(expected, result, "Problem with sort_av_dpx, log: ObjectsError")
+
+        # Test for the AIP log: MetadataError.
+        result = aip.log['MetadataError']
+        expected = 'Successfully created metadata folder'
+        self.assertEqual(expected, result, "Problem with sort_av_dpx, log: MetadataError")
+
+    def test_sort_av_metadata(self):
+        """Test for an AV AIP which contains files that go in the metadata subfolder"""
+        # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
+        aip = AIP(aips_dir, 'bmac', 'wav', 'coll-bmac', 'folder', 'av', 'av-aip-3', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'av-aip-3_copy'), os.path.join(aips_dir, 'av-aip-3'))
+        structure_directory(aip, staging_dir)
+
+        # Test for the contents of the AIP folder.
+        aip_path = os.path.join(staging_dir, aips_dir, aip.id)
+        result = make_directory_list(aip_path)
+        expected = [os.path.join(aip_path, 'metadata'),
+                    os.path.join(aip_path, 'metadata', 'av-aip-3_files-deleted_2025-09-08_del.csv'),
+                    os.path.join(aip_path, 'metadata', 'bmac_placeholder.framemd5'),
+                    os.path.join(aip_path, 'metadata', 'bmac_placeholder.qctools.mkv'),
+                    os.path.join(aip_path, 'metadata', 'bmac_placeholder.qctools.xml.gz'),
+                    os.path.join(aip_path, 'metadata', 'bmac_placeholder.srt'),
+                    os.path.join(aip_path, 'objects'),
+                    os.path.join(aip_path, 'objects', 'bmac_av-placeholder.txt')]
+        self.assertEqual(expected, result, "Problem with sort_av_metadata, AIP folder")
+
+        # Test for the AIP log: ObjectsError.
+        result = aip.log['ObjectsError']
+        expected = 'Successfully created objects folder'
+        self.assertEqual(expected, result, "Problem with sort_av_metadata, log: ObjectsError")
+
+        # Test for the AIP log: MetadataError.
+        result = aip.log['MetadataError']
+        expected = 'Successfully created metadata folder'
+        self.assertEqual(expected, result, "Problem with sort_av_metadata, log: MetadataError")
+
+    def test_sort_av_mxf(self):
+        """Test for an AV AIP from workflow mxf, which has a different renaming pattern"""
+        # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
+        aip = AIP(aips_dir, 'bmac', 'mxf', 'coll-bmac', 'folder', 'av', 'av-aip-4', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'av-aip-4_copy'), os.path.join(aips_dir, 'av-aip-4'))
+        structure_directory(aip, staging_dir)
+
+        # Test for the contents of the AIP folder.
+        aip_path = os.path.join(staging_dir, aips_dir, aip.id)
+        result = make_directory_list(aip_path)
+        expected = [os.path.join(aip_path, 'metadata'),
+                    os.path.join(aip_path, 'objects'),
+                    os.path.join(aip_path, 'objects', 'bmac_wsb-video_av-placeholder.txt')]
+        self.assertEqual(expected, result, "Problem with sort_av_mxf, AIP folder")
+
+        # Test for the AIP log: ObjectsError.
+        result = aip.log['ObjectsError']
+        expected = 'Successfully created objects folder'
+        self.assertEqual(expected, result, "Problem with sort_av_mxf, log: ObjectsError")
+
+        # Test for the AIP log: MetadataError.
+        result = aip.log['MetadataError']
+        expected = 'Successfully created metadata folder'
+        self.assertEqual(expected, result, "Problem with sort_av_mxf, log: MetadataError")
+
     def test_sort_emory(self):
         """Test for an AIP which contains an Emory metadata file, which goes in the metadata subfolder"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
@@ -168,7 +303,7 @@ class TestStructureDirectory(unittest.TestCase):
 
         # Test for the contents of the AIP folder.
         aip_path = os.path.join(staging_dir, aips_dir, aip.id)
-        result = aips_directory_list(aip_path)
+        result = make_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'metadata', 'EmoryMD_Text.txt'),
                     os.path.join(aip_path, 'objects'),
@@ -199,7 +334,7 @@ class TestStructureDirectory(unittest.TestCase):
 
         # Test for the contents of the AIP folder.
         aip_path = os.path.join(staging_dir, aips_dir, aip.id)
-        result = aips_directory_list(aip_path)
+        result = make_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'metadata', 'deletion-aip-1_files-deleted_2022-10-31_del.csv'),
                     os.path.join(aip_path, 'objects'),
@@ -230,7 +365,7 @@ class TestStructureDirectory(unittest.TestCase):
 
         # Test for the contents of the AIP folder.
         aip_path = os.path.join(staging_dir, aips_dir, aip.id)
-        result = aips_directory_list(aip_path)
+        result = make_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'objects'),
                     os.path.join(aip_path, 'objects', 'none-aip-1_coll.csv'),
@@ -262,7 +397,7 @@ class TestStructureDirectory(unittest.TestCase):
 
         # Test for the contents of the AIP folder.
         aip_path = os.path.join(staging_dir, aips_dir, aip.id)
-        result = aips_directory_list(aip_path)
+        result = make_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'metadata', 'web-aip-1_coll.csv'),
                     os.path.join(aip_path, 'metadata', 'web-aip-1_collscope.csv'),
@@ -295,7 +430,7 @@ class TestStructureDirectory(unittest.TestCase):
 
         # Test for the contents of the AIP folder.
         aip_path = os.path.join(staging_dir, aips_dir, aip.id)
-        result = aips_directory_list(aip_path)
+        result = make_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'metadata', 'web-aip-2_001_crawldef.csv'),
                     os.path.join(aip_path, 'metadata', 'web-aip-2_002_crawldef.csv'),

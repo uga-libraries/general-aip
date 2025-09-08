@@ -61,21 +61,21 @@ def check_arguments(arguments):
 
     # Checks if arguments were given, besides the default of script name.
     if len(arguments) == 1:
-        errors_list.append("AIPs directory argument is missing.")
+        errors_list.append('Required arguments are missing: aips_directory, aip_type, and to_zip.')
 
     # Checks if the first required argument (aips_directory) is present and a valid path.
     if len(arguments) > 1:
         if os.path.exists(arguments[1]):
             aips_directory = arguments[1]
         else:
-            errors_list.append("AIPs directory argument is not a valid directory.")
+            errors_list.append(f'Provided aips_directory "{arguments[1]}" is not a valid directory.')
 
     # Checks if the second required argument (aip_type) is present and an expected value.
     if len(arguments) > 2:
         if arguments[2] in ('av', 'general', 'web'):
             aip_type = arguments[2]
         else:
-            errors_list.append("AIP type is not an expected value.")
+            errors_list.append(f'Provided aip_type "{arguments[2]}" is not an expected value (av, general, web).')
 
     # Checks if the third required argument (to_zip) is present, and if so, if it is the expected value.
     if len(arguments) > 3:
@@ -84,14 +84,15 @@ def check_arguments(arguments):
         elif arguments[3] == "zip":
             to_zip = True
         else:
-            errors_list.append("To zip is not an expected value.")
+            errors_list.append(f'Provided to_zip "{arguments[3]}" is not an expected value (no-zip, zip).')
 
     # Checks if the optional argument (workflow) is present, and if so, if it is the expected value.
     if len(arguments) > 4:
-        if arguments[4] in ('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mxf', 'wav', 'mp4'):
+        if arguments[4] in ('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mp4', 'mxf', 'wav'):
             workflow = arguments[4]
         else:
-            errors_list.append("Unexpected value for the workflow.")
+            errors_list.append(f'Provided workflow "{arguments[4]}" is not an expected value '
+                               f'(dpx, mkv, mkv-filmscan, mov, mp4, mxf, wav)')
 
     # Checks if there are too many arguments.
     if len(arguments) > 5:

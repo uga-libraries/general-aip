@@ -37,7 +37,7 @@ class TestCheckArguments(unittest.TestCase):
     def test_no_argument(self):
         """Test for when the user supplies no arguments. There is still one value in sys.argv, the script name"""
         result = check_arguments(['general-aip.py'])
-        errors = ['AIPs directory argument is missing.',
+        errors = ['Required arguments are missing: aips_directory, aip_type, and to_zip.',
                   'Cannot check for the metadata.csv because the AIPs directory has an error.']
         expected = (None, None, None, None, None, errors)
         self.assertEqual(expected, result, "Problem with test for no argument provided")
@@ -45,7 +45,7 @@ class TestCheckArguments(unittest.TestCase):
     def test_first_error(self):
         """Test for when the first argument (aips_directory) is not a valid path"""
         result = check_arguments(['general-aip.py', 'aips-dir-path-error', 'av', 'zip', 'mkv'])
-        errors = ['AIPs directory argument is not a valid directory.',
+        errors = ['Provided aips_directory "aips-dir-path-error" is not a valid directory.',
                   'Cannot check for the metadata.csv because the AIPs directory has an error.']
         expected = (None, 'av', True, 'mkv', None, errors)
         self.assertEqual(expected, result, "Problem with test for first argument error")
@@ -53,35 +53,35 @@ class TestCheckArguments(unittest.TestCase):
     def test_second_error(self):
         """Test for when the second argument (aip_type) is not one of the expected values"""
         aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
-        result = check_arguments(['general-aip.py', aips_dir, 'type-error', 'no-zip', 'mkv-filmscan'])
-        errors = ['AIP type is not an expected value.']
-        expected = (aips_dir, None, False, 'mkv-filmscan', os.path.join(aips_dir, 'metadata.csv'), errors)
+        result = check_arguments(['general-aip.py', aips_dir, 'type-error', 'no-zip', 'mov'])
+        errors = ['Provided aip_type "type-error" is not an expected value (av, general, web).']
+        expected = (aips_dir, None, False, 'mov', os.path.join(aips_dir, 'metadata.csv'), errors)
         self.assertEqual(expected, result, "Problem with test for second argument error")
 
     def test_third_error(self):
         """Test for when the third argument (to_zip) is not one of the expected values"""
         aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
-        result = check_arguments(['general-aip.py', aips_dir, 'av', 'zip-error', 'mov'])
-        errors = ['To zip is not an expected value.']
-        expected = (aips_dir, 'av', None, 'mov', os.path.join(aips_dir, 'metadata.csv'), errors)
+        result = check_arguments(['general-aip.py', aips_dir, 'av', 'zip-error', 'mp4'])
+        errors = [f'Provided to_zip "zip-error" is not an expected value (no-zip, zip).']
+        expected = (aips_dir, 'av', None, 'mp4', os.path.join(aips_dir, 'metadata.csv'), errors)
         self.assertEqual(expected, result, "Problem with test for third argument error")
 
     def test_fourth_error(self):
         """Test for when the fourth argument (workflow) is not one of the expected values"""
         aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
-        result = check_arguments(['general-aip.py', aips_dir, 'general', 'zip', 'workflow-error'])
-        errors = ['Unexpected value for the workflow.']
+        result = check_arguments(['general-aip.py', aips_dir, 'general', 'zip', 'wf-error'])
+        errors = ['Provided workflow "wf-error" is not an expected value (dpx, mkv, mkv-filmscan, mov, mp4, mxf, wav)']
         expected = (aips_dir, 'general', True, None, os.path.join(aips_dir, 'metadata.csv'), errors)
         self.assertEqual(expected, result, "Problem with test for fourth argument error")
 
     def test_all_error(self):
         """Test for when all arguments are not expected values"""
-        result = check_arguments(['general-aip.py', 'path-error', 'type-error', 'zip-error', 'workflow-error'])
-        errors = ['AIPs directory argument is not a valid directory.',
-                  'AIP type is not an expected value.',
-                  'To zip is not an expected value.',
-                  'Unexpected value for the workflow.',
-                  'Cannot check for the metadata.csv because the AIPs directory has an error.',]
+        result = check_arguments(['general-aip.py', 'path-error', 'type-error', 'zip-error', 'wf-error'])
+        errors = ['Provided aips_directory "path-error" is not a valid directory.',
+                  'Provided aip_type "type-error" is not an expected value (av, general, web).',
+                  'Provided to_zip "zip-error" is not an expected value (no-zip, zip).',
+                  'Provided workflow "wf-error" is not an expected value (dpx, mkv, mkv-filmscan, mov, mp4, mxf, wav)',
+                  'Cannot check for the metadata.csv because the AIPs directory has an error.']
         expected = (None, None, None, None, None, errors)
         self.assertEqual(expected, result, "Problem with test for all error")
 

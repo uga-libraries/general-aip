@@ -1,5 +1,9 @@
 """Testing for the function check_arguments, which tests the correctness of user input from sys.argv and
- returns a list with the variable values and error messages, if any."""
+ returns a list with the variable values and error messages, if any.
+
+ For arguments with many possible correct values, most values are present in one of the tests for the other arguments,
+ but it didn't seem worth having a separate correct test for each one given the large number.
+ """
 
 import os
 import unittest
@@ -25,9 +29,9 @@ class TestCheckArguments(unittest.TestCase):
     def test_metadata_missing(self):
         """Test for when the arguments are correct but the metadata.csv is not in the expected location"""
         aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'no_metadata_csv')
-        result = check_arguments(['general-aip.py', aips_dir, 'general', 'zip'])
+        result = check_arguments(['general-aip.py', aips_dir, 'web', 'zip'])
         errors = ['Missing the required file metadata.csv in the AIPs directory.']
-        expected = (aips_dir, 'general', True, None, None, errors)
+        expected = (aips_dir, 'web', True, None, None, errors)
         self.assertEqual(expected, result, "Problem with test for metadata_missing")
 
     def test_no_argument(self):
@@ -40,26 +44,26 @@ class TestCheckArguments(unittest.TestCase):
 
     def test_first_error(self):
         """Test for when the first argument (aips_directory) is not a valid path"""
-        result = check_arguments(['general-aip.py', 'aips-dir-path-error', 'web', 'zip'])
+        result = check_arguments(['general-aip.py', 'aips-dir-path-error', 'av', 'zip', 'mkv'])
         errors = ['AIPs directory argument is not a valid directory.',
                   'Cannot check for the metadata.csv because the AIPs directory has an error.']
-        expected = (None, 'web', True, None, None, errors)
+        expected = (None, 'av', True, 'mkv', None, errors)
         self.assertEqual(expected, result, "Problem with test for first argument error")
 
     def test_second_error(self):
         """Test for when the second argument (aip_type) is not one of the expected values"""
         aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
-        result = check_arguments(['general-aip.py', aips_dir, 'type-error', 'no-zip'])
+        result = check_arguments(['general-aip.py', aips_dir, 'type-error', 'no-zip', 'mkv-filmscan'])
         errors = ['AIP type is not an expected value.']
-        expected = (aips_dir, None, False, None, os.path.join(aips_dir, 'metadata.csv'), errors)
+        expected = (aips_dir, None, False, 'mkv-filmscan', os.path.join(aips_dir, 'metadata.csv'), errors)
         self.assertEqual(expected, result, "Problem with test for second argument error")
 
     def test_third_error(self):
         """Test for when the third argument (to_zip) is not one of the expected values"""
         aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
-        result = check_arguments(['general-aip.py', aips_dir, 'general', 'zip-error'])
+        result = check_arguments(['general-aip.py', aips_dir, 'av', 'zip-error', 'mov'])
         errors = ['To zip is not an expected value.']
-        expected = (aips_dir, 'general', None, None, os.path.join(aips_dir, 'metadata.csv'), errors)
+        expected = (aips_dir, 'av', None, 'mov', os.path.join(aips_dir, 'metadata.csv'), errors)
         self.assertEqual(expected, result, "Problem with test for third argument error")
 
     def test_fourth_error(self):
@@ -84,9 +88,9 @@ class TestCheckArguments(unittest.TestCase):
     def test_extra(self):
         """Test for when there are more arguments than expected (more than 4)"""
         aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
-        result = check_arguments(['general-aip.py', aips_dir, 'av', 'no-zip', 'mp4', 'extra', 'extra2'])
+        result = check_arguments(['general-aip.py', aips_dir, 'av', 'no-zip', 'mxf', 'extra', 'extra2'])
         errors = ['Too many script arguments. The maximum expected is 4.']
-        expected = (aips_dir, 'av', False, 'mp4', os.path.join(aips_dir, 'metadata.csv'), errors)
+        expected = (aips_dir, 'av', False, 'mxf', os.path.join(aips_dir, 'metadata.csv'), errors)
         self.assertEqual(expected, result, "Problem with test for extra arguments")
 
 

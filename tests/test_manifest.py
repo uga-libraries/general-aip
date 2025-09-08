@@ -33,7 +33,7 @@ class TestManifest(unittest.TestCase):
 
         date = datetime.now().strftime("%Y-%m-%d")
         manifest_list = [f'manifest_tests_bmac_{date}.txt', f'manifest_tests_hargrett_{date}.txt',
-                         f'manifest_tests_russell_{date}.txt']
+                         f'manifest_tests_magil_{date}.txt', f'manifest_tests_russell_{date}.txt']
         for manifest_name in manifest_list:
             manifest_path = os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-ready-to-ingest', manifest_name)
             if os.path.exists(manifest_path):
@@ -142,9 +142,9 @@ class TestManifest(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        aip = AIP(aips_dir, 'bmac', 'mp4', 'rabbitbox', 'folder', 'general', 'rabbitbox_010', 'title', 1, False)
-        aip.size = 20000
-        aip.log = {'Started': '2025-08-14 2:25PM', 'AIP': 'rabbitbox_010', 'Deletions': 'No files deleted',
+        aip = AIP(aips_dir, 'magil', None, 'magil-0000', 'folder', 'web', 'magil-seed-2025', 'title', 1, False)
+        aip.size = 4400
+        aip.log = {'Started': '2025-09-08 1:15PM', 'AIP': 'magil-seed-2025', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
@@ -152,9 +152,9 @@ class TestManifest(unittest.TestCase):
         manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(aips_dir, 'ingest')))
 
         # Test for the manifest.
-        manifest_name = f'manifest_tests_bmac_{datetime.now().strftime("%Y-%m-%d")}.txt'
+        manifest_name = f'manifest_tests_magil_{datetime.now().strftime("%Y-%m-%d")}.txt'
         result = manifest_to_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
-        expected = [['629f0e1886f6e7d53291fae720e737dd', 'rabbitbox_010_bag.20000.tar']]
+        expected = [['629f0e1886f6e7d53291fae720e737dd', 'magil-seed-2025_bag.4400.tar']]
         self.assertEqual(expected, result, "Problem with tar, manifest")
 
         # Test for the AIP log.
@@ -162,7 +162,7 @@ class TestManifest(unittest.TestCase):
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-14 2:25PM', 'rabbitbox_010', 'No files deleted', 'Success', 'Success', 'BLANK',
+                    ['2025-09-08 1:15PM', 'magil-seed-2025', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
                      'Successfully completed processing']]
         self.assertEqual(expected, result, "Problem with tar, AIP log")

@@ -52,7 +52,7 @@ class TestManifest(unittest.TestCase):
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
-        manifest(aip, aip_staging, os.path.join(os.getcwd(), 'archive_ingest'))
+        manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(aips_dir, 'ingest')))
 
         # Test for the manifest.
         manifest_name = f'manifest_tests_hargrett_{datetime.now().strftime("%Y-%m-%d")}.txt'
@@ -83,7 +83,7 @@ class TestManifest(unittest.TestCase):
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
-        manifest(aip, aip_staging, os.path.join(os.getcwd(), 'archive_ingest'))
+        manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(aips_dir, 'ingest')))
 
         # Test that the manifest was not created.
         manifest_name = f'manifest_tests_hargrett_{datetime.now().strftime("%Y-%m-%d")}.txt'
@@ -118,7 +118,7 @@ class TestManifest(unittest.TestCase):
         manifest_name = f'manifest_tests_russell_{datetime.now().strftime("%Y-%m-%d")}.txt'
         with open(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name), 'w', encoding="utf-8") as file:
             file.write('629f0e1886f6e7d53291fae720e737dd  rbrl-123-er-111111_bag.22.tar.bz2\n')
-        manifest(aip, aip_staging, os.path.join(os.getcwd(), 'archive_ingest'))
+        manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(aips_dir, 'ingest')))
 
         # Test for the manifest.
         result = manifest_to_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
@@ -149,7 +149,7 @@ class TestManifest(unittest.TestCase):
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
-        manifest(aip, aip_staging, os.path.join(os.getcwd(), 'archive_ingest'))
+        manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(aips_dir, 'ingest')))
 
         # Test for the manifest.
         manifest_name = f'manifest_tests_bmac_{datetime.now().strftime("%Y-%m-%d")}.txt'

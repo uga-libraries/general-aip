@@ -100,7 +100,9 @@ class TestMakeOutputDirectories(unittest.TestCase):
 
         # Verifies that staging has the expected folders.
         result = directory_print(staging)
-        expected = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
+        expected = [os.path.join(staging, 'aips-ready-to-ingest'),
+                    os.path.join(staging, 'fits-xmls'),
+                    os.path.join(staging, 'preservation-xmls')]
         self.assertEqual(expected, result, "Problem with non_av_all")
 
     def test_non_av_none(self):
@@ -112,7 +114,9 @@ class TestMakeOutputDirectories(unittest.TestCase):
 
         # Verifies that staging has the expected folders.
         result = directory_print(staging)
-        expected = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
+        expected = [os.path.join(staging, 'aips-ready-to-ingest'),
+                    os.path.join(staging, 'fits-xmls'),
+                    os.path.join(staging, 'preservation-xmls')]
         self.assertEqual(expected, result, "Problem with non_av_none")
 
     def test_non_av_partial(self):
@@ -124,7 +128,9 @@ class TestMakeOutputDirectories(unittest.TestCase):
 
         # Verifies that staging has the expected folders.
         result = directory_print(staging)
-        expected = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
+        expected = [os.path.join(staging, 'aips-ready-to-ingest'),
+                    os.path.join(staging, 'fits-xmls'),
+                    os.path.join(staging, 'preservation-xmls')]
         self.assertEqual(expected, result, "Problem with non_av_partial")
 
 

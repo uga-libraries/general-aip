@@ -42,7 +42,7 @@ class TestStructureDirectory(unittest.TestCase):
 
         # Deletes AIP folders from aips_directory.
         aip_folders = ('deletion-aip-1', 'emory-aip-1', 'error-aip-1', 'error-aip-2',
-                       'error-aip-3', 'none-aip-1', 'web-aip-1')
+                       'error-aip-3', 'none-aip-1', 'web-aip-1', 'web-aip-2')
         for aip_folder in aip_folders:
             aip_folder_path = os.path.join(os.getcwd(), 'structure_directory', aip_folder)
             if os.path.exists(aip_folder_path):
@@ -252,7 +252,7 @@ class TestStructureDirectory(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with sort none (no metadata), log: MetadataError")
 
     def test_sort_web(self):
-        """Test for a MAGIL web AIP with all the six Archive-It reports, which go in the metadata subfolder"""
+        """Test for a web AIP (not MAGIL) with all the six Archive-It reports, which go in the metadata subfolder"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
@@ -271,10 +271,7 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, 'metadata', 'web-aip-1_seed.csv'),
                     os.path.join(aip_path, 'metadata', 'web-aip-1_seedscope.csv'),
                     os.path.join(aip_path, 'objects'),
-                    os.path.join(aip_path, 'objects', 'Test Dir'),
-                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
-                    os.path.join(aip_path, 'objects', 'Text 2.txt'),
-                    os.path.join(aip_path, 'objects', 'Text.txt')]
+                    os.path.join(aip_path, 'objects', 'warc-placeholder.txt')]
         self.assertEqual(expected, result, "Problem with sort web, AIP folder")
 
         # Test for the AIP log: ObjectsError.
@@ -286,6 +283,41 @@ class TestStructureDirectory(unittest.TestCase):
         result = aip.log['MetadataError']
         expected = 'Successfully created metadata folder'
         self.assertEqual(expected, result, "Problem with sort web, log: MetadataError")
+
+    def test_sort_web_magil(self):
+        """Test for a MAGIL web AIP with four six Archive-It reports, which go in the metadata subfolder"""
+        # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
+        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
+        aip = AIP(aips_dir, 'magil', None, 'coll-web', 'folder', 'web', 'web-aip-2', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'web-aip-2_copy'), os.path.join(aips_dir, 'web-aip-2'))
+        structure_directory(aip, staging_dir)
+
+        # Test for the contents of the AIP folder.
+        aip_path = os.path.join(staging_dir, aips_dir, aip.id)
+        result = aips_directory_list(aip_path)
+        expected = [os.path.join(aip_path, 'metadata'),
+                    os.path.join(aip_path, 'metadata', 'web-aip-2_001_crawldef.csv'),
+                    os.path.join(aip_path, 'metadata', 'web-aip-2_002_crawldef.csv'),
+                    os.path.join(aip_path, 'metadata', 'web-aip-2_coll.csv'),
+                    os.path.join(aip_path, 'metadata', 'web-aip-2_crawljob.csv'),
+                    os.path.join(aip_path, 'metadata', 'web-aip-2_seed.csv'),
+                    os.path.join(aip_path, 'objects'),
+                    os.path.join(aip_path, 'objects', 'warc1-placeholder.txt'),
+                    os.path.join(aip_path, 'objects', 'warc2-placeholder.txt')]
+        self.assertEqual(expected, result, "Problem with sort web_magil, AIP folder")
+
+        # Test for the AIP log: ObjectsError.
+        result = aip.log['ObjectsError']
+        expected = 'Successfully created objects folder'
+        self.assertEqual(expected, result, "Problem with sort web_magil, log: ObjectsError")
+
+        # Test for the AIP log: MetadataError.
+        result = aip.log['MetadataError']
+        expected = 'Successfully created metadata folder'
+        self.assertEqual(expected, result, "Problem with sort web_magil, log: MetadataError")
+
+
 
 
 if __name__ == "__main__":

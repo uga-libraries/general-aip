@@ -18,7 +18,7 @@ from test_validate_bag import aip_log_list
 
 def manifest_to_list(path):
     """Reads the manifest and returns a list of lists, where each list is a row in the manifest"""
-    df = pd.read_csv(path, sep='\s+')
+    df = pd.read_csv(path, sep=r'\s+')
     row_list = [df.columns.to_list()] + df.values.tolist()
     return row_list
 
@@ -32,12 +32,63 @@ class TestManifest(unittest.TestCase):
             os.remove(log_path)
 
         date = datetime.now().strftime("%Y-%m-%d")
-        manifest_list = [f'manifest_tests_bmac_{date}.txt', f'manifest_tests_hargrett_{date}.txt',
-                         f'manifest_tests_magil_{date}.txt', f'manifest_tests_russell_{date}.txt']
+
+        # Deletes non-AV manifests (saved in aips-ready-to-ingest)
+        manifest_list = [f'manifest_tests_hargrett_{date}.txt', f'manifest_tests_magil_{date}.txt',
+                         f'manifest_tests_russell_{date}.txt']
+        aip_folder_path = os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-ready-to-ingest')
         for manifest_name in manifest_list:
-            manifest_path = os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-ready-to-ingest', manifest_name)
-            if os.path.exists(manifest_path):
-                os.remove(manifest_path)
+            if os.path.exists(os.path.join(aip_folder_path, manifest_name)):
+                os.remove(os.path.join(aip_folder_path, manifest_name))
+
+        # Deletes AV manifest (saved in md5-manifests-for-aips)
+        av_manifest_path = os.path.join(os.getcwd(), 'manifest', 'staging', 'md5-manifests-for-aips',
+                                        f'manifest_tests_bmac_{date}.txt')
+        if os.path.exists(av_manifest_path):
+            os.remove(av_manifest_path)
+
+        # Moves the AV test file back into aips-ready-for-ingest if it was moved to the error folder.
+        # This happens if the unit tests are run in a Windows environment.
+        error_folder = os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-with-errors', 'copy_to_ingest_failed')
+        if os.path.exists(os.path.join(error_folder, 'rabbitbox_010_bag.20000.tar')):
+            os.rename(os.path.join(error_folder, 'rabbitbox_010_bag.20000.tar'),
+                      os.path.join(aip_folder_path, 'rabbitbox_010_bag.20000.tar'))
+
+    def test_av(self):
+        """Test for an AV AIP, which has the manifest saved to a different location"""
+        # Makes the test input and runs the function.
+        # The AIP log is updated as if previous steps have run correctly.
+        aips_dir = os.getcwd()
+        aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
+        aip = AIP(aips_dir, 'bmac', 'wav', 'rabbitbox', 'folder', 'av', 'rabbitbox_010', 'title', 1, False)
+        aip.size = 20000
+        aip.log = {'Started': '2025-09-08 1:25PM', 'AIP': 'rabbitbox_010', 'Deletions': 'No files deleted',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
+                   'Manifest': 'n/a', 'Complete': 'n/a'}
+        log('header', aips_dir)
+        manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(os.getcwd(), 'ingest')))
+
+        # Test for the manifest.
+        manifest_name = f'manifest_tests_bmac_{datetime.now().strftime("%Y-%m-%d")}.txt'
+        result = manifest_to_list(os.path.join(aip_staging, 'md5-manifests-for-aips', manifest_name))
+        expected = [['629f0e1886f6e7d53291fae720e737dd', 'rabbitbox_010_bag.20000.tar']]
+        self.assertEqual(expected, result, "Problem with av, manifest")
+
+        # Test for the AIP log.
+        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+                    ['2025-09-08 1:25PM', 'rabbitbox_010', 'No files deleted', 'Success', 'Success', 'BLANK',
+                     'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
+                     'Successfully completed processing']]
+        self.assertEqual(expected, result, "Problem with AV, AIP log")
+
+        # Test for copying to ingest.
+        # NOTE: this only works when running the test on a Mac, where rsync is available.
+        result = os.path.exists(os.path.join(os.getcwd(), 'ingest', 'rabbitbox_010_bag.20000.tar'))
+        self.assertEqual(True, result, "Problem with AV, ingest")
 
     def test_bz2(self):
         """Test for an AIP that is tarred and zipped"""

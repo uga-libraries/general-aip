@@ -93,6 +93,10 @@ def check_arguments(arguments):
         else:
             errors_list.append("Unexpected value for the workflow.")
 
+    # Checks if there are too many arguments.
+    if len(arguments) > 5:
+        errors_list.append("Too many script arguments. The maximum expected is 4.")
+
     # Calculates the path to the required metadata file and verifies it is present.
     # Only tests if there is a value for aips_directory, which is part of the path.
     if aips_directory:

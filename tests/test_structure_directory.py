@@ -13,11 +13,9 @@ from aip_functions import AIP, structure_directory
 
 
 def aips_directory_list(folder):
-    """
-    Makes and returns a list with the filepath for every folder and file in an AIP folder.
+    """Make and returns a list with the filepath for every folder and file in an AIP folder
     The list is sorted because the list can be in a different order depending on the operating system.
-    This is used to compare the structure_directory function's actual results to the expected results.
-    """
+    This is used to compare the structure_directory function's actual results to the expected results."""
     directory_list = []
     for root, dirs, files in os.walk(folder):
         for directory in dirs:
@@ -31,9 +29,7 @@ def aips_directory_list(folder):
 class TestStructureDirectory(unittest.TestCase):
 
     def tearDown(self):
-        """
-        Deletes the aip log, errors folder, and test AIPs folders, if present.
-        """
+        """Delete the aip log, errors folder, and test AIPs folders, if present."""
         # Deletes error folder from staging.
         error_folder = os.path.join(os.getcwd(), 'staging', 'aips-with-errors')
         if os.path.exists(error_folder):
@@ -46,16 +42,14 @@ class TestStructureDirectory(unittest.TestCase):
 
         # Deletes AIP folders from aips_directory.
         aip_folders = ('deletion-aip-1', 'emory-aip-1', 'error-aip-1', 'error-aip-2',
-                       'error-aip-3', 'objects-aip-1', 'web-aip-1')
+                       'error-aip-3', 'none-aip-1', 'web-aip-1')
         for aip_folder in aip_folders:
             aip_folder_path = os.path.join(os.getcwd(), 'structure_directory', aip_folder)
             if os.path.exists(aip_folder_path):
                 shutil.rmtree(aip_folder_path)
 
     def test_error_objects_exists(self):
-        """
-        Test for error handling when the AIP folder already contains a folder named objects.
-        """
+        """Test for error handling when the AIP folder already contains a folder named objects"""
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
@@ -90,9 +84,7 @@ class TestStructureDirectory(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with error - objects exists, log: Complete")
 
     def test_error_both_exist(self):
-        """
-        Test for error handling when the AIP folder already contains folders named metadata and objects.
-        """
+        """Test for error handling when the AIP folder already contains folders named metadata and objects"""
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
@@ -129,9 +121,7 @@ class TestStructureDirectory(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with error - both exist, log: Complete")
 
     def test_error_metadata_exists(self):
-        """
-        Test for error handling when the AIP folder already contains a folder named metadata.
-        """
+        """Test for error handling when the AIP folder already contains a folder named metadata"""
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
@@ -168,10 +158,7 @@ class TestStructureDirectory(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with error - metadata exists, log: Complete")
 
     def test_sort_emory(self):
-        """
-        Test for structuring an AIP which contains an Emory metadata file, which goes in the metadata subfolder.
-        All other files will go in the objects subfolder.
-        """
+        """Test for an AIP which contains an Emory metadata file, which goes in the metadata subfolder"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
@@ -202,10 +189,7 @@ class TestStructureDirectory(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with sort Emory metadata, log: MetadataError")
 
     def test_sort_files_deleted(self):
-        """
-        Test for structuring an AIP which contains a deletion log, which goes in the metadata subfolder.
-        All other files will go to the objects subfolder.
-        """
+        """Test for an AIP which contains a deletion log, which goes in the metadata subfolder"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
@@ -236,15 +220,12 @@ class TestStructureDirectory(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with sort files deleted log, log: MetadataError")
 
     def test_sort_none(self):
-        """
-        Test for structuring an AIP with no metadata files. All files will go in the objects subfolder.
-        Includes files that would be sorted to metadata if the department or AIP ID was different.
-        """
+        """Test for an AIP with no metadata files (some would be metadata if AIP metadata was different)"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'dept', None, 'coll', 'folder', 'genera', 'objects-aip-1', 'title', 1, True)
-        shutil.copytree(os.path.join(aips_dir, 'objects-aip-1_copy'), os.path.join(aips_dir, 'objects-aip-1'))
+        aip = AIP(aips_dir, 'dept', None, 'coll', 'folder', 'general', 'none-aip-1', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'none-aip-1_copy'), os.path.join(aips_dir, 'none-aip-1'))
         structure_directory(aip, staging_dir)
 
         # Test for the contents of the AIP folder.
@@ -252,7 +233,9 @@ class TestStructureDirectory(unittest.TestCase):
         result = aips_directory_list(aip_path)
         expected = [os.path.join(aip_path, 'metadata'),
                     os.path.join(aip_path, 'objects'),
+                    os.path.join(aip_path, 'objects', 'none-aip-1_coll.csv'),
                     os.path.join(aip_path, 'objects', 'Test Dir'),
+                    os.path.join(aip_path, 'objects', 'Test Dir', 'none-aip-1.framemd5'),
                     os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'objects', 'Text 2.txt'),
                     os.path.join(aip_path, 'objects', 'Text.txt')]
@@ -269,10 +252,7 @@ class TestStructureDirectory(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with sort none (no metadata), log: MetadataError")
 
     def test_sort_web(self):
-        """
-        Test for structuring an AIP which contains the six Archive-It reports,
-        which goes in the metadata subfolder. All other files will go in the objects subfolder.
-        """
+        """Test for a MAGIL web AIP with all the six Archive-It reports, which go in the metadata subfolder"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
@@ -295,17 +275,17 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'objects', 'Text 2.txt'),
                     os.path.join(aip_path, 'objects', 'Text.txt')]
-        self.assertEqual(expected, result, "Problem with sort seed, AIP folder")
+        self.assertEqual(expected, result, "Problem with sort web, AIP folder")
 
         # Test for the AIP log: ObjectsError.
         result = aip.log['ObjectsError']
         expected = 'Successfully created objects folder'
-        self.assertEqual(expected, result, "Problem with sort seed, log: ObjectsError")
+        self.assertEqual(expected, result, "Problem with sort web, log: ObjectsError")
 
         # Test for the AIP log: MetadataError.
         result = aip.log['MetadataError']
         expected = 'Successfully created metadata folder'
-        self.assertEqual(expected, result, "Problem with sort seed, log: MetadataError")
+        self.assertEqual(expected, result, "Problem with sort web, log: MetadataError")
 
 
 if __name__ == "__main__":

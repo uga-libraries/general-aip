@@ -2,7 +2,7 @@
 Testing for the entire script, with input that represents the different workflows that use the script.
 It does not currently include tests for error handling.
 
-BEFORE RUNNING THIS TEST: in configuration.py, make aip_staging the path to aip_staging_location in the GitHub repo
+BEFORE RUNNING THIS TEST: in configuration.py, make aip_staging the path to staging in the GitHub repo
 """
 
 import csv
@@ -36,7 +36,7 @@ def path_list(dir_name):
                 file = re.sub(r"_bag.\d+.", "_bag.1000.", file)
 
             # Skips the FITS tool error log because FITS does not always have a tool error on the test files
-            # and the placeholder files in aip_staging_location that let the folders sync to GitHub.
+            # and the placeholder files in staging that let the folders sync to GitHub.
             # Adds all other files to the list.
             if file.endswith("_fits-tool-errors_fitserr.txt") or file == 'Explanation.txt' or file == 'placeholder.txt':
                 continue
@@ -92,7 +92,7 @@ class TestFullScript(unittest.TestCase):
         # Deletes everything but placeholder.txt from the output folders in staging.
         output_dirs = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
         for output_dir in output_dirs:
-            output_path = os.path.join(os.getcwd(), 'aip_staging_location', output_dir)
+            output_path = os.path.join(os.getcwd(), 'staging', output_dir)
             for file in os.listdir(output_path):
                 if not file == 'placeholder.txt':
                     os.remove(os.path.join(output_path, file))
@@ -171,7 +171,7 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(result, expected, "Problem with test for general, aip directory")
 
         # Test for the contents of the staging directory.
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         today = datetime.date.today().strftime('%Y-%m-%d')
         result = path_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-ready-to-ingest'),
@@ -281,7 +281,7 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(result, expected, "Problem with test for web, aip directory")
 
         # Test for the contents of the staging directory.
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         today = datetime.date.today().strftime('%Y-%m-%d')
         result = path_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-ready-to-ingest'),

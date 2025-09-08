@@ -18,7 +18,7 @@ class TestValidatePreservationXML(unittest.TestCase):
         if os.path.exists(log_path):
             os.remove(log_path)
 
-        errors_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors')
+        errors_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors')
         if os.path.exists(errors_path):
             shutil.rmtree(errors_path)
 
@@ -32,7 +32,7 @@ class TestValidatePreservationXML(unittest.TestCase):
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'validate_preservation_xml')
         aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_001', 'title', 1, True)
-        validate_preservation_xml(aip, os.path.join(os.getcwd(), 'aip_staging_location'))
+        validate_preservation_xml(aip, os.path.join(os.getcwd(), 'staging'))
 
         # Test for the AIP Log: preservation.xml is made.
         result = aip.log['PresXML']
@@ -50,7 +50,7 @@ class TestValidatePreservationXML(unittest.TestCase):
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'validate_preservation_xml')
         aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_002', 'title', 1, True)
-        validate_preservation_xml(aip, os.path.join(os.getcwd(), 'aip_staging_location'))
+        validate_preservation_xml(aip, os.path.join(os.getcwd(), 'staging'))
 
         # Test for the AIP Log: preservation.xml is made.
         result = aip.log['PresXML']
@@ -76,11 +76,11 @@ class TestValidatePreservationXML(unittest.TestCase):
                    'Complete': 'n/a'}
         log('header', aips_dir)
         shutil.copytree(os.path.join(aips_dir, 'test_c01_003_copy'), os.path.join(aips_dir, 'test_c01_003'))
-        validate_preservation_xml(aip, os.path.join(os.getcwd(), 'aip_staging_location'))
+        validate_preservation_xml(aip, os.path.join(os.getcwd(), 'staging'))
 
         # Test for if the AIP folder is in the error folder.
-        result = os.path.exists(os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors',
-                                             'preservationxml_not_found', 'test_c01_003'))
+        result = os.path.exists(os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'preservationxml_not_found',
+                                             'test_c01_003'))
         self.assertEqual(result, True, "Problem with error: missing, move to error folder")
 
         # Test for the contents of the AIP log.
@@ -120,10 +120,10 @@ class TestValidatePreservationXML(unittest.TestCase):
                    'Complete': 'n/a'}
         log('header', aips_dir)
         shutil.copytree(os.path.join(aips_dir, 'test_c01_004_copy'), os.path.join(aips_dir, 'test_c01_004'))
-        validate_preservation_xml(aip, os.path.join(os.getcwd(), 'aip_staging_location'))
+        validate_preservation_xml(aip, os.path.join(os.getcwd(), 'staging'))
 
         # Test for if the AIP folder is in the error folder.
-        result = os.path.exists(os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors',
+        result = os.path.exists(os.path.join(os.getcwd(), 'staging', 'aips-with-errors',
                                              'preservationxml_not_valid', 'test_c01_004'))
         self.assertEqual(result, True, "Problem with error: missing, move to error folder")
 
@@ -142,7 +142,7 @@ class TestValidatePreservationXML(unittest.TestCase):
 
         # Test for the validation log.
         # Output is formatted differently depending on the OS the test is run on.
-        log_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'preservationxml_not_valid',
+        log_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'preservationxml_not_valid',
                                 'test_c01_004_presxml_validation.txt')
         with open(log_path, 'r') as f:
             result = f.readlines()

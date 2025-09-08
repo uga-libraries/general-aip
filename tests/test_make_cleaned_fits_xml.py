@@ -22,7 +22,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         if os.path.exists(log_path):
             os.remove(log_path)
 
-        errors_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors')
+        errors_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors')
         if os.path.exists(errors_path):
             shutil.rmtree(errors_path)
 
@@ -34,7 +34,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         """Test for successfully making the cleaned-fits.xml file."""
         # Makes the input variables and runs the function being tested.
         aip_dir = os.path.join(os.getcwd(), 'make_cleaned_fits_xml')
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aip_dir, 'dept', None, 'coll-1', 'aip_folder', 'general', 'aip1', 'title', '1', 'zip')
         make_cleaned_fits_xml(aip, staging_dir)
 
@@ -47,7 +47,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         """Test for error handling (no combined-fits.xml present) while making the cleaned-fits.xml file."""
         # Makes the input variables and runs the function being tested.
         aip_dir = os.path.join(os.getcwd(), 'make_cleaned_fits_xml')
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aip_dir, 'dept', None, 'coll-1', 'aip_folder', 'general', 'aip0', 'title', '1', 'zip')
         shutil.copytree(os.path.join(aip_dir, 'aip0_copy'), os.path.join(aip_dir, 'aip0'))
         make_cleaned_fits_xml(aip, staging_dir)

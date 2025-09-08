@@ -20,7 +20,7 @@ class TestPackage(unittest.TestCase):
         if os.path.exists(log_path):
             os.remove(log_path)
 
-        aips_ready_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-ready-to-ingest')
+        aips_ready_path = os.path.join(os.getcwd(), 'staging', 'aips-ready-to-ingest')
         for pkg in ['test-aip-1_bag.663.tar', 'test-aip-1_bag.663.tar.bz2',
                     'test-aip-1_bag.673.tar', 'test-aip-1_bag.673.tar.bz2']:
             if os.path.exists(os.path.join(aips_ready_path, pkg)):
@@ -30,7 +30,7 @@ class TestPackage(unittest.TestCase):
         """Test for an AIP that should be tarred and zipped."""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'package')
-        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-aip-1', 'title', 1, True)
         package(aip, aip_staging)
 
@@ -53,7 +53,7 @@ class TestPackage(unittest.TestCase):
         """Test for an AIP that should be tarred but not zipped"""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'package')
-        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-aip-1', 'title', 1, False)
         package(aip, aip_staging)
 
@@ -101,7 +101,7 @@ class TestPackage(unittest.TestCase):
         # Makes the test input and runs the function.
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.path.join(os.getcwd(), 'package')
-        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-missing-1', 'title', 1, False)
         aip.log = {'Started': '2025-08-14 10:55AM', 'AIP': 'test-missing-1', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',

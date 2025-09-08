@@ -24,7 +24,7 @@ def aip_log_list(log_path):
 def validation_log_list(aip_id):
     """Make a list of rows within a validation log for comparing to the expected results,
     sorting the list since bagit validation outputs are in an unpredictable order"""
-    log_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'bag_not_valid',
+    log_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'bag_not_valid',
                             f'{aip_id}_bag_validation.txt')
     with open(log_path, 'r') as open_file:
         log_list = open_file.readlines()
@@ -40,7 +40,7 @@ class TestValidateBag(unittest.TestCase):
         if os.path.exists(log_path):
             os.remove(log_path)
 
-        error_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors', 'bag_not_valid')
+        error_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'bag_not_valid')
         if os.path.exists(error_path):
             shutil.rmtree(error_path)
 
@@ -50,7 +50,7 @@ class TestValidateBag(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         # A copy of the bag is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
-        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_001', 'title', 1, True)
         aip.log = {'Started': '2025-08-14 9:30AM', 'AIP': 'test_not_001', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -85,7 +85,7 @@ class TestValidateBag(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         # A copy of the bag is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
-        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_002', 'title', 1, True)
         aip.log = {'Started': '2025-08-14 9:50AM', 'AIP': 'test_not_002', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -120,7 +120,7 @@ class TestValidateBag(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         # A copy of the bag is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
-        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_003', 'title', 1, True)
         aip.log = {'Started': '2025-08-14 9:55AM', 'AIP': 'test_not_003', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -155,7 +155,7 @@ class TestValidateBag(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         # A copy of the bag is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
-        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_004', 'title', 1, True)
         aip.log = {'Started': '2025-08-14 10:00AM', 'AIP': 'test_not_004', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -195,7 +195,7 @@ class TestValidateBag(unittest.TestCase):
         """Test for when the bag is valid"""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
-        aip_staging = os.path.join(os.getcwd(), 'aip_staging_location')
+        aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'valid', 'folder', 'general', 'test_valid_001', 'title', 1, True)
         validate_bag(aip, aip_staging)
 

@@ -549,12 +549,12 @@ def manifest(aip, staging, ingest):
         return
 
     # Calculates the MD5 of the packaged AIP.
-    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
+    md5deep_result = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
     # If md5deep has an error, logs the event and does not execute the rest of this function.
-    if md5deep_output.stderr:
-        error_msg = md5deep_output.stderr.decode("utf-8")
+    if md5deep_result.stderr:
+        error_msg = md5deep_result.stderr.decode("utf-8")
         aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
         log(aip.log, aip.directory)
@@ -569,20 +569,25 @@ def manifest(aip, staging, ingest):
     else:
         manifest_path = os.path.join(staging, "aips-ready-to-ingest", manifest_name)
     with open(manifest_path, "a", encoding="utf-8") as manifest_file:
-        manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
+        manifest_file.write(md5deep_result.stdout.decode("UTF-8").replace("\r", ""))
 
     # For AV, copies to ARCHive ingest to be ready to schedule.
-    # TODO: is there an rsync-like option for Windows for the other workflows?
+    # TODO: is there an rsync-like option for Windows for the other workflows? Or just use Python?
     if aip.type == 'av':
         rsync_result = subprocess.run(f'rsync -v --progress {aip_path} {ingest}', stderr=subprocess.PIPE, shell=True)
 
         # If copied correctly, move to a different folder on AIPs staging. Otherwise, move to an error folder.
-        # TODO: add to log
-        if "stderr=b''" in str(rsync_result):
+        if not rsync_result.stderr:
             aip_zip_name = os.path.basename(aip_path)
             shutil.move(aip_path, f'{staging}/aips-already-on-ingest-server/{aip_zip_name}')
         else:
             move_error('copy_to_ingest_failed', aip_path, staging)
+            error_msg = rsync_result.stderr.decode("utf-8")
+            aip.log["Manifest"] = (f"Successfully added AIP to manifest. "
+                                   f"Issue when copying to ingest. rsync error: {error_msg}")
+            aip.log["Complete"] = "Error during processing"
+            log(aip.log, aip.directory)
+            return
 
     # Logs the success of adding the AIP to the manifest and of AIP creation (this is the last step).
     aip.log["Manifest"] = "Successfully added AIP to manifest"

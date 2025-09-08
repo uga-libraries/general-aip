@@ -33,7 +33,7 @@ class TestMoveError(unittest.TestCase):
         result = errors_directory_print()
         expected = [os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type'),
                     os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type', 'aip1')]
-        self.assertEqual(result, expected, "Problem with no previous error")
+        self.assertEqual(expected, result, "Problem with no previous error")
 
     def test_previous_error_diff_type(self):
         """Test for moving a folder into an error folder when there is a pre-existing aips-with-errors folder
@@ -49,7 +49,7 @@ class TestMoveError(unittest.TestCase):
                     os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_two', 'aip2'),
                     os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type'),
                     os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type', 'aip1')]
-        self.assertEqual(result, expected, "Problem with previous error, different type")
+        self.assertEqual(expected, result, "Problem with previous error, different type")
 
     def test_previous_error_same_type(self):
         """Test for moving a folder into an error folder when there is a pre-existing aips-with-errors folder
@@ -64,7 +64,7 @@ class TestMoveError(unittest.TestCase):
         expected = [os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type'),
                     os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type', 'aip1'),
                     os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type', 'aip2')]
-        self.assertEqual(result, expected, "Problem with previous error, same type")
+        self.assertEqual(expected, result, "Problem with previous error, same type")
 
 
 if __name__ == "__main__":

@@ -40,7 +40,7 @@ class TestLog(unittest.TestCase):
         # Test for the log contents.
         result = aip_log_list()
         expected = [self.header]
-        self.assertEqual(result, expected, "Problem with header")
+        self.assertEqual(expected, result, "Problem with header")
 
     def test_one_aip(self):
         """Test for making a log file with information from one AIP"""
@@ -59,7 +59,7 @@ class TestLog(unittest.TestCase):
                     [str(aip.log['Started']), 'aip-1', 'No files deleted',
                      'Objects folder already exists in original files', 'BLANK', 'BLANK', 'BLANK', 'BLANK',
                      'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
-        self.assertEqual(result, expected, "Problem with one aip")
+        self.assertEqual(expected, result, "Problem with one aip")
 
     def test_multiple_aips(self):
         """Test for making the log file with information from two AIPs"""
@@ -99,7 +99,7 @@ class TestLog(unittest.TestCase):
                      'Preservation.xml valid on 2022-10-31 13:14:15.123456',
                      'Bag valid on 2022-10-13 14:15:16.789123', 'Successfully made package',
                      'Successfully added AIP to manifest.', 'Successfully completed processing']]
-        self.assertEqual(result, expected, "Problem with multiple aips")
+        self.assertEqual(expected, result, "Problem with multiple aips")
 
 
 if __name__ == "__main__":

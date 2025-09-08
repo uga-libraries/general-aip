@@ -41,7 +41,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         # Compares the cleaned-fits.xml file produced by the function to a xml file with the expected values.
         result = read_xml(os.path.join(aip_dir, 'aip1', 'metadata', 'aip1_cleaned-fits.xml'))
         expected = read_xml(os.path.join(aip_dir, 'aip1_cleaned-fits_expected.xml'))
-        self.assertEqual(result, expected, "Problem with correct")
+        self.assertEqual(expected, result, "Problem with correct")
 
     def test_error(self):
         """Test for error handling (no combined-fits.xml present) while making the cleaned-fits.xml file."""
@@ -56,7 +56,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         result = (os.path.exists(os.path.join(staging_dir, 'aips-with-errors', 'cleaned_fits_saxon_error', 'aip0')),
                   os.path.exists(os.path.join(aip_dir, 'aip0')))
         expected = (True, False)
-        self.assertEqual(result, expected, "Problem with error handling, move to error folder")
+        self.assertEqual(expected, result, "Problem with error handling, move to error folder")
 
         # Test for the AIP log, PresXML.
         # Output has a different line separator (\r\n or \n) depending on the OS the test is run on.
@@ -68,9 +68,9 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         self.assertIn(result, expected, "Problem with error handling, log: PresXML")
 
         # Test for the AIP log, Complete.
-        result_log2 = aip.log['Complete']
-        expected_log2 = 'Error during processing'
-        self.assertEqual(result_log2, expected_log2, "Problem with error handling, log: Complete")
+        result = aip.log['Complete']
+        expected = 'Error during processing'
+        self.assertEqual(expected, result, "Problem with error handling, log: Complete")
 
 
 if __name__ == "__main__":

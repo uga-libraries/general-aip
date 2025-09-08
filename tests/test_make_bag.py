@@ -49,7 +49,7 @@ class TestMakeBag(unittest.TestCase):
                     os.path.join(aips_dir, f'{aip.id}_bag', 'data', f'{aip.id}_files-deleted_{date}_del.csv'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-md5.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt')]
-        self.assertEqual(result, expected, "Problem with av_bmac")
+        self.assertEqual(expected, result, "Problem with av_bmac")
 
     def test_av_russell(self):
         """Test for making a bag out of an AIP folder that is AV from Russell"""
@@ -69,7 +69,7 @@ class TestMakeBag(unittest.TestCase):
                     os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-sha256.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-sha256.txt')]
-        self.assertEqual(result, expected, "Problem with av_russell")
+        self.assertEqual(expected, result, "Problem with av_russell")
 
     def test_general(self):
         """Test for making a bag out of an AIP folder that is the general type"""
@@ -89,7 +89,7 @@ class TestMakeBag(unittest.TestCase):
                     os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-sha256.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-sha256.txt')]
-        self.assertEqual(result, expected, "Problem with general")
+        self.assertEqual(expected, result, "Problem with general")
 
 
 if __name__ == "__main__":

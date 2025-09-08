@@ -36,7 +36,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         # Verifies that staging has the expected folders.
         result = directory_print(staging)
         expected = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
-        self.assertEqual(result, expected, "Problem with general_all")
+        self.assertEqual(expected, result, "Problem with general_all")
 
     def test_general_none(self):
         """Test for general mode when none of the three folders already exist"""
@@ -48,7 +48,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         # Verifies that staging has the expected folders.
         result = directory_print(staging)
         expected = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
-        self.assertEqual(result, expected, "Problem with general_none")
+        self.assertEqual(expected, result, "Problem with general_none")
 
     def test_general_partial(self):
         """Test for general mode when one of the three folders (aips-ready-to-ingest) already exists."""
@@ -60,7 +60,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         # Verifies that staging has the expected folders.
         result = directory_print(staging)
         expected = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
-        self.assertEqual(result, expected, "Problem with general_partial")
+        self.assertEqual(expected, result, "Problem with general_partial")
 
 
 if __name__ == "__main__":

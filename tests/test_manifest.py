@@ -68,7 +68,7 @@ class TestManifest(unittest.TestCase):
                     ['2025-08-14 11:45AM', 'har-ua01-001-001', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
                      'Successfully completed processing']]
-        self.assertEqual(result, expected, "Problem with bz2, AIP log")
+        self.assertEqual(expected, result, "Problem with bz2, AIP log")
 
     def test_error_missing(self):
         """Test for when the AIP is not in the expected location"""
@@ -99,7 +99,7 @@ class TestManifest(unittest.TestCase):
                     ['2025-08-14 2:30PM', 'harg-missing-001', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Valid', 'Success',
                      f"Tar/zip file '{aip_path}' not in aips-ready-for-ingest folder", 'Error during processing']]
-        self.assertEqual(result, expected, "Problem with error_missing, AIP log")
+        self.assertEqual(expected, result, "Problem with error_missing, AIP log")
 
     def test_manifest_exists(self):
         """Test for when a manifest already exists and the AIP needs to be added to it"""
@@ -134,7 +134,7 @@ class TestManifest(unittest.TestCase):
                     ['2025-08-14 2:40PM', 'rbrl-123-er-123456', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
                      'Successfully completed processing']]
-        self.assertEqual(result, expected, "Problem with manifest_exists, AIP log")
+        self.assertEqual(expected, result, "Problem with manifest_exists, AIP log")
 
     def test_tar(self):
         """Test for an AIP that is tarred but not zipped"""
@@ -165,7 +165,7 @@ class TestManifest(unittest.TestCase):
                     ['2025-08-14 2:25PM', 'rabbitbox_010', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
                      'Successfully completed processing']]
-        self.assertEqual(result, expected, "Problem with tar, AIP log")
+        self.assertEqual(expected, result, "Problem with tar, AIP log")
 
 
 if __name__ == "__main__":

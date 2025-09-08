@@ -73,7 +73,7 @@ class TestMakePreservationXML(unittest.TestCase):
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for bmac")
+        self.assertEqual(expected, result, "Problem with test for bmac")
 
     def test_error(self):
         """Test for an AIP without the cleaned FITS XML, which causes a Saxon error"""
@@ -127,7 +127,7 @@ class TestMakePreservationXML(unittest.TestCase):
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for multiple files")
+        self.assertEqual(expected, result, "Problem with test for multiple files")
 
     def test_multiple_files(self):
         """Test for an AIP with multiple files"""
@@ -140,7 +140,7 @@ class TestMakePreservationXML(unittest.TestCase):
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for multiple files")
+        self.assertEqual(expected, result, "Problem with test for multiple files")
 
     def test_single_file(self):
         """Test for an AIP with a single file"""
@@ -153,7 +153,7 @@ class TestMakePreservationXML(unittest.TestCase):
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for single file")
+        self.assertEqual(expected, result, "Problem with test for single file")
 
     def test_web_hargrett(self):
         """Test for a web AIP from Hargrett with no collection"""
@@ -167,7 +167,7 @@ class TestMakePreservationXML(unittest.TestCase):
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for web, hargrett")
+        self.assertEqual(expected, result, "Problem with test for web, hargrett")
 
     def test_web_magil(self):
         """Test for a web AIP from MAGIL, which never has a collection"""
@@ -180,7 +180,7 @@ class TestMakePreservationXML(unittest.TestCase):
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for web, magil")
+        self.assertEqual(expected, result, "Problem with test for web, magil")
 
 
 if __name__ == "__main__":

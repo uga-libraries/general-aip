@@ -115,7 +115,7 @@ class TestFullScript(unittest.TestCase):
                     '\n>>>Processing test-001-er-000002 (2 of 3).\n'
                     '\n>>>Processing test-001-er-000003 (3 of 3).\n'
                     '\nScript is finished running.\n')
-        self.assertEqual(result, expected, "Problem with test for general, print statements")
+        self.assertEqual(expected, result, "Problem with test for general, print statements")
 
         # Test for the contents of the AIP directory.
         result = path_list(aip_dir)
@@ -168,7 +168,7 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_three, 'manifest-sha256.txt'),
                     os.path.join(bag_three, 'tagmanifest-md5.txt'),
                     os.path.join(bag_three, 'tagmanifest-sha256.txt')]
-        self.assertEqual(result, expected, "Problem with test for general, aip directory")
+        self.assertEqual(expected, result, "Problem with test for general, aip directory")
 
         # Test for the contents of the staging directory.
         staging_dir = os.path.join(os.getcwd(), 'staging')
@@ -187,7 +187,7 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000001_preservation.xml'),
                     os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000002_preservation.xml'),
                     os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000003_preservation.xml')]
-        self.assertEqual(result, expected, 'Problem with test for general, staging directory')
+        self.assertEqual(expected, result, 'Problem with test for general, staging directory')
 
         # Test for the contents of the aip_log.csv file.
         result = log_list(os.path.join(aip_dir, 'aip_log.csv'))
@@ -210,7 +210,7 @@ class TestFullScript(unittest.TestCase):
                      'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
                      f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
                      'Successfully added AIP to manifest', 'Successfully completed processing']]
-        self.assertEqual(result, expected, "Problem with test for general, aip log")
+        self.assertEqual(expected, result, "Problem with test for general, aip log")
 
     def test_web(self):
         """Test for the web mode (content downloaded from Archive-It)"""
@@ -229,7 +229,7 @@ class TestFullScript(unittest.TestCase):
         expected = ('\n>>>Processing rbrl-498-web-201907-0001 (1 of 2).\n'
                     '\n>>>Processing rbrl-377-web-201907-0001 (2 of 2).\n'
                     '\nScript is finished running.\n')
-        self.assertEqual(result, expected, "Problem with test for web, print statements")
+        self.assertEqual(expected, result, "Problem with test for web, print statements")
 
         # Test for the contents of the AIP directory.
         result = path_list(aip_dir)
@@ -278,7 +278,7 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_two, 'manifest-sha256.txt'),
                     os.path.join(bag_two, 'tagmanifest-md5.txt'),
                     os.path.join(bag_two, 'tagmanifest-sha256.txt')]
-        self.assertEqual(result, expected, "Problem with test for web, aip directory")
+        self.assertEqual(expected, result, "Problem with test for web, aip directory")
 
         # Test for the contents of the staging directory.
         staging_dir = os.path.join(os.getcwd(), 'staging')
@@ -295,7 +295,7 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(staging_dir, 'preservation-xmls'),
                     os.path.join(staging_dir, 'preservation-xmls', 'rbrl-377-web-201907-0001_preservation.xml'),
                     os.path.join(staging_dir, 'preservation-xmls', 'rbrl-498-web-201907-0001_preservation.xml')]
-        self.assertEqual(result, expected, "Problem with test for web, staging directory")
+        self.assertEqual(expected, result, "Problem with test for web, staging directory")
 
         # Test for the contents of the aip_log.csv file.
         result = log_list(os.path.join(aip_dir, 'aip_log.csv'))
@@ -312,7 +312,7 @@ class TestFullScript(unittest.TestCase):
                      'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
                      f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
                      'Successfully added AIP to manifest', 'Successfully completed processing']]
-        self.assertEqual(result, expected, "Problem with test for web, aip log")
+        self.assertEqual(expected, result, "Problem with test for web, aip log")
 
 
 if __name__ == "__main__":

@@ -35,7 +35,7 @@ class TestCheckArguments(unittest.TestCase):
         result = check_arguments(["general-aip.py", os.getcwd(), "general", "zip"])
         errors = ["Missing the required file metadata.csv in the AIPs directory."]
         expected = (os.getcwd(), "general", True, None, None, errors)
-        self.assertEqual(result, expected, "Problem with test for missing metadata.csv")
+        self.assertEqual(expected, result, "Problem with test for missing metadata.csv")
 
     def test_no_argument(self):
         """
@@ -46,7 +46,7 @@ class TestCheckArguments(unittest.TestCase):
         errors = ["AIPs directory argument is missing.",
                   "Cannot check for the metadata.csv because the AIPs directory has an error."]
         expected = (None, None, None, None, None, errors)
-        self.assertEqual(result, expected, "Problem with test for no argument provided")
+        self.assertEqual(expected, result, "Problem with test for no argument provided")
 
     def test_to_zip_argument_error(self):
         """
@@ -55,7 +55,7 @@ class TestCheckArguments(unittest.TestCase):
         result = check_arguments(["general-aip.py", os.getcwd(), "general", "error"])
         errors = ["To zip is not an expected value."]
         expected = (os.getcwd(), "general", None, None, self.csv_path, errors)
-        self.assertEqual(result, expected, "Problem with test for to_zip argument error")
+        self.assertEqual(expected, result, "Problem with test for to_zip argument error")
 
     def test_required_argument(self):
         """
@@ -63,7 +63,7 @@ class TestCheckArguments(unittest.TestCase):
         """
         result = check_arguments(["general-aip.py", os.getcwd(), "general", "zip"])
         expected = (os.getcwd(), "general", True, None, self.csv_path, [])
-        self.assertEqual(result, expected, "Problem with test for required argument only, correct")
+        self.assertEqual(expected, result, "Problem with test for required argument only, correct")
 
     def test_required_argument_error(self):
         """
@@ -73,7 +73,7 @@ class TestCheckArguments(unittest.TestCase):
         errors = ["AIPs directory argument is not a valid directory.",
                   "Cannot check for the metadata.csv because the AIPs directory has an error."]
         expected = (None, "general", True, None, None, errors)
-        self.assertEqual(result, expected, "Problem with test for required argument, error")
+        self.assertEqual(expected, result, "Problem with test for required argument, error")
 
 
 if __name__ == "__main__":

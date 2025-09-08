@@ -68,7 +68,7 @@ class TestValidateBag(unittest.TestCase):
                     ['2025-08-14 9:30AM', 'test_not_001', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Bag not valid (see log in bag_not_valid error folder)',
                      'BLANK', 'BLANK', 'Error during processing']]
-        self.assertEqual(result, expected, "Problem with test for not_valid_added, AIP log")
+        self.assertEqual(expected, result, "Problem with test for not_valid_added, AIP log")
 
         # Test that the AIP folder was moved to the error folder.
         result = os.path.exists(os.path.join(aip_staging, 'aips-with-errors', 'bag_not_valid', f'{aip.id}_bag'))
@@ -77,7 +77,7 @@ class TestValidateBag(unittest.TestCase):
         # Test that the validation log has the expected contents.
         result = validation_log_list(aip.id)
         expected = ['Payload-Oxum validation failed. Expected 5 files and 122 bytes but found 7 files and 201 bytes']
-        self.assertEqual(result, expected, "Problem with test for not_valid_added, validation log")
+        self.assertEqual(expected, result, "Problem with test for not_valid_added, validation log")
 
     def test_not_valid_deleted(self):
         """Test for when a bag is not valid because a file was deleted after it was bagged"""
@@ -103,7 +103,7 @@ class TestValidateBag(unittest.TestCase):
                     ['2025-08-14 9:50AM', 'test_not_002', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Bag not valid (see log in bag_not_valid error folder)',
                      'BLANK', 'BLANK', 'Error during processing']]
-        self.assertEqual(result, expected, "Problem with test for not_valid_deleted, AIP log")
+        self.assertEqual(expected, result, "Problem with test for not_valid_deleted, AIP log")
 
         # Test that the AIP folder was moved to the error folder.
         result = os.path.exists(os.path.join(aip_staging, 'aips-with-errors', 'bag_not_valid', f'{aip.id}_bag'))
@@ -112,7 +112,7 @@ class TestValidateBag(unittest.TestCase):
         # Test that the validation log has the expected contents.
         result = validation_log_list(aip.id)
         expected = ['Payload-Oxum validation failed. Expected 5 files and 122 bytes but found 4 files and 116 bytes']
-        self.assertEqual(result, expected, "Problem with test for not_valid_deleted, validation log")
+        self.assertEqual(expected, result, "Problem with test for not_valid_deleted, validation log")
 
     def test_not_valid_edited(self):
         """Test for when a bag is not valid because files were edited after it was bagged"""
@@ -138,7 +138,7 @@ class TestValidateBag(unittest.TestCase):
                     ['2025-08-14 9:55AM', 'test_not_003', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Bag not valid (see log in bag_not_valid error folder)',
                      'BLANK', 'BLANK', 'Error during processing']]
-        self.assertEqual(result, expected, "Problem with test for not_valid_edited, AIP log")
+        self.assertEqual(expected, result, "Problem with test for not_valid_edited, AIP log")
 
         # Test that the AIP folder was moved to the error folder.
         result = os.path.exists(os.path.join(aip_staging, 'aips-with-errors', 'bag_not_valid', f'{aip.id}_bag'))
@@ -147,7 +147,7 @@ class TestValidateBag(unittest.TestCase):
         # Test that the validation log has the expected contents.
         result = validation_log_list(aip.id)
         expected = ['Payload-Oxum validation failed. Expected 5 files and 122 bytes but found 5 files and 143 bytes']
-        self.assertEqual(result, expected, "Problem with test for not_valid_edited, validation log")
+        self.assertEqual(expected, result, "Problem with test for not_valid_edited, validation log")
 
     def test_not_valid_md5(self):
         """Test for when a bag is not valid because the md5 changed for files after it was bagged"""
@@ -173,7 +173,7 @@ class TestValidateBag(unittest.TestCase):
                     ['2025-08-14 10:00AM', 'test_not_004', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Bag not valid (see log in bag_not_valid error folder)',
                      'BLANK', 'BLANK', 'Error during processing']]
-        self.assertEqual(result, expected, "Problem with test for not_valid_md5, AIP log")
+        self.assertEqual(expected, result, "Problem with test for not_valid_md5, AIP log")
 
         # Test that the AIP folder was moved to the error folder.
         result = os.path.exists(os.path.join(aip_staging, 'aips-with-errors', 'bag_not_valid', f'{aip.id}_bag'))
@@ -189,7 +189,7 @@ class TestValidateBag(unittest.TestCase):
                     'found="2f03b03637bf162937793f756f0f1583"\n',
                     'data\\objects\\file2.txt md5 validation failed: expected="d10ec0d49f924ed60c041089491b099e" '
                     'found="d17ec7d49f924ed60c041789491b099e"\n']
-        self.assertEqual(result, expected, "Problem with test for not_valid_md5, validation log")
+        self.assertEqual(expected, result, "Problem with test for not_valid_md5, validation log")
 
     def test_valid(self):
         """Test for when the bag is valid"""

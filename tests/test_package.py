@@ -45,9 +45,9 @@ class TestPackage(unittest.TestCase):
         self.assertIn(result, expected, "Problem with tar_zip, AIP size")
 
         # Test that the AIP log is updated.
-        result_log = aip.log['Package']
-        expected_log = 'Successfully made package'
-        self.assertEqual(result_log, expected_log, "Problem with tar_zip, AIP log")
+        result = aip.log['Package']
+        expected = 'Successfully made package'
+        self.assertEqual(expected, result, "Problem with tar_zip, AIP log")
 
     def test_tar(self):
         """Test for an AIP that should be tarred but not zipped"""
@@ -92,9 +92,9 @@ class TestPackage(unittest.TestCase):
         self.assertIn(result, expected, "Problem with tar, AIP size")
 
         # Test that the AIP log is updated.
-        result_log = aip.log['Package']
-        expected_log = 'Successfully made package'
-        self.assertEqual(result_log, expected_log, "Problem with tar, AIP log")
+        result = aip.log['Package']
+        expected = 'Successfully made package'
+        self.assertEqual(expected, result, "Problem with tar, AIP log")
 
     def test_error(self):
         """Test for when the bag folder to be packaged is missing"""
@@ -119,7 +119,7 @@ class TestPackage(unittest.TestCase):
                      'Success', 'Success', 'Valid', 'Valid',
                      f'Could not tar. Bag not in expected location: {os.path.join(aips_dir, "test-missing-1_bag")}',
                      'BLANK', 'Error during processing']]
-        self.assertEqual(result, expected, "Problem with error")
+        self.assertEqual(expected, result, "Problem with error")
 
 
 if __name__ == "__main__":

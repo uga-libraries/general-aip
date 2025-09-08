@@ -37,13 +37,13 @@ class TestValidatePreservationXML(unittest.TestCase):
         # Test for the AIP Log: preservation.xml is made.
         result = aip.log['PresXML']
         expected = 'Successfully created preservation.xml'
-        self.assertEqual(result, expected, "Problem with valid, log: PresXML")
+        self.assertEqual(expected, result, "Problem with valid, log: PresXML")
 
         # Test for the AIP Log: preservation.xml is valid.
         # Removes the timestamp (last 16 characters) from result for a consistent expected value.
         result = aip.log['PresValid'][:-16]
         expected = f'Preservation.xml valid on {date.today()}'
-        self.assertEqual(result, expected, "Problem with valid, log: PresValid")
+        self.assertEqual(expected, result, "Problem with valid, log: PresValid")
 
     def test_valid_multiple_rights(self):
         """Test for successfully validating a preservation.xml file with multiple rights statements"""
@@ -55,13 +55,13 @@ class TestValidatePreservationXML(unittest.TestCase):
         # Test for the AIP Log: preservation.xml is made.
         result = aip.log['PresXML']
         expected = 'Successfully created preservation.xml'
-        self.assertEqual(result, expected, "Problem with valid with multiple rights, log: PresXML")
+        self.assertEqual(expected, result, "Problem with valid with multiple rights, log: PresXML")
 
         # Test for the AIP Log: preservation.xml is valid.
         # Removes the timestamp (last 16 characters) from result for a consistent expected value.
         result = aip.log['PresValid'][:-16]
         expected = f'Preservation.xml valid on {date.today()}'
-        self.assertEqual(result, expected, "Problem with valid with multiple rights, log: PresValid")
+        self.assertEqual(expected, result, "Problem with valid with multiple rights, log: PresValid")
 
     def test_error_missing(self):
         """Test for error handling if the preservation.xml file is missing"""
@@ -138,7 +138,7 @@ class TestValidatePreservationXML(unittest.TestCase):
                     ['2025-08-13 3:55PM', 'test_c01_004', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
                      'Successfully created preservation.xml', 'Preservation.xml is not valid (see log in error folder)',
                      'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
-        self.assertEqual(result, expected, "Problem with error: missing, aip log")
+        self.assertEqual(expected, result, "Problem with error: missing, aip log")
 
         # Test for the validation log.
         # Output is formatted differently depending on the OS the test is run on.

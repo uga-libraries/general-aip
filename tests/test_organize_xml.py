@@ -37,15 +37,15 @@ class TestOrganizeXML(unittest.TestCase):
         for file in os.listdir(os.path.join(os.getcwd(), 'organize_xml', 'test_coll2_001', 'metadata')):
             result.append(file)
         expected = ['file_fits.xml', 'test_coll2_001_preservation.xml']
-        self.assertEqual(result, expected, "Problem with organize xml, metadata")
+        self.assertEqual(expected, result, "Problem with organize xml, metadata")
 
         # Tests the FITS folder has the expected file.
         result = os.path.exists(os.path.join(aips_staging, 'fits-xmls', 'test_coll2_001_combined-fits.xml'))
-        self.assertEqual(result, True, "Problem with organize xml, fits-xmls")
+        self.assertEqual(True, result, "Problem with organize xml, fits-xmls")
 
         # Tests the preservation xml folder has the expected file.
         result = os.path.exists(os.path.join(aips_staging, 'preservation-xmls', 'test_coll2_001_preservation.xml'))
-        self.assertEqual(result, True, "Problem with organize xml, preservation-xmls")
+        self.assertEqual(True, result, "Problem with organize xml, preservation-xmls")
 
 
 if __name__ == "__main__":

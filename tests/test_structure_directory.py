@@ -72,22 +72,22 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text 2.txt'),
                     os.path.join(aip_path, 'Text.txt')]
-        self.assertEqual(result, expected, "Problem with error - objects exists, AIP folder")
+        self.assertEqual(expected, result, "Problem with error - objects exists, AIP folder")
 
         # Test for the AIP log: ObjectsError.
-        result_log = aip.log['ObjectsError']
-        expected_log = 'Objects folder already exists in original files'
-        self.assertEqual(result_log, expected_log, 'Problem with error - objects exists, log: ObjectsError')
+        result = aip.log['ObjectsError']
+        expected = 'Objects folder already exists in original files'
+        self.assertEqual(expected, result, 'Problem with error - objects exists, log: ObjectsError')
 
         # Test for the AIP log: MetadataError.
-        result_log2 = aip.log['MetadataError']
-        expected_log2 = 'n/a'
-        self.assertEqual(result_log2, expected_log2, "Problem with error - objects exists, log: MetadataError")
+        result = aip.log['MetadataError']
+        expected = 'n/a'
+        self.assertEqual(expected, result, "Problem with error - objects exists, log: MetadataError")
 
         # Test for the AIP log: Complete.
-        result_log3 = aip.log['Complete']
-        expected_log3 = 'Error during processing'
-        self.assertEqual(result_log3, expected_log3, "Problem with error - objects exists, log: Complete")
+        result = aip.log['Complete']
+        expected = 'Error during processing'
+        self.assertEqual(expected, result, "Problem with error - objects exists, log: Complete")
 
     def test_error_both_exist(self):
         """
@@ -111,22 +111,22 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text 2.txt'),
                     os.path.join(aip_path, 'Text.txt')]
-        self.assertEqual(result, expected, "Problem with error - both exist, AIP folder")
+        self.assertEqual(expected, result, "Problem with error - both exist, AIP folder")
 
         # Test for the AIP log: ObjectsError.
-        result_log = aip.log['ObjectsError']
-        expected_log = 'Objects folder already exists in original files'
-        self.assertEqual(result_log, expected_log, "Problem with error - both exist, log: ObjectsError")
+        result = aip.log['ObjectsError']
+        expected = 'Objects folder already exists in original files'
+        self.assertEqual(expected, result, "Problem with error - both exist, log: ObjectsError")
 
         # Test for the AIP log: MetadataError.
-        result_log2 = aip.log['MetadataError']
-        expected_log2 = 'n/a'
-        self.assertEqual(result_log2, expected_log2, "Problem with error - both exist, log: MetadataError")
+        result = aip.log['MetadataError']
+        expected = 'n/a'
+        self.assertEqual(expected, result, "Problem with error - both exist, log: MetadataError")
 
         # Test for the AIP log: Complete.
-        result_log3 = aip.log['Complete']
-        expected_log3 = 'Error during processing'
-        self.assertEqual(result_log3, expected_log3, "Problem with error - both exist, log: Complete")
+        result = aip.log['Complete']
+        expected = 'Error during processing'
+        self.assertEqual(expected, result, "Problem with error - both exist, log: Complete")
 
     def test_error_metadata_exists(self):
         """
@@ -150,22 +150,22 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text 2.txt'),
                     os.path.join(aip_path, 'Text.txt')]
-        self.assertEqual(result, expected, "Problem with error - metadata exists, AIP folder")
+        self.assertEqual(expected, result, "Problem with error - metadata exists, AIP folder")
 
         # Test for the AIP log: ObjectsError.
-        result_log = aip.log['ObjectsError']
-        expected_log = 'Successfully created objects folder'
-        self.assertEqual(result_log, expected_log, "Problem with error - metadata exists, log: ObjectsError")
+        result = aip.log['ObjectsError']
+        expected = 'Successfully created objects folder'
+        self.assertEqual(expected, result, "Problem with error - metadata exists, log: ObjectsError")
 
         # Test for the AIP log: MetadataError.
-        result_log2 = aip.log['MetadataError']
-        expected_log2 = 'Metadata folder already exists in original files'
-        self.assertEqual(result_log2, expected_log2, "Problem with error - metadata exists, log: MetadataError")
+        result = aip.log['MetadataError']
+        expected = 'Metadata folder already exists in original files'
+        self.assertEqual(expected, result, "Problem with error - metadata exists, log: MetadataError")
 
         # Test for the AIP log: Complete.
-        result_log3 = aip.log['Complete']
-        expected_log3 = 'Error during processing'
-        self.assertEqual(result_log3, expected_log3, "Problem with error - metadata exists, log: Complete")
+        result = aip.log['Complete']
+        expected = 'Error during processing'
+        self.assertEqual(expected, result, "Problem with error - metadata exists, log: Complete")
 
     def test_sort_emory(self):
         """
@@ -189,17 +189,17 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'objects', 'Text 2.txt'),
                     os.path.join(aip_path, 'objects', 'Text.txt')]
-        self.assertEqual(result, expected, "Problem with sort Emory metadata, AIP folder")
+        self.assertEqual(expected, result, "Problem with sort Emory metadata, AIP folder")
 
         # Test for the AIP log: ObjectsError.
-        result_log = aip.log['ObjectsError']
-        expected_log = 'Successfully created objects folder'
-        self.assertEqual(result_log, expected_log, "Problem with sort Emory metadata, log: ObjectsError")
+        result = aip.log['ObjectsError']
+        expected = 'Successfully created objects folder'
+        self.assertEqual(expected, result, "Problem with sort Emory metadata, log: ObjectsError")
 
         # Test for the AIP log: MetadataError.
-        result_log2 = aip.log['MetadataError']
-        expected_log2 = 'Successfully created metadata folder'
-        self.assertEqual(result_log2, expected_log2, "Problem with sort Emory metadata, log: MetadataError")
+        result = aip.log['MetadataError']
+        expected = 'Successfully created metadata folder'
+        self.assertEqual(expected, result, "Problem with sort Emory metadata, log: MetadataError")
 
     def test_sort_files_deleted(self):
         """
@@ -223,17 +223,17 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'objects', 'Text 2.txt'),
                     os.path.join(aip_path, 'objects', 'Text.txt')]
-        self.assertEqual(result, expected, "Problem with sort files deleted log, AIP folder")
+        self.assertEqual(expected, result, "Problem with sort files deleted log, AIP folder")
 
         # Test for the AIP log: ObjectsError.
-        result_log = aip.log['ObjectsError']
-        expected_log = 'Successfully created objects folder'
-        self.assertEqual(result_log, expected_log, "Problem with sort files deleted log, log: ObjectsError")
+        result = aip.log['ObjectsError']
+        expected = 'Successfully created objects folder'
+        self.assertEqual(expected, result, "Problem with sort files deleted log, log: ObjectsError")
 
         # Test for the AIP log: MetadataError.
-        result_log2 = aip.log['MetadataError']
-        expected_log2 = 'Successfully created metadata folder'
-        self.assertEqual(result_log2, expected_log2, "Problem with sort files deleted log, log: MetadataError")
+        result = aip.log['MetadataError']
+        expected = 'Successfully created metadata folder'
+        self.assertEqual(expected, result, "Problem with sort files deleted log, log: MetadataError")
 
     def test_sort_none(self):
         """
@@ -256,17 +256,17 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'objects', 'Text 2.txt'),
                     os.path.join(aip_path, 'objects', 'Text.txt')]
-        self.assertEqual(result, expected, "Problem with sort none (no metadata), AIP folder")
+        self.assertEqual(expected, result, "Problem with sort none (no metadata), AIP folder")
 
         # Test for the AIP log: ObjectsError.
-        result_log = aip.log['ObjectsError']
-        expected_log = 'Successfully created objects folder'
-        self.assertEqual(result_log, expected_log, "Problem with sort none (no metadata), log: ObjectsError")
+        result = aip.log['ObjectsError']
+        expected = 'Successfully created objects folder'
+        self.assertEqual(expected, result, "Problem with sort none (no metadata), log: ObjectsError")
 
         # Test for the AIP log: MetadataError.
-        result_log2 = aip.log['MetadataError']
-        expected_log2 = 'Successfully created metadata folder'
-        self.assertEqual(result_log2, expected_log2, "Problem with sort none (no metadata), log: MetadataError")
+        result = aip.log['MetadataError']
+        expected = 'Successfully created metadata folder'
+        self.assertEqual(expected, result, "Problem with sort none (no metadata), log: MetadataError")
 
     def test_sort_web(self):
         """
@@ -295,17 +295,17 @@ class TestStructureDirectory(unittest.TestCase):
                     os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'objects', 'Text 2.txt'),
                     os.path.join(aip_path, 'objects', 'Text.txt')]
-        self.assertEqual(result, expected, "Problem with sort seed, AIP folder")
+        self.assertEqual(expected, result, "Problem with sort seed, AIP folder")
 
         # Test for the AIP log: ObjectsError.
-        result_log = aip.log['ObjectsError']
-        expected_log = 'Successfully created objects folder'
-        self.assertEqual(result_log, expected_log, "Problem with sort seed, log: ObjectsError")
+        result = aip.log['ObjectsError']
+        expected = 'Successfully created objects folder'
+        self.assertEqual(expected, result, "Problem with sort seed, log: ObjectsError")
 
         # Test for the AIP log: MetadataError.
-        result_log2 = aip.log['MetadataError']
-        expected_log2 = 'Successfully created metadata folder'
-        self.assertEqual(result_log2, expected_log2, "Problem with sort seed, log: MetadataError")
+        result = aip.log['MetadataError']
+        expected = 'Successfully created metadata folder'
+        self.assertEqual(expected, result, "Problem with sort seed, log: MetadataError")
 
 
 if __name__ == "__main__":

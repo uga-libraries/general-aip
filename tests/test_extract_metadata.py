@@ -44,12 +44,12 @@ class TestExtractMetadata(unittest.TestCase):
         # Test for the contents of the metadata folder.
         result = sorted_list(os.path.join(aips_dir, 'aip-id-one', 'metadata'))
         expected = ['metadata.txt', 'Text.txt_fits.xml']
-        self.assertEqual(result, expected, "Problem with one file, metadata folder")
+        self.assertEqual(expected, result, "Problem with one file, metadata folder")
 
         # Test for the AIP log.
-        result_log = aip.log['FITSTool']
-        expected_log = 'No FITS tools errors'
-        self.assertEqual(result_log, expected_log, "Problem with one file, log")
+        result = aip.log['FITSTool']
+        expected = 'No FITS tools errors'
+        self.assertEqual(expected, result, "Problem with one file, log")
 
     def test_multiple_files(self):
         """
@@ -63,12 +63,12 @@ class TestExtractMetadata(unittest.TestCase):
         # Test for the contents of the metadata folder.
         result = sorted_list(os.path.join(aips_dir, 'aip-id-multi', 'metadata'))
         expected = ['metadata.txt', 'output.csv_fits.xml', 'output.json_fits.xml', 'Text.txt_fits.xml']
-        self.assertEqual(result, expected, "Problem with multiple files, metadata folder")
+        self.assertEqual(expected, result, "Problem with multiple files, metadata folder")
 
         # Test for the AIP log.
-        result_log = aip.log['FITSTool']
-        expected_log = 'No FITS tools errors'
-        self.assertEqual(result_log, expected_log, "Problem with multiple files, log")
+        result = aip.log['FITSTool']
+        expected = 'No FITS tools errors'
+        self.assertEqual(expected, result, "Problem with multiple files, log")
 
     def test_error_fits_tool(self):
         """
@@ -82,7 +82,7 @@ class TestExtractMetadata(unittest.TestCase):
         # Test for the contents of the metadata folder.
         result = sorted_list(os.path.join(aips_dir, 'aip-id-error', 'metadata'))
         expected = ['aip-id-error_fits-tool-errors_fitserr.txt', 'metadata.txt', 'not.xml_fits.xml']
-        self.assertEqual(result, expected, "Problem with error, metadata folder")
+        self.assertEqual(expected, result, "Problem with error, metadata folder")
 
         # Test for the FITS error log, which is if 3 phrases are in the file.
         # The contents of the entire file cannot be tested, since most are variable (timestamps and file paths).
@@ -92,12 +92,12 @@ class TestExtractMetadata(unittest.TestCase):
                       'Tool error processing file' in content,
                       'Content is not allowed in prolog.' in content)
         expected = (True, True, True)
-        self.assertEqual(result, expected, "Problem with error, FITS tool log")
+        self.assertEqual(expected, result, "Problem with error, FITS tool log")
 
         # Test for the AIP log.
-        result_log = aip.log['FITSTool']
-        expected_log = 'FITS tools generated errors (saved to metadata folder)'
-        self.assertEqual(result_log, expected_log, "Problem with error, AIP log")
+        result = aip.log['FITSTool']
+        expected = 'FITS tools generated errors (saved to metadata folder)'
+        self.assertEqual(expected, result, "Problem with error, AIP log")
 
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ class TestCheckMetadataCSV(unittest.TestCase):
         """
         result = run_function('correct_same_case_metadata.csv')
         expected = []
-        self.assertEqual(result, expected, "Problem with test for correct_same_case_metadata.csv")
+        self.assertEqual(expected, result, "Problem with test for correct_same_case_metadata.csv")
 
     def test_correct_case_difference(self):
         """
@@ -39,7 +39,7 @@ class TestCheckMetadataCSV(unittest.TestCase):
         """
         result = run_function('correct_diff_case_metadata.csv')
         expected = []
-        self.assertEqual(result, expected, "Problem with test for correct_diff_case_metadata.csv")
+        self.assertEqual(expected, result, "Problem with test for correct_diff_case_metadata.csv")
 
     def test_error_columns(self):
         """
@@ -50,7 +50,7 @@ class TestCheckMetadataCSV(unittest.TestCase):
                     'Required: Department, Collection, Folder, AIP_ID, Title, Version',
                     'Current:  AIP_ID, Department, Collection, Folder, Title, Version',
                     'Since the columns are not correct, did not check the column values.']
-        self.assertEqual(result, expected, "Problem with test for error, columns")
+        self.assertEqual(expected, result, "Problem with test for error, columns")
 
     def test_error_group(self):
         """
@@ -58,7 +58,7 @@ class TestCheckMetadataCSV(unittest.TestCase):
         """
         result = run_function('error_group_metadata.csv')
         expected = ['Brown is not an ARCHive group.', 'banana is not an ARCHive group.']
-        self.assertEqual(result, expected, "Problem with test for error, group")
+        self.assertEqual(expected, result, "Problem with test for error, group")
 
     def test_error_repeated_folders(self):
         """
@@ -67,7 +67,7 @@ class TestCheckMetadataCSV(unittest.TestCase):
         result = run_function('error_repeat_metadata.csv')
         expected = ['aip-2 is in the metadata.csv folder column more than once.',
                     'aip-3 is in the metadata.csv folder column more than once.']
-        self.assertEqual(result, expected, "Problem with test for error, repeated folders")
+        self.assertEqual(expected, result, "Problem with test for error, repeated folders")
 
     def test_error_csv_only(self):
         """
@@ -76,7 +76,7 @@ class TestCheckMetadataCSV(unittest.TestCase):
         result = run_function('error_csv_only_metadata.csv')
         expected = ['aip-4 is in metadata.csv and missing from the AIPs directory.',
                     'aip-5 is in metadata.csv and missing from the AIPs directory.']
-        self.assertEqual(result, expected, "Problem with test for error, CSV only")
+        self.assertEqual(expected, result, "Problem with test for error, CSV only")
 
     def test_error_directory_only(self):
         """
@@ -85,7 +85,7 @@ class TestCheckMetadataCSV(unittest.TestCase):
         result = run_function('error_directory_only_metadata.csv')
         expected = ['aip-1 is in the AIPs directory and missing from metadata.csv.',
                     'aip-3 is in the AIPs directory and missing from metadata.csv.']
-        self.assertEqual(result, expected, "Problem with test for error, directory only")
+        self.assertEqual(expected, result, "Problem with test for error, directory only")
 
 
 if __name__ == "__main__":

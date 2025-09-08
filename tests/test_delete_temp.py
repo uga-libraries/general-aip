@@ -45,7 +45,7 @@ class TestDeleteTemp(unittest.TestCase):
 
     def setUp(self):
         """Date this repo was first cloned to local machine, which is the date info in the deletion log."""
-        self.modified = '2025-8-14'
+        self.modified = '2025-8-29'
 
     def tearDown(self):
         """Deletes the AIP folders created by each test"""
@@ -68,12 +68,12 @@ class TestDeleteTemp(unittest.TestCase):
         expected = [os.path.join(aip_path, 'Test Dir'),
                     os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text.txt')]
-        self.assertEqual(result, expected, "Problem with test for no temporary files, AIP folder")
+        self.assertEqual(expected, result, "Problem with test for no temporary files, AIP folder")
 
         # Test for the AIP log.
         result = aip.log['Deletions']
         expected = 'No files deleted'
-        self.assertEqual(result, expected, "Problem with test for no temporary files, AIP log")
+        self.assertEqual(expected, result, "Problem with test for no temporary files, AIP log")
 
     def test_ds_store(self):
         """Test for an AIP with .DS_Store files to delete"""
@@ -94,19 +94,19 @@ class TestDeleteTemp(unittest.TestCase):
                     os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text.txt'),
                     deletion_log]
-        self.assertEqual(result, expected, "Problem with test for .DS_Store, AIP folder")
+        self.assertEqual(expected, result, "Problem with test for .DS_Store, AIP folder")
 
         # Test for the AIP log.
         result = aip.log['Deletions']
         expected = 'File(s) deleted'
-        self.assertEqual(result, expected, "Problem with test for .DS_Store, AIP log")
+        self.assertEqual(expected, result, "Problem with test for .DS_Store, AIP log")
 
         # Test for the deletion log.
         result = deletion_log_rows(deletion_log)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
                     [os.path.join(aips_dir, 'aip-id_ds-store', '.DS_Store'), '.DS_Store', 0, self.modified],
                     [os.path.join(aips_dir, 'aip-id_ds-store', 'Test Dir', '.DS_Store'), '.DS_Store', 0, self.modified]]
-        self.assertEqual(result, expected, "Problem with test for .DS_Store, deletion log")
+        self.assertEqual(expected, result, "Problem with test for .DS_Store, deletion log")
 
     def test_ds_store_2(self):
         """Test for an AIP with ._.DS_Store files to delete"""
@@ -127,12 +127,12 @@ class TestDeleteTemp(unittest.TestCase):
                     os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text.txt'),
                     deletion_log]
-        self.assertEqual(result, expected, "Problem with test for ._.DS_Store, AIP folder")
+        self.assertEqual(expected, result, "Problem with test for ._.DS_Store, AIP folder")
 
         # Test for the AIP log.
         result = aip.log['Deletions']
         expected = 'File(s) deleted'
-        self.assertEqual(result, expected, "Problem with test for ._.DS_Store, AIP log")
+        self.assertEqual(expected, result, "Problem with test for ._.DS_Store, AIP log")
 
         # Test for the deletion log.
         result = deletion_log_rows(deletion_log)
@@ -140,7 +140,7 @@ class TestDeleteTemp(unittest.TestCase):
                     [os.path.join(aips_dir, 'aip-id_ds-store-2', '._.DS_Store'), '._.DS_Store', 0, self.modified],
                     [os.path.join(aips_dir, 'aip-id_ds-store-2', 'Test Dir', '._.DS_Store'), '._.DS_Store', 0,
                      self.modified]]
-        self.assertEqual(result, expected, "Problem with test for .DS_Store, deletion log")
+        self.assertEqual(expected, result, "Problem with test for .DS_Store, deletion log")
 
     def test_thumbs_db(self):
         """Test for an AIP with Thumbs.db files to delete"""
@@ -161,12 +161,12 @@ class TestDeleteTemp(unittest.TestCase):
                     os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text.txt'),
                     deletion_log]
-        self.assertEqual(result, expected, "Problem with test for Thumbs.db, AIP folder")
+        self.assertEqual(expected, result, "Problem with test for Thumbs.db, AIP folder")
 
         # Test for the AIP log.
         result = aip.log['Deletions']
         expected = 'File(s) deleted'
-        self.assertEqual(result, expected, "Problem with test for Thumbs.db, AIP log")
+        self.assertEqual(expected, result, "Problem with test for Thumbs.db, AIP log")
 
         # Test for the deletion log.
         # Size is different depending on the OS.
@@ -200,19 +200,19 @@ class TestDeleteTemp(unittest.TestCase):
                     os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text.txt'),
                     deletion_log]
-        self.assertEqual(result, expected, "Problem with test for dot prefix, AIP folder")
+        self.assertEqual(expected, result, "Problem with test for dot prefix, AIP folder")
 
         # Test for the AIP log.
         result = aip.log['Deletions']
         expected = 'File(s) deleted'
-        self.assertEqual(result, expected, "Problem with test for dot prefix, AIP log")
+        self.assertEqual(expected, result, "Problem with test for dot prefix, AIP log")
 
         # Test for the deletion log.
         result = deletion_log_rows(deletion_log)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
                     [os.path.join(aips_dir, 'aip-id_dot', '.temp.txt'), '.temp.txt', 0, self.modified],
                     [os.path.join(aips_dir, 'aip-id_dot', 'Test Dir', '.temp.txt'), '.temp.txt', 0, self.modified]]
-        self.assertEqual(result, expected, "Problem with test for dot prefix, deletion log")
+        self.assertEqual(expected, result, "Problem with test for dot prefix, deletion log")
 
     def test_tmp_extension(self):
         """Test for an AIP with filename.tmp files to delete"""
@@ -233,12 +233,12 @@ class TestDeleteTemp(unittest.TestCase):
                     os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
                     os.path.join(aip_path, 'Text.txt'),
                     deletion_log]
-        self.assertEqual(result, expected, "Problem with test for .tmp extension, AIP folder")
+        self.assertEqual(expected, result, "Problem with test for .tmp extension, AIP folder")
 
         # Test for the AIP log.
         result = aip.log['Deletions']
         expected = 'File(s) deleted'
-        self.assertEqual(result, expected, "Problem with test for .tmp extension, AIP log")
+        self.assertEqual(expected, result, "Problem with test for .tmp extension, AIP log")
 
         # Test for the deletion log.
         # Size is different depending on the OS.

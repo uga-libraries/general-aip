@@ -44,7 +44,7 @@ class TestMakePreservationXML(unittest.TestCase):
         """If they are present, deletes the script outputs."""
 
         # Deletes any preservation.xml files.
-        aip_ids = ('harg-0000-web-202108-0001', 'magil-ggp-2472041-2022-05', 'rabbitbox_0003',
+        aip_ids = ('harg-0000-web-202108-0001', 'magil-ggp-2529686-2025-08', 'rabbitbox_0003',
                    'rbrl-025-er-000001', 'rbrl-025-er-000002', 'rbrl-025-er-000003', 'test-er-01')
         for aip_id in aip_ids:
             xml_path = os.path.join(os.getcwd(), 'make_preservation_xml', aip_id, 'metadata',
@@ -174,7 +174,8 @@ class TestMakePreservationXML(unittest.TestCase):
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'magil', None, 'magil-0000', 'folder', 'web', 'magil-ggp-2472041-2022-05', 'Web', 1, True)
+        aip = AIP(aips_dir, 'magil', None, 'magil-0000', 'folder', 'web', 'magil-ggp-2529686-2025-08',
+                  'Georgia State Government Website', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.

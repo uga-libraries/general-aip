@@ -14,16 +14,14 @@ from aip_functions import AIP, delete_temp
 from test_script import make_directory_list
 
 
-def deletion_log_rows(log_path):
-    """
-    Makes and returns a list with the contents of each row in the deletion log.
-    The time in the Date Last Modified is removed, leaving just the date, so it is predictable for comparison.
-    This is used to test that the correct information was saved to the log.
-    """
+def make_deletion_log_list(log_path):
+    """Reads the deletion log and returns a list of lists, where each list is a row in the log
+    The time in the Date Last Modified is removed, leaving just the date, so it is predictable for comparison."""
     df = pd.read_csv(log_path)
     df['Date Last Modified'] = df['Date Last Modified'].str.split(' ').str[0]
-    row_list = [df.columns.to_list()] + df.values.tolist()
-    return row_list
+    df.fillna('BLANK')
+    log_list = [df.columns.to_list()] + df.values.tolist()
+    return log_list
 
 
 class TestDeleteTemp(unittest.TestCase):
@@ -87,7 +85,7 @@ class TestDeleteTemp(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for .DS_Store, AIP log")
 
         # Test for the deletion log.
-        result = deletion_log_rows(deletion_log)
+        result = make_deletion_log_list(deletion_log)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
                     [os.path.join(aips_dir, 'aip-id_ds-store', '.DS_Store'), '.DS_Store', 0, self.modified],
                     [os.path.join(aips_dir, 'aip-id_ds-store', 'Test Dir', '.DS_Store'), '.DS_Store', 0, self.modified]]
@@ -120,7 +118,7 @@ class TestDeleteTemp(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for ._.DS_Store, AIP log")
 
         # Test for the deletion log.
-        result = deletion_log_rows(deletion_log)
+        result = make_deletion_log_list(deletion_log)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
                     [os.path.join(aips_dir, 'aip-id_ds-store-2', '._.DS_Store'), '._.DS_Store', 0, self.modified],
                     [os.path.join(aips_dir, 'aip-id_ds-store-2', 'Test Dir', '._.DS_Store'), '._.DS_Store', 0,
@@ -155,7 +153,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the deletion log.
         # Size is different depending on the OS.
-        result = deletion_log_rows(deletion_log)
+        result = make_deletion_log_list(deletion_log)
         expected = [[['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
                      [os.path.join(aips_dir, 'aip-id_thumbs', 'Thumbs.db'), 'Thumbs.db', 25, self.modified],
                      [os.path.join(aips_dir, 'aip-id_thumbs', 'Test Dir', 'Thumbs.db'), 'Thumbs.db', 2590,
@@ -193,7 +191,7 @@ class TestDeleteTemp(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for dot prefix, AIP log")
 
         # Test for the deletion log.
-        result = deletion_log_rows(deletion_log)
+        result = make_deletion_log_list(deletion_log)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
                     [os.path.join(aips_dir, 'aip-id_dot', '.temp.txt'), '.temp.txt', 0, self.modified],
                     [os.path.join(aips_dir, 'aip-id_dot', 'Test Dir', '.temp.txt'), '.temp.txt', 0, self.modified]]
@@ -227,7 +225,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the deletion log.
         # Size is different depending on the OS.
-        result = deletion_log_rows(deletion_log)
+        result = make_deletion_log_list(deletion_log)
         expected = [[['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
                      [os.path.join(aip_path, 'Text.tmp'), 'Text.tmp', 9, self.modified],
                      [os.path.join(aip_path, 'Test Dir', 'Test Dir Text.tmp'), 'Test Dir Text.tmp', 1615,

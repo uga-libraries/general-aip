@@ -13,14 +13,15 @@ import os
 import pandas as pd
 import unittest
 from aip_functions import AIP, log, manifest
-from test_validate_bag import aip_log_list
+from test_script import make_aip_log_list
 
 
-def manifest_to_list(path):
+def make_manifest_list(path):
     """Reads the manifest and returns a list of lists, where each list is a row in the manifest"""
     df = pd.read_csv(path, sep=r'\s+')
-    row_list = [df.columns.to_list()] + df.values.tolist()
-    return row_list
+    df = df.fillna('BLANK')
+    manifest_list = [df.columns.to_list()] + df.values.tolist()
+    return manifest_list
 
 
 class TestManifest(unittest.TestCase):
@@ -71,12 +72,12 @@ class TestManifest(unittest.TestCase):
 
         # Test for the manifest.
         manifest_name = f'manifest_tests_bmac_{datetime.now().strftime("%Y-%m-%d")}.txt'
-        result = manifest_to_list(os.path.join(aip_staging, 'md5-manifests-for-aips', manifest_name))
+        result = make_manifest_list(os.path.join(aip_staging, 'md5-manifests-for-aips', manifest_name))
         expected = [['629f0e1886f6e7d53291fae720e737dd', 'rabbitbox_010_bag.20000.tar']]
         self.assertEqual(expected, result, "Problem with av, manifest")
 
         # Test for the AIP log.
-        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
@@ -107,12 +108,12 @@ class TestManifest(unittest.TestCase):
 
         # Test for the manifest.
         manifest_name = f'manifest_tests_hargrett_{datetime.now().strftime("%Y-%m-%d")}.txt'
-        result = manifest_to_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
+        result = make_manifest_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
         expected = [['8a88e2fe7d8fa98e978fcbcc59b4e352', 'har-ua01-001-001_bag.1000.tar.bz2']]
         self.assertEqual(expected, result, "Problem with bz2, manifest")
 
         # Test for the AIP log.
-        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
@@ -142,7 +143,7 @@ class TestManifest(unittest.TestCase):
         self.assertEqual(result, False, "Problem with error_missing, manifest")
 
         # Test for the AIP log.
-        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
         aip_path = os.path.join(aip_staging, 'aips-ready-to-ingest', 'harg-missing-001_bag.999.tar.bz2')
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
@@ -172,13 +173,13 @@ class TestManifest(unittest.TestCase):
         manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(aips_dir, 'ingest')))
 
         # Test for the manifest.
-        result = manifest_to_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
+        result = make_manifest_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
         expected = [['629f0e1886f6e7d53291fae720e737dd', 'rbrl-123-er-111111_bag.22.tar.bz2'],
                     ['8a88e2fe7d8fa98e978fcbcc59b4e352', 'rbrl-123-er-123456_bag.300.tar.bz2']]
         self.assertEqual(expected, result, "Problem with manifest_exists, manifest")
 
         # Test for the AIP log.
-        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
@@ -204,12 +205,12 @@ class TestManifest(unittest.TestCase):
 
         # Test for the manifest.
         manifest_name = f'manifest_tests_magil_{datetime.now().strftime("%Y-%m-%d")}.txt'
-        result = manifest_to_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
+        result = make_manifest_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
         expected = [['629f0e1886f6e7d53291fae720e737dd', 'magil-seed-2025_bag.4400.tar']]
         self.assertEqual(expected, result, "Problem with tar, manifest")
 
         # Test for the AIP log.
-        result = aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],

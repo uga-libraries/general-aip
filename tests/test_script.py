@@ -5,13 +5,35 @@ It does not currently include tests for error handling.
 BEFORE RUNNING THIS TEST: in configuration.py, make aip_staging the path to staging in the GitHub repo
 """
 
-import csv
 import datetime
 import os
+import pandas as pd
 import re
 import shutil
 import subprocess
 import unittest
+
+
+def make_aip_log_list(log_path):
+    """Reads the aip log and returns a list of lists, where each list is a row in the log,
+    with normalization for inconsistent data."""
+    df = pd.read_csv(log_path, dtype=str)
+
+    # Remove time stamps, which are the last 16 characters, as long as the column is not blank.
+    df['Time Started'] = df['Time Started'].str[:-16]
+    df['Preservation.xml Valid'] = df['Preservation.xml Valid'].str[:-16]
+    df.loc[~df['Bag Valid'].str.startswith('Bag not valid'), 'Bag Valid'] = df['Bag Valid'].str[:-16]
+
+    # Make FITS tool error value consistent, since the same files don't always generate an error.
+    df.loc[df['FITS Tool Errors'] == 'FITS tools generated errors (saved to metadata folder)', 'FITS Tool Errors'] = 'No FITS tools errors'
+
+    # Normalize direction of slash from xmllint to match other text.
+    df['Preservation.xml Made'] = df['Preservation.xml Made'].str.replace('/', '\\')
+
+    # Convert the dataframe to a list of rows.
+    df = df.fillna('BLANK')
+    log_list = [df.columns.to_list()] + df.values.tolist()
+    return log_list
 
 
 def make_directory_list(dir_path):
@@ -31,38 +53,6 @@ def make_directory_list(dir_path):
             directory_list.append(os.path.join(root, file))
     directory_list.sort(key=str.lower)
     return directory_list
-
-
-def log_list(log_path):
-    """Reads the aip_log.csv file and returns a list of the rows in the log."""
-    # Reads the log into a list, where each list item is a list with the row data.
-    with open(log_path, newline="") as log:
-        log_read = csv.reader(log)
-        log_rows_list = list(log_read)
-
-    # Makes a new version of log_rows_list that has consistent data for comparison to expected values.
-    updated_rows_list = []
-    for row in log_rows_list:
-
-        # Does not edit the header.
-        if row[0] == "Time Started":
-            updated_rows_list.append(row)
-            continue
-
-        # Remove the time stamp, which is the last 16 characters ( HH:MM:SS.######).
-        # The columns are Time Started, Preservation.xml Valid, and Bag Valid.
-        row[0] = row[0][:-16]
-        row[8] = row[8][:-16]
-        row[9] = row[9][:-16]
-
-        # Changes the FITS Tool Errors column back to no errors, if present.
-        # FITS does not always have a tool error on the test files.
-        if row[5] == "FITS tools generated errors (saved to metadata folder)":
-            row[5] = "No FITS tools errors"
-
-        updated_rows_list.append(row)
-
-    return updated_rows_list
 
 
 class TestFullScript(unittest.TestCase):
@@ -178,7 +168,7 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(expected, result, 'Problem with test for general, staging directory')
 
         # Test for the contents of the aip_log.csv file.
-        result = log_list(os.path.join(aip_dir, 'aip_log.csv'))
+        result = make_aip_log_list(os.path.join(aip_dir, 'aip_log.csv'))
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
                      'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
@@ -287,7 +277,7 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for web, staging directory")
 
         # Test for the contents of the aip_log.csv file.
-        result = log_list(os.path.join(aip_dir, 'aip_log.csv'))
+        result = make_aip_log_list(os.path.join(aip_dir, 'aip_log.csv'))
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
                      'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],

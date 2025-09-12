@@ -13,92 +13,16 @@
             <premis:objectIdentifierType>http://uri/hargrett/harg-0000-web-202108-0001</premis:objectIdentifierType>
             <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
          </premis:objectIdentifier>
-         <premis:objectCategory>representation</premis:objectCategory>
+         <premis:objectCategory>file</premis:objectCategory>
          <premis:objectCharacteristics>
-            <premis:size>120</premis:size>
+            <premis:size>57500000</premis:size>
             <premis:format>
                <premis:formatDesignation>
-                  <premis:formatName>Comma-Separated Values (CSV)</premis:formatName>
-               </premis:formatDesignation>
-               <premis:formatRegistry>
-                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
-                  <premis:formatRegistryKey>x-fmt/18</premis:formatRegistryKey>
-                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
-               </premis:formatRegistry>
-               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
-            </premis:format>
-            <premis:format>
-               <premis:formatDesignation>
-                  <premis:formatName>Unknown Binary</premis:formatName>
+                  <premis:formatName>WARC</premis:formatName>
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
             </premis:format>
          </premis:objectCharacteristics>
       </premis:object>
    </aip>
-   <filelist>
-      <premis:object>
-         <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://uri/hargrett/harg-0000-web-202108-0001</premis:objectIdentifierType>
-            <premis:objectIdentifierValue>harg-0000-web-202108-0001/objects/coll.csv</premis:objectIdentifierValue>
-         </premis:objectIdentifier>
-         <premis:objectCategory>file</premis:objectCategory>
-         <premis:objectCharacteristics>
-            <premis:fixity>
-               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
-               <premis:messageDigest>829bdf76c4575b65bc8eb641c242d876</premis:messageDigest>
-               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
-            </premis:fixity>
-            <premis:size>104</premis:size>
-            <premis:format>
-               <premis:formatDesignation>
-                  <premis:formatName>Comma-Separated Values (CSV)</premis:formatName>
-               </premis:formatDesignation>
-               <premis:formatRegistry>
-                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
-                  <premis:formatRegistryKey>x-fmt/18</premis:formatRegistryKey>
-                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
-               </premis:formatRegistry>
-               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
-            </premis:format>
-         </premis:objectCharacteristics>
-         <premis:relationship>
-            <premis:relationshipType>structural</premis:relationshipType>
-            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
-            <premis:relatedObjectIdentifier>
-               <premis:relatedObjectIdentifierType>http://uri/hargrett</premis:relatedObjectIdentifierType>
-               <premis:relatedObjectIdentifierValue>harg-0000-web-202108-0001</premis:relatedObjectIdentifierValue>
-            </premis:relatedObjectIdentifier>
-         </premis:relationship>
-      </premis:object>
-      <premis:object>
-         <premis:objectIdentifier>
-            <premis:objectIdentifierType>http://uri/hargrett/harg-0000-web-202108-0001</premis:objectIdentifierType>
-            <premis:objectIdentifierValue>harg-0000-web-202108-0001/objects/warc_placeholder.warc</premis:objectIdentifierValue>
-         </premis:objectIdentifier>
-         <premis:objectCategory>file</premis:objectCategory>
-         <premis:objectCharacteristics>
-            <premis:fixity>
-               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
-               <premis:messageDigest>7df3ceba8483a50580a28d84c42b51c6</premis:messageDigest>
-               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
-            </premis:fixity>
-            <premis:size>16</premis:size>
-            <premis:format>
-               <premis:formatDesignation>
-                  <premis:formatName>Unknown Binary</premis:formatName>
-               </premis:formatDesignation>
-               <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
-            </premis:format>
-         </premis:objectCharacteristics>
-         <premis:relationship>
-            <premis:relationshipType>structural</premis:relationshipType>
-            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
-            <premis:relatedObjectIdentifier>
-               <premis:relatedObjectIdentifierType>http://uri/hargrett</premis:relatedObjectIdentifierType>
-               <premis:relatedObjectIdentifierValue>harg-0000-web-202108-0001</premis:relatedObjectIdentifierValue>
-            </premis:relatedObjectIdentifier>
-         </premis:relationship>
-      </premis:object>
-   </filelist>
 </preservation>

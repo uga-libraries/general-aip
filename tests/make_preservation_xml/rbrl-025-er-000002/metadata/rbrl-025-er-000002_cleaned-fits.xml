@@ -11,7 +11,7 @@
          </identity>
       </identification>
       <fileinfo>
-         <filepath>C:/Users/ahanson/Documents/GitHub/general-aip/tests/make_preservation_xml/not_done/rbrl-025-er-000002/objects/Test File Spreadsheet.csv</filepath>
+         <filepath>C:/GitHub/tests/rbrl-025-er-000002/objects/Test File Spreadsheet.csv</filepath>
          <size toolname="OIS File Information"
                toolversion="1.0"
                status="SINGLE_RESULT">52</size>
@@ -33,7 +33,7 @@
          </identity>
       </identification>
       <fileinfo>
-         <filepath>C:/Users/ahanson/Documents/GitHub/general-aip/tests/make_preservation_xml/not_done/rbrl-025-er-000002/objects/Docs/Test File Word.docx</filepath>
+         <filepath>C:/GitHub/tests/rbrl-025-er-000002/objects/Docs/Test File Word.docx</filepath>
          <size toolname="OIS File Information"
                toolversion="1.0"
                status="SINGLE_RESULT">12011</size>
@@ -66,7 +66,7 @@
          </identity>
       </identification>
       <fileinfo>
-         <filepath>C:/Users/ahanson/Documents/GitHub/general-aip/tests/make_preservation_xml/not_done/rbrl-025-er-000002/objects/Docs/Test File.pdf</filepath>
+         <filepath>C:/GitHub/tests/rbrl-025-er-000002/objects/Docs/Test File.pdf</filepath>
          <size toolname="Jhove" toolversion="1.20.1">33061</size>
          <md5checksum toolname="OIS File Information"
                       toolversion="1.0"

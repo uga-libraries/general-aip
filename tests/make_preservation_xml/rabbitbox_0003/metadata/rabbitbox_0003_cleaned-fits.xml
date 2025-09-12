@@ -10,7 +10,7 @@
          </identity>
       </identification>
       <fileinfo>
-         <filepath>GitHub/general-aip/rabbitbox_0003/objects/bmac_JaneDoe.mp3</filepath>
+         <filepath>X:/GitHub/tests/rabbitbox_0003/objects/bmac_JaneDoe.mp3</filepath>
          <size toolname="OIS File Information"
                toolversion="1.0"
                status="SINGLE_RESULT">20</size>
@@ -28,7 +28,7 @@
          </identity>
       </identification>
       <fileinfo>
-         <filepath>GitHub/general-aip/rabbitbox_0003/objects/bmac_JohnSmith.mp3</filepath>
+         <filepath>X:/GitHub/tests/rabbitbox_0003/objects/bmac_JohnSmith.mp3</filepath>
          <size toolname="OIS File Information"
                toolversion="1.0"
                status="SINGLE_RESULT">30</size>

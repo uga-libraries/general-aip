@@ -26,26 +26,30 @@
       <identification>
          <identity format="Office Open XML Document">
             <tool toolname="Droid" toolversion="6.4"/>
-            <tool toolname="Exiftool" toolversion="11.54"/>
-            <tool toolname="Tika" toolversion="1.21"/>
             <version toolname="Droid" toolversion="6.4">2007 onwards</version>
             <externalIdentifier type="puid">fmt/189</externalIdentifier>
          </identity>
+		 <identity format="XLSX">
+            <tool toolname="Exiftool" toolversion="11.54"/>
+         </identity>
+		 <identity format="Office Open XML Workbook">
+            <tool toolname="Tika" toolversion="1.21"/>
+         </identity>
       </identification>
       <fileinfo>
-         <filepath>C:/GitHub/tests/rbrl-025-er-000002/objects/Docs/Test File Word.docx</filepath>
+         <filepath>C:/GitHub/tests/rbrl-025-er-000002/objects/Docs/Test Spreadsheet.xlsx</filepath>
          <size toolname="OIS File Information"
                toolversion="1.0"
-               status="SINGLE_RESULT">12011</size>
+               status="SINGLE_RESULT">17011</size>
          <md5checksum toolname="OIS File Information"
                       toolversion="1.0"
-                      status="SINGLE_RESULT">b89f3a67c897515f5e0758d9523a8ddf</md5checksum>
+                      status="SINGLE_RESULT">5f24cb9f277aa92ebad909f648acb6fd</md5checksum>
          <creatingApplication tool="Exiftool">
             <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025:07:21 19:53:00Z</created>
-            <creatingApplicationVersion toolname="Exiftool" toolversion="11.54">16.0000</creatingApplicationVersion>
          </creatingApplication>
          <creatingApplication tool="Tika">
-            <creatingApplicationName toolname="Tika" toolversion="1.21" status="SINGLE_RESULT">Microsoft Office Word</creatingApplicationName>
+            <creatingApplicationName toolname="Tika" toolversion="1.21" status="SINGLE_RESULT">Microsoft Excel</creatingApplicationName>
+			<creatingApplicationVersion toolname="Tika" toolversion="1.21" status="SINGLE_RESULT">16.0300</creatingApplicationVersion>
          </creatingApplication>
       </fileinfo>
    </fits>

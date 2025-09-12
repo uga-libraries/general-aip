@@ -4,6 +4,7 @@ import os
 import shutil
 import unittest
 from aip_functions import AIP, organize_xml
+from test_script import make_directory_list
 
 
 class TestOrganizeXML(unittest.TestCase):
@@ -33,10 +34,10 @@ class TestOrganizeXML(unittest.TestCase):
         organize_xml(aip, aips_staging)
 
         # Tests the metadata folder contains only the expected files.
-        result = []
-        for file in os.listdir(os.path.join(os.getcwd(), 'organize_xml', 'test_coll2_001', 'metadata')):
-            result.append(file)
-        expected = ['file_fits.xml', 'test_coll2_001_preservation.xml']
+        metadata_path = os.path.join(os.getcwd(), 'organize_xml', 'test_coll2_001', 'metadata')
+        result = make_directory_list(metadata_path)
+        expected = [os.path.join(metadata_path, 'file_fits.xml'),
+                    os.path.join(metadata_path, 'test_coll2_001_preservation.xml')]
         self.assertEqual(expected, result, "Problem with organize xml, metadata")
 
         # Tests the FITS folder has the expected file.

@@ -14,36 +14,23 @@ import subprocess
 import unittest
 
 
-def path_list(dir_name):
-    """ Makes and returns a list of the paths of every file and folder in a directory.
-    Paths are relative, starting with the provided directory."""
-    paths_list = []
-
-    # Navigates all levels in the AIPs directory.
-    for root, dirs, files in os.walk(dir_name):
-
-        # Adds the path for every folder.
+def make_directory_list(dir_path):
+    """Make a list of the paths of every file and folder in a directory,
+    with sorting and normalization for inconsistent data."""
+    directory_list = []
+    for root, dirs, files in os.walk(dir_path):
         for directory in dirs:
-            paths_list.append(os.path.join(root, directory))
-
-        # Adds the path for every file.
-        # Makes changes to create consistent data for comparison to the expected.
+            directory_list.append(os.path.join(root, directory))
         for file in files:
-
-            # Edits the file size that is part of zipped AIP filenames, since that varies each time,
-            # even though the files are the same.
+            # The size in the zipped AIP filenames varies each time.
             if root.endswith("aips-ready-to-ingest") and file.endswith(".tar.bz2"):
                 file = re.sub(r"_bag.\d+.", "_bag.1000.", file)
-
-            # Skips the FITS tool error log because FITS does not always have a tool error on the test files
-            # and the placeholder files in staging that let the folders sync to GitHub.
-            # Adds all other files to the list.
+            # Skips the FITS tool error log because it is not consistently made and the placeholder files for GitHub.
             if file.endswith("_fits-tool-errors_fitserr.txt") or file == 'Explanation.txt' or file == 'placeholder.txt':
                 continue
-            paths_list.append(os.path.join(root, file))
-
-    paths_list.sort(key=str.lower)
-    return paths_list
+            directory_list.append(os.path.join(root, file))
+    directory_list.sort(key=str.lower)
+    return directory_list
 
 
 def log_list(log_path):
@@ -118,7 +105,7 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for general, print statements")
 
         # Test for the contents of the AIP directory.
-        result = path_list(aip_dir)
+        result = make_directory_list(aip_dir)
         bag_one = os.path.join(aip_dir, 'test-001-er-000001_bag')
         bag_two = os.path.join(aip_dir, 'test-001-er-000002_bag')
         bag_three = os.path.join(aip_dir, 'test-001-er-000003_bag')
@@ -173,7 +160,7 @@ class TestFullScript(unittest.TestCase):
         # Test for the contents of the staging directory.
         staging_dir = os.path.join(os.getcwd(), 'staging')
         today = datetime.date.today().strftime('%Y-%m-%d')
-        result = path_list(staging_dir)
+        result = make_directory_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-ready-to-ingest'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', f'manifest_aip_directory_test_{today}.txt'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000001_bag.1000.tar.bz2'),
@@ -183,6 +170,7 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000001_combined-fits.xml'),
                     os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000002_combined-fits.xml'),
                     os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000003_combined-fits.xml'),
+                    os.path.join(staging_dir, 'movs-to-bag'),
                     os.path.join(staging_dir, 'preservation-xmls'),
                     os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000001_preservation.xml'),
                     os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000002_preservation.xml'),
@@ -232,7 +220,7 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for web, print statements")
 
         # Test for the contents of the AIP directory.
-        result = path_list(aip_dir)
+        result = make_directory_list(aip_dir)
         bag_one = os.path.join(aip_dir, 'rbrl-377-web-201907-0001_bag')
         bag_two = os.path.join(aip_dir, 'rbrl-498-web-201907-0001_bag')
         expected = [os.path.join(aip_dir, 'aip_log.csv'),
@@ -283,7 +271,7 @@ class TestFullScript(unittest.TestCase):
         # Test for the contents of the staging directory.
         staging_dir = os.path.join(os.getcwd(), 'staging')
         today = datetime.date.today().strftime('%Y-%m-%d')
-        result = path_list(staging_dir)
+        result = make_directory_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-ready-to-ingest'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest',
                                  f'manifest_preservation_download_russell_{today}.txt'),
@@ -292,6 +280,7 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(staging_dir, 'fits-xmls'),
                     os.path.join(staging_dir, 'fits-xmls', 'rbrl-377-web-201907-0001_combined-fits.xml'),
                     os.path.join(staging_dir, 'fits-xmls', 'rbrl-498-web-201907-0001_combined-fits.xml'),
+                    os.path.join(staging_dir, 'movs-to-bag'),
                     os.path.join(staging_dir, 'preservation-xmls'),
                     os.path.join(staging_dir, 'preservation-xmls', 'rbrl-377-web-201907-0001_preservation.xml'),
                     os.path.join(staging_dir, 'preservation-xmls', 'rbrl-498-web-201907-0001_preservation.xml')]

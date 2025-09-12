@@ -8,16 +8,7 @@ import os
 import shutil
 import unittest
 from aip_functions import make_output_directories
-
-
-def directory_print(path):
-    """Makes a list of folders within the directory to compare to expected results"""
-    folder_list = []
-    for root, dirs, files in os.walk(path):
-        for dir_name in dirs:
-            folder_list.append(os.path.join(root, dir_name))
-    folder_list.sort()
-    return folder_list
+from test_script import make_directory_list
 
 
 class TestMakeOutputDirectories(unittest.TestCase):
@@ -39,7 +30,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         make_output_directories(staging, 'av')
 
         # Verifies that staging has the expected folders.
-        result = directory_print(staging)
+        result = make_directory_list(staging)
         expected = [os.path.join(staging, 'aips-already-on-ingest-server'),
                     os.path.join(staging, 'aips-ready-to-ingest'),
                     os.path.join(staging, 'fits-xmls'),
@@ -59,7 +50,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         make_output_directories(staging, 'av')
 
         # Verifies that staging has the expected folders.
-        result = directory_print(staging)
+        result = make_directory_list(staging)
         expected = [os.path.join(staging, 'aips-already-on-ingest-server'),
                     os.path.join(staging, 'aips-ready-to-ingest'),
                     os.path.join(staging, 'fits-xmls'),
@@ -79,7 +70,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         make_output_directories(staging, 'av')
 
         # Verifies that staging has the expected folders.
-        result = directory_print(staging)
+        result = make_directory_list(staging)
         expected = [os.path.join(staging, 'aips-already-on-ingest-server'),
                     os.path.join(staging, 'aips-ready-to-ingest'),
                     os.path.join(staging, 'fits-xmls'),
@@ -99,7 +90,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         make_output_directories(staging, 'non_av')
 
         # Verifies that staging has the expected folders.
-        result = directory_print(staging)
+        result = make_directory_list(staging)
         expected = [os.path.join(staging, 'aips-ready-to-ingest'),
                     os.path.join(staging, 'fits-xmls'),
                     os.path.join(staging, 'preservation-xmls')]
@@ -113,7 +104,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         make_output_directories(staging, 'non_av')
 
         # Verifies that staging has the expected folders.
-        result = directory_print(staging)
+        result = make_directory_list(staging)
         expected = [os.path.join(staging, 'aips-ready-to-ingest'),
                     os.path.join(staging, 'fits-xmls'),
                     os.path.join(staging, 'preservation-xmls')]
@@ -127,7 +118,7 @@ class TestMakeOutputDirectories(unittest.TestCase):
         make_output_directories(staging, 'non_av')
 
         # Verifies that staging has the expected folders.
-        result = directory_print(staging)
+        result = make_directory_list(staging)
         expected = [os.path.join(staging, 'aips-ready-to-ingest'),
                     os.path.join(staging, 'fits-xmls'),
                     os.path.join(staging, 'preservation-xmls')]

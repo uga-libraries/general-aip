@@ -10,21 +10,7 @@ import os
 import shutil
 import unittest
 from aip_functions import AIP, structure_directory
-
-
-def make_directory_list(folder):
-    """Make and returns a list with the filepath for every folder and file in a folder
-    The list is sorted because the list can be in a different order depending on the operating system.
-    This is used to compare the structure_directory function's actual results to the expected results."""
-    directory_list = []
-    for root, dirs, files in os.walk(folder):
-        for directory in dirs:
-            directory_list.append(os.path.join(root, directory))
-        for file in files:
-            if file != 'empty-folder-placeholder.txt':
-                directory_list.append(os.path.join(root, file))
-    directory_list.sort(key=str.lower)
-    return directory_list
+from test_script import make_directory_list
 
 
 class TestStructureDirectory(unittest.TestCase):

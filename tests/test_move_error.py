@@ -4,17 +4,7 @@ import os
 import shutil
 import unittest
 from aip_functions import move_error
-
-
-def errors_directory_print():
-    """Makes and returns a list with the filepath for every folder in the aips-with-errors folder
-    The list is sorted because the list can be in a different order depending on the operating system."""
-    result = []
-    for root, dirs, files in os.walk(os.path.join(os.getcwd(), 'staging', 'aips-with-errors')):
-        for directory in dirs:
-            result.append(os.path.join(root, directory))
-    result.sort()
-    return result
+from test_script import make_directory_list
 
 
 class TestMoveError(unittest.TestCase):
@@ -30,9 +20,10 @@ class TestMoveError(unittest.TestCase):
         move_error('error_type', os.path.join(os.getcwd(), 'aip1'), os.path.join(os.getcwd(), 'staging'))
 
         # Tests that the aips-with-errors folder contains the expected error folder and AIP folder.
-        result = errors_directory_print()
-        expected = [os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type'),
-                    os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type', 'aip1')]
+        errors_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors')
+        result = make_directory_list(errors_path)
+        expected = [os.path.join(errors_path, 'error_type'),
+                    os.path.join(errors_path, 'error_type', 'aip1')]
         self.assertEqual(expected, result, "Problem with no previous error")
 
     def test_previous_error_diff_type(self):
@@ -44,11 +35,12 @@ class TestMoveError(unittest.TestCase):
         move_error('error_two', os.path.join(os.getcwd(), 'aip2'), os.path.join(os.getcwd(), 'staging'))
 
         # Tests that the aips-with-errors folder contains the expected error folders and AIP folders.
-        result = errors_directory_print()
-        expected = [os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_two'),
-                    os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_two', 'aip2'),
-                    os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type'),
-                    os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type', 'aip1')]
+        errors_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors')
+        result = make_directory_list(errors_path)
+        expected = [os.path.join(errors_path, 'error_two'),
+                    os.path.join(errors_path, 'error_two', 'aip2'),
+                    os.path.join(errors_path, 'error_type'),
+                    os.path.join(errors_path, 'error_type', 'aip1')]
         self.assertEqual(expected, result, "Problem with previous error, different type")
 
     def test_previous_error_same_type(self):
@@ -60,10 +52,11 @@ class TestMoveError(unittest.TestCase):
         move_error('error_type', os.path.join(os.getcwd(), 'aip2'), os.path.join(os.getcwd(), 'staging'))
 
         # Tests that the aips-with-errors folder contains the expected error folder and AIP folders.
-        result = errors_directory_print()
-        expected = [os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type'),
-                    os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type', 'aip1'),
-                    os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'error_type', 'aip2')]
+        errors_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors')
+        result = make_directory_list(errors_path)
+        expected = [os.path.join(errors_path, 'error_type'),
+                    os.path.join(errors_path, 'error_type', 'aip1'),
+                    os.path.join(errors_path, 'error_type', 'aip2')]
         self.assertEqual(expected, result, "Problem with previous error, same type")
 
 

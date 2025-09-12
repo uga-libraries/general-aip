@@ -247,19 +247,19 @@ def check_metadata_csv(read_metadata, aips_dir):
         for duplicate in unique_duplicates:
             errors_list.append(f"{duplicate} is in the metadata.csv folder column more than once.")
 
-    # Checks for any AIPs that are only in the CSV.
+    # Checks for any folders that are only in the CSV.
     just_csv = list(set(csv_folder_list) - set(aips_directory_list))
     if len(just_csv) > 0:
         just_csv.sort()
-        for aip in just_csv:
-            errors_list.append(f"{aip} is in metadata.csv and missing from the AIPs directory.")
+        for aip_folder in just_csv:
+            errors_list.append(f"{aip_folder} is in metadata.csv and missing from the AIPs directory.")
 
-    # Checks for any AIPs that are only in the AIPs directory.
+    # Checks for any folders that are only in the AIPs directory.
     just_aip_dir = list(set(aips_directory_list) - set(csv_folder_list))
     if len(just_aip_dir) > 0:
         just_aip_dir.sort()
-        for aip in just_aip_dir:
-            errors_list.append(f"{aip} is in the AIPs directory and missing from metadata.csv.")
+        for aip_folder in just_aip_dir:
+            errors_list.append(f"{aip_folder} is in the AIPs directory and missing from metadata.csv.")
 
     # The errors list is empty if there were no errors.
     return errors_list

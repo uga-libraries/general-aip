@@ -314,6 +314,22 @@ class TestFullScript(unittest.TestCase):
                      'Successfully added AIP to manifest', 'Successfully completed processing']]
         self.assertEqual(expected, result, "Problem with test for web, aip log")
 
+    def test_error(self):
+        """Test for there is an error with the initial checks and the script quits without running"""
+        # Runs the script.
+        script_path = os.path.join('..', 'general_aip.py')
+        aip_dir = os.path.join(os.getcwd(), 'script', 'error')
+        printed = subprocess.run(f'python "{script_path}" "{aip_dir}" type_error zip',
+                                 shell=True, capture_output=True, text=True)
+
+        # Test for the script print statements.
+        result = printed.stdout
+        expected = ('\nProblems detected with the provided script arguments:\n'
+                    f'   * Provided aips_directory "{aip_dir}" is not a valid directory.\n'
+                    '   * Provided aip_type "type_error" is not an expected value (av, general, web).\n'
+                    '   * Cannot check for the metadata.csv because the AIPs directory has an error.\n')
+        self.assertEqual(expected, result, "Problem with test for error")
+
 
 if __name__ == "__main__":
     unittest.main()

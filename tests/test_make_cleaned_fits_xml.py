@@ -22,7 +22,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         if os.path.exists(log_path):
             os.remove(log_path)
 
-        errors_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors')
+        errors_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors')
         if os.path.exists(errors_path):
             shutil.rmtree(errors_path)
 
@@ -34,20 +34,20 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         """Test for successfully making the cleaned-fits.xml file."""
         # Makes the input variables and runs the function being tested.
         aip_dir = os.path.join(os.getcwd(), 'make_cleaned_fits_xml')
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aip_dir, 'dept', None, 'coll-1', 'aip_folder', 'general', 'aip1', 'title', '1', 'zip')
         make_cleaned_fits_xml(aip, staging_dir)
 
         # Compares the cleaned-fits.xml file produced by the function to a xml file with the expected values.
         result = read_xml(os.path.join(aip_dir, 'aip1', 'metadata', 'aip1_cleaned-fits.xml'))
         expected = read_xml(os.path.join(aip_dir, 'aip1_cleaned-fits_expected.xml'))
-        self.assertEqual(result, expected, "Problem with correct")
+        self.assertEqual(expected, result, "Problem with correct")
 
     def test_error(self):
         """Test for error handling (no combined-fits.xml present) while making the cleaned-fits.xml file."""
         # Makes the input variables and runs the function being tested.
         aip_dir = os.path.join(os.getcwd(), 'make_cleaned_fits_xml')
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aip_dir, 'dept', None, 'coll-1', 'aip_folder', 'general', 'aip0', 'title', '1', 'zip')
         shutil.copytree(os.path.join(aip_dir, 'aip0_copy'), os.path.join(aip_dir, 'aip0'))
         make_cleaned_fits_xml(aip, staging_dir)
@@ -56,7 +56,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         result = (os.path.exists(os.path.join(staging_dir, 'aips-with-errors', 'cleaned_fits_saxon_error', 'aip0')),
                   os.path.exists(os.path.join(aip_dir, 'aip0')))
         expected = (True, False)
-        self.assertEqual(result, expected, "Problem with error handling, move to error folder")
+        self.assertEqual(expected, result, "Problem with error handling, move to error folder")
 
         # Test for the AIP log, PresXML.
         # Output has a different line separator (\r\n or \n) depending on the OS the test is run on.
@@ -68,9 +68,9 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         self.assertIn(result, expected, "Problem with error handling, log: PresXML")
 
         # Test for the AIP log, Complete.
-        result_log2 = aip.log['Complete']
-        expected_log2 = 'Error during processing'
-        self.assertEqual(result_log2, expected_log2, "Problem with error handling, log: Complete")
+        result = aip.log['Complete']
+        expected = 'Error during processing'
+        self.assertEqual(expected, result, "Problem with error handling, log: Complete")
 
 
 if __name__ == "__main__":

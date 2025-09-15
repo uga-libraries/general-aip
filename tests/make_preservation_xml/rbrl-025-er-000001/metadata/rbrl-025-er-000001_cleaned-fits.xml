@@ -14,7 +14,7 @@
          </identity>
       </identification>
       <fileinfo>
-         <filepath>C:/Users/ahanson/Documents/GitHub/general-aip/tests/make_preservation_xml/not_done/rbrl-025-er-000001/objects/Test File.docx</filepath>
+         <filepath>C:/GitHub/general-aip/tests/rbrl-025-er-000001/objects/Test File.docx</filepath>
          <size toolname="OIS File Information"
                toolversion="1.0"
                status="SINGLE_RESULT">12011</size>

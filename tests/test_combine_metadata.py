@@ -49,12 +49,12 @@ class TestCombineMetadata(unittest.TestCase):
         # Test for combined-fits.xml produced by the function.
         result = read_xml(os.path.join(aips_dir, 'aip-1', 'metadata', 'aip-1_combined-fits.xml'))
         expected = read_xml(os.path.join(aips_dir, 'expected_xml', 'aip-1_combined-fits.xml'))
-        self.assertEqual(result, expected, "Problem with one file, combined-fits.xml")
+        self.assertEqual(expected, result, "Problem with one file, combined-fits.xml")
 
         # Test for AIP log.
-        result_log = aip.log['FITSError']
-        expected_log = 'Successfully created combined-fits.xml'
-        self.assertEqual(result_log, expected_log, "Problem with one file, log")
+        result = aip.log['FITSError']
+        expected = 'Successfully created combined-fits.xml'
+        self.assertEqual(expected, result, "Problem with one file, log")
 
     def test_multiple_files(self):
         """
@@ -198,9 +198,9 @@ class TestCombineMetadata(unittest.TestCase):
         self.assertEqual(result[2], expected_2, "Problem with multiple files, combined-fits.xml, 3rd fits")
 
         # Test for AIP log.
-        result_log = aip.log['FITSError']
-        expected_log = 'Successfully created combined-fits.xml'
-        self.assertEqual(result_log, expected_log, "Problem with multiple files, log")
+        result = aip.log['FITSError']
+        expected = 'Successfully created combined-fits.xml'
+        self.assertEqual(expected, result, "Problem with multiple files, log")
 
     def test_error_et_parse(self):
         """
@@ -218,17 +218,17 @@ class TestCombineMetadata(unittest.TestCase):
         result = (os.path.exists(os.path.join('aips-with-errors', 'combining_fits', 'aip-0')),
                   os.path.exists(os.path.join(aips_dir, 'aip-0')))
         expected = (True, False)
-        self.assertEqual(result, expected, "Problem with ET parse error, move to error folder")
+        self.assertEqual(expected, result, "Problem with ET parse error, move to error folder")
 
         # Test for the AIP log, FITSError.
-        result_log = aip.log['FITSError']
-        expected_log = 'Issue when creating combined-fits.xml: syntax error: line 1, column 0'
-        self.assertEqual(result_log, expected_log, "Problem with ET parse error, log: FITSError")
+        result = aip.log['FITSError']
+        expected = 'Issue when creating combined-fits.xml: syntax error: line 1, column 0'
+        self.assertEqual(expected, result, "Problem with ET parse error, log: FITSError")
 
         # Test for the AIP log, Complete.
-        result_log2 = aip.log['Complete']
-        expected_log2 = 'Error during processing'
-        self.assertEqual(result_log2, expected_log2, "Problem with ET parse error, log: Complete")
+        result = aip.log['Complete']
+        expected = 'Error during processing'
+        self.assertEqual(expected, result, "Problem with ET parse error, log: Complete")
 
 
 if __name__ == "__main__":

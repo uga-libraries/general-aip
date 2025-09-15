@@ -61,21 +61,21 @@ def check_arguments(arguments):
 
     # Checks if arguments were given, besides the default of script name.
     if len(arguments) == 1:
-        errors_list.append("AIPs directory argument is missing.")
+        errors_list.append('Required arguments are missing: aips_directory, aip_type, and to_zip.')
 
     # Checks if the first required argument (aips_directory) is present and a valid path.
     if len(arguments) > 1:
         if os.path.exists(arguments[1]):
             aips_directory = arguments[1]
         else:
-            errors_list.append("AIPs directory argument is not a valid directory.")
+            errors_list.append(f'Provided aips_directory "{arguments[1]}" is not a valid directory.')
 
     # Checks if the second required argument (aip_type) is present and an expected value.
     if len(arguments) > 2:
         if arguments[2] in ('av', 'general', 'web'):
             aip_type = arguments[2]
         else:
-            errors_list.append("AIP type is not an expected value.")
+            errors_list.append(f'Provided aip_type "{arguments[2]}" is not an expected value (av, general, web).')
 
     # Checks if the third required argument (to_zip) is present, and if so, if it is the expected value.
     if len(arguments) > 3:
@@ -84,14 +84,19 @@ def check_arguments(arguments):
         elif arguments[3] == "zip":
             to_zip = True
         else:
-            errors_list.append("To zip is not an expected value.")
+            errors_list.append(f'Provided to_zip "{arguments[3]}" is not an expected value (no-zip, zip).')
 
     # Checks if the optional argument (workflow) is present, and if so, if it is the expected value.
     if len(arguments) > 4:
-        if arguments[4] in ('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mxf', 'wav', 'mp4'):
+        if arguments[4] in ('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mp4', 'mxf', 'wav'):
             workflow = arguments[4]
         else:
-            errors_list.append("Unexpected value for the workflow.")
+            errors_list.append(f'Provided workflow "{arguments[4]}" is not an expected value '
+                               f'(dpx, mkv, mkv-filmscan, mov, mp4, mxf, wav)')
+
+    # Checks if there are too many arguments.
+    if len(arguments) > 5:
+        errors_list.append("Too many script arguments. The maximum expected is 4.")
 
     # Calculates the path to the required metadata file and verifies it is present.
     # Only tests if there is a value for aips_directory, which is part of the path.
@@ -242,19 +247,19 @@ def check_metadata_csv(read_metadata, aips_dir):
         for duplicate in unique_duplicates:
             errors_list.append(f"{duplicate} is in the metadata.csv folder column more than once.")
 
-    # Checks for any AIPs that are only in the CSV.
+    # Checks for any folders that are only in the CSV.
     just_csv = list(set(csv_folder_list) - set(aips_directory_list))
     if len(just_csv) > 0:
         just_csv.sort()
-        for aip in just_csv:
-            errors_list.append(f"{aip} is in metadata.csv and missing from the AIPs directory.")
+        for aip_folder in just_csv:
+            errors_list.append(f"{aip_folder} is in metadata.csv and missing from the AIPs directory.")
 
-    # Checks for any AIPs that are only in the AIPs directory.
+    # Checks for any folders that are only in the AIPs directory.
     just_aip_dir = list(set(aips_directory_list) - set(csv_folder_list))
     if len(just_aip_dir) > 0:
         just_aip_dir.sort()
-        for aip in just_aip_dir:
-            errors_list.append(f"{aip} is in the AIPs directory and missing from metadata.csv.")
+        for aip_folder in just_aip_dir:
+            errors_list.append(f"{aip_folder} is in the AIPs directory and missing from metadata.csv.")
 
     # The errors list is empty if there were no errors.
     return errors_list
@@ -549,12 +554,12 @@ def manifest(aip, staging, ingest):
         return
 
     # Calculates the MD5 of the packaged AIP.
-    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
+    md5deep_result = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
     # If md5deep has an error, logs the event and does not execute the rest of this function.
-    if md5deep_output.stderr:
-        error_msg = md5deep_output.stderr.decode("utf-8")
+    if md5deep_result.stderr:
+        error_msg = md5deep_result.stderr.decode("utf-8")
         aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
         log(aip.log, aip.directory)
@@ -569,20 +574,25 @@ def manifest(aip, staging, ingest):
     else:
         manifest_path = os.path.join(staging, "aips-ready-to-ingest", manifest_name)
     with open(manifest_path, "a", encoding="utf-8") as manifest_file:
-        manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
+        manifest_file.write(md5deep_result.stdout.decode("UTF-8").replace("\r", ""))
 
     # For AV, copies to ARCHive ingest to be ready to schedule.
-    # TODO: is there an rsync-like option for Windows for the other workflows?
+    # TODO: is there an rsync-like option for Windows for the other workflows? Or just use Python?
     if aip.type == 'av':
         rsync_result = subprocess.run(f'rsync -v --progress {aip_path} {ingest}', stderr=subprocess.PIPE, shell=True)
 
         # If copied correctly, move to a different folder on AIPs staging. Otherwise, move to an error folder.
-        # TODO: add to log
-        if "stderr=b''" in str(rsync_result):
+        if not rsync_result.stderr:
             aip_zip_name = os.path.basename(aip_path)
             shutil.move(aip_path, f'{staging}/aips-already-on-ingest-server/{aip_zip_name}')
         else:
             move_error('copy_to_ingest_failed', aip_path, staging)
+            error_msg = rsync_result.stderr.decode("utf-8")
+            aip.log["Manifest"] = (f"Successfully added AIP to manifest. "
+                                   f"Issue when copying to ingest. rsync error: {error_msg}")
+            aip.log["Complete"] = "Error during processing"
+            log(aip.log, aip.directory)
+            return
 
     # Logs the success of adding the AIP to the manifest and of AIP creation (this is the last step).
     aip.log["Manifest"] = "Successfully added AIP to manifest"
@@ -767,20 +777,20 @@ def structure_directory(aip, staging):
     # Moves DPX files to the objects folder.
     # DPX files are already in bags, so have to navigate to the data folder to find the content to move into objects.
     if aip.workflow == 'dpx':
-        for root, dirs, files in os.walk(os.path.join(aip_path, 'data')):
-            for folder in dirs:
-                os.replace(os.path.join(root, folder), os.path.join(aip_path, 'objects', f'{folder}-dpx'))
-            for file in files:
-                if file.endswith('.cue'):
-                    os.replace(os.path.join(root, file), os.path.join(aip_path, 'objects', file))
-                if file.endswith('.mov'):
-                    shutil.copy2(os.path.join(root, file), os.path.join(staging, 'movs-to-bag'))
-                    os.replace(os.path.join(root, file), os.path.join(aip_path, 'objects', file))
-                if file.endswith('.wav'):
-                    os.replace(os.path.join(root, file), os.path.join(aip_path, 'objects', f'{pathlib.Path(file).stem}-dpx.wav'))
+        for item in os.listdir(os.path.join(aip_path, 'data')):
+            if os.path.isdir(os.path.join(aip_path, 'data', item)):
+                shutil.copytree(os.path.join(aip_path, 'data', item), os.path.join(aip_path, 'objects', f'{item}-dpx'))
+            elif item.endswith('.cue'):
+                os.replace(os.path.join(aip_path, 'data', item), os.path.join(aip_path, 'objects', item))
+            elif item.endswith('.mov'):
+                shutil.copy2(os.path.join(aip_path, 'data', item), os.path.join(staging, 'movs-to-bag'))
+                os.replace(os.path.join(aip_path, 'data', item), os.path.join(aip_path, 'objects', item))
+            elif item.endswith('.wav'):
+                os.replace(os.path.join(aip_path, 'data', item),
+                           os.path.join(aip_path, 'objects', f'{pathlib.Path(item).stem}-dpx.wav'))
         # Deletes the bag metadata files and data folder, now that the rest is organized into the AIP directory.
-        for metadata_file in ('bag-info.txt', 'bagit.txt', 'manifest-md5.txt', 'tagmanifest-md5.txt'):
-            os.remove(os.path.join(aip_path, metadata_file))
+        for bag_metadata_file in ('bag-info.txt', 'bagit.txt', 'manifest-md5.txt', 'tagmanifest-md5.txt'):
+            os.remove(os.path.join(aip_path, bag_metadata_file))
         shutil.rmtree(os.path.join(aip_path, 'data'))
 
     # Moves any metadata files to the metadata folder and then the rest to the objects folder, with renaming as needed.

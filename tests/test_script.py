@@ -2,80 +2,58 @@
 Testing for the entire script, with input that represents the different workflows that use the script.
 It does not currently include tests for error handling.
 
-BEFORE RUNNING THIS TEST: in configuration.py, make aip_staging the path to aip_staging_location in the GitHub repo
+BEFORE RUNNING THIS TEST: in configuration.py, make aip_staging the path to staging in the GitHub repo
 """
 
-import csv
 import datetime
 import os
+import pandas as pd
 import re
 import shutil
 import subprocess
 import unittest
 
 
-def path_list(dir_name):
-    """ Makes and returns a list of the paths of every file and folder in a directory.
-    Paths are relative, starting with the provided directory."""
-    paths_list = []
+def make_aip_log_list(log_path):
+    """Reads the aip log and returns a list of lists, where each list is a row in the log,
+    with normalization for inconsistent data."""
+    df = pd.read_csv(log_path, dtype=str)
 
-    # Navigates all levels in the AIPs directory.
-    for root, dirs, files in os.walk(dir_name):
+    # Remove time stamps, which are the last 16 characters, and leaves just the day to allow comparison,
+    # as long as the column is from a correct validation (may also be blank or a validation error).
+    df['Time Started'] = df['Time Started'].str[:-16]
+    df.loc[df['Preservation.xml Valid'].str.startswith('Preservation.xml valid on', na=False), 'Preservation.xml Valid'] = df['Preservation.xml Valid'].str[:-16]
+    df.loc[df['Bag Valid'].str.startswith('Bag valid on', na=False), 'Bag Valid'] = df['Bag Valid'].str[:-16]
 
-        # Adds the path for every folder.
+    # Make FITS tool error value consistent, since the same files don't always generate an error.
+    df.loc[df['FITS Tool Errors'] == 'FITS tools generated errors (saved to metadata folder)', 'FITS Tool Errors'] = 'No FITS tools errors'
+
+    # Normalize direction of slash from xmllint to match other text.
+    df['Preservation.xml Made'] = df['Preservation.xml Made'].str.replace('/', '\\')
+
+    # Convert the dataframe to a list of rows.
+    df = df.fillna('BLANK')
+    log_list = [df.columns.to_list()] + df.values.tolist()
+    return log_list
+
+
+def make_directory_list(dir_path):
+    """Make a list of the paths of every file and folder in a directory,
+    with sorting and normalization for inconsistent data."""
+    directory_list = []
+    for root, dirs, files in os.walk(dir_path):
         for directory in dirs:
-            paths_list.append(os.path.join(root, directory))
-
-        # Adds the path for every file.
-        # Makes changes to create consistent data for comparison to the expected.
+            directory_list.append(os.path.join(root, directory))
         for file in files:
-
-            # Edits the file size that is part of zipped AIP filenames, since that varies each time,
-            # even though the files are the same.
+            # The size in the zipped AIP filenames varies each time.
             if root.endswith("aips-ready-to-ingest") and file.endswith(".tar.bz2"):
                 file = re.sub(r"_bag.\d+.", "_bag.1000.", file)
-
-            # Skips the FITS tool error log because FITS does not always have a tool error on the test files
-            # and the placeholder files in aip_staging_location that let the folders sync to GitHub.
-            # Adds all other files to the list.
+            # Skips the FITS tool error log because it is not consistently made and the placeholder files for GitHub.
             if file.endswith("_fits-tool-errors_fitserr.txt") or file == 'Explanation.txt' or file == 'placeholder.txt':
                 continue
-            paths_list.append(os.path.join(root, file))
-
-    paths_list.sort(key=str.lower)
-    return paths_list
-
-
-def log_list(log_path):
-    """Reads the aip_log.csv file and returns a list of the rows in the log."""
-    # Reads the log into a list, where each list item is a list with the row data.
-    with open(log_path, newline="") as log:
-        log_read = csv.reader(log)
-        log_rows_list = list(log_read)
-
-    # Makes a new version of log_rows_list that has consistent data for comparison to expected values.
-    updated_rows_list = []
-    for row in log_rows_list:
-
-        # Does not edit the header.
-        if row[0] == "Time Started":
-            updated_rows_list.append(row)
-            continue
-
-        # Remove the time stamp, which is the last 16 characters ( HH:MM:SS.######).
-        # The columns are Time Started, Preservation.xml Valid, and Bag Valid.
-        row[0] = row[0][:-16]
-        row[8] = row[8][:-16]
-        row[9] = row[9][:-16]
-
-        # Changes the FITS Tool Errors column back to no errors, if present.
-        # FITS does not always have a tool error on the test files.
-        if row[5] == "FITS tools generated errors (saved to metadata folder)":
-            row[5] = "No FITS tools errors"
-
-        updated_rows_list.append(row)
-
-    return updated_rows_list
+            directory_list.append(os.path.join(root, file))
+    directory_list.sort(key=str.lower)
+    return directory_list
 
 
 class TestFullScript(unittest.TestCase):
@@ -92,7 +70,7 @@ class TestFullScript(unittest.TestCase):
         # Deletes everything but placeholder.txt from the output folders in staging.
         output_dirs = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
         for output_dir in output_dirs:
-            output_path = os.path.join(os.getcwd(), 'aip_staging_location', output_dir)
+            output_path = os.path.join(os.getcwd(), 'staging', output_dir)
             for file in os.listdir(output_path):
                 if not file == 'placeholder.txt':
                     os.remove(os.path.join(output_path, file))
@@ -115,10 +93,10 @@ class TestFullScript(unittest.TestCase):
                     '\n>>>Processing test-001-er-000002 (2 of 3).\n'
                     '\n>>>Processing test-001-er-000003 (3 of 3).\n'
                     '\nScript is finished running.\n')
-        self.assertEqual(result, expected, "Problem with test for general, print statements")
+        self.assertEqual(expected, result, "Problem with test for general, print statements")
 
         # Test for the contents of the AIP directory.
-        result = path_list(aip_dir)
+        result = make_directory_list(aip_dir)
         bag_one = os.path.join(aip_dir, 'test-001-er-000001_bag')
         bag_two = os.path.join(aip_dir, 'test-001-er-000002_bag')
         bag_three = os.path.join(aip_dir, 'test-001-er-000003_bag')
@@ -168,13 +146,14 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_three, 'manifest-sha256.txt'),
                     os.path.join(bag_three, 'tagmanifest-md5.txt'),
                     os.path.join(bag_three, 'tagmanifest-sha256.txt')]
-        self.assertEqual(result, expected, "Problem with test for general, aip directory")
+        self.assertEqual(expected, result, "Problem with test for general, aip directory")
 
         # Test for the contents of the staging directory.
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         today = datetime.date.today().strftime('%Y-%m-%d')
-        result = path_list(staging_dir)
-        expected = [os.path.join(staging_dir, 'aips-ready-to-ingest'),
+        result = make_directory_list(staging_dir)
+        expected = [os.path.join(staging_dir, 'aips-already-on-ingest-server'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', f'manifest_aip_directory_test_{today}.txt'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000001_bag.1000.tar.bz2'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000002_bag.1000.tar.bz2'),
@@ -183,14 +162,15 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000001_combined-fits.xml'),
                     os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000002_combined-fits.xml'),
                     os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000003_combined-fits.xml'),
+                    os.path.join(staging_dir, 'movs-to-bag'),
                     os.path.join(staging_dir, 'preservation-xmls'),
                     os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000001_preservation.xml'),
                     os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000002_preservation.xml'),
                     os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000003_preservation.xml')]
-        self.assertEqual(result, expected, 'Problem with test for general, staging directory')
+        self.assertEqual(expected, result, 'Problem with test for general, staging directory')
 
         # Test for the contents of the aip_log.csv file.
-        result = log_list(os.path.join(aip_dir, 'aip_log.csv'))
+        result = make_aip_log_list(os.path.join(aip_dir, 'aip_log.csv'))
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
                      'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
@@ -210,7 +190,7 @@ class TestFullScript(unittest.TestCase):
                      'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
                      f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
                      'Successfully added AIP to manifest', 'Successfully completed processing']]
-        self.assertEqual(result, expected, "Problem with test for general, aip log")
+        self.assertEqual(expected, result, "Problem with test for general, aip log")
 
     def test_web(self):
         """Test for the web mode (content downloaded from Archive-It)"""
@@ -229,10 +209,10 @@ class TestFullScript(unittest.TestCase):
         expected = ('\n>>>Processing rbrl-498-web-201907-0001 (1 of 2).\n'
                     '\n>>>Processing rbrl-377-web-201907-0001 (2 of 2).\n'
                     '\nScript is finished running.\n')
-        self.assertEqual(result, expected, "Problem with test for web, print statements")
+        self.assertEqual(expected, result, "Problem with test for web, print statements")
 
         # Test for the contents of the AIP directory.
-        result = path_list(aip_dir)
+        result = make_directory_list(aip_dir)
         bag_one = os.path.join(aip_dir, 'rbrl-377-web-201907-0001_bag')
         bag_two = os.path.join(aip_dir, 'rbrl-498-web-201907-0001_bag')
         expected = [os.path.join(aip_dir, 'aip_log.csv'),
@@ -278,13 +258,14 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_two, 'manifest-sha256.txt'),
                     os.path.join(bag_two, 'tagmanifest-md5.txt'),
                     os.path.join(bag_two, 'tagmanifest-sha256.txt')]
-        self.assertEqual(result, expected, "Problem with test for web, aip directory")
+        self.assertEqual(expected, result, "Problem with test for web, aip directory")
 
         # Test for the contents of the staging directory.
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         today = datetime.date.today().strftime('%Y-%m-%d')
-        result = path_list(staging_dir)
-        expected = [os.path.join(staging_dir, 'aips-ready-to-ingest'),
+        result = make_directory_list(staging_dir)
+        expected = [os.path.join(staging_dir, 'aips-already-on-ingest-server'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest',
                                  f'manifest_preservation_download_russell_{today}.txt'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'rbrl-377-web-201907-0001_bag.1000.tar.bz2'),
@@ -292,13 +273,14 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(staging_dir, 'fits-xmls'),
                     os.path.join(staging_dir, 'fits-xmls', 'rbrl-377-web-201907-0001_combined-fits.xml'),
                     os.path.join(staging_dir, 'fits-xmls', 'rbrl-498-web-201907-0001_combined-fits.xml'),
+                    os.path.join(staging_dir, 'movs-to-bag'),
                     os.path.join(staging_dir, 'preservation-xmls'),
                     os.path.join(staging_dir, 'preservation-xmls', 'rbrl-377-web-201907-0001_preservation.xml'),
                     os.path.join(staging_dir, 'preservation-xmls', 'rbrl-498-web-201907-0001_preservation.xml')]
-        self.assertEqual(result, expected, "Problem with test for web, staging directory")
+        self.assertEqual(expected, result, "Problem with test for web, staging directory")
 
         # Test for the contents of the aip_log.csv file.
-        result = log_list(os.path.join(aip_dir, 'aip_log.csv'))
+        result = make_aip_log_list(os.path.join(aip_dir, 'aip_log.csv'))
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
                      'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
@@ -312,7 +294,23 @@ class TestFullScript(unittest.TestCase):
                      'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
                      f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
                      'Successfully added AIP to manifest', 'Successfully completed processing']]
-        self.assertEqual(result, expected, "Problem with test for web, aip log")
+        self.assertEqual(expected, result, "Problem with test for web, aip log")
+
+    def test_error(self):
+        """Test for there is an error with the initial checks and the script quits without running"""
+        # Runs the script.
+        script_path = os.path.join('..', 'general_aip.py')
+        aip_dir = os.path.join(os.getcwd(), 'script', 'error')
+        printed = subprocess.run(f'python "{script_path}" "{aip_dir}" type_error zip',
+                                 shell=True, capture_output=True, text=True)
+
+        # Test for the script print statements.
+        result = printed.stdout
+        expected = ('\nProblems detected with the provided script arguments:\n'
+                    f'   * Provided aips_directory "{aip_dir}" is not a valid directory.\n'
+                    '   * Provided aip_type "type_error" is not an expected value (av, general, web).\n'
+                    '   * Cannot check for the metadata.csv because the AIPs directory has an error.\n')
+        self.assertEqual(expected, result, "Problem with test for error")
 
 
 if __name__ == "__main__":

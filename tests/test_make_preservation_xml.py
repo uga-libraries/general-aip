@@ -44,7 +44,7 @@ class TestMakePreservationXML(unittest.TestCase):
         """If they are present, deletes the script outputs."""
 
         # Deletes any preservation.xml files.
-        aip_ids = ('harg-0000-web-202108-0001', 'magil-ggp-2472041-2022-05', 'rabbitbox_0003',
+        aip_ids = ('harg-0000-web-202108-0001', 'magil-ggp-2529686-2025-08', 'rabbitbox_0003',
                    'rbrl-025-er-000001', 'rbrl-025-er-000002', 'rbrl-025-er-000003', 'test-er-01')
         for aip_id in aip_ids:
             xml_path = os.path.join(os.getcwd(), 'make_preservation_xml', aip_id, 'metadata',
@@ -58,7 +58,7 @@ class TestMakePreservationXML(unittest.TestCase):
             os.remove(log_path)
 
         # Deletes the errors folder.
-        errors_path = os.path.join(os.getcwd(), 'aip_staging_location', 'aips-with-errors')
+        errors_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors')
         if os.path.exists(errors_path):
             shutil.rmtree(errors_path)
 
@@ -66,14 +66,14 @@ class TestMakePreservationXML(unittest.TestCase):
         """Test for an AIP from BMAC, which calculates file id differently"""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'bmac', 'mp4', 'rabbitbox', 'folder', 'av', 'rabbitbox_0003', 'rabbitbox_0003', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for bmac")
+        self.assertEqual(expected, result, "Problem with test for bmac")
 
     def test_error(self):
         """Test for an AIP without the cleaned FITS XML, which causes a Saxon error"""
@@ -81,7 +81,7 @@ class TestMakePreservationXML(unittest.TestCase):
         # A copy of the AIP is made since this test should move it to an error folder.
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'test', 'folder', 'general', 'test-er-01', 'title', 1, True)
         aip.log = {'Started': '2025-08-13 2:15PM', 'AIP': 'test-er-01', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -120,46 +120,46 @@ class TestMakePreservationXML(unittest.TestCase):
         """Test for an AIP with multiple files of the same format"""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'russell', None, 'rbrl-025', 'folder', 'general', 'rbrl-025-er-000003', 'Dups', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for multiple files")
+        self.assertEqual(expected, result, "Problem with test for multiple files")
 
     def test_multiple_files(self):
         """Test for an AIP with multiple files"""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'russell', None, 'rbrl-025', 'folder', 'general', 'rbrl-025-er-000002', 'Multi', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for multiple files")
+        self.assertEqual(expected, result, "Problem with test for multiple files")
 
     def test_single_file(self):
         """Test for an AIP with a single file"""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'russell', None, 'rbrl-025', 'folder', 'general', 'rbrl-025-er-000001', 'Single', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for single file")
+        self.assertEqual(expected, result, "Problem with test for single file")
 
     def test_web_hargrett(self):
         """Test for a web AIP from Hargrett with no collection"""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'hargrett', None, 'harg-0000', 'folder', 'web', 'harg-0000-web-202108-0001',
                   'Hargrett Web without Collection', 1, True)
         make_preservation_xml(aip, staging_dir)
@@ -167,20 +167,21 @@ class TestMakePreservationXML(unittest.TestCase):
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for web, hargrett")
+        self.assertEqual(expected, result, "Problem with test for web, hargrett")
 
     def test_web_magil(self):
         """Test for a web AIP from MAGIL, which never has a collection"""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
-        staging_dir = os.path.join(os.getcwd(), 'aip_staging_location')
-        aip = AIP(aips_dir, 'magil', None, 'magil-0000', 'folder', 'web', 'magil-ggp-2472041-2022-05', 'Web', 1, True)
+        staging_dir = os.path.join(os.getcwd(), 'staging')
+        aip = AIP(aips_dir, 'magil', None, 'magil-0000', 'folder', 'web', 'magil-ggp-2529686-2025-08',
+                  'Georgia State Government Website', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
-        self.assertEqual(result, expected, "Problem with test for web, magil")
+        self.assertEqual(expected, result, "Problem with test for web, magil")
 
 
 if __name__ == "__main__":

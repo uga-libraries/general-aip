@@ -4,18 +4,11 @@ and adds a row to the aip log with the information.
 These tests are for if information is written to a CSV correctly.
 Tests for functions with error handling include testing if the correct information is saved to the log."""
 
+from datetime import date
 import os
-import pandas as pd
 import unittest
 from aip_functions import AIP, log
-
-
-def aip_log_list():
-    """Reads an aip_log.csv and returns a list of lists (each row), replacing na with text for easier comparison"""
-    df = pd.read_csv(os.path.join(os.getcwd(), 'aip_log.csv'))
-    df = df.fillna('BLANK')
-    row_list = [df.columns.to_list()] + df.values.tolist()
-    return row_list
+from test_script import make_aip_log_list
 
 
 class TestLog(unittest.TestCase):
@@ -38,9 +31,9 @@ class TestLog(unittest.TestCase):
         log('header', os.getcwd())
 
         # Test for the log contents.
-        result = aip_log_list()
+        result = make_aip_log_list(os.path.join(os.getcwd(), 'aip_log.csv'))
         expected = [self.header]
-        self.assertEqual(result, expected, "Problem with header")
+        self.assertEqual(expected, result, "Problem with header")
 
     def test_one_aip(self):
         """Test for making a log file with information from one AIP"""
@@ -54,12 +47,12 @@ class TestLog(unittest.TestCase):
         log(aip.log, aips_dir)
 
         # Test for the log contents.
-        result = aip_log_list()
+        result = make_aip_log_list(os.path.join(os.getcwd(), 'aip_log.csv'))
         expected = [self.header,
-                    [str(aip.log['Started']), 'aip-1', 'No files deleted',
+                    [date.today().strftime('%Y-%m-%d'), 'aip-1', 'No files deleted',
                      'Objects folder already exists in original files', 'BLANK', 'BLANK', 'BLANK', 'BLANK',
                      'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
-        self.assertEqual(result, expected, "Problem with one aip")
+        self.assertEqual(expected, result, "Problem with one aip")
 
     def test_multiple_aips(self):
         """Test for making the log file with information from two AIPs"""
@@ -88,18 +81,18 @@ class TestLog(unittest.TestCase):
         log(aip2.log, aips_dir)
 
         # Test for the log contents.
-        result = aip_log_list()
+        result = make_aip_log_list(os.path.join(os.getcwd(), 'aip_log.csv'))
         expected = [self.header,
-                    [str(aip1.log['Started']), 'aip-1', 'No files deleted',
+                    [date.today().strftime('%Y-%m-%d'), 'aip-1', 'No files deleted',
                      'Objects folder already exists in original files', 'BLANK', 'BLANK', 'BLANK', 'BLANK',
                      'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing'],
-                    [str(aip2.log['Started']), 'aip-2', 'No files deleted', 'Successfully created objects folder',
-                     'Successfully created metadata folder', 'No FITS tool errors',
-                     'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
-                     'Preservation.xml valid on 2022-10-31 13:14:15.123456',
-                     'Bag valid on 2022-10-13 14:15:16.789123', 'Successfully made package',
-                     'Successfully added AIP to manifest.', 'Successfully completed processing']]
-        self.assertEqual(result, expected, "Problem with multiple aips")
+                    [date.today().strftime('%Y-%m-%d'), 'aip-2', 'No files deleted',
+                     'Successfully created objects folder', 'Successfully created metadata folder',
+                     'No FITS tool errors', 'Successfully created combined-fits.xml',
+                     'Successfully created preservation.xml', 'Preservation.xml valid on 2022-10-31',
+                     'Bag valid on 2022-10-13', 'Successfully made package', 'Successfully added AIP to manifest.',
+                     'Successfully completed processing']]
+        self.assertEqual(expected, result, "Problem with multiple aips")
 
 
 if __name__ == "__main__":

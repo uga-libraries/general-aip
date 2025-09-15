@@ -10,7 +10,7 @@
   </identification>
   <fileinfo>
     <size toolname="Jhove" toolversion="1.20.1">9</size>
-    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">C:\Users\ahanson\Documents\GitHub\general-aip\tests\make_preservation_xml\test-er-01\objects\File.txt</filepath>
+    <filepath toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">C:\GitHub\tests\test-er-01\objects\File.txt</filepath>
     <filename toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">File.txt</filename>
     <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">dfee14c3ca5a537621c67ffba86333b7</md5checksum>
     <fslastmodified toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">1753127368355</fslastmodified>

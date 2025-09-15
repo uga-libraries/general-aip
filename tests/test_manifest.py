@@ -63,7 +63,7 @@ class TestManifest(unittest.TestCase):
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
         aip = AIP(aips_dir, 'bmac', 'wav', 'rabbitbox', 'folder', 'av', 'rabbitbox_010', 'title', 1, False)
         aip.size = 20000
-        aip.log = {'Started': '2025-09-08 1:25PM', 'AIP': 'rabbitbox_010', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-09-08 01:25:01.000000', 'AIP': 'rabbitbox_010', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
@@ -81,7 +81,7 @@ class TestManifest(unittest.TestCase):
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-09-08 1:25PM', 'rabbitbox_010', 'No files deleted', 'Success', 'Success', 'BLANK',
+                    ['2025-09-08', 'rabbitbox_010', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
                      'Successfully completed processing']]
         self.assertEqual(expected, result, "Problem with AV, AIP log")
@@ -99,7 +99,7 @@ class TestManifest(unittest.TestCase):
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
         aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'har-ua01-001-001', 'title', 1, True)
         aip.size = 1000
-        aip.log = {'Started': '2025-08-14 11:45AM', 'AIP': 'har-ua01-001-001', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-08-14 11:45:01.000000', 'AIP': 'har-ua01-001-001', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
@@ -117,7 +117,7 @@ class TestManifest(unittest.TestCase):
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-14 11:45AM', 'har-ua01-001-001', 'No files deleted', 'Success', 'Success', 'BLANK',
+                    ['2025-08-14', 'har-ua01-001-001', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
                      'Successfully completed processing']]
         self.assertEqual(expected, result, "Problem with bz2, AIP log")
@@ -130,7 +130,7 @@ class TestManifest(unittest.TestCase):
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
         aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'harg-missing-001', 'title', 1, True)
         aip.size = 999
-        aip.log = {'Started': '2025-08-14 2:30PM', 'AIP': 'harg-missing-001', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-08-14 02:30:01.000000', 'AIP': 'harg-missing-001', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
@@ -148,7 +148,7 @@ class TestManifest(unittest.TestCase):
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-14 2:30PM', 'harg-missing-001', 'No files deleted', 'Success', 'Success', 'BLANK',
+                    ['2025-08-14', 'harg-missing-001', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Valid', 'Success',
                      f"Tar/zip file '{aip_path}' not in aips-ready-for-ingest folder", 'Error during processing']]
         self.assertEqual(expected, result, "Problem with error_missing, AIP log")
@@ -162,7 +162,7 @@ class TestManifest(unittest.TestCase):
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
         aip = AIP(aips_dir, 'russell', None, 'rbrl-123', 'folder', 'general', 'rbrl-123-er-123456', 'title', 1, True)
         aip.size = 300
-        aip.log = {'Started': '2025-08-14 2:40PM', 'AIP': 'rbrl-123-er-123456', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-08-14 02:40:01.000000', 'AIP': 'rbrl-123-er-123456', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
@@ -183,7 +183,7 @@ class TestManifest(unittest.TestCase):
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-14 2:40PM', 'rbrl-123-er-123456', 'No files deleted', 'Success', 'Success', 'BLANK',
+                    ['2025-08-14', 'rbrl-123-er-123456', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
                      'Successfully completed processing']]
         self.assertEqual(expected, result, "Problem with manifest_exists, AIP log")
@@ -196,7 +196,7 @@ class TestManifest(unittest.TestCase):
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
         aip = AIP(aips_dir, 'magil', None, 'magil-0000', 'folder', 'web', 'magil-seed-2025', 'title', 1, False)
         aip.size = 4400
-        aip.log = {'Started': '2025-09-08 1:15PM', 'AIP': 'magil-seed-2025', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-09-08 01:15:01.000000', 'AIP': 'magil-seed-2025', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
@@ -214,7 +214,7 @@ class TestManifest(unittest.TestCase):
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-09-08 1:15PM', 'magil-seed-2025', 'No files deleted', 'Success', 'Success', 'BLANK',
+                    ['2025-09-08', 'magil-seed-2025', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
                      'Successfully completed processing']]
         self.assertEqual(expected, result, "Problem with tar, AIP log")

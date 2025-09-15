@@ -9,7 +9,7 @@ import os
 import tarfile
 import unittest
 from aip_functions import AIP, log, package
-from test_validate_bag import aip_log_list
+from test_script import make_aip_log_list
 
 
 class TestPackage(unittest.TestCase):
@@ -103,7 +103,7 @@ class TestPackage(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'package')
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-missing-1', 'title', 1, False)
-        aip.log = {'Started': '2025-08-14 10:55AM', 'AIP': 'test-missing-1', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-08-14 10:55:01.000000', 'AIP': 'test-missing-1', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'n/a',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
@@ -111,11 +111,11 @@ class TestPackage(unittest.TestCase):
         package(aip, aip_staging)
 
         # Test for the AIP log.
-        result = aip_log_list(os.path.join(os.getcwd(), 'package', 'aip_log.csv'))
+        result = make_aip_log_list(os.path.join(os.getcwd(), 'package', 'aip_log.csv'))
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-14 10:55AM', 'test-missing-1', 'No files deleted', 'Success', 'Success', 'BLANK',
+                    ['2025-08-14', 'test-missing-1', 'No files deleted', 'Success', 'Success', 'BLANK',
                      'Success', 'Success', 'Valid', 'Valid',
                      f'Could not tar. Bag not in expected location: {os.path.join(aips_dir, "test-missing-1_bag")}',
                      'BLANK', 'Error during processing']]

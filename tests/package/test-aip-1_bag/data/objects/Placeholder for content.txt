@@ -1,2 +1,0 @@
-Stand in for the files and folders that would be part of the AIP,
-since actual files aren't needed for this test.

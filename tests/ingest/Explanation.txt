@@ -1,1 +1,0 @@
-For testing purpose, ingest takes the place of networked storage that connects to ARCHive.

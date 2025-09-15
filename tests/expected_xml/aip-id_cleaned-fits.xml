@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<combined-fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="01/01/22 1:23 PM">
+      <identification>
+         <identity format="Plain text">
+            <tool toolname="Droid" toolversion="6.4" />
+            <tool toolname="Jhove" toolversion="1.20.1" />
+            <tool toolname="file utility" toolversion="5.03" />
+            <externalIdentifier type="puid">x-fmt/111</externalIdentifier>
+         </identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/Path/aip-id/objects/file.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">9</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">aaaf7028b8b9c6ce59bd3d1ee80869b3</md5checksum>
+      </fileinfo>
+      <filestatus>
+         <valid toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</valid>
+         <well-formed toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</well-formed>
+      </filestatus>
+   </fits>
+</combined-fits>

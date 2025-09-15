@@ -152,7 +152,8 @@ class TestFullScript(unittest.TestCase):
         staging_dir = os.path.join(os.getcwd(), 'staging')
         today = datetime.date.today().strftime('%Y-%m-%d')
         result = make_directory_list(staging_dir)
-        expected = [os.path.join(staging_dir, 'aips-ready-to-ingest'),
+        expected = [os.path.join(staging_dir, 'aips-already-on-ingest-server'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', f'manifest_aip_directory_test_{today}.txt'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000001_bag.1000.tar.bz2'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000002_bag.1000.tar.bz2'),
@@ -263,7 +264,8 @@ class TestFullScript(unittest.TestCase):
         staging_dir = os.path.join(os.getcwd(), 'staging')
         today = datetime.date.today().strftime('%Y-%m-%d')
         result = make_directory_list(staging_dir)
-        expected = [os.path.join(staging_dir, 'aips-ready-to-ingest'),
+        expected = [os.path.join(staging_dir, 'aips-already-on-ingest-server'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest',
                                  f'manifest_preservation_download_russell_{today}.txt'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'rbrl-377-web-201907-0001_bag.1000.tar.bz2'),

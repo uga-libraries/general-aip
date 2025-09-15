@@ -1,61 +1,52 @@
 """Testing for the function organize_xml, which takes an AIP class instance as input and
 deletes, copies, or moves the XML files created to produce the preservation.xml file."""
-
+import os
+import shutil
 import unittest
-from aip_functions import *
+from aip_functions import AIP, organize_xml
+from test_script import make_directory_list
 
 
 class TestOrganizeXML(unittest.TestCase):
 
     def tearDown(self):
-        """
-        If they are present, deletes the test AIP, the AIP log, and the script output folders.
-        """
+        """If they are present, deletes the test AIP and XML copied or moved by the function."""
 
-        if os.path.exists("aip-id"):
-            shutil.rmtree("aip-id")
+        aip_path = os.path.join(os.getcwd(), 'organize_xml', 'test_coll2_001')
+        if os.path.exists(aip_path):
+            shutil.rmtree(aip_path)
 
-        if os.path.exists("aip_log.csv"):
-            os.remove("aip_log.csv")
-
-        script_output_folders = ("aips-to-ingest", "fits-xml", "preservation-xml")
-        for folder in script_output_folders:
-            path = os.path.join("..", folder)
-            if os.path.exists(path):
-                shutil.rmtree(path)
+        aips_staging = os.path.join(os.getcwd(), 'staging')
+        xml_paths = [os.path.join(aips_staging, 'fits-xmls', 'test_coll2_001_combined-fits.xml'),
+                     os.path.join(aips_staging, 'preservation-xmls', 'test_coll2_001_preservation.xml')]
+        for xml_path in xml_paths:
+            if os.path.exists(xml_path):
+                os.remove(xml_path)
 
     def test_organize_xml(self):
-        """
-        Test for organizing XML files after the preservation.xml file is made.
-        """
-        # Makes an AIP instance and corresponding AIP folder to use for testing.
-        # To save times, makes placeholder files with the metadata filenames
-        # instead of running the functions for the earlier steps of the script.
-        make_output_directories()
-        aip = AIP(os.getcwd(), "test", "coll-1", "aip-folder", "aip-id", "title", 1, True)
-        os.makedirs(os.path.join("aip-id", "metadata"))
-        with open(os.path.join("aip-id", "metadata", "aip-id_cleaned-fits.xml"), "w") as file:
-            file.write("Cleaned FITS placeholder")
-        with open(os.path.join("aip-id", "metadata", "aip-id_combined-fits.xml"), "w") as file:
-            file.write("Combined FITS placeholder")
-        with open(os.path.join("aip-id", "metadata", "aip-id_preservation.xml"), "w") as file:
-            file.write("Preservation XML placeholder")
-        os.makedirs(os.path.join("aip-id", "objects"))
-        with open(os.path.join("aip-id", "objects", "file.txt"), "w") as file:
-            file.write("Test text")
+        """Test for the function (has no variations)"""
+        # Makes the test input and runs the function.
+        # A copy of the AIP is made since this test should alter the contents of the AIP metadata folder.
+        aips_dir = os.path.join(os.getcwd(), 'organize_xml')
+        aips_staging = os.path.join(os.getcwd(), 'staging')
+        aip = AIP(aips_dir, 'test', None, 'coll-1', 'aip-folder', 'general', 'test_coll2_001', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'test_coll2_001_copy'), os.path.join(aips_dir, 'test_coll2_001'))
+        organize_xml(aip, aips_staging)
 
-        # Runs the function being tested.
-        organize_xml(aip)
+        # Tests the metadata folder contains only the expected files.
+        metadata_path = os.path.join(os.getcwd(), 'organize_xml', 'test_coll2_001', 'metadata')
+        result = make_directory_list(metadata_path)
+        expected = [os.path.join(metadata_path, 'file_fits.xml'),
+                    os.path.join(metadata_path, 'test_coll2_001_preservation.xml')]
+        self.assertEqual(expected, result, "Problem with organize xml, metadata")
 
-        # Tests if the files are at the original location and in the new location (if copied or moved).
-        # and compares the result to what is expected.
-        result = [os.path.exists(os.path.join("..", "preservation-xml", "aip-id_preservation.xml")),
-                  os.path.exists(os.path.join("aip-id", "metadata", "aip-id_preservation.xml")),
-                  os.path.exists(os.path.join("..", "fits-xml", "aip-id_combined-fits.xml")),
-                  os.path.exists(os.path.join("aip-id", "metadata", "aip-id_combined-fits.xml")),
-                  os.path.exists(os.path.join("aip-id", "metadata", "aip-id_cleaned-fits.xml"))]
-        expected = [True, True, True, False, False]
-        self.assertEqual(result, expected, "Problem with organize xml")
+        # Tests the FITS folder has the expected file.
+        result = os.path.exists(os.path.join(aips_staging, 'fits-xmls', 'test_coll2_001_combined-fits.xml'))
+        self.assertEqual(True, result, "Problem with organize xml, fits-xmls")
+
+        # Tests the preservation xml folder has the expected file.
+        result = os.path.exists(os.path.join(aips_staging, 'preservation-xmls', 'test_coll2_001_preservation.xml'))
+        self.assertEqual(True, result, "Problem with organize xml, preservation-xmls")
 
 
 if __name__ == "__main__":

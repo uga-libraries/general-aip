@@ -1,82 +1,128 @@
-"""Testing for the function make_output_directories, which creates three directories in the current directory.
-It does not have any inputs and returns nothing."""
+"""Testing for the function make_output_directories, which makes directories for output in staging 
+if they don't already exist. Different directories are made depending on the mode.
+
+The function check_configuration() confirms that staging is a valid path, so no test is needed for that error.
+"""
 
 import os
+import shutil
 import unittest
 from aip_functions import make_output_directories
+from test_script import make_directory_list
 
 
 class TestMakeOutputDirectories(unittest.TestCase):
 
     def tearDown(self):
-        """
-        Deletes the three script output folders.
-        """
-        os.rmdir(os.path.join("..", "aips-to-ingest"))
-        os.rmdir(os.path.join("..", "fits-xml"))
-        os.rmdir(os.path.join("..", "preservation-xml"))
+        """Deletes the finished staging folder (copy of data made for each test)"""
+        staging_folders = ['staging_av_all', 'staging_av_none', 'staging_av_partial',
+                           'staging_all', 'staging_none', 'staging_partial']
+        for staging_folder in staging_folders:
+            staging_path = os.path.join(os.getcwd(), 'make_output_directories', staging_folder)
+            if os.path.exists(staging_path):
+                shutil.rmtree(staging_path)
 
-    def test_aips_present(self):
-        """
-        Test for running the function when the aips-to-ingest folder already exists.
-        Result for testing is a list of new folders in the parent directory of the current directory.
-        """
-        # Makes the aips-to-ingest folder.
-        os.mkdir(os.path.join("..", "aips-to-ingest"))
+    def test_av_all(self):
+        """Test for av mode when all the folders already exist"""
+        # Makes a copy of the test input and runs the function.
+        staging = os.path.join(os.getcwd(), 'make_output_directories', 'staging_av_all')
+        shutil.copytree(f'{staging}_copy', staging)
+        make_output_directories(staging, 'av')
 
-        # Saves a list of what is in the parent directory before and after running the function
-        # to calculate which directories were added by the function.
-        parent_directory_before = os.listdir("..")
-        make_output_directories()
-        parent_directory_after = os.listdir("..")
+        # Verifies that staging has the expected folders.
+        result = make_directory_list(staging)
+        expected = [os.path.join(staging, 'aips-already-on-ingest-server'),
+                    os.path.join(staging, 'aips-ready-to-ingest'),
+                    os.path.join(staging, 'fits-xmls'),
+                    os.path.join(staging, 'md5-manifests-for-aips'),
+                    os.path.join(staging, 'mediainfo-xmls'),
+                    os.path.join(staging, 'mediainfo-xmls', 'mediainfo-raw-output'),
+                    os.path.join(staging, 'mediainfo-xmls', 'pbcore2-xml'),
+                    os.path.join(staging, 'movs-to-bag'),
+                    os.path.join(staging, 'preservation-xmls')]
+        self.assertEqual(expected, result, "Problem with av_all")
 
-        # Calculates the difference between the two directory prints and sorts so the values are predictable
-        # and compares that to the expected result.
-        result = list(set(parent_directory_after) - set(parent_directory_before))
-        result.sort()
-        expected = ["fits-xml", "preservation-xml"]
-        self.assertEqual(result, expected, "Problem with make_output_directories, aips-to-ingest present")
+    def test_av_none(self):
+        """Test for av mode when none of the folders already exist"""
+        # Makes a copy of the test input and runs the function.
+        staging = os.path.join(os.getcwd(), 'make_output_directories', 'staging_av_none')
+        shutil.copytree(f'{staging}_copy', staging)
+        make_output_directories(staging, 'av')
 
-    def test_all_present(self):
-        """
-        Test for running the function when all three folders already exist.
-        Result for testing is a list of new folders in the parent directory of the current directory.
-        """
-        # Makes the three input folders.
-        os.mkdir(os.path.join("..", "aips-to-ingest"))
-        os.mkdir(os.path.join("..", "fits-xml"))
-        os.mkdir(os.path.join("..", "preservation-xml"))
+        # Verifies that staging has the expected folders.
+        result = make_directory_list(staging)
+        expected = [os.path.join(staging, 'aips-already-on-ingest-server'),
+                    os.path.join(staging, 'aips-ready-to-ingest'),
+                    os.path.join(staging, 'fits-xmls'),
+                    os.path.join(staging, 'md5-manifests-for-aips'),
+                    os.path.join(staging, 'mediainfo-xmls'),
+                    os.path.join(staging, 'mediainfo-xmls', 'mediainfo-raw-output'),
+                    os.path.join(staging, 'mediainfo-xmls', 'pbcore2-xml'),
+                    os.path.join(staging, 'movs-to-bag'),
+                    os.path.join(staging, 'preservation-xmls')]
+        self.assertEqual(expected, result, "Problem with av_none")
 
-        # Saves a list of what is in the parent directory before and after running the function
-        # to calculate which directories were added by the function.
-        parent_directory_before = os.listdir("..")
-        make_output_directories()
-        parent_directory_after = os.listdir("..")
+    def test_av_partial(self):
+        """Test for av mode when some of the folders already exist"""
+        # Makes a copy of the test input and runs the function.
+        staging = os.path.join(os.getcwd(), 'make_output_directories', 'staging_av_partial')
+        shutil.copytree(f'{staging}_copy', staging)
+        make_output_directories(staging, 'av')
 
-        # Calculates the difference between the two directory prints and sorts so the values are predictable
-        # and compares that to the expected result.
-        result = list(set(parent_directory_after) - set(parent_directory_before))
-        result.sort()
-        expected = []
-        self.assertEqual(result, expected, "Problem with make_output_directories, all present")
+        # Verifies that staging has the expected folders.
+        result = make_directory_list(staging)
+        expected = [os.path.join(staging, 'aips-already-on-ingest-server'),
+                    os.path.join(staging, 'aips-ready-to-ingest'),
+                    os.path.join(staging, 'fits-xmls'),
+                    os.path.join(staging, 'md5-manifests-for-aips'),
+                    os.path.join(staging, 'mediainfo-xmls'),
+                    os.path.join(staging, 'mediainfo-xmls', 'mediainfo-raw-output'),
+                    os.path.join(staging, 'mediainfo-xmls', 'pbcore2-xml'),
+                    os.path.join(staging, 'movs-to-bag'),
+                    os.path.join(staging, 'preservation-xmls')]
+        self.assertEqual(expected, result, "Problem with av_partial")
 
-    def test_none_present(self):
-        """
-        Test for running the function when none of the three folders already exist.
-        Result for testing is a list of new folders in the parent directory of the current directory.
-        """
-        # Saves a list of what is in the parent directory before and after running the function
-        # to calculate which directories were added by the function.
-        parent_directory_before = os.listdir("..")
-        make_output_directories()
-        parent_directory_after = os.listdir("..")
+    def test_non_av_all(self):
+        """Test for mode other than av when all the folders already exist"""
+        # Makes a copy of the test input and runs the function.
+        staging = os.path.join(os.getcwd(), 'make_output_directories', 'staging_all')
+        shutil.copytree(f'{staging}_copy', staging)
+        make_output_directories(staging, 'non_av')
 
-        # Calculates the difference between the two directory prints and sorts so the values are predictable
-        # and compares that to the expected result.
-        result = list(set(parent_directory_after) - set(parent_directory_before))
-        result.sort()
-        expected = ["aips-to-ingest", "fits-xml", "preservation-xml"]
-        self.assertEqual(result, expected, "Problem with make_output_directories")
+        # Verifies that staging has the expected folders.
+        result = make_directory_list(staging)
+        expected = [os.path.join(staging, 'aips-ready-to-ingest'),
+                    os.path.join(staging, 'fits-xmls'),
+                    os.path.join(staging, 'preservation-xmls')]
+        self.assertEqual(expected, result, "Problem with non_av_all")
+
+    def test_non_av_none(self):
+        """Test for mode other than av when none of the folders already exist"""
+        # Makes a copy of the test input and runs the function.
+        staging = os.path.join(os.getcwd(), 'make_output_directories', 'staging_none')
+        shutil.copytree(f'{staging}_copy', staging)
+        make_output_directories(staging, 'non_av')
+
+        # Verifies that staging has the expected folders.
+        result = make_directory_list(staging)
+        expected = [os.path.join(staging, 'aips-ready-to-ingest'),
+                    os.path.join(staging, 'fits-xmls'),
+                    os.path.join(staging, 'preservation-xmls')]
+        self.assertEqual(expected, result, "Problem with non_av_none")
+
+    def test_non_av_partial(self):
+        """Test for mode other than av when some the three folders already exist."""
+        # Makes a copy of the test input and runs the function.
+        staging = os.path.join(os.getcwd(), 'make_output_directories', 'staging_partial')
+        shutil.copytree(f'{staging}_copy', staging)
+        make_output_directories(staging, 'non_av')
+
+        # Verifies that staging has the expected folders.
+        result = make_directory_list(staging)
+        expected = [os.path.join(staging, 'aips-ready-to-ingest'),
+                    os.path.join(staging, 'fits-xmls'),
+                    os.path.join(staging, 'preservation-xmls')]
+        self.assertEqual(expected, result, "Problem with non_av_partial")
 
 
 if __name__ == "__main__":

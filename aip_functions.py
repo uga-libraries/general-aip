@@ -331,28 +331,29 @@ def delete_temp(aip, logging):
 
     # Checks all files at any level in the AIP folder against the deletion criteria.
     # Deletes DS_Store, Thumbs.db, starts with a dot, or ends with .tmp.
-    # Gets information for the deletion log and then deletes the file.
+    # Gets information for the deletion log if a log will be made and deletes the file.
     delete_list = [".DS_Store", "._.DS_Store", "Thumbs.db"]
     for root, directories, files in os.walk(os.path.join(aip.directory, aip.id)):
         for item in files:
             if item in delete_list or item.endswith(".tmp") or item.startswith("."):
-                path = os.path.join(root, item)
-                date = time.gmtime(os.path.getmtime(path))
-                date_reformatted = f"{date.tm_year}-{date.tm_mon}-{date.tm_mday} {date.tm_hour}:{date.tm_hour}:{date.tm_min}"
-                deleted_files.append([path, item, os.path.getsize(path), date_reformatted])
+                if logging == 'log':
+                    path = os.path.join(root, item)
+                    date = time.gmtime(os.path.getmtime(path))
+                    date_reformatted = f"{date.tm_year}-{date.tm_mon}-{date.tm_mday} {date.tm_hour}:{date.tm_hour}:{date.tm_min}"
+                    deleted_files.append([path, item, os.path.getsize(path), date_reformatted])
                 os.remove(os.path.join(root, item))
 
     # Creates the log in the AIP folder if any files were deleted.
     # The log contains the path, filename, size in bytes and date/time last modified of every deleted file.
     # Also adds event information for deletion to the script log.
-    if len(deleted_files) > 0:
+    if len(deleted_files) > 0 and logging == 'log':
         filename = f"{aip.id}_files-deleted_{datetime.today().strftime('%Y-%#m-%#d')}_del.csv"
         with open(os.path.join(aip.directory, aip.id, filename), "w", newline="") as deleted_log:
             deleted_log_writer = csv.writer(deleted_log)
             deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
             for file_data in deleted_files:
                 deleted_log_writer.writerow(file_data)
-        aip.log["Deletions"] = "File(s) deleted"
+        aip.log["Deletions"] = "File(s) deleted (see log)"
     else:
         aip.log["Deletions"] = "No files deleted"
 

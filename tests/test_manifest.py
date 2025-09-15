@@ -11,6 +11,7 @@ We plan to stop using md5deep fairly soon, so leaving that without a test.
 from datetime import datetime
 import os
 import pandas as pd
+import shutil
 import unittest
 from aip_functions import AIP, log, manifest
 from test_script import make_aip_log_list
@@ -48,19 +49,25 @@ class TestManifest(unittest.TestCase):
         if os.path.exists(av_manifest_path):
             os.remove(av_manifest_path)
 
-        # Moves the AV test file back into aips-ready-for-ingest if it was moved to the error folder.
-        # This happens if the unit tests are run in a Windows environment.
-        error_folder = os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-with-errors', 'copy_to_ingest_failed')
-        if os.path.exists(os.path.join(error_folder, 'rabbitbox_010_bag.20000.tar')):
-            os.rename(os.path.join(error_folder, 'rabbitbox_010_bag.20000.tar'),
-                      os.path.join(aip_folder_path, 'rabbitbox_010_bag.20000.tar'))
+        # Deletes the copy of the AV aip, which is copied to 2 folders when the test is run on a mac
+        # and to an errors folder when the test is run on Windows.
+        locations = [os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-with-errors', 'copy_to_ingest_failed'),
+                     os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-already-on-ingest-server'),
+                     os.path.join(os.getcwd(), 'ingest')]
+        for location in locations:
+            tar_path = os.path.join(location, 'rabbitbox_010_bag.20000.tar')
+            if os.path.exists(tar_path):
+                os.remove(tar_path)
 
     def test_av(self):
         """Test for an AV AIP, which has the manifest saved to a different location"""
         # Makes the test input and runs the function.
+        # A copy of the test file is made since in av mode it will be moved to a different location in staging.
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
+        shutil.copy2(os.path.join(aip_staging, 'aips-ready-to-ingest', 'copy_rabbitbox_010_bag.20000.tar'),
+                     os.path.join(aip_staging, 'aips-ready-to-ingest', 'rabbitbox_010_bag.20000.tar'))
         aip = AIP(aips_dir, 'bmac', 'wav', 'rabbitbox', 'folder', 'av', 'rabbitbox_010', 'title', 1, False)
         aip.size = 20000
         aip.log = {'Started': '2025-09-08 01:25:01.000000', 'AIP': 'rabbitbox_010', 'Deletions': 'No files deleted',
@@ -90,6 +97,10 @@ class TestManifest(unittest.TestCase):
         # NOTE: this only works when running the test on a Mac, where rsync is available.
         result = os.path.exists(os.path.join(os.getcwd(), 'ingest', 'rabbitbox_010_bag.20000.tar'))
         self.assertEqual(True, result, "Problem with AV, ingest")
+
+        # Test for moving to other location in staging.
+        result = os.path.exists(os.path.join(aip_staging, 'aips-already-on-ingest-server', 'rabbitbox_010_bag.20000.tar'))
+        self.assertEqual(True, result, "Problem with AV, staging location")
 
     def test_bz2(self):
         """Test for an AIP that is tarred and zipped"""

@@ -1,1 +1,0 @@
-To generate an error, there is no combined-fits.xml file in the metadata folder.

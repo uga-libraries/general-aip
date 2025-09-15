@@ -1,2 +1,0 @@
-e00811241e9c63dc005f6ae100e671b8  data/metadata/Placeholder for metadata.txt
-3aa2a2874b5507acb5aca675d422aecf  data/objects/Placeholder for content.txt

@@ -1,2 +1,0 @@
-Placeholder for a file sorted into the metadata folder by structure_directory().
-There needs to be a file in metadata or GitHub removes during syncing.

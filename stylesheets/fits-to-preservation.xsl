@@ -66,7 +66,7 @@
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
     <xsl:variable name="uri"><xsl:value-of select="$ns" />/<xsl:value-of select="$department" /></xsl:variable>
          
-    <!--file-id: the portion of the file path after objects (bmac) or the aip id (all other departments.-->
+    <!--file-id: the portion of the file path beginning with objects (bmac) or the aip id (all other departments.-->
     <!--Gets the file id from each instance of fits/fileinfo/filepath-->
     <xsl:template name="get-file-id">
         <xsl:choose>

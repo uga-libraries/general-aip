@@ -1,5 +1,0 @@
-5d1bcdb4b339b3ebbe1de5eb772bf272  data/metadata/file.txt_fits.xml
-3a3848346961d4af384f2e06a89fa234  data/metadata/file2.txt_fits.xml
-e7a3eddf0f12620b231bab4ea0fe4cc0  data/metadata/test_valid_001_preservation.xml
-2f03b03637bf162937793f756f0f1583  data/objects/file1.txt
-d17ec7d49f924ed60c041789491b099e  data/objects/file2.txt

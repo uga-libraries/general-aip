@@ -1,8 +1,0 @@
-ca81baa8b7e87efc87ee9b0c8e1bbf07  data/placeholder.cue
-ca81baa8b7e87efc87ee9b0c8e1bbf07  data/placeholder.mov
-ca81baa8b7e87efc87ee9b0c8e1bbf07  data/placeholder.wav
-ca81baa8b7e87efc87ee9b0c8e1bbf07  data/placeholder2.mov
-ca81baa8b7e87efc87ee9b0c8e1bbf07  data/placeholder2.wav
-5d53808e0420ef962238a4deb168c32d  data/av-aip-2/av-placeholder1.txt
-5d53808e0420ef962238a4deb168c32d  data/av-aip-2/av-placeholder2.txt
-5d53808e0420ef962238a4deb168c32d  data/av-aip-2/av-placeholder3.txt

@@ -7,6 +7,7 @@ import pandas as pd
 import shutil
 import unittest
 from aip_functions import AIP, log, validate_preservation_xml
+from test_script import make_aip_log_list
 
 
 class TestValidatePreservationXML(unittest.TestCase):
@@ -70,7 +71,7 @@ class TestValidatePreservationXML(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.path.join(os.getcwd(), 'validate_preservation_xml')
         aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_003', 'title', 1, True)
-        aip.log = {'Started': '2025-08-13 2:35PM', 'AIP': 'test_c01_003', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-08-13 02:35:00.000000', 'AIP': 'test_c01_003', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'n/a', 'PresValid': 'n/a', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
                    'Complete': 'n/a'}
@@ -86,22 +87,19 @@ class TestValidatePreservationXML(unittest.TestCase):
         # Test for the contents of the AIP log.
         # Must change the "/" in the xmllint output to "\" for it to match aips_dir.
         # Output is formatted differently depending on the OS the test is run on.
-        log_df = pd.read_csv(os.path.join(aips_dir, 'aip_log.csv'))
-        log_df = log_df.fillna('BLANK')
-        log_df['Preservation.xml Made'] = log_df['Preservation.xml Made'].str.replace('/', '\\')
-        result = [log_df.columns.tolist()] + log_df.values.tolist()
+        result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
         aips_dir_backward = aips_dir.replace('/', '\\')
         expected = [[['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-13 2:35PM', 'test_c01_003', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
+                    ['2025-08-13', 'test_c01_003', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
                      f'Preservation.xml was not created. xmllint error: warning: failed to load external entity '
                      f'"file:\\{aips_dir}\\test_c01_003\\metadata\\test_c01_003_preservation.xml"\r\n',
                      'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']],
                     [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                       'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                       'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                     ['2025-08-13 2:35PM', 'test_c01_003', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
+                     ['2025-08-13', 'test_c01_003', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
                       f'Preservation.xml was not created. xmllint error: warning: failed to load external entity '
                       f'"{aips_dir_backward}\\test_c01_003\\metadata\\test_c01_003_preservation.xml"\n',
                       'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]]
@@ -114,7 +112,7 @@ class TestValidatePreservationXML(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.path.join(os.getcwd(), 'validate_preservation_xml')
         aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_004', 'title', 1, True)
-        aip.log = {'Started': '2025-08-13 3:55PM', 'AIP': 'test_c01_004', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-08-13 03:55:00.000000', 'AIP': 'test_c01_004', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'n/a', 'PresValid': 'n/a', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
                    'Complete': 'n/a'}
@@ -128,14 +126,11 @@ class TestValidatePreservationXML(unittest.TestCase):
         self.assertEqual(result, True, "Problem with error: missing, move to error folder")
 
         # Test for the contents of the AIP log.
-        log_df = pd.read_csv(os.path.join(aips_dir, 'aip_log.csv'))
-        log_df = log_df.fillna('BLANK')
-        log_df['Preservation.xml Made'] = log_df['Preservation.xml Made'].str.replace('/', '\\')
-        result = [log_df.columns.tolist()] + log_df.values.tolist()
+        result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-13 3:55PM', 'test_c01_004', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
+                    ['2025-08-13', 'test_c01_004', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
                      'Successfully created preservation.xml', 'Preservation.xml is not valid (see log in error folder)',
                      'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
         self.assertEqual(expected, result, "Problem with error: missing, aip log")

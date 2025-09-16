@@ -434,7 +434,7 @@ def make_bag(aip):
     """
 
     # Deletes temporary files. These can be re-generated during the AIP creation process.
-    delete_temp(aip)
+    delete_temp(aip, logging=False)
 
     # Bags the AIP. To save time, BMAC AV only generates md5 checksums.
     aip_path = os.path.join(aip.directory, aip.id)
@@ -668,7 +668,7 @@ def package(aip, staging):
     """
 
     # Deletes temporary files. These can be re-generated during the AIP creation process.
-    delete_temp(aip)
+    delete_temp(aip, logging=False)
 
     # Gets the operating system, since the tar and zip commands are different for Windows and Mac/Linux.
     operating_system = platform.system()

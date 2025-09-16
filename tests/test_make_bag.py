@@ -1,73 +1,88 @@
 """Testing for the function make_bag, which takes an AIP class instance as input and makes it into a bag,
 with md5 and sha256 checksums. The bag folder is renamed with "_bag" suffix."""
 
+from datetime import datetime
 import os
 import shutil
 import unittest
 from aip_functions import AIP, make_bag
+from test_script import make_directory_list
 
 
 class TestMakeBag(unittest.TestCase):
 
-    def setUp(self):
-        """
-        Makes an AIP instance and corresponding folder to use for testing.
-        """
-        # Makes the AIP instance and a folder named with the AIP ID.
-        self.aip = AIP(os.getcwd(), "test", "coll-1", "aip-folder", "aip-id", "title", 1, True)
-        os.mkdir(self.aip.id)
-
-        # Makes the AIP metadata folder and metadata files.
-        # To save time, since they are not used for the test, the metadata files are text files and not real.
-        os.mkdir(os.path.join(self.aip.id, "metadata"))
-        with open(os.path.join(self.aip.id, "metadata", "file_fits.xml"), "w") as file:
-            file.write("Text")
-        with open(os.path.join(self.aip.id, "metadata", f"{self.aip.id}_preservation.xml"), "w") as file:
-            file.write("Text")
-
-        # Makes the AIP object folder and a test file.
-        os.mkdir(os.path.join(self.aip.id, "objects"))
-        with open(os.path.join(self.aip.id, "objects", "file.txt"), "w") as file:
-            file.write("Test")
-
     def tearDown(self):
-        """
-        If they are present, deletes the test AIP (if correctly renamed to add "_bag" or if it isn't),
-        the AIP log and the errors folder.
-        """
-        if os.path.exists(f"{self.aip.id}_bag"):
-            shutil.rmtree(f"{self.aip.id}_bag")
-        elif os.path.exists(self.aip.id):
-            shutil.rmtree(self.aip.id)
+        """If they are present, deletes the test AIPs if correctly renamed to add "_bag" or not"""
+        aips_dir = os.path.join(os.getcwd(), 'make_bag')
+        aips = ['rabbitbox_0001', 'rbrl_025_er_000001', 'rbrl025_0001_media']
+        for aip in aips:
+            if os.path.exists(os.path.join(aips_dir, aip)):
+                shutil.rmtree(os.path.join(aips_dir, aip))
+            elif os.path.exists(os.path.join(aips_dir, f'{aip}_bag')):
+                shutil.rmtree(os.path.join(aips_dir, f'{aip}_bag'))
 
-        log_path = os.path.join("..", "aip_log.csv")
-        if os.path.exists(log_path):
-            os.remove(log_path)
+    def test_av_bmac(self):
+        """Test for making a bag out of an AIP folder that is AV from BMAC"""
+        # Makes the test input and runs the function.
+        # A copy of the AIP is made since this test should move it to an error folder.
+        aips_dir = os.path.join(os.getcwd(), 'make_bag')
+        aip = AIP(aips_dir, 'bmac', 'mp4', 'rabbitbox', 'folder', 'av', 'rabbitbox_0001', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, f'{aip.id}_copy'), os.path.join(aips_dir, aip.id))
+        make_bag(aip)
 
-        errors_path = os.path.join("..", "errors")
-        if os.path.exists(errors_path):
-            shutil.rmtree(errors_path)
+        # Verifies the AIP is now a bag, based on the folder name and contents.
+        result = make_directory_list(os.path.join(aips_dir, f'{aip.id}_bag'))
+        date = datetime.today().strftime('%Y-%#m-%#d')
+        expected = [os.path.join(aips_dir, f'{aip.id}_bag', 'bag-info.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'bagit.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'data'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'data', 'Placeholder for AIP content.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'data', f'{aip.id}_files-deleted_{date}_del.csv'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-md5.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt')]
+        self.assertEqual(expected, result, "Problem with av_bmac")
 
-    def test_make_bag(self):
-        """
-        Test for making a bag out of an AIP folder.
-        Result for testing is the contents of the bag folder (the bag metadata files).
-        """
-        make_bag(self.aip)
+    def test_av_russell(self):
+        """Test for making a bag out of an AIP folder that is AV from Russell"""
+        # Makes the test input and runs the function.
+        # A copy of the AIP is made since this test should move it to an error folder.
+        aips_dir = os.path.join(os.getcwd(), 'make_bag')
+        aip = AIP(aips_dir, 'russell', 'mp4', 'rbrl025', 'folder', 'av', 'rbrl025_0001_media', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, f'{aip.id}_copy'), os.path.join(aips_dir, aip.id))
+        make_bag(aip)
 
-        # If the renamed bag folder is present, a directory print of the folder is the test result.
-        # Otherwise, default error language is the result.
-        if os.path.exists(f"{self.aip.id}_bag"):
-            result = []
-            for item in os.listdir(f"{self.aip.id}_bag"):
-                result.append(item)
-        else:
-            result = "AIP's bag folder not found"
+        # Verifies the AIP is now a bag, based on the folder name and contents.
+        result = make_directory_list(os.path.join(aips_dir, f'{aip.id}_bag'))
+        expected = [os.path.join(aips_dir, f'{aip.id}_bag', 'bag-info.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'bagit.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'data'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'data', 'Placeholder for AIP content.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-md5.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-sha256.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-sha256.txt')]
+        self.assertEqual(expected, result, "Problem with av_russell")
 
-        expected = ["bag-info.txt", "bagit.txt", "data", "manifest-md5.txt", "manifest-sha256.txt",
-                    "tagmanifest-md5.txt", "tagmanifest-sha256.txt"]
+    def test_general(self):
+        """Test for making a bag out of an AIP folder that is the general type"""
+        # Makes the test input and runs the function.
+        # A copy of the AIP is made since this test should move it to an error folder.
+        aips_dir = os.path.join(os.getcwd(), 'make_bag')
+        aip = AIP(aips_dir, 'russell', None, 'rbrl_025', 'folder', 'general', 'rbrl_025_er_000001', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, f'{aip.id}_copy'), os.path.join(aips_dir, aip.id))
+        make_bag(aip)
 
-        self.assertEqual(result, expected, "Problem with make bag")
+        # Verifies the AIP is now a bag, based on the folder name and contents.
+        result = make_directory_list(os.path.join(aips_dir, f'{aip.id}_bag'))
+        expected = [os.path.join(aips_dir, f'{aip.id}_bag', 'bag-info.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'bagit.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'data'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'data', 'Placeholder for AIP content.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-md5.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-sha256.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt'),
+                    os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-sha256.txt')]
+        self.assertEqual(expected, result, "Problem with general")
 
 
 if __name__ == "__main__":

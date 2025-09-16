@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<combined-fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd"
+         version="1.5.0"
+         timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text">
+            <tool toolname="Droid" toolversion="6.4"/>
+            <tool toolname="Jhove" toolversion="1.20.1"/>
+            <tool toolname="file utility" toolversion="5.03"/>
+            <externalIdentifier type="puid">x-fmt/111</externalIdentifier>
+         </identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/rbrl-025-er-000003/objects/Text.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information"
+                      toolversion="1.0"
+                      status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+      </fileinfo>
+      <filestatus>
+         <valid toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</valid>
+         <well-formed toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</well-formed>
+      </filestatus>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd"
+         version="1.5.0"
+         timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text">
+            <tool toolname="Droid" toolversion="6.4"/>
+            <tool toolname="Jhove" toolversion="1.20.1"/>
+            <tool toolname="file utility" toolversion="5.03"/>
+            <externalIdentifier type="puid">x-fmt/111</externalIdentifier>
+         </identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/rbrl-025-er-000003/objects/Text2.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">22</size>
+         <md5checksum toolname="OIS File Information"
+                      toolversion="1.0"
+                      status="SINGLE_RESULT">fa071fcc6ed73faaff86cf30d8a1e9cb</md5checksum>
+      </fileinfo>
+      <filestatus>
+         <valid toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</valid>
+         <well-formed toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</well-formed>
+      </filestatus>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd"
+         version="1.5.0"
+         timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text">
+            <tool toolname="Droid" toolversion="6.4"/>
+            <tool toolname="Jhove" toolversion="1.20.1"/>
+            <tool toolname="file utility" toolversion="5.03"/>
+            <externalIdentifier type="puid">x-fmt/111</externalIdentifier>
+         </identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub//tests/rbrl-025-er-000003/objects/Text3.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">34</size>
+         <md5checksum toolname="OIS File Information"
+                      toolversion="1.0"
+                      status="SINGLE_RESULT">99a4e2ee649b28f9336077e0d332bcc3</md5checksum>
+      </fileinfo>
+      <filestatus>
+         <valid toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</valid>
+         <well-formed toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</well-formed>
+      </filestatus>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd"
+         version="1.5.0"
+         timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text">
+            <tool toolname="Droid" toolversion="6.4"/>
+            <tool toolname="Jhove" toolversion="1.20.1"/>
+            <tool toolname="file utility" toolversion="5.03"/>
+            <externalIdentifier type="puid">x-fmt/111</externalIdentifier>
+         </identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/rbrl-025-er-000003/objects/Text4.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">34</size>
+         <md5checksum toolname="OIS File Information"
+                      toolversion="1.0"
+                      status="SINGLE_RESULT">99a4e2ee649b28f9336077e0d332bcc3</md5checksum>
+      </fileinfo>
+      <filestatus>
+         <valid toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</valid>
+         <well-formed toolname="Jhove" toolversion="1.20.1" status="SINGLE_RESULT">true</well-formed>
+      </filestatus>
+   </fits>
+</combined-fits>

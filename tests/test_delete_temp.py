@@ -59,6 +59,11 @@ class TestDeleteTemp(unittest.TestCase):
         expected = 'No files deleted'
         self.assertEqual(expected, result, "Problem with test for no temporary files, AIP log")
 
+        # Test the deletion log was not made, since no files were deleted.
+        today = date.today().strftime('%Y-%#m-%#d')
+        result = os.path.exists(os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv'))
+        self.assertEqual(False, result, "Problem with test for no temporary files, deletion log")
+
     def test_ds_store(self):
         """Test for an AIP with .DS_Store files to delete"""
         # Makes the input needed for the function and runs the function being tested.

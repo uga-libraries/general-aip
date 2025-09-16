@@ -27,8 +27,9 @@ def make_deletion_log_list(log_path):
 class TestDeleteTemp(unittest.TestCase):
 
     def setUp(self):
-        """Date this repo was first cloned to local machine, which is the date info in the deletion log."""
-        self.modified = '2025-9-9'
+        """Date this repo was first cloned to local machine, which is the date info in the deletion log.
+        This does need to be reset after syncing with GitHub."""
+        self.modified = '2025-9-15'
 
     def tearDown(self):
         """Deletes the AIP folders created by each test"""
@@ -43,7 +44,7 @@ class TestDeleteTemp(unittest.TestCase):
         # Makes the input needed for the function and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, logging=True)
 
         # Test for the AIP folder.
         aip_path = os.path.join(aips_dir, aip.id)
@@ -64,7 +65,7 @@ class TestDeleteTemp(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_ds-store_copy'), os.path.join(aips_dir, 'aip-id_ds-store'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_ds-store', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, logging=True)
 
         # Variables used throughout the test: the path to the deletion log and today's date formatted YYYY-MM-DD.
         aip_path = os.path.join(aips_dir, aip.id)
@@ -81,7 +82,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted'
+        expected = 'File(s) deleted (see log)'
         self.assertEqual(expected, result, "Problem with test for .DS_Store, AIP log")
 
         # Test for the deletion log.
@@ -97,7 +98,7 @@ class TestDeleteTemp(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_ds-store-2_copy'), os.path.join(aips_dir, 'aip-id_ds-store-2'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_ds-store-2', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, logging=True)
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
@@ -114,7 +115,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted'
+        expected = 'File(s) deleted (see log)'
         self.assertEqual(expected, result, "Problem with test for ._.DS_Store, AIP log")
 
         # Test for the deletion log.
@@ -131,7 +132,7 @@ class TestDeleteTemp(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_thumbs_copy'), os.path.join(aips_dir, 'aip-id_thumbs'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_thumbs', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, logging=True)
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
@@ -148,7 +149,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted'
+        expected = 'File(s) deleted (see log)'
         self.assertEqual(expected, result, "Problem with test for Thumbs.db, AIP log")
 
         # Test for the deletion log.
@@ -170,7 +171,7 @@ class TestDeleteTemp(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_dot_copy'), os.path.join(aips_dir, 'aip-id_dot'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_dot', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, logging=True)
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
@@ -187,7 +188,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted'
+        expected = 'File(s) deleted (see log)'
         self.assertEqual(expected, result, "Problem with test for dot prefix, AIP log")
 
         # Test for the deletion log.
@@ -203,7 +204,7 @@ class TestDeleteTemp(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_tmp_copy'), os.path.join(aips_dir, 'aip-id_tmp'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_tmp', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, logging=True)
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
@@ -220,7 +221,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted'
+        expected = 'File(s) deleted (see log)'
         self.assertEqual(expected, result, "Problem with test for .tmp extension, AIP log")
 
         # Test for the deletion log.

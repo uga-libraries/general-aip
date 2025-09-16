@@ -33,11 +33,41 @@ class TestDeleteTemp(unittest.TestCase):
 
     def tearDown(self):
         """Deletes the AIP folders created by each test"""
-        aip_folders = ['aip-id_dot', 'aip-id_ds-store', 'aip-id_ds-store-2', 'aip-id_tmp', 'aip-id_thumbs']
-        for aip_folder in aip_folders:
-            aip_path = os.path.join(os.getcwd(), 'delete_temp', aip_folder)
+        variations = ['dot', 'ds-store', 'ds-store-2', 'no-log', 'tmp', 'thumbs']
+        for variation in variations:
+            aip_path = os.path.join(os.getcwd(), 'delete_temp', f'aip-id_{variation}')
             if os.path.exists(aip_path):
                 shutil.rmtree(aip_path)
+
+    def test_no_log(self):
+        """Test for an AIP with temporary files to delete but deletion should not be logged"""
+        # Makes the input needed for the function and runs the function being tested.
+        aips_dir = os.path.join(os.getcwd(), 'delete_temp')
+        shutil.copytree(os.path.join(aips_dir, 'aip-id_no-log_copy'), os.path.join(aips_dir, 'aip-id_no-log'))
+        aip = AIP(aips_dir, 'dept', 'None', 'coll-1', 'folder', 'general', 'aip-id_no-log', 'title', 1, True)
+        aip.log['Deletions'] = 'Deletions note (for testing)'
+        delete_temp(aip, logging=False)
+
+        # Variables used throughout the test: the path to the deletion log and today's date formatted YYYY-MM-DD.
+        aip_path = os.path.join(aips_dir, aip.id)
+        today = date.today().strftime('%Y-%#m-%#d')
+        deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
+
+        # Test for the AIP folder.
+        result = make_directory_list(os.path.join(aip_path))
+        expected = [os.path.join(aip_path, 'Test Dir'),
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
+                    os.path.join(aip_path, 'Text.txt')]
+        self.assertEqual(expected, result, "Problem with test for no log, AIP folder")
+
+        # Test for the AIP log.
+        result = aip.log['Deletions']
+        expected = 'Deletions note (for testing)'
+        self.assertEqual(expected, result, "Problem with test for no log, AIP log")
+
+        # Test the deletion log was not made.
+        result = os.path.exists(os.path.join(aip_path, deletion_log))
+        self.assertEqual(False, result, "Problem with test for no log, deletion log")
 
     def test_no_temp(self):
         """Test for an AIP with no temporary files to delete"""

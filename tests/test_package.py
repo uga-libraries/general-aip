@@ -22,7 +22,8 @@ class TestPackage(unittest.TestCase):
 
         aips_ready_path = os.path.join(os.getcwd(), 'staging', 'aips-ready-to-ingest')
         for pkg in ['test-aip-1_bag.663.tar', 'test-aip-1_bag.663.tar.bz2',
-                    'test-aip-1_bag.673.tar', 'test-aip-1_bag.673.tar.bz2']:
+                    'test-aip-1_bag.673.tar', 'test-aip-1_bag.673.tar.bz2',
+                    'test-aip-2_bag.663.tar', 'test-aip-2_bag.673.tar']:
             if os.path.exists(os.path.join(aips_ready_path, pkg)):
                 os.remove(os.path.join(aips_ready_path, pkg))
 
@@ -95,6 +96,59 @@ class TestPackage(unittest.TestCase):
         result = aip.log['Package']
         expected = 'Successfully made package'
         self.assertEqual(expected, result, "Problem with tar, AIP log")
+
+    def test_temp(self):
+        """Test for an AIP that had temp files created after bagging that should be deleted"""
+        # Makes the test input and runs the function.
+        aips_dir = os.path.join(os.getcwd(), 'package')
+        aip_staging = os.path.join(os.getcwd(), 'staging')
+        aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-aip-2', 'title', 1, False)
+        aip.log['Deletions'] = 'Deletions note (for testing)'
+        package(aip, aip_staging)
+
+        # Test that the tar file is in the aips-to-ingest folder.
+        result = (os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-2_bag.663.tar')) or
+                  os.path.exists(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-2_bag.673.tar')))
+        self.assertEqual(result, True, "Problem with temp, aips-ready-to-ingest")
+
+        # Test that the tar file contains the expected file paths.
+        # Catches errors in how the tar is constructed, like if it contains unnecessary folders.
+        try:
+            with tarfile.open(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-2_bag.663.tar')) as tar:
+                result = tar.getnames()
+        except FileNotFoundError:
+            with tarfile.open(os.path.join(aip_staging, 'aips-ready-to-ingest', 'test-aip-2_bag.673.tar')) as tar:
+                result = tar.getnames()
+        result.sort()
+        # Windows includes bag name in path and Mac has "." instead.
+        # Mac also has a copy of every file and folder with "._" prefix, which seems to be from the tar command.
+        # The bag is still valid and does now show any of these in the manifest.
+        expected = [['.', './._bag-info.txt', './._bagit.txt', './._data', './._manifest-md5.txt',
+                     './._tagmanifest-md5.txt', './bag-info.txt', './bagit.txt', './data', './data/._metadata',
+                     './data/._objects', './data/metadata', './data/metadata/._Placeholder for metadata.txt',
+                     './data/metadata/Placeholder for metadata.txt', './data/objects',
+                     './data/objects/._Placeholder for content.txt', './data/objects/Placeholder for content.txt',
+                     './manifest-md5.txt', './tagmanifest-md5.txt', '._.'],
+                    ['test-aip-2_bag', 'test-aip-2_bag/bag-info.txt', 'test-aip-2_bag/bagit.txt', 'test-aip-2_bag/data',
+                     'test-aip-2_bag/data/metadata', 'test-aip-2_bag/data/metadata/Placeholder for metadata.txt',
+                     'test-aip-2_bag/data/objects', 'test-aip-2_bag/data/objects/Placeholder for content.txt',
+                     'test-aip-2_bag/manifest-md5.txt', 'test-aip-2_bag/tagmanifest-md5.txt']]
+        self.assertIn(result, expected, "Problem with temp, tar contents")
+
+        # Test that the AIP log size is updated.
+        result = aip.size
+        expected = [663, 673]
+        self.assertIn(result, expected, "Problem with temp, AIP size")
+
+        # Test that the AIP log deletion was not updated.
+        result = aip.log['Deletions']
+        expected = 'Deletions note (for testing)'
+        self.assertEqual(expected, result, "Problem with temp, AIP log - Deletions")
+
+        # Test that the AIP log package is updated.
+        result = aip.log['Package']
+        expected = 'Successfully made package'
+        self.assertEqual(expected, result, "Problem with temp, AIP log - Package")
 
     def test_error(self):
         """Test for when the bag folder to be packaged is missing"""

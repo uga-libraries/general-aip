@@ -6,6 +6,7 @@ so the expected results and the tearDown look for either possible size.
 """
 
 import os
+import shutil
 import tarfile
 import unittest
 from aip_functions import AIP, log, package
@@ -15,10 +16,14 @@ from test_script import make_aip_log_list
 class TestPackage(unittest.TestCase):
 
     def tearDown(self):
-        """Deletes the AIP log and packaged AIP if created"""
+        """Deletes the AIP log, copy of the test aip for deletions, and packaged AIP if created"""
         log_path = os.path.join(os.getcwd(), 'package', 'aip_log.csv')
         if os.path.exists(log_path):
             os.remove(log_path)
+
+        aip_path = os.path.join(os.getcwd(), 'package', 'test-aip-2_bag')
+        if os.path.exists(aip_path):
+            shutil.rmtree(aip_path)
 
         aips_ready_path = os.path.join(os.getcwd(), 'staging', 'aips-ready-to-ingest')
         for pkg in ['test-aip-1_bag.663.tar', 'test-aip-1_bag.663.tar.bz2',
@@ -104,6 +109,7 @@ class TestPackage(unittest.TestCase):
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-aip-2', 'title', 1, False)
         aip.log['Deletions'] = 'Deletions note (for testing)'
+        shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
         package(aip, aip_staging)
 
         # Test that the tar file is in the aips-to-ingest folder.

@@ -310,7 +310,7 @@ def combine_metadata(aip, staging):
     combo_tree.write(fits_path, xml_declaration=True, encoding="UTF-8")
 
 
-def delete_temp(aip, logging):
+def delete_temp(aip, aip_path, logging):
     """Delete temporary files of various types from the AIP folder and optionally make a log of the deleted files
 
     Temporary files are deleted because they cause errors later in the workflow, especially with bag validation.
@@ -321,6 +321,7 @@ def delete_temp(aip, logging):
 
     Parameters:
          aip : instance of the AIP class, used for directory, id and log
+         aip_path : path to the aip folder, either named with the aip_id or aip_id_bag
          logging : True or False, indicating if a deletion log should be made
 
     Returns: none
@@ -333,7 +334,7 @@ def delete_temp(aip, logging):
     # Deletes DS_Store, Thumbs.db, starts with a dot, or ends with .tmp.
     # Gets information for the deletion log if a log will be made and deletes the file.
     delete_list = [".DS_Store", "._.DS_Store", "Thumbs.db"]
-    for root, directories, files in os.walk(os.path.join(aip.directory, aip.id)):
+    for root, directories, files in os.walk(aip_path):
         for item in files:
             if item in delete_list or item.endswith(".tmp") or item.startswith("."):
                 if logging:
@@ -434,10 +435,10 @@ def make_bag(aip):
     """
 
     # Deletes temporary files. These can be re-generated during the AIP creation process.
-    delete_temp(aip, logging=False)
+    aip_path = os.path.join(aip.directory, aip.id)
+    delete_temp(aip, aip_path, logging=False)
 
     # Bags the AIP. To save time, BMAC AV only generates md5 checksums.
-    aip_path = os.path.join(aip.directory, aip.id)
     if aip.type == "av" and aip.department == "bmac":
         bagit.make_bag(aip_path, checksums=["md5"])
     else:
@@ -667,15 +668,15 @@ def package(aip, staging):
     Returns: none
     """
 
-    # Deletes temporary files. These can be re-generated during the AIP creation process.
-    delete_temp(aip, logging=False)
-
     # Gets the operating system, since the tar and zip commands are different for Windows and Mac/Linux.
     operating_system = platform.system()
 
     # Makes variables for the AIP folder name and AIP full path.
     aip_bag = f"{aip.id}_bag"
     bag_path = os.path.join(aip.directory, aip_bag)
+
+    # Deletes temporary files. These can be re-generated during the AIP creation process.
+    delete_temp(aip, bag_path, logging=False)
 
     # Gets the total size of the bag:
     # sum of the bag payload (data folder) from bag-info.txt and the size of the bag metadata files.

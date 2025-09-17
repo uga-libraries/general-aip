@@ -89,11 +89,11 @@ for aip_row in read_metadata:
     print(f'\n>>>Processing {aip.id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
 
     # Renames the folder to the AIP ID.
-    os.replace(os.path.join(aip.directory, aip.folder_name),
-               os.path.join(aip.directory, aip.id))
+    aip_path = os.path.join(aip.directory, aip.id)
+    os.replace(os.path.join(aip.directory, aip.folder_name), aip_path)
 
     # Deletes any temporary files and makes a log of each deleted file.
-    a.delete_temp(aip, logging=True)
+    a.delete_temp(aip, aip_path, logging=True)
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure (objects and metadata).
     if aip.id in os.listdir(AIPS_DIRECTORY):

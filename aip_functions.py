@@ -310,14 +310,19 @@ def combine_metadata(aip, staging):
     combo_tree.write(fits_path, xml_declaration=True, encoding="UTF-8")
 
 
-def delete_temp(aip):
-    """Delete temporary files of various types from the AIP folder and make a log of deleted files
+def delete_temp(aip, aip_path, logging):
+    """Delete temporary files of various types from the AIP folder and optionally make a log of the deleted files
 
     Temporary files are deleted because they cause errors later in the workflow, especially with bag validation.
     Types of files deleted: DS_Store, Thumbs.db, ends with .tmp, and starts with '.'
 
+    A log is made the first time temporary files are deleted, since they likely came with the accession.
+    Later deletions are for temporary files made by the AIP creation process in a Mac and do not need a log.
+
     Parameters:
          aip : instance of the AIP class, used for directory, id and log
+         aip_path : path to the aip folder, either named with the aip_id or aip_id_bag
+         logging : True or False, indicating if a deletion log should be made
 
     Returns: none
     """
@@ -327,30 +332,32 @@ def delete_temp(aip):
 
     # Checks all files at any level in the AIP folder against the deletion criteria.
     # Deletes DS_Store, Thumbs.db, starts with a dot, or ends with .tmp.
-    # Gets information for the deletion log and then deletes the file.
+    # Gets information for the deletion log if a log will be made and deletes the file.
     delete_list = [".DS_Store", "._.DS_Store", "Thumbs.db"]
-    for root, directories, files in os.walk(os.path.join(aip.directory, aip.id)):
+    for root, directories, files in os.walk(aip_path):
         for item in files:
             if item in delete_list or item.endswith(".tmp") or item.startswith("."):
-                path = os.path.join(root, item)
-                date = time.gmtime(os.path.getmtime(path))
-                date_reformatted = f"{date.tm_year}-{date.tm_mon}-{date.tm_mday} {date.tm_hour}:{date.tm_hour}:{date.tm_min}"
-                deleted_files.append([path, item, os.path.getsize(path), date_reformatted])
+                if logging:
+                    path = os.path.join(root, item)
+                    date = time.gmtime(os.path.getmtime(path))
+                    date_reformatted = f"{date.tm_year}-{date.tm_mon}-{date.tm_mday} {date.tm_hour}:{date.tm_hour}:{date.tm_min}"
+                    deleted_files.append([path, item, os.path.getsize(path), date_reformatted])
                 os.remove(os.path.join(root, item))
 
-    # Creates the log in the AIP folder if any files were deleted.
-    # The log contains the path, filename, size in bytes and date/time last modified of every deleted file.
-    # Also adds event information for deletion to the script log.
-    if len(deleted_files) > 0:
-        filename = f"{aip.id}_files-deleted_{datetime.today().strftime('%Y-%#m-%#d')}_del.csv"
-        with open(os.path.join(aip.directory, aip.id, filename), "w", newline="") as deleted_log:
-            deleted_log_writer = csv.writer(deleted_log)
-            deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
-            for file_data in deleted_files:
-                deleted_log_writer.writerow(file_data)
-        aip.log["Deletions"] = "File(s) deleted"
-    else:
-        aip.log["Deletions"] = "No files deleted"
+    # If there is logging, creates the deletion log and updates the AIP log.
+    # The deletion log contains the path, filename, size in bytes and date/time last modified of every deleted file.
+    # If there is no logging, the function is running to delete temp files generated during AIP creation.
+    if logging:
+        if len(deleted_files) > 0:
+            filename = f"{aip.id}_files-deleted_{datetime.today().strftime('%Y-%m-%d')}_del.csv"
+            with open(os.path.join(aip.directory, aip.id, filename), "w", newline="") as deleted_log:
+                deleted_log_writer = csv.writer(deleted_log)
+                deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
+                for file_data in deleted_files:
+                    deleted_log_writer.writerow(file_data)
+            aip.log["Deletions"] = "File(s) deleted (see log)"
+        else:
+            aip.log["Deletions"] = "No files deleted"
 
 
 def extract_metadata(aip):
@@ -428,10 +435,10 @@ def make_bag(aip):
     """
 
     # Deletes temporary files. These can be re-generated during the AIP creation process.
-    delete_temp(aip)
+    aip_path = os.path.join(aip.directory, aip.id)
+    delete_temp(aip, aip_path, logging=False)
 
     # Bags the AIP. To save time, BMAC AV only generates md5 checksums.
-    aip_path = os.path.join(aip.directory, aip.id)
     if aip.type == "av" and aip.department == "bmac":
         bagit.make_bag(aip_path, checksums=["md5"])
     else:
@@ -661,15 +668,15 @@ def package(aip, staging):
     Returns: none
     """
 
-    # Deletes temporary files. These can be re-generated during the AIP creation process.
-    delete_temp(aip)
-
     # Gets the operating system, since the tar and zip commands are different for Windows and Mac/Linux.
     operating_system = platform.system()
 
     # Makes variables for the AIP folder name and AIP full path.
     aip_bag = f"{aip.id}_bag"
     bag_path = os.path.join(aip.directory, aip_bag)
+
+    # Deletes temporary files. These can be re-generated during the AIP creation process.
+    delete_temp(aip, bag_path, logging=False)
 
     # Gets the total size of the bag:
     # sum of the bag payload (data folder) from bag-info.txt and the size of the bag metadata files.

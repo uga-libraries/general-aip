@@ -7,43 +7,63 @@ one that tests that the files deleted log is made correctly."""
 
 from datetime import date
 import os
-import pandas as pd
 import shutil
 import unittest
 from aip_functions import AIP, delete_temp
-from test_script import make_directory_list
-
-
-def make_deletion_log_list(log_path):
-    """Reads the deletion log and returns a list of lists, where each list is a row in the log
-    The time in the Date Last Modified is removed, leaving just the date, so it is predictable for comparison."""
-    df = pd.read_csv(log_path)
-    df['Date Last Modified'] = df['Date Last Modified'].str.split(' ').str[0]
-    df.fillna('BLANK')
-    log_list = [df.columns.to_list()] + df.values.tolist()
-    return log_list
+from test_script import make_deletion_log_list, make_directory_list
 
 
 class TestDeleteTemp(unittest.TestCase):
 
     def setUp(self):
-        """Date this repo was first cloned to local machine, which is the date info in the deletion log."""
-        self.modified = '2025-9-9'
+        """Date this repo was first cloned to local machine, which is the date info in the deletion log.
+        This does need to be reset after syncing with GitHub."""
+        self.modified = '2025-9-15'
 
     def tearDown(self):
         """Deletes the AIP folders created by each test"""
-        aip_folders = ['aip-id_dot', 'aip-id_ds-store', 'aip-id_ds-store-2', 'aip-id_tmp', 'aip-id_thumbs']
-        for aip_folder in aip_folders:
-            aip_path = os.path.join(os.getcwd(), 'delete_temp', aip_folder)
+        variations = ['dot', 'ds-store', 'ds-store-2', 'no-log', 'tmp', 'thumbs']
+        for variation in variations:
+            aip_path = os.path.join(os.getcwd(), 'delete_temp', f'aip-id_{variation}')
             if os.path.exists(aip_path):
                 shutil.rmtree(aip_path)
+
+    def test_no_log(self):
+        """Test for an AIP with temporary files to delete but deletion should not be logged"""
+        # Makes the input needed for the function and runs the function being tested.
+        aips_dir = os.path.join(os.getcwd(), 'delete_temp')
+        shutil.copytree(os.path.join(aips_dir, 'aip-id_no-log_copy'), os.path.join(aips_dir, 'aip-id_no-log'))
+        aip = AIP(aips_dir, 'dept', 'None', 'coll-1', 'folder', 'general', 'aip-id_no-log', 'title', 1, True)
+        aip.log['Deletions'] = 'Deletions note (for testing)'
+        delete_temp(aip, os.path.join(aips_dir, aip.id), logging=False)
+
+        # Variables used throughout the test: the path to the deletion log and today's date formatted YYYY-MM-DD.
+        aip_path = os.path.join(aips_dir, aip.id)
+        today = date.today().strftime('%Y-%m-%d')
+        deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
+
+        # Test for the AIP folder.
+        result = make_directory_list(os.path.join(aip_path))
+        expected = [os.path.join(aip_path, 'Test Dir'),
+                    os.path.join(aip_path, 'Test Dir', 'Test Dir Text.txt'),
+                    os.path.join(aip_path, 'Text.txt')]
+        self.assertEqual(expected, result, "Problem with test for no log, AIP folder")
+
+        # Test for the AIP log.
+        result = aip.log['Deletions']
+        expected = 'Deletions note (for testing)'
+        self.assertEqual(expected, result, "Problem with test for no log, AIP log")
+
+        # Test the deletion log was not made.
+        result = os.path.exists(os.path.join(aip_path, deletion_log))
+        self.assertEqual(False, result, "Problem with test for no log, deletion log")
 
     def test_no_temp(self):
         """Test for an AIP with no temporary files to delete"""
         # Makes the input needed for the function and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)
 
         # Test for the AIP folder.
         aip_path = os.path.join(aips_dir, aip.id)
@@ -58,17 +78,22 @@ class TestDeleteTemp(unittest.TestCase):
         expected = 'No files deleted'
         self.assertEqual(expected, result, "Problem with test for no temporary files, AIP log")
 
+        # Test the deletion log was not made, since no files were deleted.
+        today = date.today().strftime('%Y-%#m-%#d')
+        result = os.path.exists(os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv'))
+        self.assertEqual(False, result, "Problem with test for no temporary files, deletion log")
+
     def test_ds_store(self):
         """Test for an AIP with .DS_Store files to delete"""
         # Makes the input needed for the function and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_ds-store_copy'), os.path.join(aips_dir, 'aip-id_ds-store'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_ds-store', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)
 
         # Variables used throughout the test: the path to the deletion log and today's date formatted YYYY-MM-DD.
         aip_path = os.path.join(aips_dir, aip.id)
-        today = date.today().strftime('%Y-%#m-%#d')
+        today = date.today().strftime('%Y-%m-%d')
         deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
 
         # Test for the AIP folder.
@@ -81,7 +106,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted'
+        expected = 'File(s) deleted (see log)'
         self.assertEqual(expected, result, "Problem with test for .DS_Store, AIP log")
 
         # Test for the deletion log.
@@ -97,11 +122,11 @@ class TestDeleteTemp(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_ds-store-2_copy'), os.path.join(aips_dir, 'aip-id_ds-store-2'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_ds-store-2', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
-        today = date.today().strftime('%Y-%#m-%#d')
+        today = date.today().strftime('%Y-%m-%d')
         deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
 
         # Test for the AIP folder.
@@ -114,7 +139,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted'
+        expected = 'File(s) deleted (see log)'
         self.assertEqual(expected, result, "Problem with test for ._.DS_Store, AIP log")
 
         # Test for the deletion log.
@@ -131,11 +156,11 @@ class TestDeleteTemp(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_thumbs_copy'), os.path.join(aips_dir, 'aip-id_thumbs'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_thumbs', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
-        today = date.today().strftime('%Y-%#m-%#d')
+        today = date.today().strftime('%Y-%m-%d')
         deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
 
         # Test for the AIP folder.
@@ -148,7 +173,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted'
+        expected = 'File(s) deleted (see log)'
         self.assertEqual(expected, result, "Problem with test for Thumbs.db, AIP log")
 
         # Test for the deletion log.
@@ -170,11 +195,11 @@ class TestDeleteTemp(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_dot_copy'), os.path.join(aips_dir, 'aip-id_dot'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_dot', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
-        today = date.today().strftime('%Y-%#m-%#d')
+        today = date.today().strftime('%Y-%m-%d')
         deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
 
         # Test for the AIP folder.
@@ -187,7 +212,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted'
+        expected = 'File(s) deleted (see log)'
         self.assertEqual(expected, result, "Problem with test for dot prefix, AIP log")
 
         # Test for the deletion log.
@@ -203,11 +228,11 @@ class TestDeleteTemp(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_tmp_copy'), os.path.join(aips_dir, 'aip-id_tmp'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_tmp', 'title', 1, True)
-        delete_temp(aip)
+        delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
-        today = date.today().strftime('%Y-%#m-%#d')
+        today = date.today().strftime('%Y-%m-%d')
         deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
 
         # Test for the AIP folder.
@@ -220,7 +245,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted'
+        expected = 'File(s) deleted (see log)'
         self.assertEqual(expected, result, "Problem with test for .tmp extension, AIP log")
 
         # Test for the deletion log.

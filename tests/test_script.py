@@ -37,6 +37,16 @@ def make_aip_log_list(log_path):
     return log_list
 
 
+def make_deletion_log_list(log_path):
+    """Reads the deletion log and returns a list of lists, where each list is a row in the log
+    The time in the Date Last Modified is removed, leaving just the date, so it is predictable for comparison."""
+    df = pd.read_csv(log_path)
+    df['Date Last Modified'] = df['Date Last Modified'].str.split(' ').str[0]
+    df.fillna('BLANK')
+    log_list = [df.columns.to_list()] + df.values.tolist()
+    return log_list
+
+
 def make_directory_list(dir_path):
     """Make a list of the paths of every file and folder in a directory,
     with sorting and normalization for inconsistent data."""
@@ -96,6 +106,8 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for general, print statements")
 
         # Test for the contents of the AIP directory.
+        today = datetime.date.today().strftime('%Y-%m-%d')
+        today_delete = datetime.date.today().strftime('%Y-%#m-%#d')
         result = make_directory_list(aip_dir)
         bag_one = os.path.join(aip_dir, 'test-001-er-000001_bag')
         bag_two = os.path.join(aip_dir, 'test-001-er-000002_bag')
@@ -108,6 +120,7 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_one, 'data'),
                     os.path.join(bag_one, 'data', 'metadata'),
                     os.path.join(bag_one, 'data', 'metadata', 'Flower2.JPG_fits.xml'),
+                    os.path.join(bag_one, 'data', 'metadata', f'test-001-er-000001_files-deleted_{today_delete}_del.csv'),
                     os.path.join(bag_one, 'data', 'metadata', 'test-001-er-000001_preservation.xml'),
                     os.path.join(bag_one, 'data', 'objects'),
                     os.path.join(bag_one, 'data', 'objects', 'Flower2.JPG'),
@@ -136,6 +149,7 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_three, 'data'),
                     os.path.join(bag_three, 'data', 'metadata'),
                     os.path.join(bag_three, 'data', 'metadata', 'Test PDF.pdf_fits.xml'),
+                    os.path.join(bag_three, 'data', 'metadata', f'test-001-er-000003_files-deleted_{today_delete}_del.csv'),
                     os.path.join(bag_three, 'data', 'metadata', 'test-001-er-000003_preservation.xml'),
                     os.path.join(bag_three, 'data', 'metadata', 'Worksheet.csv_fits.xml'),
                     os.path.join(bag_three, 'data', 'objects'),
@@ -150,7 +164,6 @@ class TestFullScript(unittest.TestCase):
 
         # Test for the contents of the staging directory.
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        today = datetime.date.today().strftime('%Y-%m-%d')
         result = make_directory_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-already-on-ingest-server'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest'),
@@ -175,7 +188,7 @@ class TestFullScript(unittest.TestCase):
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
                      'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
                      'Processing Complete'],
-                    [today, 'test-001-er-000001', 'No files deleted', 'Successfully created objects folder',
+                    [today, 'test-001-er-000001', 'File(s) deleted (see log)', 'Successfully created objects folder',
                      'Successfully created metadata folder', 'No FITS tools errors',
                      'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
                      f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
@@ -185,12 +198,27 @@ class TestFullScript(unittest.TestCase):
                      'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
                      f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
                      'Successfully added AIP to manifest', 'Successfully completed processing'],
-                    [today, 'test-001-er-000003', 'No files deleted', 'Successfully created objects folder',
+                    [today, 'test-001-er-000003', 'File(s) deleted (see log)', 'Successfully created objects folder',
                      'Successfully created metadata folder', 'No FITS tools errors',
                      'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
                      f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
                      'Successfully added AIP to manifest', 'Successfully completed processing']]
         self.assertEqual(expected, result, "Problem with test for general, aip log")
+
+        # Test for the contents of the first AIP's deletion log.
+        log_path = os.path.join(bag_one, 'data', 'metadata', f'test-001-er-000001_files-deleted_{today_delete}_del.csv')
+        result = make_deletion_log_list(log_path)
+        expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
+                    [os.path.join(aip_dir, 'test-001-er-000001', 'Thumbs.db'), 'Thumbs.db', 25, '2025-9-15']]
+        self.assertEqual(expected, result, "Problem with test for general, first aip deletion log")
+
+        # Test for the contents of the third AIP's deletion log.
+        log_path = os.path.join(bag_three, 'data', 'metadata', f'test-001-er-000003_files-deleted_{today_delete}_del.csv')
+        result = make_deletion_log_list(log_path)
+        expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
+                    [os.path.join(aip_dir, 'test-001-er-000003', '.Test PDF.pdf'), '.Test PDF.pdf', 187972, '2025-9-15'],
+                    [os.path.join(aip_dir, 'test-001-er-000003', 'Spreadsheet', '.Worksheet.csv'), '.Worksheet.csv', 178, '2025-9-15']]
+        self.assertEqual(expected, result, "Problem with test for general, third aip deletion log")
 
     def test_web(self):
         """Test for the web mode (content downloaded from Archive-It)"""

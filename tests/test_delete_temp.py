@@ -7,21 +7,10 @@ one that tests that the files deleted log is made correctly."""
 
 from datetime import date
 import os
-import pandas as pd
 import shutil
 import unittest
 from aip_functions import AIP, delete_temp
-from test_script import make_directory_list
-
-
-def make_deletion_log_list(log_path):
-    """Reads the deletion log and returns a list of lists, where each list is a row in the log
-    The time in the Date Last Modified is removed, leaving just the date, so it is predictable for comparison."""
-    df = pd.read_csv(log_path)
-    df['Date Last Modified'] = df['Date Last Modified'].str.split(' ').str[0]
-    df.fillna('BLANK')
-    log_list = [df.columns.to_list()] + df.values.tolist()
-    return log_list
+from test_script import make_deletion_log_list, make_directory_list
 
 
 class TestDeleteTemp(unittest.TestCase):

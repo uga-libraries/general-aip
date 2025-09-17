@@ -59,7 +59,7 @@ def make_directory_list(dir_path):
             if root.endswith("aips-ready-to-ingest") and file.endswith(".tar.bz2"):
                 file = re.sub(r"_bag.\d+.", "_bag.1000.", file)
             # Skips the FITS tool error log because it is not consistently made and the placeholder files for GitHub.
-            if file.endswith("_fits-tool-errors_fitserr.txt") or file == 'Explanation.txt' or file == 'placeholder.txt':
+            if file.endswith("_fits-tool-errors_fitserr.txt") or file == 'Explanation.txt' or file.lower() == 'placeholder.txt':
                 continue
             directory_list.append(os.path.join(root, file))
     directory_list.sort(key=str.lower)

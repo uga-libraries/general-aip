@@ -39,7 +39,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Variables used throughout the test: the path to the deletion log and today's date formatted YYYY-MM-DD.
         aip_path = os.path.join(aips_dir, aip.id)
-        today = date.today().strftime('%Y-%#m-%#d')
+        today = date.today().strftime('%Y-%m-%d')
         deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
 
         # Test for the AIP folder.
@@ -93,7 +93,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Variables used throughout the test: the path to the deletion log and today's date formatted YYYY-MM-DD.
         aip_path = os.path.join(aips_dir, aip.id)
-        today = date.today().strftime('%Y-%#m-%#d')
+        today = date.today().strftime('%Y-%m-%d')
         deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
 
         # Test for the AIP folder.
@@ -126,7 +126,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
-        today = date.today().strftime('%Y-%#m-%#d')
+        today = date.today().strftime('%Y-%m-%d')
         deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
 
         # Test for the AIP folder.
@@ -160,7 +160,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
-        today = date.today().strftime('%Y-%#m-%#d')
+        today = date.today().strftime('%Y-%m-%d')
         deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
 
         # Test for the AIP folder.
@@ -199,7 +199,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
-        today = date.today().strftime('%Y-%#m-%#d')
+        today = date.today().strftime('%Y-%m-%d')
         deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
 
         # Test for the AIP folder.
@@ -232,7 +232,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Variables used throughout the tests.
         aip_path = os.path.join(aips_dir, aip.id)
-        today = date.today().strftime('%Y-%#m-%#d')
+        today = date.today().strftime('%Y-%m-%d')
         deletion_log = os.path.join(aip_path, f'{aip.id}_files-deleted_{today}_del.csv')
 
         # Test for the AIP folder.

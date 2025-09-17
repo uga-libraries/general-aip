@@ -107,7 +107,6 @@ class TestFullScript(unittest.TestCase):
 
         # Test for the contents of the AIP directory.
         today = datetime.date.today().strftime('%Y-%m-%d')
-        today_delete = datetime.date.today().strftime('%Y-%#m-%#d')
         result = make_directory_list(aip_dir)
         bag_one = os.path.join(aip_dir, 'test-001-er-000001_bag')
         bag_two = os.path.join(aip_dir, 'test-001-er-000002_bag')
@@ -120,7 +119,7 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_one, 'data'),
                     os.path.join(bag_one, 'data', 'metadata'),
                     os.path.join(bag_one, 'data', 'metadata', 'Flower2.JPG_fits.xml'),
-                    os.path.join(bag_one, 'data', 'metadata', f'test-001-er-000001_files-deleted_{today_delete}_del.csv'),
+                    os.path.join(bag_one, 'data', 'metadata', f'test-001-er-000001_files-deleted_{today}_del.csv'),
                     os.path.join(bag_one, 'data', 'metadata', 'test-001-er-000001_preservation.xml'),
                     os.path.join(bag_one, 'data', 'objects'),
                     os.path.join(bag_one, 'data', 'objects', 'Flower2.JPG'),
@@ -149,7 +148,7 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_three, 'data'),
                     os.path.join(bag_three, 'data', 'metadata'),
                     os.path.join(bag_three, 'data', 'metadata', 'Test PDF.pdf_fits.xml'),
-                    os.path.join(bag_three, 'data', 'metadata', f'test-001-er-000003_files-deleted_{today_delete}_del.csv'),
+                    os.path.join(bag_three, 'data', 'metadata', f'test-001-er-000003_files-deleted_{today}_del.csv'),
                     os.path.join(bag_three, 'data', 'metadata', 'test-001-er-000003_preservation.xml'),
                     os.path.join(bag_three, 'data', 'metadata', 'Worksheet.csv_fits.xml'),
                     os.path.join(bag_three, 'data', 'objects'),
@@ -206,14 +205,14 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for general, aip log")
 
         # Test for the contents of the first AIP's deletion log.
-        log_path = os.path.join(bag_one, 'data', 'metadata', f'test-001-er-000001_files-deleted_{today_delete}_del.csv')
+        log_path = os.path.join(bag_one, 'data', 'metadata', f'test-001-er-000001_files-deleted_{today}_del.csv')
         result = make_deletion_log_list(log_path)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
                     [os.path.join(aip_dir, 'test-001-er-000001', 'Thumbs.db'), 'Thumbs.db', 25, '2025-9-15']]
         self.assertEqual(expected, result, "Problem with test for general, first aip deletion log")
 
         # Test for the contents of the third AIP's deletion log.
-        log_path = os.path.join(bag_three, 'data', 'metadata', f'test-001-er-000003_files-deleted_{today_delete}_del.csv')
+        log_path = os.path.join(bag_three, 'data', 'metadata', f'test-001-er-000003_files-deleted_{today}_del.csv')
         result = make_deletion_log_list(log_path)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
                     [os.path.join(aip_dir, 'test-001-er-000003', '.Test PDF.pdf'), '.Test PDF.pdf', 187972, '2025-9-15'],

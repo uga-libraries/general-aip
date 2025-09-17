@@ -349,7 +349,7 @@ def delete_temp(aip, aip_path, logging):
     # If there is no logging, the function is running to delete temp files generated during AIP creation.
     if logging:
         if len(deleted_files) > 0:
-            filename = f"{aip.id}_files-deleted_{datetime.today().strftime('%Y-%#m-%#d')}_del.csv"
+            filename = f"{aip.id}_files-deleted_{datetime.today().strftime('%Y-%m-%d')}_del.csv"
             with open(os.path.join(aip.directory, aip.id, filename), "w", newline="") as deleted_log:
                 deleted_log_writer = csv.writer(deleted_log)
                 deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])

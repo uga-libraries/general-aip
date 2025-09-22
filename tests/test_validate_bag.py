@@ -27,10 +27,14 @@ def validation_log_list(aip_id):
 class TestValidateBag(unittest.TestCase):
 
     def tearDown(self):
-        """Deletes the AIP log and bag_not_valid errors folder if they were made"""
+        """Deletes the AIP log, copy of the valid bag, and bag_not_valid errors folder if they were made"""
         log_path = os.path.join(os.getcwd(), 'validate_bag', 'aip_log.csv')
         if os.path.exists(log_path):
             os.remove(log_path)
+
+        valid_path = os.path.join(os.getcwd(), 'validate_bag', 'test_valid_001_bag')
+        if os.path.exists(valid_path):
+            shutil.rmtree(valid_path)
 
         error_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'bag_not_valid')
         if os.path.exists(error_path):
@@ -190,9 +194,11 @@ class TestValidateBag(unittest.TestCase):
     def test_valid(self):
         """Test for when the bag is valid"""
         # Makes the test input and runs the function.
+        # A copy of the bag is made in case it is incorrectly moved to the error folder.
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'valid', 'folder', 'general', 'test_valid_001', 'title', 1, True)
+        shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
         validate_bag(aip, aip_staging)
 
         # Test for the AIP log.

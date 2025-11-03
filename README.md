@@ -88,9 +88,16 @@ To run the script via the command line: python /path/general_aip.py aips_directo
 Includes one test file per function, and a test to run the full script.
 Unit test scripts should be run with the script repo folder "tests" as the current working directory.
 
-Before running test_check_configuration.py, rename the configuration_test.py file in the tests folder to configuration.py
+Before running test_check_configuration.py (test is commented out by default to not run with the full test suite), 
+rename the configuration_test.py file in the tests folder to configuration.py
 and rename it back to configuration_test.py once the test is complete.
 Otherwise, the wrong configuration.py is used for all other tests.
+
+The test for av in test_manifest.py only works on a Mac, because it requires rysnc.
+The test is commented out by default to not cause errors in Windows.
+
+When the script is updated, it is changing the date last modified of test files, which is part of the deletion log.
+This impacts tests for delete_temp and the script.
 
 Known issue: Tests that check the contents of XML may fail due to the inconsistent order of element attributes.
 

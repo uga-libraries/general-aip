@@ -3,6 +3,8 @@ calculates the MD5 for the tar.bz2 version of the AIP, and adds that to the mani
 There is error handling for if the .tar.bz2 version of the AIP doesn't exist and
 for errors from the tool which generates the MD5.
 
+NOTE: test_av only works on a Mac and is commented out by default.
+
 NOTE: was not able to make a test for md5deep error handling.
 The only way to cause an error is give it an incorrect path, but that is caught at an earlier step.
 We plan to stop using md5deep fairly soon, so leaving that without a test.
@@ -59,48 +61,49 @@ class TestManifest(unittest.TestCase):
             if os.path.exists(tar_path):
                 os.remove(tar_path)
 
-    def test_av(self):
-        """Test for an AV AIP, which has the manifest saved to a different location"""
-        # Makes the test input and runs the function.
-        # A copy of the test file is made since in av mode it will be moved to a different location in staging.
-        # The AIP log is updated as if previous steps have run correctly.
-        aips_dir = os.getcwd()
-        aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        shutil.copy2(os.path.join(aip_staging, 'aips-ready-to-ingest', 'copy_rabbitbox_010_bag.20000.tar'),
-                     os.path.join(aip_staging, 'aips-ready-to-ingest', 'rabbitbox_010_bag.20000.tar'))
-        aip = AIP(aips_dir, 'bmac', 'wav', 'rabbitbox', 'folder', 'av', 'rabbitbox_010', 'title', 1, False)
-        aip.size = 20000
-        aip.log = {'Started': '2025-09-08 01:25:01.000000', 'AIP': 'rabbitbox_010', 'Deletions': 'No files deleted',
-                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
-                   'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
-                   'Manifest': 'n/a', 'Complete': 'n/a'}
-        log('header', aips_dir)
-        manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(os.getcwd(), 'ingest')))
-
-        # Test for the manifest.
-        manifest_name = f'manifest_tests_bmac_{datetime.now().strftime("%Y-%m-%d")}.txt'
-        result = make_manifest_list(os.path.join(aip_staging, 'md5-manifests-for-aips', manifest_name))
-        expected = [['629f0e1886f6e7d53291fae720e737dd', 'rabbitbox_010_bag.20000.tar']]
-        self.assertEqual(expected, result, "Problem with av, manifest")
-
-        # Test for the AIP log.
-        result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
-                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-09-08', 'rabbitbox_010', 'No files deleted', 'Success', 'Success', 'BLANK',
-                     'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
-                     'Successfully completed processing']]
-        self.assertEqual(expected, result, "Problem with AV, AIP log")
-
-        # Test for copying to ingest.
-        # NOTE: this only works when running the test on a Mac, where rsync is available.
-        result = os.path.exists(os.path.join(os.getcwd(), 'ingest', 'rabbitbox_010_bag.20000.tar'))
-        self.assertEqual(True, result, "Problem with AV, ingest")
-
-        # Test for moving to other location in staging.
-        result = os.path.exists(os.path.join(aip_staging, 'aips-already-on-ingest-server', 'rabbitbox_010_bag.20000.tar'))
-        self.assertEqual(True, result, "Problem with AV, staging location")
+    # def test_av(self):
+    #     """Test for an AV AIP, which has the manifest saved to a different location
+    #     NOTE: this only works if the test is run on a Mac, as it requires rsync"""
+    #     # Makes the test input and runs the function.
+    #     # A copy of the test file is made since in av mode it will be moved to a different location in staging.
+    #     # The AIP log is updated as if previous steps have run correctly.
+    #     aips_dir = os.getcwd()
+    #     aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
+    #     shutil.copy2(os.path.join(aip_staging, 'aips-ready-to-ingest', 'copy_rabbitbox_010_bag.20000.tar'),
+    #                  os.path.join(aip_staging, 'aips-ready-to-ingest', 'rabbitbox_010_bag.20000.tar'))
+    #     aip = AIP(aips_dir, 'bmac', 'wav', 'rabbitbox', 'folder', 'av', 'rabbitbox_010', 'title', 1, False)
+    #     aip.size = 20000
+    #     aip.log = {'Started': '2025-09-08 01:25:01.000000', 'AIP': 'rabbitbox_010', 'Deletions': 'No files deleted',
+    #                'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+    #                'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
+    #                'Manifest': 'n/a', 'Complete': 'n/a'}
+    #     log('header', aips_dir)
+    #     manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(os.getcwd(), 'ingest')))
+    #
+    #     # Test for the manifest.
+    #     manifest_name = f'manifest_tests_bmac_{datetime.now().strftime("%Y-%m-%d")}.txt'
+    #     result = make_manifest_list(os.path.join(aip_staging, 'md5-manifests-for-aips', manifest_name))
+    #     expected = [['629f0e1886f6e7d53291fae720e737dd', 'rabbitbox_010_bag.20000.tar']]
+    #     self.assertEqual(expected, result, "Problem with av, manifest")
+    #
+    #     # Test for the AIP log.
+    #     result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+    #     expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
+    #                  'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
+    #                  'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
+    #                 ['2025-09-08', 'rabbitbox_010', 'No files deleted', 'Success', 'Success', 'BLANK',
+    #                  'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
+    #                  'Successfully completed processing']]
+    #     self.assertEqual(expected, result, "Problem with AV, AIP log")
+    #
+    #     # Test for copying to ingest.
+    #     # NOTE: this only works when running the test on a Mac, where rsync is available.
+    #     result = os.path.exists(os.path.join(os.getcwd(), 'ingest', 'rabbitbox_010_bag.20000.tar'))
+    #     self.assertEqual(True, result, "Problem with AV, ingest")
+    #
+    #     # Test for moving to other location in staging.
+    #     result = os.path.exists(os.path.join(aip_staging, 'aips-already-on-ingest-server', 'rabbitbox_010_bag.20000.tar'))
+    #     self.assertEqual(True, result, "Problem with AV, staging location")
 
     def test_bz2(self):
         """Test for an AIP that is tarred and zipped"""

@@ -47,7 +47,7 @@ class TestValidatePreservationXML(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with valid, log: PresValid")
 
     def test_valid_multiple_rights(self):
-        """Test for successfully validating a preservation.xml file with multiple rights statements"""
+        """Test for successfully validating a preservation.xml file with multiple rights statements (and one file)"""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'validate_preservation_xml')
         aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_002', 'title', 1, True)

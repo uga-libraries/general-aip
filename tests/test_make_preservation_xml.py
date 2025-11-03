@@ -1,9 +1,6 @@
 """Testing for the function make_preservation_xml, which takes an AIP class instance as input and
 makes the preservation.xml metadata file from the cleaned-fits.xml file already in the AIP metadata folder.
-There is error handling throughout for XML transformation.
-
-There is a test for each AIP ID format, since the stylesheet for making the preservation.xml
-uses the ID to calculate additional values."""
+There is error handling throughout for XML transformation."""
 
 import fileinput
 import os

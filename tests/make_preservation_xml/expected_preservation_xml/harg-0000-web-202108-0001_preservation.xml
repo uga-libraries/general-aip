@@ -25,4 +25,35 @@
          </premis:objectCharacteristics>
       </premis:object>
    </aip>
+   <filelist>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/hargrett/harg-0000-web-202108-0001</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>harg-0000-web-202108-0001/objects/file.warc</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:fixity>
+               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
+               <premis:messageDigest>829bdf76c4575b65bc8eb641c242d876</premis:messageDigest>
+               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
+            </premis:fixity>
+            <premis:size>57500000</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>WARC</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://uri/hargrett</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>harg-0000-web-202108-0001</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+   </filelist>
 </preservation>

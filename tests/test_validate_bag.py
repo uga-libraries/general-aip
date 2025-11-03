@@ -27,14 +27,19 @@ def validation_log_list(aip_id):
 class TestValidateBag(unittest.TestCase):
 
     def tearDown(self):
-        """Deletes the AIP log, copy of the valid bag, and bag_not_valid errors folder if they were made"""
+        """Deletes the AIP log, copy of the test bags, and bag_not_valid errors folder if they were made"""
         log_path = os.path.join(os.getcwd(), 'validate_bag', 'aip_log.csv')
         if os.path.exists(log_path):
             os.remove(log_path)
 
-        valid_path = os.path.join(os.getcwd(), 'validate_bag', 'test_valid_001_bag')
-        if os.path.exists(valid_path):
-            shutil.rmtree(valid_path)
+        # The test copy of the valid bag is the only one that should still be there,
+        # but sometimes there is a permissions error for saving to the errors folder and another remains.
+        bag_names = ['test_not_001_bag', 'test_not_002_bag', 'test_not_003_bag', 'test_not_004_bag',
+                     'test_valid_001_bag']
+        for bag_name in bag_names:
+            bag_path = os.path.join(os.getcwd(), 'validate_bag', bag_name)
+            if os.path.exists(bag_path):
+                shutil.rmtree(bag_path)
 
         error_path = os.path.join(os.getcwd(), 'staging', 'aips-with-errors', 'bag_not_valid')
         if os.path.exists(error_path):

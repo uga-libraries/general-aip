@@ -208,15 +208,15 @@ class TestFullScript(unittest.TestCase):
         log_path = os.path.join(bag_one, 'data', 'metadata', f'test-001-er-000001_files-deleted_{today}_del.csv')
         result = make_deletion_log_list(log_path)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
-                    [os.path.join(aip_dir, 'test-001-er-000001', 'Thumbs.db'), 'Thumbs.db', 25, '2025-9-15']]
+                    [os.path.join(aip_dir, 'test-001-er-000001', 'Thumbs.db'), 'Thumbs.db', 25, '2025-11-3']]
         self.assertEqual(expected, result, "Problem with test for general, first aip deletion log")
 
         # Test for the contents of the third AIP's deletion log.
         log_path = os.path.join(bag_three, 'data', 'metadata', f'test-001-er-000003_files-deleted_{today}_del.csv')
         result = make_deletion_log_list(log_path)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
-                    [os.path.join(aip_dir, 'test-001-er-000003', '.Test PDF.pdf'), '.Test PDF.pdf', 187972, '2025-9-15'],
-                    [os.path.join(aip_dir, 'test-001-er-000003', 'Spreadsheet', '.Worksheet.csv'), '.Worksheet.csv', 178, '2025-9-15']]
+                    [os.path.join(aip_dir, 'test-001-er-000003', '.Test PDF.pdf'), '.Test PDF.pdf', 187972, '2025-11-3'],
+                    [os.path.join(aip_dir, 'test-001-er-000003', 'Spreadsheet', '.Worksheet.csv'), '.Worksheet.csv', 178, '2025-11-3']]
         self.assertEqual(expected, result, "Problem with test for general, third aip deletion log")
 
     def test_web(self):

@@ -37,8 +37,8 @@ class TestCheckMetadataCSV(unittest.TestCase):
         """Test for the column names in metadata.csv not matching the expected values"""
         result = run_function('error_column_order_metadata.csv')
         expected = ['The columns in the metadata.csv do not match the required values or order.',
-                    'Required: Department, Collection, Folder, AIP_ID, Title, Version',
-                    'Current:  AIP_ID, Department, Collection, Folder, Title, Version',
+                    'Required: Department, Collection, Folder, AIP_ID, Title, Version, Rights',
+                    'Current:  AIP_ID, Department, Collection, Folder, Title, Version, Rights',
                     'Since the columns are not correct, did not check the column values.']
         self.assertEqual(expected, result, "Problem with test for error, columns")
 
@@ -68,6 +68,13 @@ class TestCheckMetadataCSV(unittest.TestCase):
         expected = ['aip-1 is in the AIPs directory and missing from metadata.csv.',
                     'aip-3 is in the AIPs directory and missing from metadata.csv.']
         self.assertEqual(expected, result, "Problem with test for error, directory only")
+
+    def test_error_rights(self):
+        """Test for rights in the metadata.csv that are not Creative Commons or RightsStatements.org"""
+        result = run_function('error_rights_metadata.csv')
+        expected = [' is not Creative Commons or RightsStatement.org.',
+                    'InC is not Creative Commons or RightsStatement.org.']
+        self.assertEqual(expected, result, "Problem with test for error, rights")
 
 
 if __name__ == "__main__":

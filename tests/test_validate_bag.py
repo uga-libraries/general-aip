@@ -52,7 +52,7 @@ class TestValidateBag(unittest.TestCase):
         # A copy of the bag is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
         aip_staging = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_001', 'title', 1, True)
+        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_001', 'title', 1, 'InC', True)
         aip.log = {'Started': '2025-08-14 09:30:01.000000', 'AIP': 'test_not_001', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Preservation.xml valid on 2025-08-14 09:30:01.000000',
@@ -88,7 +88,7 @@ class TestValidateBag(unittest.TestCase):
         # A copy of the bag is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
         aip_staging = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_002', 'title', 1, True)
+        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_002', 'title', 1, 'InC', True)
         aip.log = {'Started': '2025-08-14 09:50:01.000000', 'AIP': 'test_not_002', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Preservation.xml valid on 2025-08-14 09:50:01.000000',
@@ -124,7 +124,7 @@ class TestValidateBag(unittest.TestCase):
         # A copy of the bag is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
         aip_staging = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_003', 'title', 1, True)
+        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_003', 'title', 1, 'InC', True)
         aip.log = {'Started': '2025-08-14 09:55:01.000000', 'AIP': 'test_not_003', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Preservation.xml valid on 2025-08-14 09:55:01.000000',
@@ -160,7 +160,7 @@ class TestValidateBag(unittest.TestCase):
         # A copy of the bag is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
         aip_staging = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_004', 'title', 1, True)
+        aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_004', 'title', 1, 'InC', True)
         aip.log = {'Started': '2025-08-14 10:00:01.000000', 'AIP': 'test_not_004', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Preservation.xml valid on 2025-08-14 10:00:01.000000',
@@ -202,7 +202,7 @@ class TestValidateBag(unittest.TestCase):
         # A copy of the bag is made in case it is incorrectly moved to the error folder.
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
         aip_staging = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'test', None, 'valid', 'folder', 'general', 'test_valid_001', 'title', 1, True)
+        aip = AIP(aips_dir, 'test', None, 'valid', 'folder', 'general', 'test_valid_001', 'title', 1, 'InC', True)
         shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
         validate_bag(aip, aip_staging)
 

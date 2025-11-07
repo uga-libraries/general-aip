@@ -35,7 +35,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         # Makes the input variables and runs the function being tested.
         aip_dir = os.path.join(os.getcwd(), 'make_cleaned_fits_xml')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aip_dir, 'dept', None, 'coll-1', 'aip_folder', 'general', 'aip1', 'title', '1', 'zip')
+        aip = AIP(aip_dir, 'dept', None, 'coll-1', 'aip_folder', 'general', 'aip1', 'title', '1', 'InC', 'zip')
         make_cleaned_fits_xml(aip, staging_dir)
 
         # Compares the cleaned-fits.xml file produced by the function to a xml file with the expected values.
@@ -48,7 +48,7 @@ class TestMakeCleanedFitsXML(unittest.TestCase):
         # Makes the input variables and runs the function being tested.
         aip_dir = os.path.join(os.getcwd(), 'make_cleaned_fits_xml')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aip_dir, 'dept', None, 'coll-1', 'aip_folder', 'general', 'aip0', 'title', '1', 'zip')
+        aip = AIP(aip_dir, 'dept', None, 'coll-1', 'aip_folder', 'general', 'aip0', 'title', '1', 'InC', 'zip')
         shutil.copytree(os.path.join(aip_dir, 'aip0_copy'), os.path.join(aip_dir, 'aip0'))
         make_cleaned_fits_xml(aip, staging_dir)
 

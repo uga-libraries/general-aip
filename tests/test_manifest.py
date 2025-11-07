@@ -111,7 +111,7 @@ class TestManifest(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'har-ua01-001-001', 'title', 1, True)
+        aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'har-ua01-001-001', 'title', 1, 'InC', True)
         aip.size = 1000
         aip.log = {'Started': '2025-08-14 11:45:01.000000', 'AIP': 'har-ua01-001-001', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -142,7 +142,7 @@ class TestManifest(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'harg-missing-001', 'title', 1, True)
+        aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'harg-missing-001', 'title', 1, 'InC', True)
         aip.size = 999
         aip.log = {'Started': '2025-08-14 02:30:01.000000', 'AIP': 'harg-missing-001', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -174,7 +174,7 @@ class TestManifest(unittest.TestCase):
         # The manifest is made by the test instead of being in the GitHub repo already so the date matches.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        aip = AIP(aips_dir, 'russell', None, 'rbrl-123', 'folder', 'general', 'rbrl-123-er-123456', 'title', 1, True)
+        aip = AIP(aips_dir, 'russell', None, 'rbrl-123', 'folder', 'general', 'rbrl-123-er-123456', 'title', 1, 'InC', True)
         aip.size = 300
         aip.log = {'Started': '2025-08-14 02:40:01.000000', 'AIP': 'rbrl-123-er-123456', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -208,7 +208,7 @@ class TestManifest(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        aip = AIP(aips_dir, 'magil', None, 'magil-0000', 'folder', 'web', 'magil-seed-2025', 'title', 1, False)
+        aip = AIP(aips_dir, 'magil', None, 'magil-0000', 'folder', 'web', 'magil-seed-2025', 'title', 1, 'InC', False)
         aip.size = 4400
         aip.log = {'Started': '2025-09-08 01:15:01.000000', 'AIP': 'magil-seed-2025', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',

@@ -32,7 +32,7 @@ class TestValidatePreservationXML(unittest.TestCase):
         """Test for successfully validating a preservation.xml file"""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'validate_preservation_xml')
-        aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_001', 'title', 1, True)
+        aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_001', 'title', 1, 'InC', True)
         validate_preservation_xml(aip, os.path.join(os.getcwd(), 'staging'))
 
         # Test for the AIP Log: preservation.xml is made.
@@ -50,7 +50,7 @@ class TestValidatePreservationXML(unittest.TestCase):
         """Test for successfully validating a preservation.xml file with multiple rights statements (and one file)"""
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'validate_preservation_xml')
-        aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_002', 'title', 1, True)
+        aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_002', 'title', 1, 'InC', True)
         validate_preservation_xml(aip, os.path.join(os.getcwd(), 'staging'))
 
         # Test for the AIP Log: preservation.xml is made.
@@ -70,7 +70,7 @@ class TestValidatePreservationXML(unittest.TestCase):
         # A copy of the AIP is made since this test should move it to an error folder.
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.path.join(os.getcwd(), 'validate_preservation_xml')
-        aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_003', 'title', 1, True)
+        aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_003', 'title', 1, 'InC', True)
         aip.log = {'Started': '2025-08-13 02:35:00.000000', 'AIP': 'test_c01_003', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'n/a', 'PresValid': 'n/a', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
@@ -111,7 +111,7 @@ class TestValidatePreservationXML(unittest.TestCase):
         # A copy of the AIP is made since this test should move it to an error folder.
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.path.join(os.getcwd(), 'validate_preservation_xml')
-        aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_004', 'title', 1, True)
+        aip = AIP(aips_dir, 'test', None, 'test_c01', 'folder', 'general', 'test_c01_004', 'title', 1, 'InC', True)
         aip.log = {'Started': '2025-08-13 03:55:00.000000', 'AIP': 'test_c01_004', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'n/a', 'PresValid': 'n/a', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',

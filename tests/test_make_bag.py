@@ -26,7 +26,7 @@ class TestMakeBag(unittest.TestCase):
         # Makes the test input and runs the function.
         # A copy of the AIP is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'make_bag')
-        aip = AIP(aips_dir, 'bmac', 'mp4', 'rabbitbox', 'folder', 'av', 'rabbitbox_0001', 'title', 1, True)
+        aip = AIP(aips_dir, 'bmac', 'mp4', 'rabbitbox', 'folder', 'av', 'rabbitbox_0001', 'title', 1, 'InC', True)
         shutil.copytree(os.path.join(aips_dir, f'{aip.id}_copy'), os.path.join(aips_dir, aip.id))
         make_bag(aip)
 
@@ -46,7 +46,7 @@ class TestMakeBag(unittest.TestCase):
         # Makes the test input and runs the function.
         # A copy of the AIP is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'make_bag')
-        aip = AIP(aips_dir, 'russell', 'mp4', 'rbrl025', 'folder', 'av', 'rbrl025_0001_media', 'title', 1, True)
+        aip = AIP(aips_dir, 'russell', 'mp4', 'rbrl025', 'folder', 'av', 'rbrl025_0001_media', 'title', 1, 'InC', True)
         shutil.copytree(os.path.join(aips_dir, f'{aip.id}_copy'), os.path.join(aips_dir, aip.id))
         make_bag(aip)
 
@@ -67,7 +67,7 @@ class TestMakeBag(unittest.TestCase):
         # Makes the test input and runs the function.
         # A copy of the AIP is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'make_bag')
-        aip = AIP(aips_dir, 'russell', None, 'rbrl_025', 'folder', 'general', 'rbrl_025_er_000001', 'title', 1, True)
+        aip = AIP(aips_dir, 'russell', None, 'rbrl_025', 'folder', 'general', 'rbrl_025_er_000001', 'title', 1, 'InC', True)
         shutil.copytree(os.path.join(aips_dir, f'{aip.id}_copy'), os.path.join(aips_dir, aip.id))
         make_bag(aip)
 
@@ -88,7 +88,7 @@ class TestMakeBag(unittest.TestCase):
         # Makes the test input and runs the function.
         # A copy of the AIP is made since this test should move it to an error folder.
         aips_dir = os.path.join(os.getcwd(), 'make_bag')
-        aip = AIP(aips_dir, 'test', None, 'test_001', 'folder', 'general', 'test_001_01', 'title', 1, True)
+        aip = AIP(aips_dir, 'test', None, 'test_001', 'folder', 'general', 'test_001_01', 'title', 1, 'InC', True)
         shutil.copytree(os.path.join(aips_dir, f'{aip.id}_copy'), os.path.join(aips_dir, aip.id))
         make_bag(aip)
 

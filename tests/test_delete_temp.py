@@ -18,7 +18,7 @@ class TestDeleteTemp(unittest.TestCase):
     def setUp(self):
         """Date this repo was first cloned to local machine, which is the date info in the deletion log.
         This does need to be reset after syncing with GitHub."""
-        self.modified = '2025-9-15'
+        self.modified = '2025-11-7'
 
     def tearDown(self):
         """Deletes the AIP folders created by each test"""

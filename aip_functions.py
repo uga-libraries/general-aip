@@ -211,19 +211,21 @@ def check_metadata_csv(read_metadata, aips_dir):
     # If the header is not correct, returns the error and does not test the column values.
     header = next(read_metadata)
     header_lowercase = [name.lower() for name in header]
-    if header_lowercase != ["department", "collection", "folder", "aip_id", "title", "version"]:
+    if header_lowercase != ["department", "collection", "folder", "aip_id", "title", "version", "rights"]:
         errors_list.append("The columns in the metadata.csv do not match the required values or order.")
-        errors_list.append("Required: Department, Collection, Folder, AIP_ID, Title, Version")
+        errors_list.append("Required: Department, Collection, Folder, AIP_ID, Title, Version, Rights")
         errors_list.append(f"Current:  {', '.join(header)}")
         errors_list.append("Since the columns are not correct, did not check the column values.")
         return errors_list
 
-    # Makes a list of all values in the department and folder columns to use for testing.
+    # Makes a list of all values in the department, folder, and rights columns to use for testing.
     csv_dept_list = []
     csv_folder_list = []
+    csv_rights_list = []
     for row in read_metadata:
         csv_dept_list.append(row[0])
         csv_folder_list.append(row[2])
+        csv_rights_list.append(row[6])
 
     # Checks that the values in the department column match the expected ARCHive groups from the configuration file.
     unique_departments = list(set(csv_dept_list))
@@ -231,6 +233,13 @@ def check_metadata_csv(read_metadata, aips_dir):
     for department in unique_departments:
         if department not in c.GROUPS:
             errors_list.append(f"{department} is not an ARCHive group.")
+
+    # Checks that the values in the rights column are either Creative Commons or RightsStatements.org.
+    unique_rights = list(set(csv_rights_list))
+    unique_rights.sort()
+    for right in unique_rights:
+        if not(right.startswith('https://creativecommons.org') or right.startswith('http://rightsstatements.org')):
+            errors_list.append(f"{right} is not Creative Commons or RightsStatement.org.")
 
     # The rest of the function tests the folder names.
 

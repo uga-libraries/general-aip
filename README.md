@@ -56,7 +56,7 @@ In settings, go to Environment Variables > Path > Edit > New and add the 7-zip f
 
 Create a file named metadata.csv in the AIPs directory. [Example metadata.csv](documentation/metadata.csv) 
 This contains required information about each of the AIPs to be included in this batch.
-The header row is formatted Department,Collection,Folder,AIP_ID,Title,Version
+The header row is formatted Department,Collection,Folder,AIP_ID,Title,Rights,Version
 
 For UGA, these values are:
 * Department: ARCHive group name
@@ -64,6 +64,7 @@ For UGA, these values are:
 * Folder: the current folder name of the AIP folder
 * AIP_ID: AIP identifier
 * Title: AIP title
+* Rights: either Creative Commons license or RightsStatements.org statement
 * Version: AIP version number, which must be a whole number
 
 #### Changing Rights Statements

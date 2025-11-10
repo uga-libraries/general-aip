@@ -33,7 +33,7 @@ Both share responsibility for maintaining the script.
    3. Create the AIP directory structure: folder named with the AIP ID that contains metadata and objects folders.
    4. Extract technical metadata from each file in the objects folder with FITS and save it to the metadata folder. 
    5. Combine each FITS xml file into one file named combined-fits.xml and save it to the fits-xml folder.
-   6. Make the preservation.xml file (Dublin Core and PREMIS) from the combined-fits xml and save it to the metadata folder. 
+   6. Make the preservation.xml file (Dublin Core and PREMIS) from the combined-fits xml and values from metadata.csv and save it to the metadata folder. 
    7. Validate that the preservation.xml file meets UGA standards.
    8. Use bagit to bag each AIP folder in place, with md5 and sha256 manifests.
    9. Validate the bag.

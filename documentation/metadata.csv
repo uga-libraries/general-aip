@@ -1,5 +1,5 @@
-Department,Collection,Folder,AIP_ID,Title,Version
-hargrett,harg-123,folder_1,harg123er1,Example Title,1
-hargrett,harg-123,folder_2,harg123er1,Example Title 2,2
-hargrett,harg-123,folder_3,harg123er1,Title_Three,1
-hargrett,harg-000,folder_1a,harg000er1,Title: Diff Collection,1
+Department,Collection,Folder,AIP_ID,Title,Rights,Version
+hargrett,harg-123,folder_1,harg123er1,Example Title,http://rightsstatements.org/vocab/CNE/1.0/,1
+hargrett,harg-123,folder_2,harg123er1,Example Title 2,http://rightsstatements.org/vocab/CNE/1.0/,2
+hargrett,harg-123,folder_3,harg123er1,Title_Three,http://rightsstatements.org/vocab/CNE/1.0/,1
+hargrett,harg-000,folder_1a,harg000er1,Title: Diff Collection,https://creativecommons.org/licenses/by-nc/4.0/,1

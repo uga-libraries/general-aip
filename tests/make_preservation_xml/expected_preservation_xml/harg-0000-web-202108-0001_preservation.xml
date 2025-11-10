@@ -2,7 +2,7 @@
 <preservation xmlns:dc="http://purl.org/dc/terms/"
               xmlns:premis="http://www.loc.gov/premis/v3">
    <dc:title>Hargrett Web without Collection</dc:title>
-   <dc:rights>http://rightsstatements.org/vocab/InC/1.0/</dc:rights>
+   <dc:rights>https://creativecommons.org/licenses/by-sa/4.0/</dc:rights>
    <aip>
       <premis:object>
          <premis:objectIdentifier>

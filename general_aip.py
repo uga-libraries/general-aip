@@ -81,8 +81,9 @@ next(read_metadata)
 for aip_row in read_metadata:
 
     # Makes an instance of the AIP class using metadata from the CSV and global variables.
-    department, collection_id, aip_folder, aip_id, title, version, rights = aip_row
-    aip = a.AIP(AIPS_DIRECTORY, department, WORKFLOW, collection_id, aip_folder, AIP_TYPE, aip_id, title, version, rights, ZIP)
+    department, collection_id, aip_folder, aip_id, title, rights, version = aip_row
+    aip = a.AIP(AIPS_DIRECTORY, department, WORKFLOW, collection_id, aip_folder, AIP_TYPE, aip_id, title, rights,
+                version, ZIP)
 
     # Updates the current AIP number and prints the script progress in the terminal.
     CURRENT_AIP += 1

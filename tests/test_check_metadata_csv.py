@@ -37,8 +37,8 @@ class TestCheckMetadataCSV(unittest.TestCase):
         """Test for the column names in metadata.csv not matching the expected values"""
         result = run_function('error_column_order_metadata.csv')
         expected = ['The columns in the metadata.csv do not match the required values or order.',
-                    'Required: Department, Collection, Folder, AIP_ID, Title, Version, Rights',
-                    'Current:  AIP_ID, Department, Collection, Folder, Title, Version, Rights',
+                    'Required: Department, Collection, Folder, AIP_ID, Title, Rights, Version',
+                    'Current:  AIP_ID, Department, Collection, Folder, Title, Rights, Version ',
                     'Since the columns are not correct, did not check the column values.']
         self.assertEqual(expected, result, "Problem with test for error, columns")
 

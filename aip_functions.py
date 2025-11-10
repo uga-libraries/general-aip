@@ -16,8 +16,8 @@ import configuration as c
 class AIP:
     """Characteristics of each AIP and log data used by multiple functions"""
 
-    def __init__(self, directory, department, workflow, collection_id, folder_name, aip_type, aip_id, title, version,
-                 rights, to_zip):
+    def __init__(self, directory, department, workflow, collection_id, folder_name, aip_type, aip_id, title, rights,
+                 version, to_zip):
         self.directory = directory
         self.department = department
         self.workflow = workflow
@@ -26,8 +26,8 @@ class AIP:
         self.type = aip_type
         self.id = aip_id
         self.title = title
-        self.version = version
         self.rights = rights
+        self.version = version
         self.to_zip = to_zip
         self.size = None
         self.log = {"Started": datetime.now(), "AIP": self.id, "Deletions": "n/a",
@@ -211,9 +211,9 @@ def check_metadata_csv(read_metadata, aips_dir):
     # If the header is not correct, returns the error and does not test the column values.
     header = next(read_metadata)
     header_lowercase = [name.lower() for name in header]
-    if header_lowercase != ["department", "collection", "folder", "aip_id", "title", "version", "rights"]:
+    if header_lowercase != ["department", "collection", "folder", "aip_id", "title", "rights", "version"]:
         errors_list.append("The columns in the metadata.csv do not match the required values or order.")
-        errors_list.append("Required: Department, Collection, Folder, AIP_ID, Title, Version, Rights")
+        errors_list.append("Required: Department, Collection, Folder, AIP_ID, Title, Rights, Version")
         errors_list.append(f"Current:  {', '.join(header)}")
         errors_list.append("Since the columns are not correct, did not check the column values.")
         return errors_list
@@ -225,7 +225,7 @@ def check_metadata_csv(read_metadata, aips_dir):
     for row in read_metadata:
         csv_dept_list.append(row[0])
         csv_folder_list.append(row[2])
-        csv_rights_list.append(row[6])
+        csv_rights_list.append(row[5])
 
     # Checks that the values in the department column match the expected ARCHive groups from the configuration file.
     unique_departments = list(set(csv_dept_list))

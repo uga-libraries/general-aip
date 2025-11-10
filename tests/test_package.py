@@ -37,7 +37,7 @@ class TestPackage(unittest.TestCase):
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'package')
         aip_staging = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-aip-1', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-aip-1', 'title', 'InC', 1, True)
         package(aip, aip_staging)
 
         # Test that the tar.bz2 file is in the aips-to-ingest folder.
@@ -60,7 +60,7 @@ class TestPackage(unittest.TestCase):
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'package')
         aip_staging = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-aip-1', 'title', 1, 'InC', False)
+        aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-aip-1', 'title', 'InC', 1, False)
         package(aip, aip_staging)
 
         # Test that the tar file is in the aips-to-ingest folder.
@@ -107,7 +107,7 @@ class TestPackage(unittest.TestCase):
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'package')
         aip_staging = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-aip-2', 'title', 1, 'InC', False)
+        aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-aip-2', 'title', 'InC', 1, False)
         aip.log['Deletions'] = 'Deletions note (for testing)'
         shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
         package(aip, aip_staging)
@@ -162,7 +162,7 @@ class TestPackage(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.path.join(os.getcwd(), 'package')
         aip_staging = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-missing-1', 'title', 1, 'InC', False)
+        aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-missing-1', 'title', 'InC', 1, False)
         aip.log = {'Started': '2025-08-14 10:55:01.000000', 'AIP': 'test-missing-1', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'n/a',

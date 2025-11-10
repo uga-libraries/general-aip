@@ -46,7 +46,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-1', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-1', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'error-aip-1_copy'), os.path.join(aips_dir, 'error-aip-1'))
         structure_directory(aip, staging_dir)
 
@@ -81,7 +81,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-2', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-2', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'error-aip-2_copy'), os.path.join(aips_dir, 'error-aip-2'))
         structure_directory(aip, staging_dir)
 
@@ -118,7 +118,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-3', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-3', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'error-aip-3_copy'), os.path.join(aips_dir, 'error-aip-3'))
         structure_directory(aip, staging_dir)
 
@@ -155,7 +155,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'bmac', 'wav', 'coll-bmac', 'folder', 'av', 'av-aip-1', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'bmac', 'wav', 'coll-bmac', 'folder', 'av', 'av-aip-1', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'av-aip-1_copy'), os.path.join(aips_dir, 'av-aip-1'))
         structure_directory(aip, staging_dir)
 
@@ -183,7 +183,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'bmac', 'dpx', 'coll-bmac', 'folder', 'av', 'av-aip-2', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'bmac', 'dpx', 'coll-bmac', 'folder', 'av', 'av-aip-2', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'av-aip-2_copy'), os.path.join(aips_dir, 'av-aip-2'))
         structure_directory(aip, staging_dir)
 
@@ -224,7 +224,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'bmac', 'wav', 'coll-bmac', 'folder', 'av', 'av-aip-3', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'bmac', 'wav', 'coll-bmac', 'folder', 'av', 'av-aip-3', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'av-aip-3_copy'), os.path.join(aips_dir, 'av-aip-3'))
         structure_directory(aip, staging_dir)
 
@@ -256,7 +256,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'bmac', 'mxf', 'coll-bmac', 'folder', 'av', 'av-aip-4', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'bmac', 'mxf', 'coll-bmac', 'folder', 'av', 'av-aip-4', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'av-aip-4_copy'), os.path.join(aips_dir, 'av-aip-4'))
         structure_directory(aip, staging_dir)
 
@@ -283,7 +283,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'emory', None, 'coll-emory', 'folder', 'general', 'emory-aip-1', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'emory', None, 'coll-emory', 'folder', 'general', 'emory-aip-1', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'emory-aip-1_copy'), os.path.join(aips_dir, 'emory-aip-1'))
         structure_directory(aip, staging_dir)
 
@@ -314,7 +314,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'dept', None, 'coll-delete', 'folder', 'general', 'deletion-aip-1', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-delete', 'folder', 'general', 'deletion-aip-1', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'deletion-aip-1_copy'), os.path.join(aips_dir, 'deletion-aip-1'))
         structure_directory(aip, staging_dir)
 
@@ -345,7 +345,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'dept', None, 'coll', 'folder', 'general', 'none-aip-1', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'dept', None, 'coll', 'folder', 'general', 'none-aip-1', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'none-aip-1_copy'), os.path.join(aips_dir, 'none-aip-1'))
         structure_directory(aip, staging_dir)
 
@@ -377,7 +377,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'magil', None, 'coll-web', 'folder', 'web', 'web-aip-1', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'magil', None, 'coll-web', 'folder', 'web', 'web-aip-1', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'web-aip-1_copy'), os.path.join(aips_dir, 'web-aip-1'))
         structure_directory(aip, staging_dir)
 
@@ -410,7 +410,7 @@ class TestStructureDirectory(unittest.TestCase):
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'magil', None, 'coll-web', 'folder', 'web', 'web-aip-2', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'magil', None, 'coll-web', 'folder', 'web', 'web-aip-2', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'web-aip-2_copy'), os.path.join(aips_dir, 'web-aip-2'))
         structure_directory(aip, staging_dir)
 
@@ -437,8 +437,6 @@ class TestStructureDirectory(unittest.TestCase):
         result = aip.log['MetadataError']
         expected = 'Successfully created metadata folder'
         self.assertEqual(expected, result, "Problem with sort web_magil, log: MetadataError")
-
-
 
 
 if __name__ == "__main__":

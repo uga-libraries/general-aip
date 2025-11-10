@@ -29,7 +29,7 @@ class TestOrganizeXML(unittest.TestCase):
         # A copy of the AIP is made since this test should alter the contents of the AIP metadata folder.
         aips_dir = os.path.join(os.getcwd(), 'organize_xml')
         aips_staging = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'test', None, 'coll-1', 'aip-folder', 'general', 'test_coll2_001', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'test', None, 'coll-1', 'aip-folder', 'general', 'test_coll2_001', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'test_coll2_001_copy'), os.path.join(aips_dir, 'test_coll2_001'))
         organize_xml(aip, aips_staging)
 

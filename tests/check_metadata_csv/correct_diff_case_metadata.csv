@@ -1,4 +1,4 @@
-department,COLLECTION,folder,aip_id,TITLE,version,rights
-test,test-coll,aip-1,aip-001,title-1,1,http://rightsstatements.org/vocab/InC/1.0/
-test,test-coll,aip-2,aip-002,title-2,1,http://rightsstatements.org/vocab/InC/1.0/
-test,test-coll,aip-3,aip-003,title-3,1,http://rightsstatements.org/vocab/InC/1.0/
+department,COLLECTION,folder,aip_id,TITLE,Rights,Version
+test,test-coll,aip-1,aip-001,title-1,http://rightsstatements.org/vocab/InC/1.0/,1
+test,test-coll,aip-2,aip-002,title-2,http://rightsstatements.org/vocab/InC/1.0/,1
+test,test-coll,aip-3,aip-003,title-3,http://rightsstatements.org/vocab/InC/1.0/,1

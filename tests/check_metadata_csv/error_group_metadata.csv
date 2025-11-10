@@ -1,4 +1,4 @@
-Department,Collection,Folder,AIP_ID,Title,Version,Rights
-banana,ban-coll,aip-1,aip-001,title-1,1,http://rightsstatements.org/vocab/InC/1.0/
-banana,ban-coll,aip-2,aip-002,title-2,1,http://rightsstatements.org/vocab/InC/1.0/
-Brown,bma-coll,aip-3,bma-aip-001,bma-title-1,1,http://rightsstatements.org/vocab/InC/1.0/
+Department,Collection,Folder,AIP_ID,Title,Rights,Version
+banana,ban-coll,aip-1,aip-001,title-1,http://rightsstatements.org/vocab/InC/1.0/,1
+banana,ban-coll,aip-2,aip-002,title-2,http://rightsstatements.org/vocab/InC/1.0/,1
+Brown,bma-coll,aip-3,bma-aip-001,bma-title-1,http://rightsstatements.org/vocab/InC/1.0/,1

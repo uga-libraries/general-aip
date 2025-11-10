@@ -1,6 +1,6 @@
-Department,Collection,Folder,AIP_ID,Title,Version,Rights
-test,test-coll,aip-1,aip-001,title-1,1,https://creativecommons.org/licenses/by-sa/4.0/
-test,test-coll,aip-2,aip-002,title-2,1,https://creativecommons.org/licenses/by-sa/4.0/
-test,test-coll,aip-3,aip-003,title-3,1,https://creativecommons.org/licenses/by-sa/4.0/
-test,test-coll,aip-4,aip-004,title-4,1,https://creativecommons.org/licenses/by-sa/4.0/
-test,test-coll,aip-5,aip-005,title-5,1,https://creativecommons.org/licenses/by-sa/4.0/
+Department,Collection,Folder,AIP_ID,Title,Rights,Version
+test,test-coll,aip-1,aip-001,title-1,https://creativecommons.org/licenses/by-sa/4.0/,1
+test,test-coll,aip-2,aip-002,title-2,https://creativecommons.org/licenses/by-sa/4.0/,1
+test,test-coll,aip-3,aip-003,title-3,https://creativecommons.org/licenses/by-sa/4.0/,1
+test,test-coll,aip-4,aip-004,title-4,https://creativecommons.org/licenses/by-sa/4.0/,1
+test,test-coll,aip-5,aip-005,title-5,https://creativecommons.org/licenses/by-sa/4.0/,1

@@ -26,7 +26,7 @@ class TestExtractMetadata(unittest.TestCase):
         """Test for an AIP with one file"""
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'extract_metadata')
-        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'one_folder', 'general', 'aip-id-one', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'one_folder', 'general', 'aip-id-one', 'title', 'InC', 1, True)
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.
@@ -45,7 +45,7 @@ class TestExtractMetadata(unittest.TestCase):
         """Test for an AIP with multiple files of different formats (CSV, JSON, Plain text)"""
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'extract_metadata')
-        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'multi_folder', 'general', 'aip-id-multi', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'multi_folder', 'general', 'aip-id-multi', 'title', 'InC', 1, True)
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.
@@ -68,7 +68,7 @@ class TestExtractMetadata(unittest.TestCase):
     #     """
     #     # Makes test input and runs the function being tested.
     #     aips_dir = os.path.join(os.getcwd(), 'extract_metadata')
-    #     aip = AIP(aips_dir, 'dept', None, 'coll-1', 'tool_error_folder', 'general', 'aip-id-error', 'title', 1, 'InC', True)
+    #     aip = AIP(aips_dir, 'dept', None, 'coll-1', 'tool_error_folder', 'general', 'aip-id-error', 'title', 'InC', 1, True)
     #     extract_metadata(aip)
     #
     #     # Test for the contents of the metadata folder.

@@ -43,7 +43,7 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the AIP instance and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-1', 'general', 'aip-1', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-1', 'general', 'aip-1', 'title', 'InC', 1, True)
         combine_metadata(aip, os.getcwd())
 
         # Test for combined-fits.xml produced by the function.
@@ -62,7 +62,7 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the AIP instance and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-2', 'general', 'aip-2', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-2', 'general', 'aip-2', 'title', 'InC', 1, True)
         combine_metadata(aip, os.getcwd())
 
         # Test for combined-fits.xml produced by the function.
@@ -209,7 +209,7 @@ class TestCombineMetadata(unittest.TestCase):
         """
         # Makes the AIP instance, a copy of the aip folder (moved by test) and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
-        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-error', 'general', 'aip-0', 'title', 1, 'InC', True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-error', 'general', 'aip-0', 'title', 'InC', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'aip-0_copy'), os.path.join(aips_dir, 'aip-0'))
         combine_metadata(aip, os.getcwd())
 

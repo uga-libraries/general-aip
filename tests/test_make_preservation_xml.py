@@ -64,8 +64,8 @@ class TestMakePreservationXML(unittest.TestCase):
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'bmac', 'mp4', 'rabbitbox', 'folder', 'av', 'rabbitbox_0003', 'rabbitbox_0003', 1,
-                  'http://rightsstatements.org/vocab/InC/1.0/', True)
+        aip = AIP(aips_dir, 'bmac', 'mp4', 'rabbitbox', 'folder', 'av', 'rabbitbox_0003', 'rabbitbox_0003',
+                  'http://rightsstatements.org/vocab/InC/1.0/', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.
@@ -80,8 +80,8 @@ class TestMakePreservationXML(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'test', None, 'test', 'folder', 'general', 'test-er-01', 'title', 1,
-                  'http://rightsstatements.org/vocab/InC/1.0/', True)
+        aip = AIP(aips_dir, 'test', None, 'test', 'folder', 'general', 'test-er-01', 'title',
+                  'http://rightsstatements.org/vocab/InC/1.0/', 1, True)
         aip.log = {'Started': '2025-08-13 2:15PM', 'AIP': 'test-er-01', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
                    'PresXML': 'n/a', 'PresValid': 'n/a', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
@@ -120,8 +120,8 @@ class TestMakePreservationXML(unittest.TestCase):
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'russell', None, 'rbrl-025', 'folder', 'general', 'rbrl-025-er-000003', 'Dups', 1,
-                  'http://rightsstatements.org/vocab/InC/1.0/', True)
+        aip = AIP(aips_dir, 'russell', None, 'rbrl-025', 'folder', 'general', 'rbrl-025-er-000003', 'Dups',
+                  'http://rightsstatements.org/vocab/InC/1.0/', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.
@@ -134,8 +134,8 @@ class TestMakePreservationXML(unittest.TestCase):
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'russell', None, 'rbrl-025', 'folder', 'general', 'rbrl-025-er-000002', 'Multi', 1,
-                  'http://rightsstatements.org/vocab/InC/1.0/', True)
+        aip = AIP(aips_dir, 'russell', None, 'rbrl-025', 'folder', 'general', 'rbrl-025-er-000002', 'Multi',
+                  'http://rightsstatements.org/vocab/InC/1.0/', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.
@@ -148,8 +148,8 @@ class TestMakePreservationXML(unittest.TestCase):
         # Makes the test input and runs the function.
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
         staging_dir = os.path.join(os.getcwd(), 'staging')
-        aip = AIP(aips_dir, 'russell', None, 'rbrl-025', 'folder', 'general', 'rbrl-025-er-000001', 'Single', 1,
-                  'http://rightsstatements.org/vocab/InC/1.0/', True)
+        aip = AIP(aips_dir, 'russell', None, 'rbrl-025', 'folder', 'general', 'rbrl-025-er-000001', 'Single',
+                  'http://rightsstatements.org/vocab/InC/1.0/', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.
@@ -163,7 +163,7 @@ class TestMakePreservationXML(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
         staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'hargrett', None, 'harg-0000', 'folder', 'web', 'harg-0000-web-202108-0001',
-                  'Hargrett Web without Collection', 1, 'http://rightsstatements.org/vocab/InC/1.0/', True)
+                  'Hargrett Web without Collection', 'http://rightsstatements.org/vocab/InC/1.0/', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.
@@ -177,7 +177,7 @@ class TestMakePreservationXML(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
         staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'magil', None, 'magil-0000', 'folder', 'web', 'magil-ggp-2529686-2025-08',
-                  'Georgia State Government Website', 1, 'http://rightsstatements.org/vocab/InC/1.0/', True)
+                  'Georgia State Government Website', 'http://rightsstatements.org/vocab/InC/1.0/', 1, True)
         make_preservation_xml(aip, staging_dir)
 
         # Compares the preservation.xml created by the function to a xml file with the expected values.

@@ -67,15 +67,12 @@ For UGA, these values are:
 * Rights: either Creative Commons license or RightsStatements.org statement
 * Version: AIP version number, which must be a whole number
 
-#### Changing Rights Statements
+#### Adding Rights Statements
 
-By default, the fits-to-preservation.xsl stylesheet will assign http://rightsstatements.org/vocab/InC/1.0/ to the AIPs.
-To change this, edit the stylesheet prior to running the script.
-There must be one rightstatement.org or Creative Commons license.
+The required Creative Commons license or RightsStatements.org statement is added to the preservation.xml from the metadata.csv.
 
-For additional rights, add one <dc:rights> element per rights statement.
-The right must be added to our preservation system (ARCHive) first.
-The element value is the objectIdentifierType/objectIdentifierValue from our preservation system.
+To add additional rights statements, edit the fits-to-preservation.xsl stylesheet.
+Add one <dc:rights> element per rights statement with the URI of the right from our preservation system (ARCHive).
 
 ### Script Arguments
 

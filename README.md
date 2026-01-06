@@ -103,6 +103,10 @@ Each AIP is fully processed before the next one is started.
 If a known error is encountered, such as failing a validation test or a regular expression does not find a match, 
 the AIP is moved to an error folder, and the rest of the steps are skipped for that AIP.
 
+It is recommended to keep AIPs to under 10,000 files and 100 GB where possible for ease of ongoing validation and other maintenance tasks.
+See the [aip_prep.py script](https://github.com/uga-libraries/congressional-mail/blob/main/aip_prep.py) developed for congressional mail
+for an example of how to automatically split a large folder into multiple aips.
+
 ## Author
 
 Adriane Hanson, Head of Digital Stewardship, December 2019.

@@ -157,6 +157,8 @@
                               <xs:enumeration value="PGP" />
                               <xs:enumeration value="Standard V1.2 (40-bit)" />
                               <xs:enumeration value="Standard V2.3 (128-bit)" />
+							  <xs:enumeration value="Standard V4.4 (128-bit)" />
+							  <xs:enumeration value="Standard V5.6 (256-bit)" />
                          </xs:restriction>	
                     </xs:simpleType>
                </xs:element>

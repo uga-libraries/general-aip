@@ -1,4 +1,5 @@
-# AIP Creation Workflow, December 2023
+# AIP Creation Workflow, December 2023 [REPLACED]
+This workflow was replaced in 2026. See documentation in the [born-digital-processing repo](https://github.com/uga-libraries/born-digital-processing/blob/main/preservation.md)
 
 ## Overview
 

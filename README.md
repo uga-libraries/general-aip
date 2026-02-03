@@ -97,7 +97,7 @@ Known issue: Tests that check the contents of XML may fail due to the inconsiste
 ## Workflow
 
 The script organizes the files, extracts and formats technical metadata, and bags and zips the AIP folders.
-See [AIP Creation Instructions](documentation/aip_creation_instructions.md) for details.
+See [preservation.md](https://github.com/uga-libraries/born-digital-processing/blob/main/preservation.md) for how this is implemented with born-digital archives.
 
 Each AIP is fully processed before the next one is started.
 If a known error is encountered, such as failing a validation test or a regular expression does not find a match, 

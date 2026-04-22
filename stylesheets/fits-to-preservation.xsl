@@ -572,6 +572,18 @@ multiple possible formats or multiple possible created dates) all possible infor
                 </premis:dateCreatedByApplication>
             </xsl:when>
             
+ 			<!--Pattern: D:YYYYMMDD######-->
+            <!--Example: D:20070628105338-->
+            <xsl:when test="matches($apdate, '^D:\d{14}')">
+                <premis:dateCreatedByApplication>
+                    <xsl:analyze-string select="$apdate" regex="D:(\d{{4}})(\d{{2}})(\d{{2}})\d{{5}}">
+                        <xsl:matching-substring>
+                            <xsl:value-of select="regex-group(1)" />-<xsl:value-of select="regex-group(2)" />-<xsl:value-of select="regex-group(3)" />
+                        </xsl:matching-substring>
+                    </xsl:analyze-string>
+                </premis:dateCreatedByApplication>
+            </xsl:when>
+
             <!--Pattern: Day.Month.Year(,) Time with all numbers-->
             <!--Examples: 23.07.98, 2:28 AM; 18.9.98, 12:50 PM; 2.9.98 11:42 PM-->
             <xsl:when test="matches($apdate, '(\d{1,2})\.(\d{1,2})\.(\d{2}),? \d{1,2}:\d{1,2} (AM|PM)')">
@@ -751,7 +763,8 @@ multiple possible formats or multiple possible created dates) all possible infor
             <!--Makes an invalid element to catch new date formats during validation.-->
             <xsl:otherwise>
                 <premis:dateCreatedByApplication>
-					<xsl:text>New Date Format Identified: Update Stylesheet</xsl:text>
+					<xsl:text>Update stylesheet for new date format: </xsl:text>
+                    <xsl:value-of select="$apdate" />
                 </premis:dateCreatedByApplication>
             </xsl:otherwise>
             

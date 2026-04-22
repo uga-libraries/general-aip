@@ -391,8 +391,8 @@ def extract_metadata(aip):
     # If there were any tool error messages from FITS, saves those to a log in the AIP's metadata folder.
     # Processing on the AIP continues, since typically other tools still work.
     if fits_output.stderr:
-        with open(os.path.join(metadata, f"{aip.id}_fits-tool-errors_fitserr.txt"), "w") as fits_errors:
-            fits_errors.write(fits_output.stderr.decode("utf-8"))
+        with open(os.path.join(metadata, f"{aip.id}_fits-tool-errors_fitserr.txt"), "w", errors="ignore") as fits_errors:
+            fits_errors.write(fits_output.stderr.decode("utf-8", errors="replace"))
         aip.log["FITSTool"] = "FITS tools generated errors (saved to metadata folder)"
     else:
         aip.log["FITSTool"] = "No FITS tools errors"

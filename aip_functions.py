@@ -527,7 +527,7 @@ def make_preservation_xml(aip, staging):
         return
 
 
-def manifest(aip, staging, ingest):
+def manifest(aip, staging):
     """Calculate the MD5 checksum for the AIP and add it to the department's manifest in the aips-to-ingest folder
 
     One manifest is made for each department so that AIPs may be made for multiple departments simultaneously.
@@ -536,7 +536,6 @@ def manifest(aip, staging, ingest):
     Parameters:
          aip : instance of the AIP class, used for department, id, log, size, and to_zip
          staging : path to the aip_staging folder from configuration.py
-         ingest : path to the ARCHive ingest server folder from configuration.py
 
     Returns: none
     """
@@ -576,24 +575,6 @@ def manifest(aip, staging, ingest):
         manifest_path = os.path.join(staging, "aips-ready-to-ingest", manifest_name)
     with open(manifest_path, "a", encoding="utf-8") as manifest_file:
         manifest_file.write(md5deep_result.stdout.decode("UTF-8").replace("\r", ""))
-
-    # For AV, copies to ARCHive ingest to be ready to schedule.
-    # TODO: is there an rsync-like option for Windows for the other workflows? Or just use Python?
-    if aip.type == 'av':
-        rsync_result = subprocess.run(f'rsync -v --progress {aip_path} {ingest}', stderr=subprocess.PIPE, shell=True)
-
-        # If copied correctly, move to a different folder on AIPs staging. Otherwise, move to an error folder.
-        if not rsync_result.stderr:
-            aip_zip_name = os.path.basename(aip_path)
-            shutil.move(aip_path, f'{staging}/aips-already-on-ingest-server/{aip_zip_name}')
-        else:
-            move_error('copy_to_ingest_failed', aip_path, staging)
-            error_msg = rsync_result.stderr.decode("utf-8")
-            aip.log["Manifest"] = (f"Successfully added AIP to manifest. "
-                                   f"Issue when copying to ingest. rsync error: {error_msg}")
-            aip.log["Complete"] = "Error during processing"
-            log(aip.log, aip.directory)
-            return
 
     # Logs the success of adding the AIP to the manifest and of AIP creation (this is the last step).
     aip.log["Manifest"] = "Successfully added AIP to manifest"

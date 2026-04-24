@@ -138,12 +138,6 @@ def check_configuration(aips_dir):
         errors_list.append("AIP_STAGING variable is missing from the configuration file.")
 
     try:
-        if not os.path.exists(c.INGEST_SERVER):
-            errors_list.append(f"INGEST_SERVER path '{c.INGEST_SERVER}' is not correct.")
-    except AttributeError:
-        errors_list.append("INGEST_SERVER variable is missing from the configuration file.")
-
-    try:
         if not os.path.exists(c.FITS):
             errors_list.append(f"FITS path '{c.FITS}' is not correct.")
         # For FITS, checks that the directory (first character) of the path matches the directory of aips_dir.

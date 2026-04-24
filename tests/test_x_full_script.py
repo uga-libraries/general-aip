@@ -90,7 +90,7 @@ class TestFullScript(unittest.TestCase):
 
     def test_born_digital(self):
         """
-        Runs the entire script on born-digital test files.
+        Runs the entire script on born-digital test files. Original folders are not named with the AIP ID.
         """
         # Make a copy of the test files stored in the script repo, since the test will alter the files.
         shutil.copytree("born_digital_files", "born_digital_current")
@@ -129,7 +129,8 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_one, "data", "objects"),
                     os.path.join(bag_one, "data", "metadata", "Flower2.JPG_fits.xml"),
                     os.path.join(bag_one, "data", "metadata", "test-001-er-000001_preservation.xml"),
-                    os.path.join(bag_one, "data", "objects", "Flower2.JPG"),
+                    os.path.join(bag_one, "data", "objects", "CD001_Images"),
+                    os.path.join(bag_one, "data", "objects", "CD001_Images", "Flower2.JPG"),
                     os.path.join(bag_two, "data"),
                     os.path.join(bag_two, "bag-info.txt"),
                     os.path.join(bag_two, "bagit.txt"),
@@ -142,8 +143,9 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_two, "data", "metadata", "New Text Document.txt_fits.xml"),
                     os.path.join(bag_two, "data", "metadata", "overview-tree.html_fits.xml"),
                     os.path.join(bag_two, "data", "metadata", "test-001-er-000002_preservation.xml"),
-                    os.path.join(bag_two, "data", "objects", "New Text Document.txt"),
-                    os.path.join(bag_two, "data", "objects", "overview-tree.html"),
+                    os.path.join(bag_two, "data", "objects", "CD002_Random"),
+                    os.path.join(bag_two, "data", "objects", "CD002_Random", "New Text Document.txt"),
+                    os.path.join(bag_two, "data", "objects", "CD002_Random", "overview-tree.html"),
                     os.path.join(bag_three, "data"),
                     os.path.join(bag_three, "bag-info.txt"),
                     os.path.join(bag_three, "bagit.txt"),
@@ -156,9 +158,10 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_three, "data", "metadata", "Test PDF.pdf_fits.xml"),
                     os.path.join(bag_three, "data", "metadata", "test-001-er-000003_preservation.xml"),
                     os.path.join(bag_three, "data", "metadata", "Worksheet.csv_fits.xml"),
-                    os.path.join(bag_three, "data", "objects", "Spreadsheet"),
-                    os.path.join(bag_three, "data", "objects", "Test PDF.pdf"),
-                    os.path.join(bag_three, "data", "objects", "Spreadsheet", "Worksheet.csv"),
+                    os.path.join(bag_three, "data", "objects", "FD001_Text"),
+                    os.path.join(bag_three, "data", "objects", "FD001_Text", "Spreadsheet"),
+                    os.path.join(bag_three, "data", "objects", "FD001_Text", "Test PDF.pdf"),
+                    os.path.join(bag_three, "data", "objects", "FD001_Text", "Spreadsheet", "Worksheet.csv"),
                     os.path.join("born_digital_current", "fits-xml", "test-001-er-000001_combined-fits.xml"),
                     os.path.join("born_digital_current", "fits-xml", "test-001-er-000002_combined-fits.xml"),
                     os.path.join("born_digital_current", "fits-xml", "test-001-er-000003_combined-fits.xml"),

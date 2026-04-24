@@ -30,7 +30,8 @@ Both share responsibility for maintaining the script.
 2. Run the script. The script will:
 
    1. Extract the AIP metadata from the metadata.csv.
-   2. Delete temporary files from anywhere within the AIP folder because they cause errors with validating bags.
+   2. Make a top-level folder named with the AIP ID and move everything into it, if the original AIP folder is not named with the AIP ID.
+   3. Delete temporary files from anywhere within the AIP folder because they cause errors with validating bags.
    3. Create the AIP directory structure: folder named with the AIP ID that contains metadata and objects folders.
    4. Extract technical metadata from each file in the objects folder with FITS and save it to the metadata folder. 
    5. Combine each FITS xml file into one file named combined-fits.xml and save it to the fits-xml folder.

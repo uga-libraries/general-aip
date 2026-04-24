@@ -19,6 +19,7 @@ Returns:
 
 import csv
 import os
+import shutil
 import sys
 import aip_functions as a
 
@@ -93,7 +94,7 @@ for aip_row in read_metadata:
     # make a new folder named with the AIP ID and move the entire folder into it.
     if aip.folder_name != aip.id:
         os.mkdir(os.path.join(AIPS_DIRECTORY, aip.id))
-        os.replace(aip.folder_name, aip.id)
+        shutil.move(os.path.join(AIPS_DIRECTORY, aip.folder_name), os.path.join(AIPS_DIRECTORY, aip.id))
 
     # Deletes any temporary files and makes a log of each deleted file.
     a.delete_temp(aip)

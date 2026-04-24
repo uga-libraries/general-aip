@@ -49,11 +49,11 @@ class TestManifest(unittest.TestCase):
         if os.path.exists(av_manifest_path):
             os.remove(av_manifest_path)
 
-        # Deletes the copy of the AV aip, which is copied to 2 folders when the test is run on a mac
+        # Deletes the copy of the AV aip, which is copied to staging when the test is run on a mac
         # and to an errors folder when the test is run on Windows.
         locations = [os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-with-errors', 'copy_to_ingest_failed'),
                      os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-already-on-ingest-server'),
-                     os.path.join(os.getcwd(), 'ingest')]
+                     os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-ready-to-ingest')]
         for location in locations:
             tar_path = os.path.join(location, 'rabbitbox_010_bag.20000.tar')
             if os.path.exists(tar_path):
@@ -75,7 +75,7 @@ class TestManifest(unittest.TestCase):
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
-        manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(os.getcwd(), 'ingest')))
+        manifest(aip, aip_staging)
 
         # Test for the manifest.
         manifest_name = f'manifest_tests_bmac_{datetime.now().strftime("%Y-%m-%d")}.txt'
@@ -92,11 +92,6 @@ class TestManifest(unittest.TestCase):
                      'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
                      'Successfully completed processing']]
         self.assertEqual(expected, result, "Problem with AV, AIP log")
-
-        # Test for copying to ingest.
-        # NOTE: this only works when running the test on a Mac, where rsync is available.
-        result = os.path.exists(os.path.join(os.getcwd(), 'ingest', 'rabbitbox_010_bag.20000.tar'))
-        self.assertEqual(True, result, "Problem with AV, ingest")
 
         # Test for moving to other location in staging.
         result = os.path.exists(os.path.join(aip_staging, 'aips-already-on-ingest-server', 'rabbitbox_010_bag.20000.tar'))
@@ -115,7 +110,7 @@ class TestManifest(unittest.TestCase):
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
-        manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(aips_dir, 'ingest')))
+        manifest(aip, aip_staging)
 
         # Test for the manifest.
         manifest_name = f'manifest_tests_hargrett_{datetime.now().strftime("%Y-%m-%d")}.txt'
@@ -146,7 +141,7 @@ class TestManifest(unittest.TestCase):
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
-        manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(aips_dir, 'ingest')))
+        manifest(aip, aip_staging)
 
         # Test that the manifest was not created.
         manifest_name = f'manifest_tests_hargrett_{datetime.now().strftime("%Y-%m-%d")}.txt'
@@ -181,7 +176,7 @@ class TestManifest(unittest.TestCase):
         manifest_name = f'manifest_tests_russell_{datetime.now().strftime("%Y-%m-%d")}.txt'
         with open(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name), 'w', encoding="utf-8") as file:
             file.write('629f0e1886f6e7d53291fae720e737dd  rbrl-123-er-111111_bag.22.tar.bz2\n')
-        manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(aips_dir, 'ingest')))
+        manifest(aip, aip_staging)
 
         # Test for the manifest.
         result = make_manifest_list(os.path.join(aip_staging, 'aips-ready-to-ingest', manifest_name))
@@ -212,7 +207,7 @@ class TestManifest(unittest.TestCase):
                    'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'Success',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
-        manifest(aip, aip_staging, os.path.join(os.getcwd(), os.path.join(aips_dir, 'ingest')))
+        manifest(aip, aip_staging)
 
         # Test for the manifest.
         manifest_name = f'manifest_tests_magil_{datetime.now().strftime("%Y-%m-%d")}.txt'

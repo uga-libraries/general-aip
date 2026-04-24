@@ -92,6 +92,7 @@ for aip_row in read_metadata:
     # If the folder is not already named with the AIP ID,
     # make a new folder named with the AIP ID and move the entire folder into it.
     if aip.folder_name != aip.id:
+        os.mkdir(os.path.join(AIPS_DIRECTORY, aip.id))
         os.replace(aip.folder_name, aip.id)
 
     # Deletes any temporary files and makes a log of each deleted file.

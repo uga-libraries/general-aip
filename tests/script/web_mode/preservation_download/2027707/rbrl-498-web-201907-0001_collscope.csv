@@ -1,0 +1,4 @@
+abstract_scope_rule,account,collection,created_by,created_date,enabled,host,id,last_updated_by,last_updated_date,scope_rule_template,seed,type,url_match,value
+,1468,12265,bpieczko,2019-10-18 13:57:58.967060+00:00,True,soundcloud.com,1001752,bpieczko,2019-10-18 13:57:58.967117+00:00,,,IGNORE_ROBOTS,,
+,1468,12265,robert.lay,2021-02-10 18:20:52.571273+00:00,True,fbcdn.net,1678549,robert.lay,2021-02-10 18:20:52.571321+00:00,,,IGNORE_ROBOTS,,
+,1468,12265,robert.lay,2021-02-10 18:20:52.610905+00:00,True,www.instagram.com,1678550,robert.lay,2021-02-10 18:20:52.610961+00:00,,,IGNORE_ROBOTS,,

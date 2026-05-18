@@ -427,6 +427,10 @@ def make_bag(aip):
     Returns: none
     """
 
+    # Deletes temporary files. These can be re-generated during the AIP creation process.
+    aip_path = os.path.join(aip.directory, aip.id)
+    delete_temp(aip, aip_path, logging=False)
+
     # Bags the AIP.
     bagit.make_bag(aip.id, checksums=["md5", "sha256"])
 

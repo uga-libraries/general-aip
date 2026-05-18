@@ -327,7 +327,7 @@ def delete_temp(aip, aip_path, logging):
     # Deletes DS_Store, Thumbs.db, starts with a dot, or ends with .tmp.
     # Gets information for the deletion log if a log will be made and deletes the file.
     delete_list = [".DS_Store", "._.DS_Store", "Thumbs.db"]
-    for root, directories, files in os.walk(aip.id):
+    for root, directories, files in os.walk(aip_path):
         for item in files:
             if item in delete_list or item.endswith(".tmp") or item.startswith("."):
                 if logging:

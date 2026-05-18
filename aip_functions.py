@@ -82,14 +82,14 @@ def check_arguments(arguments):
         else:
             errors_list.append(f'Provided aip_type "{arguments[2]}" is not an expected value (av, general, web).')
 
-    # Checks if the optional to_zip argument is present, and if so if it is the expected value.
-    if len(arguments) > 2:
-        if arguments[2] == "no-zip":
+    # Checks if the third required argument (to_zip) is present, and if so, if it is the expected value.
+    if len(arguments) > 3:
+        if arguments[3] == "no-zip":
             to_zip = False
+        elif arguments[3] == "zip":
+            to_zip = True
         else:
-            errors_list.append("Unexpected value for the second argument. If provided, should be 'no-zip'.")
-    else:
-        to_zip = True
+            errors_list.append(f'Provided to_zip "{arguments[3]}" is not an expected value (no-zip, zip).')
 
     # Calculates the path to the required metadata file and verifies it is present.
     # Only tests if there is a value for aips_directory, which is part of the path.

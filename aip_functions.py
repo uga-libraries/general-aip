@@ -732,26 +732,27 @@ def structure_directory(aip, staging):
 
     # Makes the objects folder within the AIP folder, if it doesn't exist.
     # If it does, moves the AIP to an error folder so the original directory structure is not altered.
+    aip_path = os.path.join(aip.directory, aip.id)
     try:
-        os.mkdir(os.path.join(aip.id, "objects"))
+        os.mkdir(os.path.join(aip_path, "objects"))
         aip.log["ObjectsError"] = "Successfully created objects folder"
     except FileExistsError:
         aip.log["ObjectsError"] = "Objects folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
         log(aip.log, aip.directory)
-        move_error("objects_folder_exists", aip.id, staging)
+        move_error("objects_folder_exists", aip_path, staging)
         return
 
     # Makes the metadata folders within the AIP folder, if it doesn't exist.
     # If it does, moves the AIP to an error folder so the original directory structure is not altered.
     try:
-        os.mkdir(os.path.join(aip.id, "metadata"))
+        os.mkdir(os.path.join(aip_path, "metadata"))
         aip.log["MetadataError"] = "Successfully created metadata folder"
     except FileExistsError:
         aip.log["MetadataError"] = "Metadata folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
         log(aip.log, aip.directory)
-        move_error("metadata_folder_exists", aip.id, staging)
+        move_error("metadata_folder_exists", aip_path, staging)
         return
 
     # Moves any metadata files to the metadata folder.

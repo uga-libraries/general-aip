@@ -467,7 +467,7 @@ def make_cleaned_fits_xml(aip, staging):
         error_msg = saxon_output.stderr.decode("utf-8")
         aip.log["PresXML"] = f"Issue when creating cleaned-fits.xml. Saxon error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         move_error("cleaned_fits_saxon_error", os.path.join(aip.directory, aip.id), staging)
 
 

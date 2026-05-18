@@ -700,13 +700,12 @@ def package(aip, staging):
     # If the AIP should be zipped (if the value of to_zip is true),
     # Zips (bz2) the tar file, using the command appropriate for the operating system.
     if aip.to_zip is True:
-        aip_tar = f"{aip_bag}.{bag_size}.tar"
         if operating_system == "Windows":
             # Does not print the progress to the terminal (stdout), which is a lot of text.
-            subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -tbzip2 a -aoa "{aip_tar}.bz2" "{aip_tar}"',
+            subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -tbzip2 a -aoa "{tar_size_path}.bz2" "{tar_size_path}"',
                            stdout=subprocess.DEVNULL, shell=True)
         else:
-            subprocess.run(f'bzip2 "{aip_tar}"', shell=True)
+            subprocess.run(f'bzip2 "{tar_size_path}"', shell=True)
 
         # Deletes the tar version. Just want the tarred and zipped version.
         # For Mac/Linux, the bzip2 command overwrites the tar file so this step is unnecessary.

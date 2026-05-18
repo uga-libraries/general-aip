@@ -121,7 +121,7 @@ for aip_row in read_metadata:
     # Bags the AIP using bagit.
     if aip.id in os.listdir(AIPS_DIRECTORY):
         a.make_bag(aip)
-        a.validate_bag(aip)
+        a.validate_bag(aip, configuration.AIP_STAGING)
 
     # Tars the AIP and also zips (bz2) the AIP if ZIP (optional script argument) is True.
     if f'{aip.id}_bag' in os.listdir(AIPS_DIRECTORY):

@@ -819,7 +819,8 @@ def validate_bag(aip, staging):
     """
 
     # Validate the bag with bagit, and save an errors in a separate log.
-    new_bag = bagit.Bag(f"{aip.id}_bag")
+    bag_path = os.path.join(aip.directory, f"{aip.id}_bag")
+    new_bag = bagit.Bag(bag_path)
     try:
         new_bag.validate()
         aip.log["BagValid"] = f"Bag valid on {datetime.now()}"

@@ -16,8 +16,8 @@ import configuration as c
 class AIP:
     """Characteristics of each AIP and log data used by multiple functions"""
 
-    def __init__(self, directory, department, workflow, collection_id, folder_name, aip_type, aip_id, title, version,
-                 to_zip):
+    def __init__(self, directory, department, workflow, collection_id, folder_name, aip_type, aip_id, title, rights,
+                 version, to_zip):
         self.directory = directory
         self.department = department
         self.workflow = workflow
@@ -26,6 +26,7 @@ class AIP:
         self.type = aip_type
         self.id = aip_id
         self.title = title
+        self.rights = rights
         self.version = version
         self.to_zip = to_zip
         self.size = None

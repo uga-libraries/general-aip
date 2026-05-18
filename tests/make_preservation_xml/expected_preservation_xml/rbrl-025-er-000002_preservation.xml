@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preservation xmlns:dc="http://purl.org/dc/terms/"
+              xmlns:premis="http://www.loc.gov/premis/v3">
+   <dc:title>Multi</dc:title>
+   <dc:rights>http://rightsstatements.org/vocab/InC/1.0/</dc:rights>
+   <aip>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/russell</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>rbrl-025-er-000002</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/russell/rbrl-025-er-000002</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>1</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>representation</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:size>50124</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Comma-Separated Values (CSV)</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>x-fmt/18</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+            </premis:format>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Office Open XML Document</premis:formatName>
+                  <premis:formatVersion>2007 onwards</premis:formatVersion>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>fmt/189</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+            </premis:format>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Office Open XML Workbook</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
+            </premis:format>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Portable Document Format</premis:formatName>
+                  <premis:formatVersion>1.6</premis:formatVersion>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>fmt/20</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+               <premis:formatNote>Format identified by Exiftool version 11.54</premis:formatNote>
+               <premis:formatNote>Format identified by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified by NLNZ Metadata Extractor version 3.6GA</premis:formatNote>
+               <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
+               <premis:formatNote>Format identified by ffident version 0.2</premis:formatNote>
+               <premis:formatNote>Format identified by file utility version 5.03</premis:formatNote>
+            </premis:format>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>XLSX</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified by Exiftool version 11.54</premis:formatNote>
+            </premis:format>
+            <premis:creatingApplication>
+               <premis:creatingApplicationName>Adobe PDF Library 25.1.97/Acrobat PDFMaker 25 for Word</premis:creatingApplicationName>
+            </premis:creatingApplication>
+            <premis:creatingApplication>
+               <premis:creatingApplicationName>Microsoft Excel</premis:creatingApplicationName>
+               <premis:creatingApplicationVersion>16.0300</premis:creatingApplicationVersion>
+            </premis:creatingApplication>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://uri/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>rbrl-025</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+   </aip>
+   <filelist>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/russell/rbrl-025-er-000002</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>rbrl-025-er-000002/objects/Test File Spreadsheet.csv</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:fixity>
+               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
+               <premis:messageDigest>ccb180a0df1578edbc073dda4e4dd597</premis:messageDigest>
+               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
+            </premis:fixity>
+            <premis:size>52</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Comma-Separated Values (CSV)</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>x-fmt/18</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://uri/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>rbrl-025-er-000002</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/russell/rbrl-025-er-000002</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>rbrl-025-er-000002/objects/Docs/Test Spreadsheet.xlsx</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:fixity>
+               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
+               <premis:messageDigest>5f24cb9f277aa92ebad909f648acb6fd</premis:messageDigest>
+               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
+            </premis:fixity>
+            <premis:size>17011</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Office Open XML Document</premis:formatName>
+                  <premis:formatVersion>2007 onwards</premis:formatVersion>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>fmt/189</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+            </premis:format>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>XLSX</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified by Exiftool version 11.54</premis:formatNote>
+            </premis:format>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Office Open XML Workbook</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
+            </premis:format>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-07-21</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
+            <premis:creatingApplication>
+               <premis:creatingApplicationName>Microsoft Excel</premis:creatingApplicationName>
+               <premis:creatingApplicationVersion>16.0300</premis:creatingApplicationVersion>
+            </premis:creatingApplication>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://uri/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>rbrl-025-er-000002</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/russell/rbrl-025-er-000002</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>rbrl-025-er-000002/objects/Docs/Test File.pdf</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:fixity>
+               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
+               <premis:messageDigest>b31d8b32acb497c725201d1ccbff2163</premis:messageDigest>
+               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
+            </premis:fixity>
+            <premis:size>33061</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Portable Document Format</premis:formatName>
+                  <premis:formatVersion>1.6</premis:formatVersion>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>fmt/20</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified as valid by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified as well-formed by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+               <premis:formatNote>Format identified by Jhove version 1.20.1</premis:formatNote>
+               <premis:formatNote>Format identified by file utility version 5.03</premis:formatNote>
+               <premis:formatNote>Format identified by Exiftool version 11.54</premis:formatNote>
+               <premis:formatNote>Format identified by NLNZ Metadata Extractor version 3.6GA</premis:formatNote>
+               <premis:formatNote>Format identified by ffident version 0.2</premis:formatNote>
+               <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
+            </premis:format>
+            <premis:creatingApplication>
+               <premis:creatingApplicationName>Adobe PDF Library 25.1.97/Acrobat PDFMaker 25 for Word</premis:creatingApplicationName>
+               <premis:dateCreatedByApplication>2025-07-21</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://uri/russell</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>rbrl-025-er-000002</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+   </filelist>
+</preservation>

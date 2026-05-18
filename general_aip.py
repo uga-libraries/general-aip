@@ -97,7 +97,7 @@ for aip_row in read_metadata:
         shutil.move(os.path.join(AIPS_DIRECTORY, aip.folder_name), os.path.join(AIPS_DIRECTORY, aip.id))
 
     # Deletes any temporary files and makes a log of each deleted file.
-    a.delete_temp(aip)
+    a.delete_temp(aip, aip_path, logging=True)
 
     # Organizes the AIP folder contents into the UGA Libraries' AIP directory structure (objects and metadata).
     if aip.id in os.listdir('.'):

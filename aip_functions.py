@@ -840,17 +840,18 @@ def validate_bag(aip, staging):
                 log_path.write(str(errors))
 
 
-def validate_preservation_xml(aip):
+def validate_preservation_xml(aip, staging):
     """Validate the preservation.xml file against UGA's requirements
 
     Parameters:
          aip : instance of the AIP class, used for id and log
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
 
     # Uses xmllint and an XSD file to validate the preservation.xml.
-    input_file = os.path.join(aip.id, "metadata", f"{aip.id}_preservation.xml")
+    input_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_preservation.xml")
     stylesheet = os.path.join(c.STYLESHEETS, "preservation.xsd")
     xmllint_output = subprocess.run(f'xmllint --noout -schema "{stylesheet}" "{input_file}"',
                                     stderr=subprocess.PIPE, shell=True)
@@ -861,8 +862,8 @@ def validate_preservation_xml(aip):
     if "failed to load" in validation_result:
         aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("preservationxml_not_found", aip.id)
+        log(aip.log, aip.directory)
+        move_error("preservationxml_not_found", os.path.join(aip.directory, aip.id), staging)
         return
     else:
         aip.log["PresXML"] = "Successfully created preservation.xml"
@@ -873,9 +874,10 @@ def validate_preservation_xml(aip):
     if "fails to validate" in validation_result:
         aip.log["PresValid"] = "Preservation.xml is not valid (see log in error folder)"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("preservationxml_not_valid", aip.id)
-        log_path = os.path.join("..", "errors", "preservationxml_not_valid", f"{aip.id}_presxml_validation.txt")
+        log(aip.log, aip.directory)
+        move_error("preservationxml_not_valid", os.path.join(aip.directory, aip.id), staging)
+        log_path = os.path.join(staging, "aips-with-errors", "preservationxml_not_valid",
+                                f"{aip.id}_presxml_validation.txt")
         with open(log_path, "w") as validation_log:
             for line in validation_result.split("\r"):
                 validation_log.write(line + "\n")

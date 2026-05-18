@@ -774,10 +774,9 @@ def structure_directory(aip, staging):
             os.remove(os.path.join(aip_path, bag_metadata_file))
         shutil.rmtree(os.path.join(aip_path, 'data'))
 
-    # Moves any metadata files to the metadata folder.
-    # Departments or other details, in addition to the filenames, are used when possible.
-    # The more specific the match, the less likely a file will be incorrectly identified as a metadata file.
-    for item in os.listdir(aip.id):
+    # Moves any metadata files to the metadata folder and then the rest to the objects folder, with renaming as needed.
+    # Metadata files are matched as specifically as possible to reduce the risk of incorrect identifications.
+    for item in os.listdir(aip_path):
         item_path = os.path.join(aip.id, item)
         metadata_path = os.path.join(aip.id, "metadata", item)
         # Deletion log, created by the script when deleting temp files.

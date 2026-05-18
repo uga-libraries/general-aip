@@ -75,6 +75,13 @@ def check_arguments(arguments):
         else:
             errors_list.append(f'Provided aips_directory "{arguments[1]}" is not a valid directory.')
 
+    # Checks if the second required argument (aip_type) is present and an expected value.
+    if len(arguments) > 2:
+        if arguments[2] in ('av', 'general', 'web'):
+            aip_type = arguments[2]
+        else:
+            errors_list.append(f'Provided aip_type "{arguments[2]}" is not an expected value (av, general, web).')
+
     # Checks if the optional to_zip argument is present, and if so if it is the expected value.
     if len(arguments) > 2:
         if arguments[2] == "no-zip":

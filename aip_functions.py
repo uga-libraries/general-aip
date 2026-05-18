@@ -712,15 +712,6 @@ def package(aip, staging):
         if operating_system == "Windows":
             os.remove(tar_size_path)
 
-        # Moves the tarred and zipped version to the aips-to-ingest folder.
-        path = os.path.join("..", "aips-to-ingest", f"{aip_bag}.{bag_size}.tar.bz2")
-        os.replace(f"{aip_bag}.{bag_size}.tar.bz2", path)
-
-    # If not zipping, moves the tarred version to the aips-to-ingest folder.
-    else:
-        path = os.path.join("..", "aips-to-ingest", f"{aip_bag}.{bag_size}.tar")
-        os.replace(f"{aip_bag}.{bag_size}.tar", path)
-
     # Updates the log with success.
     aip.log["Package"] = "Successfully made package"
 

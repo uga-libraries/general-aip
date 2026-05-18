@@ -129,8 +129,13 @@ def check_configuration(aips_dir):
     # Starts a list for all encountered errors, so all errors can be checked before returning a result.
     errors_list = []
 
-    # For the four variables with a value that is a path,
-    # checks if the variable exists and if the path is valid.
+    # For the variables with a value that is a path, checks if the variable exists and if the path is valid.
+    try:
+        if not os.path.exists(c.AIP_STAGING):
+            errors_list.append(f"AIP_STAGING path '{c.AIP_STAGING}' is not correct.")
+    except AttributeError:
+        errors_list.append("AIP_STAGING variable is missing from the configuration file.")
+        
     try:
         if not os.path.exists(c.FITS):
             errors_list.append(f"FITS path '{c.FITS}' is not correct.")

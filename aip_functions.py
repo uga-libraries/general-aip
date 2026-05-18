@@ -785,8 +785,8 @@ def structure_directory(aip, staging):
         av_metadata = (".qctools.mkv", ".qctools.xml.gz", ".framemd5", ".srt")
         if aip.type == "av" and item.endswith(av_metadata):
             os.replace(item_path, os.path.join(aip_path, "metadata", f"bmac_{item}"))
-            # Deletion log, created by the script when deleting temp files.
-            elif item.startswith(f"{aip.id}_files-deleted_"):
+        # Deletion log, created by the script when deleting temp files.
+        elif item.startswith(f"{aip.id}_files-deleted_"):
             os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # Metadata file used by Emory with disk images.
         elif aip.department == "emory" and item.startswith("EmoryMD"):

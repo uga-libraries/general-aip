@@ -674,10 +674,10 @@ def package(aip, staging):
     bag_size = int(bag_size)
 
     # Tars the file, using the command appropriate for the operating system.
+    tar_path = os.path.join(staging, 'aips-ready-to-ingest', f"{aip_bag}.tar")
     if operating_system == "Windows":
         # Does not print the progress to the terminal (stdout), which is a lot of text. [subprocess.DEVNULL]
-        bag_path = os.path.join(aip.directory, aip_bag)
-        tar_output = subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{aip_bag}.tar" "{bag_path}"',
+        tar_output = subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{tar_path}" "{bag_path}"',
                                     stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, shell=True)
         # If there is an error, saves the error to the log and does not complete the rest of the function for this AIP.
         # Cannot move it to an error folder because getting a permissions error.
@@ -685,7 +685,7 @@ def package(aip, staging):
             error_msg = tar_output.stderr.decode("utf-8")
             aip.log["Package"] = f"Could not tar. 7zip error: {error_msg}"
             aip.log["Complete"] = "Error during processing"
-            log(aip.log)
+            log(aip.log, aip.directory)
             return
     else:
         subprocess.run(f'tar -cf "{aip_bag}.tar" "{aip_bag}"', shell=True)

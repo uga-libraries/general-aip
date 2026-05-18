@@ -115,7 +115,7 @@ def check_arguments(arguments):
         errors_list.append("Cannot check for the metadata.csv because the AIPs directory has an error.")
 
     # The errors list is empty if there were no errors.
-    return aips_directory, to_zip, aip_metadata_csv, errors_list
+    return aips_directory, aip_type, to_zip, workflow, aip_metadata_csv, errors_list
 
 
 def check_configuration(aips_dir):

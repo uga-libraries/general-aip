@@ -526,7 +526,7 @@ def make_preservation_xml(aip, staging):
         return
 
 
-def manifest(aip):
+def manifest(aip, staging):
     """Calculate the MD5 checksum for the AIP and add it to the department's manifest in the aips-to-ingest folder
 
     One manifest is made for each department so that AIPs may be made for multiple departments simultaneously.
@@ -534,46 +534,51 @@ def manifest(aip):
 
     Parameters:
          aip : instance of the AIP class, used for department, id, log, size, and to_zip
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
 
     # Makes the path to the packaged AIP, which is different depending on if it is zipped or not.
-    aip_path = os.path.join("..", "aips-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
+    aip_path = os.path.join(staging, "aips-ready-to-ingest", f"{aip.id}_bag.{aip.size}.tar")
     if aip.to_zip is True:
         aip_path = aip_path + ".bz2"
 
     # Checks if the tar/zip is present in the aips-to-ingest directory.
     # If it isn't, due to errors from package(), logs the event and does not complete the rest of the function.
     if not os.path.exists(aip_path):
-        aip.log["Manifest"] = "Tar/zip file not in aips-to-ingest folder"
+        aip.log["Manifest"] = f"Tar/zip file '{aip_path}' not in aips-ready-for-ingest folder"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         return
 
     # Calculates the MD5 of the packaged AIP.
-    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
+    md5deep_result = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
     # If md5deep has an error, logs the event and does not execute the rest of this function.
-    if md5deep_output.stderr:
-        error_msg = md5deep_output.stderr.decode("utf-8")
+    if md5deep_result.stderr:
+        error_msg = md5deep_result.stderr.decode("utf-8")
         aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         return
 
-    # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.
+    # Adds the md5 and AIP filename to the appropriate manifest in staging.
     # Initial output of md5deep is b'md5_value  filename.ext\r\n'
     # Converts to a string and remove the \r linebreak to format the manifest text file as required by ARCHive.
-    manifest_path = os.path.join("..", "aips-to-ingest", f"manifest_{aip.department}.txt")
+    manifest_name = f'manifest_{os.path.basename(aip.directory)}_{aip.department}_{datetime.now().strftime("%Y-%m-%d")}.txt'
+    if aip.type == "av":
+        manifest_path = os.path.join(staging, "md5-manifests-for-aips", manifest_name)
+    else:
+        manifest_path = os.path.join(staging, "aips-ready-to-ingest", manifest_name)
     with open(manifest_path, "a", encoding="utf-8") as manifest_file:
-        manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
+        manifest_file.write(md5deep_result.stdout.decode("UTF-8").replace("\r", ""))
 
     # Logs the success of adding the AIP to the manifest and of AIP creation (this is the last step).
     aip.log["Manifest"] = "Successfully added AIP to manifest"
     aip.log["Complete"] = "Successfully completed processing"
-    log(aip.log)
+    log(aip.log, aip.directory)
 
 
 def move_error(error_name, item):

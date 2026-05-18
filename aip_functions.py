@@ -553,12 +553,12 @@ def manifest(aip, staging):
         return
 
     # Calculates the MD5 of the packaged AIP.
-    md5deep_output = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
+    md5deep_result = subprocess.run(f'"{c.MD5DEEP}" -br "{aip_path}"',
                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
     # If md5deep has an error, logs the event and does not execute the rest of this function.
-    if md5deep_output.stderr:
-        error_msg = md5deep_output.stderr.decode("utf-8")
+    if md5deep_result.stderr:
+        error_msg = md5deep_result.stderr.decode("utf-8")
         aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
         log(aip.log, aip.directory)
@@ -569,12 +569,12 @@ def manifest(aip, staging):
     # Converts to a string and remove the \r linebreak to format the manifest text file as required by ARCHive.
     manifest_path = os.path.join("..", "aips-to-ingest", f"manifest_{aip.department}.txt")
     with open(manifest_path, "a", encoding="utf-8") as manifest_file:
-        manifest_file.write(md5deep_output.stdout.decode("UTF-8").replace("\r", ""))
+        manifest_file.write(md5deep_result.stdout.decode("UTF-8").replace("\r", ""))
 
     # Logs the success of adding the AIP to the manifest and of AIP creation (this is the last step).
     aip.log["Manifest"] = "Successfully added AIP to manifest"
     aip.log["Complete"] = "Successfully completed processing"
-    log(aip.log)
+    log(aip.log, aip.directory)
 
 
 def move_error(error_name, item):

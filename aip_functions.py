@@ -797,6 +797,12 @@ def structure_directory(aip, staging):
             os.replace(item_path, os.path.join(aip_path, "metadata", item))
         if aip.department == "magil" and item.endswith(web_metadata):
             os.replace(item_path, os.path.join(aip_path, "metadata", item))
+        # MXF files (renaming required, different from other AV)
+        elif aip.department == "bmac" and aip.workflow == "mxf":
+            os.replace(item_path, os.path.join(aip_path, "objects", f"bmac_wsb-video_{item.lower()}"))
+        # Moves all other BMA files to the objects folder, with renaming.
+        elif aip.department == "bmac":
+            os.replace(item_path, os.path.join(aip_path, "objects", f"bmac_{item}"))
 
     # Moves all remaining files and folders to the objects folder.
     # The first level within the AIPs folder is now just the metadata folder and objects folder.

@@ -180,7 +180,7 @@ def check_configuration(aips_dir):
     return errors_list
 
 
-def check_metadata_csv(read_metadata):
+def check_metadata_csv(read_metadata, aips_dir):
     """Verify the content of the metadata.csv is correct
 
     - Columns are in the required order
@@ -190,6 +190,7 @@ def check_metadata_csv(read_metadata):
 
     Parameters:
         read_metadata : contents of the metadata.csv file, read with the csv library
+        aips_dir : the path to the folder which contains the folders to be made into AIPs
 
     Returns:
         errors_list : a list of errors, or an empty list if there were no errors
@@ -227,8 +228,8 @@ def check_metadata_csv(read_metadata):
 
     # Makes a list of every folder name in the AIPs directory.
     aips_directory_list = []
-    for item in os.listdir("."):
-        if os.path.isdir(item):
+    for item in os.listdir(aips_dir):
+        if os.path.isdir(os.path.join(aips_dir, item)):
             aips_directory_list.append(item)
 
     # Checks for any folder names that are in the CSV more than once.
@@ -239,19 +240,19 @@ def check_metadata_csv(read_metadata):
         for duplicate in unique_duplicates:
             errors_list.append(f"{duplicate} is in the metadata.csv folder column more than once.")
 
-    # Checks for any AIPs that are only in the CSV.
+    # Checks for any folders that are only in the CSV.
     just_csv = list(set(csv_folder_list) - set(aips_directory_list))
     if len(just_csv) > 0:
         just_csv.sort()
-        for aip in just_csv:
-            errors_list.append(f"{aip} is in metadata.csv and missing from the AIPs directory.")
+        for aip_folder in just_csv:
+            errors_list.append(f"{aip_folder} is in metadata.csv and missing from the AIPs directory.")
 
-    # Checks for any AIPs that are only in the AIPs directory.
+    # Checks for any folders that are only in the AIPs directory.
     just_aip_dir = list(set(aips_directory_list) - set(csv_folder_list))
     if len(just_aip_dir) > 0:
         just_aip_dir.sort()
-        for aip in just_aip_dir:
-            errors_list.append(f"{aip} is in the AIPs directory and missing from metadata.csv.")
+        for aip_folder in just_aip_dir:
+            errors_list.append(f"{aip_folder} is in the AIPs directory and missing from metadata.csv.")
 
     # The errors list is empty if there were no errors.
     return errors_list

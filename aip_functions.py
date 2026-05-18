@@ -387,13 +387,14 @@ def extract_metadata(aip):
             os.rename(os.path.join(metadata, item), os.path.join(metadata, new_name))
 
 
-def log(log_data):
+def log(log_data, aips_dir):
     """Save the result about each step done on an AIP to a CSV file
 
     Information is saved to the log after the AIP either finishes processing or encounters an anticipated error.
 
     Parameters:
         log_data : "header" or dictionary with log information for the AIP
+        aips_dir : the path to the folder which contains the folders to be made into AIPs
 
     Returns: none
     """
@@ -412,7 +413,7 @@ def log(log_data):
                    log_data["Manifest"], log_data["Complete"]]
 
     # Saves the data for the row to the log CSV.
-    with open(os.path.join("..", "aip_log.csv"), "a", newline="") as log_file:
+    with open(os.path.join(aips_dir, "aip_log.csv"), "a", newline="") as log_file:
         log_writer = csv.writer(log_file)
         log_writer.writerow(log_row)
 

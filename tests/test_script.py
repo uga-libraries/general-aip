@@ -35,7 +35,7 @@ def make_aip_log_list(log_path):
     return make_aip_log_list
 
 
-def make_deletion_make_aip_log_list(log_path):
+def make_deletion_log_list(log_path):
     """Reads the deletion log and returns a list of lists, where each list is a row in the log
     The time in the Date Last Modified is removed, leaving just the date, so it is predictable for comparison."""
     df = pd.read_csv(log_path)

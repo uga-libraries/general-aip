@@ -629,14 +629,15 @@ def organize_xml(aip, staging):
     os.remove(os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_cleaned-fits.xml"))
 
 
-def package(aip):
-    """Tar and zip (optional) the AIP, rename it to include the size, and save it to the aips-to-ingest folder
+def package(aip, staging):
+    """Tar and zip (optional) the AIP, rename it to include the size, and save it to the aips-ready-to-ingest folder
 
     AIPs may not be zipped if zipping is time-consuming and does not save much space. They must be tarred.
     The unzipped size is included so the preservation system can determine if there is room to unzip it during ingest.
 
     Parameters:
          aip : instance of the AIP class, used for directory, id, log, size, and to_zip
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -644,29 +645,39 @@ def package(aip):
     # Gets the operating system, since the tar and zip commands are different for Windows and Mac/Linux.
     operating_system = platform.system()
 
-    # Makes a variable for the AIP folder name, which is reused a lot.
+    # Makes variables for the AIP folder name and AIP full path.
     aip_bag = f"{aip.id}_bag"
+    bag_path = os.path.join(aip.directory, aip_bag)
+
+    # Deletes temporary files. These can be re-generated during the AIP creation process.
+    delete_temp(aip, bag_path, logging=False)
 
     # Gets the total size of the bag:
     # sum of the bag payload (data folder) from bag-info.txt and the size of the bag metadata files.
     # It saves time to use the bag payload instead of recalculating the size of a large data folder.
+    try:
+        bag_info = open(os.path.join(bag_path, "bag-info.txt"), "r")
+    except FileNotFoundError:
+        aip.log["Package"] = f"Could not tar. Bag not in expected location: {bag_path}"
+        aip.log["Complete"] = "Error during processing"
+        log(aip.log, aip.directory)
+        return
     bag_size = 0
-    bag_info = open(os.path.join(aip_bag, "bag-info.txt"), "r")
     for line in bag_info:
         if line.startswith("Payload-Oxum"):
             payload = line.split()[1]
             bag_size += float(payload)
-    for file in os.listdir(aip_bag):
+    for file in os.listdir(bag_path):
         if file.endswith(".txt"):
-            bag_size += os.path.getsize(os.path.join(aip_bag, file))
+            bag_size += os.path.getsize(os.path.join(bag_path, file))
     bag_info.close()
     bag_size = int(bag_size)
 
     # Tars the file, using the command appropriate for the operating system.
+    tar_path = os.path.join(staging, 'aips-ready-to-ingest', f"{aip_bag}.tar")
     if operating_system == "Windows":
         # Does not print the progress to the terminal (stdout), which is a lot of text. [subprocess.DEVNULL]
-        bag_path = os.path.join(aip.directory, aip_bag)
-        tar_output = subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{aip_bag}.tar" "{bag_path}"',
+        tar_output = subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -ttar a "{tar_path}" "{bag_path}"',
                                     stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, shell=True)
         # If there is an error, saves the error to the log and does not complete the rest of the function for this AIP.
         # Cannot move it to an error folder because getting a permissions error.
@@ -674,13 +685,14 @@ def package(aip):
             error_msg = tar_output.stderr.decode("utf-8")
             aip.log["Package"] = f"Could not tar. 7zip error: {error_msg}"
             aip.log["Complete"] = "Error during processing"
-            log(aip.log)
+            log(aip.log, aip.directory)
             return
     else:
-        subprocess.run(f'tar -cf "{aip_bag}.tar" "{aip_bag}"', shell=True)
+        subprocess.run(f'tar -C "{bag_path}" -cf "{tar_path}" .', shell=True)
 
     # Renames the file to include the size.
-    os.replace(f"{aip_bag}.tar", f"{aip_bag}.{bag_size}.tar")
+    tar_size_path = os.path.join(staging, "aips-ready-to-ingest", f"{aip_bag}.{bag_size}.tar")
+    os.replace(tar_path, tar_size_path)
 
     # Updates the size in the AIP object so it can be used by the manifest() function later.
     aip.size = bag_size
@@ -688,27 +700,17 @@ def package(aip):
     # If the AIP should be zipped (if the value of to_zip is true),
     # Zips (bz2) the tar file, using the command appropriate for the operating system.
     if aip.to_zip is True:
-        aip_tar = f"{aip_bag}.{bag_size}.tar"
         if operating_system == "Windows":
             # Does not print the progress to the terminal (stdout), which is a lot of text.
-            subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -tbzip2 a -aoa "{aip_tar}.bz2" "{aip_tar}"',
+            subprocess.run(f'"C:/Program Files/7-Zip/7z.exe" -tbzip2 a -aoa "{tar_size_path}.bz2" "{tar_size_path}"',
                            stdout=subprocess.DEVNULL, shell=True)
         else:
-            subprocess.run(f'bzip2 "{aip_tar}"', shell=True)
+            subprocess.run(f'bzip2 "{tar_size_path}"', shell=True)
 
         # Deletes the tar version. Just want the tarred and zipped version.
         # For Mac/Linux, the bzip2 command overwrites the tar file so this step is unnecessary.
         if operating_system == "Windows":
-            os.remove(f"{aip_bag}.{bag_size}.tar")
-
-        # Moves the tarred and zipped version to the aips-to-ingest folder.
-        path = os.path.join("..", "aips-to-ingest", f"{aip_bag}.{bag_size}.tar.bz2")
-        os.replace(f"{aip_bag}.{bag_size}.tar.bz2", path)
-
-    # If not zipping, moves the tarred version to the aips-to-ingest folder.
-    else:
-        path = os.path.join("..", "aips-to-ingest", f"{aip_bag}.{bag_size}.tar")
-        os.replace(f"{aip_bag}.{bag_size}.tar", path)
+            os.remove(tar_size_path)
 
     # Updates the log with success.
     aip.log["Package"] = "Successfully made package"

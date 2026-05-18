@@ -851,7 +851,7 @@ def validate_preservation_xml(aip, staging):
     """
 
     # Uses xmllint and an XSD file to validate the preservation.xml.
-    input_file = os.path.join(aip.id, "metadata", f"{aip.id}_preservation.xml")
+    input_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_preservation.xml")
     stylesheet = os.path.join(c.STYLESHEETS, "preservation.xsd")
     xmllint_output = subprocess.run(f'xmllint --noout -schema "{stylesheet}" "{input_file}"',
                                     stderr=subprocess.PIPE, shell=True)

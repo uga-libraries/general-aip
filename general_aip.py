@@ -106,7 +106,7 @@ for aip_row in read_metadata:
     # Extracts technical metadata from the files using FITS.
     if aip.id in os.listdir(AIPS_DIRECTORY):
         a.extract_metadata(aip)
-        a.combine_metadata(aip)
+        a.combine_metadata(aip, configuration.AIP_STAGING)
 
     # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
     if aip.id in os.listdir(AIPS_DIRECTORY):

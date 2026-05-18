@@ -803,14 +803,10 @@ def structure_directory(aip, staging):
         # Moves all other BMA files to the objects folder, with renaming.
         elif aip.department == "bmac":
             os.replace(item_path, os.path.join(aip_path, "objects", f"bmac_{item}"))
-
-    # Moves all remaining files and folders to the objects folder.
-    # The first level within the AIPs folder is now just the metadata folder and objects folder.
-    for item in os.listdir(aip.id):
-        if item in ("metadata", "objects"):
-            continue
-        os.replace(os.path.join(aip.id, item), os.path.join(aip.id, "objects", item))
-
+        # Moves all remaining files and folders to the objects folder.
+        else:
+            os.replace(item_path, os.path.join(aip_path, "objects", item))
+    
 
 def validate_bag(aip):
     """Validate the AIP's bag

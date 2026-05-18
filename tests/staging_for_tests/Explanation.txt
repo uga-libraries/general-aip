@@ -1,0 +1,2 @@
+Placeholder for a folder to act as the AIP staging location.
+Need the folder and its subfolders (output directories) to pre-exist for some testing.

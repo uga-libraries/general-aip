@@ -80,7 +80,7 @@ class TestFullScript(unittest.TestCase):
         # Deletes everything but placeholder.txt from the output folders in staging.
         output_dirs = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
         for output_dir in output_dirs:
-            output_path = os.path.join(os.getcwd(), 'staging', output_dir)
+            output_path = os.path.join(os.getcwd(), 'staging_for_tests', output_dir)
             for file in os.listdir(output_path):
                 if not file == 'placeholder.txt':
                     os.remove(os.path.join(output_path, file))
@@ -162,7 +162,7 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for general, aip directory")
 
         # Test for the contents of the staging directory.
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         result = make_directory_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-already-on-ingest-server'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest'),
@@ -288,7 +288,7 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for web, aip directory")
 
         # Test for the contents of the staging directory.
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         today = datetime.date.today().strftime('%Y-%m-%d')
         result = make_directory_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-already-on-ingest-server'),

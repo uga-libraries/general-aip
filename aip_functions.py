@@ -784,19 +784,19 @@ def structure_directory(aip, staging):
         av_metadata = (".qctools.mkv", ".qctools.xml.gz", ".framemd5", ".srt")
         if aip.type == "av" and item.endswith(av_metadata):
             os.replace(item_path, os.path.join(aip_path, "metadata", f"bmac_{item}"))
-        # Deletion log, created by the script when deleting temp files.
-        if item.startswith(f"{aip.id}_files-deleted_"):
-            os.replace(item_path, metadata_path)
+            # Deletion log, created by the script when deleting temp files.
+            elif item.startswith(f"{aip.id}_files-deleted_"):
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # Metadata file used by Emory with disk images.
-        if aip.department == "emory" and item.startswith("EmoryMD"):
-            os.replace(item_path, metadata_path)
+        elif aip.department == "emory" and item.startswith("EmoryMD"):
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # Website metadata files from downloading WARCs from Archive-It.
         # Hargrett and Russell both have -web- in the AIP ID, but MAGIL does not and can only check for the department.
         web_metadata = ("_coll.csv", "_collscope.csv", "_crawldef.csv", "_crawljob.csv", "_seed.csv", "_seedscope.csv")
         if "-web-" in aip.id and item.endswith(web_metadata):
-            os.replace(item_path, metadata_path)
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
         if aip.department == "magil" and item.endswith(web_metadata):
-            os.replace(item_path, metadata_path)
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
 
     # Moves all remaining files and folders to the objects folder.
     # The first level within the AIPs folder is now just the metadata folder and objects folder.

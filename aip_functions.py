@@ -15,17 +15,20 @@ import configuration as c
 class AIP:
     """Characteristics of each AIP and log data used by multiple functions"""
 
-    def __init__(self, directory, department, collection_id, folder_name, aip_id, title, version, to_zip):
+    def __init__(self, directory, department, workflow, collection_id, folder_name, aip_type, aip_id, title, version,
+                 to_zip):
         self.directory = directory
         self.department = department
+        self.workflow = workflow
         self.collection_id = collection_id
         self.folder_name = folder_name
+        self.type = aip_type
         self.id = aip_id
         self.title = title
         self.version = version
         self.to_zip = to_zip
         self.size = None
-        self.log = {"Started": datetime.datetime.now(), "AIP": self.id, "Deletions": "n/a",
+        self.log = {"Started": datetime.now(), "AIP": self.id, "Deletions": "n/a",
                     "ObjectsError": "n/a", "MetadataError": "n/a", "FITSTool": "n/a", "FITSError": "n/a",
                     "PresXML": "n/a", "PresValid": "n/a", "BagValid": "n/a", "Package": "n/a", "Manifest": "n/a",
                     "Complete": "n/a"}

@@ -793,9 +793,9 @@ def structure_directory(aip, staging):
             os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # Website metadata files from downloading WARCs from Archive-It.
         # Hargrett and Russell both have -web- in the AIP ID, but MAGIL does not and can only check for the department.
-        if "-web-" in aip.id and item.endswith(web_metadata):
+        elif "-web-" in aip.id and item.endswith(web_metadata):
             os.replace(item_path, os.path.join(aip_path, "metadata", item))
-        if aip.department == "magil" and item.endswith(web_metadata):
+        elif aip.department == "magil" and item.endswith(web_metadata):
             os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # MXF files (renaming required, different from other AV)
         elif aip.department == "bmac" and aip.workflow == "mxf":

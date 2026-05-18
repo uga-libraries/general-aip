@@ -780,6 +780,10 @@ def structure_directory(aip, staging):
         if item in ('metadata', 'objects'):
             continue
         item_path = os.path.join(aip_path, item)
+        # AV metadata files.
+        av_metadata = (".qctools.mkv", ".qctools.xml.gz", ".framemd5", ".srt")
+        if aip.type == "av" and item.endswith(av_metadata):
+            os.replace(item_path, os.path.join(aip_path, "metadata", f"bmac_{item}"))
         # Deletion log, created by the script when deleting temp files.
         if item.startswith(f"{aip.id}_files-deleted_"):
             os.replace(item_path, metadata_path)

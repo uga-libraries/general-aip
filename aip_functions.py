@@ -3,6 +3,7 @@
 import csv
 from datetime import datetime
 import os
+import pathlib
 import platform
 import shutil
 import subprocess
@@ -694,7 +695,7 @@ def package(aip, staging):
     tar_size_path = os.path.join(staging, "aips-ready-to-ingest", f"{aip_bag}.{bag_size}.tar")
     os.replace(tar_path, tar_size_path)
 
-    # Updates the size in the AIP object so it can be used by the manifest() function later.
+    # Updates the size in the AIP object, so it can be used by the manifest() function later.
     aip.size = bag_size
 
     # If the AIP should be zipped (if the value of to_zip is true),
@@ -806,7 +807,7 @@ def structure_directory(aip, staging):
         # Moves all remaining files and folders to the objects folder.
         else:
             os.replace(item_path, os.path.join(aip_path, "objects", item))
-    
+
 
 def validate_bag(aip, staging):
     """Validate the AIP's bag

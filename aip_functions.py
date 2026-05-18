@@ -808,11 +808,12 @@ def structure_directory(aip, staging):
             os.replace(item_path, os.path.join(aip_path, "objects", item))
     
 
-def validate_bag(aip):
+def validate_bag(aip, staging):
     """Validate the AIP's bag
 
     Parameters:
          aip : instance of the AIP class, used for id and log
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -826,7 +827,7 @@ def validate_bag(aip):
         aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("bag_not_valid", f"{aip.id}_bag")
+        move_error("bag_not_valid", f"{aip.id}_bag", staging)
         # Error log is formatted to be easier to read (one error per line) if error information is in details.
         # Otherwise, the entire error output is saved to the log in the errors folder alongside the AIP folder.
         log_path = os.path.join("..", "errors", "bag_not_valid", f"{aip.id}_bag_validation.txt")

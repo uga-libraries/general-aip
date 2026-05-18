@@ -91,6 +91,7 @@ for aip_row in read_metadata:
 
     # If the folder is not already named with the AIP ID,
     # make a new folder named with the AIP ID and move the entire folder into it.
+    aip_path = aip_path = os.path.join(aip.directory, aip.id)
     if aip.folder_name != aip.id:
         os.mkdir(os.path.join(AIPS_DIRECTORY, aip.id))
         shutil.move(os.path.join(AIPS_DIRECTORY, aip.folder_name), os.path.join(AIPS_DIRECTORY, aip.id))

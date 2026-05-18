@@ -129,7 +129,7 @@ for aip_row in read_metadata:
 
     # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
     if f'{aip.id}_bag' in os.listdir(AIPS_DIRECTORY):
-        a.manifest(aip)
+        a.manifest(aip, configuration.AIP_STAGING)
 
 # Closes the metadata CSV.
 open_metadata.close()

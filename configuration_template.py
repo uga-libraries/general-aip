@@ -12,6 +12,10 @@ In a Mac or Linux environment:
     Change \\ to /
 """
 
+# Location for saving script outputs.
+AIP_STAGING = 'C:\\INSERT\\PATH'
+
+# Dependencies. Stylesheets is a folder in the GitHub repo.
 FITS = 'C:\\INSERT\\PATH\\fits.bat'
 SAXON = 'C:\\INSERT\\PATH\\saxon-he-#.#.jar'
 MD5DEEP = 'C:\\INSERT\\PATH\\md5deep64.exe'

@@ -471,20 +471,29 @@ def make_cleaned_fits_xml(aip, staging):
         move_error("cleaned_fits_saxon_error", os.path.join(aip.directory, aip.id), staging)
 
 
-def make_output_directories():
-    """Make the directories for script outputs, if they don't already exist, in the parent folder of the AIPs directory
+def make_output_directories(staging, aip_type):
+    """Make the directories for script outputs, if they don't already exist, in AIP staging
 
-    Parameters: none
+    Parameters:
+        staging : path to the aip_staging folder from configuration.py
+        aip_type : AIP type (av, general, web)
 
     Returns: none
     """
 
-    output_directories = ["aips-to-ingest", "fits-xml", "preservation-xml"]
-
+    # Determine the output directories needed, based on the AIP type.
+    if aip_type == 'av':
+        output_directories = ['aips-already-on-ingest-server', 'aips-ready-to-ingest', 'fits-xmls',
+                              'md5-manifests-for-aips', 'mediainfo-xmls/mediainfo-raw-output',
+                              'mediainfo-xmls/pbcore2-xml', 'movs-to-bag', 'preservation-xmls']
+    else:
+        output_directories = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
+    # Makes the output directories, if they don't already exist.
+    # In some cases, these folders are never deleted and contain output from all AIPs in ARCHive.
     for directory in output_directories:
-        directory_path = os.path.join("..", directory)
+        directory_path = os.path.join(staging, directory)
         if not os.path.exists(directory_path):
-            os.mkdir(directory_path)
+            os.makedirs(directory_path)
 
 
 def make_preservation_xml(aip):

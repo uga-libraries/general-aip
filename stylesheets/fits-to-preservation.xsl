@@ -20,7 +20,7 @@
     <xsl:template match="/">
         <preservation>
             <dc:title><xsl:value-of select="$aip-title" /></dc:title>
-            <dc:rights>http://rightsstatements.org/vocab/InC/1.0/</dc:rights>
+            <dc:rights><xsl:value-of select="$rights" /></dc:rights>
             <aip>
                 <premis:object>
                     <xsl:call-template name="aip-object-id" />
@@ -57,6 +57,7 @@
     <xsl:param name="aip-id" required="yes" />
     <xsl:param name="aip-title" required="yes" />
     <xsl:param name="department" required="yes" />
+    <xsl:param name="rights" required="yes" />
     <xsl:param name="version" required="yes" />
     <xsl:param name="ns" required="yes" />
     

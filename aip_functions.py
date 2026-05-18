@@ -716,7 +716,7 @@ def package(aip, staging):
     aip.log["Package"] = "Successfully made package"
 
 
-def structure_directory(aip):
+def structure_directory(aip, staging):
     """Make the AIP directory structure (objects and metadata folders) and move the digital objects into those folders
 
     Anything not recognized as metadata is moved into the objects folder.
@@ -724,7 +724,8 @@ def structure_directory(aip):
     that directory structure is maintained within the objects folder.
 
     Parameters:
-         aip : instance of the AIP class, used for department, id, and log
+         aip : instance of the AIP class, used for directory, workflow, department, id, and log
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -738,7 +739,7 @@ def structure_directory(aip):
         aip.log["ObjectsError"] = "Objects folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("objects_folder_exists", aip.id)
+        move_error("objects_folder_exists", aip.id, staging)
         return
 
     # Makes the metadata folders within the AIP folder, if it doesn't exist.
@@ -750,7 +751,7 @@ def structure_directory(aip):
         aip.log["MetadataError"] = "Metadata folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("metadata_folder_exists", aip.id)
+        move_error("metadata_folder_exists", aip.id, staging)
         return
 
     # Moves any metadata files to the metadata folder.

@@ -688,7 +688,7 @@ def package(aip, staging):
             log(aip.log, aip.directory)
             return
     else:
-        subprocess.run(f'tar -cf "{aip_bag}.tar" "{aip_bag}"', shell=True)
+        subprocess.run(f'tar -C "{bag_path}" -cf "{tar_path}" .', shell=True)
 
     # Renames the file to include the size.
     os.replace(f"{aip_bag}.tar", f"{aip_bag}.{bag_size}.tar")

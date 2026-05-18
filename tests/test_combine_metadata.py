@@ -37,6 +37,10 @@ class TestCombineMetadata(unittest.TestCase):
         if os.path.exists('aips-with-errors'):
             shutil.rmtree('aips-with-errors')
 
+        # Deletes the copy of the AIP used for error testing.
+        if os.path.exists('aip-0'):
+            shutil.rmtree('aip-0')
+
     def test_one_file(self):
         """
         Test for an AIP with one file (Plain text).

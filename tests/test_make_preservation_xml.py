@@ -53,7 +53,7 @@ class TestMakePreservationXML(unittest.TestCase):
                 os.remove(xml_path)
 
         # Deletes the AIP log.
-        log_path = os.path.join(os.getcwd(), 'staging_for_tests', "aip_log.csv")
+        log_path = os.path.join(os.getcwd(), "make_preservation_xml", "aip_log.csv")
         if os.path.exists(log_path):
             os.remove(log_path)
 

@@ -91,6 +91,14 @@ def check_arguments(arguments):
         else:
             errors_list.append(f'Provided to_zip "{arguments[3]}" is not an expected value (no-zip, zip).')
 
+    # Checks if the optional argument (workflow) is present, and if so, if it is the expected value.
+    if len(arguments) > 4:
+        if arguments[4] in ('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mp4', 'mxf', 'wav'):
+            workflow = arguments[4]
+        else:
+            errors_list.append(f'Provided workflow "{arguments[4]}" is not an expected value '
+                               f'(dpx, mkv, mkv-filmscan, mov, mp4, mxf, wav)')
+
     # Calculates the path to the required metadata file and verifies it is present.
     # Only tests if there is a value for aips_directory, which is part of the path.
     if aips_directory:

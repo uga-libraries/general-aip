@@ -54,6 +54,8 @@ def check_arguments(arguments):
     # These are updated to the correct value from the arguments, if they are provided.
     errors_list = []
     aips_directory = None
+    aip_type = None
+    workflow = None
     to_zip = None
 
     # Checks if arguments were given, besides the default of script name.

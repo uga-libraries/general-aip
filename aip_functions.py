@@ -258,7 +258,7 @@ def check_metadata_csv(read_metadata, aips_dir):
     return errors_list
 
 
-def combine_metadata(aip):
+def combine_metadata(aip, staging):
     """Make the combined-fits.xml file in the metadata folder, which contains the FITS output for every file in the AIP
 
     It is moved out of the AIP folder and into the fits-xml folder after the preservation.xml is made.
@@ -266,6 +266,7 @@ def combine_metadata(aip):
 
     Parameters:
         aip : instance of the AIP class, used for id and log
+        staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -275,7 +276,8 @@ def combine_metadata(aip):
     combo_root = combo_tree.getroot()
 
     # Gets each of the FITS documents in the AIP's metadata folder.
-    for doc in os.listdir(os.path.join(aip.id, "metadata")):
+    metadata_path = os.path.join(aip.directory, aip.id, "metadata")
+    for doc in os.listdir(metadata_path):
         if doc.endswith("_fits.xml"):
 
             # Makes Python aware of the FITS namespace (it is the default and has no prefix).
@@ -283,7 +285,7 @@ def combine_metadata(aip):
 
             # Gets the FITS element and its children and makes it a child of the root, combined-fits.
             try:
-                tree = et.parse(os.path.join(aip.id, "metadata", doc))
+                tree = et.parse(os.path.join(metadata_path, doc))
                 root = tree.getroot()
                 combo_root.append(root)
                 aip.log["FITSError"] = "Successfully created combined-fits.xml"
@@ -292,12 +294,12 @@ def combine_metadata(aip):
             except et.ParseError as error:
                 aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
                 aip.log["Complete"] = "Error during processing"
-                log(aip.log)
-                move_error("combining_fits", aip.id)
+                log(aip.log, aip.directory)
+                move_error("combining_fits", os.path.join(aip.directory, aip.id), staging)
                 return
 
     # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
-    fits_path = os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml")
+    fits_path = os.path.join(metadata_path, f"{aip.id}_combined-fits.xml")
     combo_tree.write(fits_path, xml_declaration=True, encoding="UTF-8")
 
 

@@ -58,16 +58,22 @@ def check_arguments(arguments):
     workflow = None
     to_zip = None
 
+    errors_list = []
+    aips_directory = None
+    aip_type = None
+    workflow = None
+    to_zip = None
+
     # Checks if arguments were given, besides the default of script name.
     if len(arguments) == 1:
-        errors_list.append("AIPs directory argument is missing.")
+        errors_list.append('Required arguments are missing: aips_directory, aip_type, and to_zip.')
 
-    # Checks if the required aips_directory argument is present and a valid path.
+    # Checks if the first required argument (aips_directory) is present and a valid path.
     if len(arguments) > 1:
         if os.path.exists(arguments[1]):
             aips_directory = arguments[1]
         else:
-            errors_list.append("AIPs directory argument is not a valid directory.")
+            errors_list.append(f'Provided aips_directory "{arguments[1]}" is not a valid directory.')
 
     # Checks if the optional to_zip argument is present, and if so if it is the expected value.
     if len(arguments) > 2:

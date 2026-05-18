@@ -2,6 +2,8 @@
 
 # Path variables.
 
+# Missing variable AIP_STAGING
+
 # Path does not exist and letter directory does not match AIPS directory.
 FITS = 'Z:\\FITS\\fits.bat'
 

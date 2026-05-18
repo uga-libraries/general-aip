@@ -755,6 +755,25 @@ def structure_directory(aip, staging):
         move_error("metadata_folder_exists", aip_path, staging)
         return
 
+    # Moves DPX files to the objects folder.
+    # DPX files are already in bags, so have to navigate to the data folder to find the content to move into objects.
+    if aip.workflow == 'dpx':
+        for item in os.listdir(os.path.join(aip_path, 'data')):
+            if os.path.isdir(os.path.join(aip_path, 'data', item)):
+                shutil.copytree(os.path.join(aip_path, 'data', item), os.path.join(aip_path, 'objects', f'{item}-dpx'))
+            elif item.endswith('.cue'):
+                os.replace(os.path.join(aip_path, 'data', item), os.path.join(aip_path, 'objects', item))
+            elif item.endswith('.mov'):
+                shutil.copy2(os.path.join(aip_path, 'data', item), os.path.join(staging, 'movs-to-bag'))
+                os.replace(os.path.join(aip_path, 'data', item), os.path.join(aip_path, 'objects', item))
+            elif item.endswith('.wav'):
+                os.replace(os.path.join(aip_path, 'data', item),
+                           os.path.join(aip_path, 'objects', f'{pathlib.Path(item).stem}-dpx.wav'))
+        # Deletes the bag metadata files and data folder, now that the rest is organized into the AIP directory.
+        for bag_metadata_file in ('bag-info.txt', 'bagit.txt', 'manifest-md5.txt', 'tagmanifest-md5.txt'):
+            os.remove(os.path.join(aip_path, bag_metadata_file))
+        shutil.rmtree(os.path.join(aip_path, 'data'))
+
     # Moves any metadata files to the metadata folder.
     # Departments or other details, in addition to the filenames, are used when possible.
     # The more specific the match, the less likely a file will be incorrectly identified as a metadata file.

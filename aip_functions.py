@@ -808,28 +808,30 @@ def structure_directory(aip, staging):
             os.replace(item_path, os.path.join(aip_path, "objects", item))
     
 
-def validate_bag(aip):
+def validate_bag(aip, staging):
     """Validate the AIP's bag
 
     Parameters:
          aip : instance of the AIP class, used for id and log
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
 
     # Validate the bag with bagit, and save an errors in a separate log.
-    new_bag = bagit.Bag(f"{aip.id}_bag")
+    bag_path = os.path.join(aip.directory, f"{aip.id}_bag")
+    new_bag = bagit.Bag(bag_path)
     try:
         new_bag.validate()
         aip.log["BagValid"] = f"Bag valid on {datetime.now()}"
     except bagit.BagValidationError as errors:
         aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("bag_not_valid", f"{aip.id}_bag")
+        log(aip.log, aip.directory)
+        move_error("bag_not_valid", bag_path, staging)
         # Error log is formatted to be easier to read (one error per line) if error information is in details.
         # Otherwise, the entire error output is saved to the log in the errors folder alongside the AIP folder.
-        log_path = os.path.join("..", "errors", "bag_not_valid", f"{aip.id}_bag_validation.txt")
+        log_path = os.path.join(staging, "aips-with-errors", "bag_not_valid", f"{aip.id}_bag_validation.txt")
         with open(log_path, "w") as log_path:
             if errors.details:
                 for error_type in errors.details:

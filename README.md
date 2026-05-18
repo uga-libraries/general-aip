@@ -92,6 +92,8 @@ The working directory must be the folder "PATH/general-aip/tests".
 In PyCharm, this will automatically be set if running all tests by right clicking on the tests folder.
 If tests are run individually, you may need to change the working directory by editing the test configuration.
 
+Before running test_script, change the AIPS_STAGING path in configuration.py to "PATH/general-aip/tests/staging_for_tests"
+
 Before running test_check_configuration.py, rename the configuration_test.py file in the tests folder to configuration.py
 and rename it back to configuration_test.py once the test is complete.
 Otherwise, the wrong configuration.py is used for all other tests.

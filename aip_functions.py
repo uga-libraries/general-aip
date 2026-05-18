@@ -42,6 +42,8 @@ def check_arguments(arguments):
 
     Returns:
         aips_directory : the path to the folder which contains the folders to be made into AIPs
+        aip_type : the type of AIP, which influences a few steps
+        workflow : for AV type, the type of AV workflow, which influences a few steps
         to_zip : a boolean for if the AIPs should be zipped as well as tarred (True) or only tarred (False)
         aip_metadata_csv : the path to the metadata.csv file in the aips_directory
         errors_list : a list of errors, or an empty list if there were no errors

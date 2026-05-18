@@ -431,8 +431,11 @@ def make_bag(aip):
     aip_path = os.path.join(aip.directory, aip.id)
     delete_temp(aip, aip_path, logging=False)
 
-    # Bags the AIP.
-    bagit.make_bag(aip.id, checksums=["md5", "sha256"])
+    # Bags the AIP. To save time, BMAC AV only generates md5 checksums.
+    if aip.type == "av" and aip.department == "bmac":
+        bagit.make_bag(aip_path, checksums=["md5"])
+    else:
+        bagit.make_bag(aip_path, checksums=["md5", "sha256"])
 
     # Renames the AIP folder to add _bag (common naming convention for the standard).
     os.replace(aip.id, f"{aip.id}_bag")

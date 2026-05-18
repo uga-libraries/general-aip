@@ -564,10 +564,14 @@ def manifest(aip, staging):
         log(aip.log, aip.directory)
         return
 
-    # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.
+    # Adds the md5 and AIP filename to the appropriate manifest in staging.
     # Initial output of md5deep is b'md5_value  filename.ext\r\n'
     # Converts to a string and remove the \r linebreak to format the manifest text file as required by ARCHive.
-    manifest_path = os.path.join("..", "aips-to-ingest", f"manifest_{aip.department}.txt")
+    manifest_name = f'manifest_{os.path.basename(aip.directory)}_{aip.department}_{datetime.now().strftime("%Y-%m-%d")}.txt'
+    if aip.type == "av":
+        manifest_path = os.path.join(staging, "md5-manifests-for-aips", manifest_name)
+    else:
+        manifest_path = os.path.join(staging, "aips-ready-to-ingest", manifest_name)
     with open(manifest_path, "a", encoding="utf-8") as manifest_file:
         manifest_file.write(md5deep_result.stdout.decode("UTF-8").replace("\r", ""))
 

@@ -50,7 +50,7 @@ read_metadata = csv.reader(open_metadata)
 
 # Verifies the metadata header row has the expected values, departments are all ARCHive groups, and the folders match
 # what is in the AIPs directory. If there are an errors, ends the script.
-metadata_errors = a.check_metadata_csv(read_metadata)
+metadata_errors = a.check_metadata_csv(read_metadata, AIPS_DIRECTORY)
 if len(metadata_errors) > 0:
     print('\nProblems detected with metadata.csv:')
     for error in metadata_errors:

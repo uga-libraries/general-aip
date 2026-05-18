@@ -441,22 +441,23 @@ def make_bag(aip):
     os.replace(aip_path, os.path.join(aip.directory, f"{aip.id}_bag"))
 
 
-def make_cleaned_fits_xml(aip):
+def make_cleaned_fits_xml(aip, staging):
     """Make a simplified version of the combined-fits.xml in the metadata folder
 
     The cleaned FITS makes the format information is easier to aggregate.
     It is deleted after the preservation.xml is made.
 
     Parameters:
-         aip : instance of the AIP class, used for id and log
+        aip : instance of the AIP class, used for directory, id and log
+        staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
 
     # Uses saxon and a stylesheet to make the cleaned-fits.xml from the combined-fits.xml.
-    input_file = os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml")
+    input_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_combined-fits.xml")
     stylesheet = os.path.join(c.STYLESHEETS, "fits-cleanup.xsl")
-    output_file = os.path.join(aip.id, "metadata", f"{aip.id}_cleaned-fits.xml")
+    output_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_cleaned-fits.xml")
     saxon_output = subprocess.run(f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{input_file}" '
                                   f'-xsl:"{stylesheet}" -o:"{output_file}"',
                                   stderr=subprocess.PIPE, shell=True)
@@ -466,8 +467,8 @@ def make_cleaned_fits_xml(aip):
         error_msg = saxon_output.stderr.decode("utf-8")
         aip.log["PresXML"] = f"Issue when creating cleaned-fits.xml. Saxon error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("cleaned_fits_saxon_error", aip.id)
+        log(aip.log, aip.directory)
+        move_error("cleaned_fits_saxon_error", os.path.join(aip.directory, aip.id), staging)
 
 
 def make_output_directories():

@@ -40,4 +40,40 @@
          </premis:relationship>
       </premis:object>
    </aip>
+   <filelist>
+      <premis:object>
+         <premis:objectIdentifier>
+            <premis:objectIdentifierType>http://uri/test/test_c01_002</premis:objectIdentifierType>
+            <premis:objectIdentifierValue>test_c01_002/objects/table.csv</premis:objectIdentifierValue>
+         </premis:objectIdentifier>
+         <premis:objectCategory>file</premis:objectCategory>
+         <premis:objectCharacteristics>
+            <premis:fixity>
+               <premis:messageDigestAlgorithm>MD5</premis:messageDigestAlgorithm>
+               <premis:messageDigest>77a99c5e3231aa1835595396b448611a</premis:messageDigest>
+               <premis:messageDigestOriginator>OIS File Information version 1.0</premis:messageDigestOriginator>
+            </premis:fixity>
+            <premis:size>1265</premis:size>
+            <premis:format>
+               <premis:formatDesignation>
+                  <premis:formatName>Comma-Separated Values (CSV)</premis:formatName>
+               </premis:formatDesignation>
+               <premis:formatRegistry>
+                  <premis:formatRegistryName>https://www.nationalarchives.gov.uk/PRONOM</premis:formatRegistryName>
+                  <premis:formatRegistryKey>x-fmt/18</premis:formatRegistryKey>
+                  <premis:formatRegistryRole>specification</premis:formatRegistryRole>
+               </premis:formatRegistry>
+               <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
+            </premis:format>
+         </premis:objectCharacteristics>
+         <premis:relationship>
+            <premis:relationshipType>structural</premis:relationshipType>
+            <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>
+            <premis:relatedObjectIdentifier>
+               <premis:relatedObjectIdentifierType>http://uri/test</premis:relatedObjectIdentifierType>
+               <premis:relatedObjectIdentifierValue>test_c01_002</premis:relatedObjectIdentifierValue>
+            </premis:relatedObjectIdentifier>
+         </premis:relationship>
+      </premis:object>
+   </filelist>
 </preservation>

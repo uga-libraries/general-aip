@@ -58,12 +58,6 @@ def check_arguments(arguments):
     workflow = None
     to_zip = None
 
-    errors_list = []
-    aips_directory = None
-    aip_type = None
-    workflow = None
-    to_zip = None
-
     # Checks if arguments were given, besides the default of script name.
     if len(arguments) == 1:
         errors_list.append('Required arguments are missing: aips_directory, aip_type, and to_zip.')

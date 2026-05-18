@@ -710,7 +710,7 @@ def package(aip, staging):
         # Deletes the tar version. Just want the tarred and zipped version.
         # For Mac/Linux, the bzip2 command overwrites the tar file so this step is unnecessary.
         if operating_system == "Windows":
-            os.remove(f"{aip_bag}.{bag_size}.tar")
+            os.remove(tar_size_path)
 
         # Moves the tarred and zipped version to the aips-to-ingest folder.
         path = os.path.join("..", "aips-to-ingest", f"{aip_bag}.{bag_size}.tar.bz2")

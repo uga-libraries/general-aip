@@ -738,7 +738,7 @@ def structure_directory(aip, staging):
     except FileExistsError:
         aip.log["ObjectsError"] = "Objects folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         move_error("objects_folder_exists", aip.id, staging)
         return
 
@@ -750,7 +750,7 @@ def structure_directory(aip, staging):
     except FileExistsError:
         aip.log["MetadataError"] = "Metadata folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         move_error("metadata_folder_exists", aip.id, staging)
         return
 

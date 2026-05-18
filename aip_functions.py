@@ -629,14 +629,15 @@ def organize_xml(aip, staging):
     os.remove(os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_cleaned-fits.xml"))
 
 
-def package(aip):
-    """Tar and zip (optional) the AIP, rename it to include the size, and save it to the aips-to-ingest folder
+def package(aip, staging):
+    """Tar and zip (optional) the AIP, rename it to include the size, and save it to the aips-ready-to-ingest folder
 
     AIPs may not be zipped if zipping is time-consuming and does not save much space. They must be tarred.
     The unzipped size is included so the preservation system can determine if there is room to unzip it during ingest.
 
     Parameters:
          aip : instance of the AIP class, used for directory, id, log, size, and to_zip
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -644,8 +645,9 @@ def package(aip):
     # Gets the operating system, since the tar and zip commands are different for Windows and Mac/Linux.
     operating_system = platform.system()
 
-    # Makes a variable for the AIP folder name, which is reused a lot.
+    # Makes variables for the AIP folder name and AIP full path.
     aip_bag = f"{aip.id}_bag"
+    bag_path = os.path.join(aip.directory, aip_bag)
 
     # Gets the total size of the bag:
     # sum of the bag payload (data folder) from bag-info.txt and the size of the bag metadata files.

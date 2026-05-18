@@ -777,8 +777,9 @@ def structure_directory(aip, staging):
     # Moves any metadata files to the metadata folder and then the rest to the objects folder, with renaming as needed.
     # Metadata files are matched as specifically as possible to reduce the risk of incorrect identifications.
     for item in os.listdir(aip_path):
-        item_path = os.path.join(aip.id, item)
-        metadata_path = os.path.join(aip.id, "metadata", item)
+        if item in ('metadata', 'objects'):
+            continue
+        item_path = os.path.join(aip_path, item)
         # Deletion log, created by the script when deleting temp files.
         if item.startswith(f"{aip.id}_files-deleted_"):
             os.replace(item_path, metadata_path)

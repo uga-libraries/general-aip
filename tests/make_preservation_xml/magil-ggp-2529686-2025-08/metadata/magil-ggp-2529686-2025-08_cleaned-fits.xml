@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<combined-fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd"
+         version="1.5.0"
+         timestamp="8/21/25 4:03 PM">
+      <identification status="SINGLE_RESULT">
+         <identity format="WARC">
+            <tool toolname="Tika" toolversion="1.21"/>
+         </identity>
+      </identification>
+      <fileinfo>
+         <filepath>X:/ait_download/2025-08/magil-ggp-2529686-2025-08/objects/ARCHIVEIT-15678-TEST-JOB2107225-0-SEED2529686-20250321180502143-00000-3b8jsoev.warc</filepath>
+         <size toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">1202882742</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">df66ba48120c0c988a62a6a858a440ab</md5checksum>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd"
+         version="1.5.0"
+         timestamp="8/21/25 4:03 PM">
+      <identification status="SINGLE_RESULT">
+         <identity format="WARC">
+            <tool toolname="Tika" toolversion="1.21"/>
+         </identity>
+      </identification>
+      <fileinfo>
+         <filepath>X:/ait_download/2025-08/magil-ggp-2529686-2025-08/objects/ARCHIVEIT-15678-TEST-JOB2107225-0-SEED2529686-20250325040627764-00000-laxkmye1.warc</filepath>
+         <size toolname="OIS File Information"
+               toolversion="1.0"
+               status="SINGLE_RESULT">263009448</size>
+         <md5checksum toolname="OIS File Information"
+                      toolversion="1.0"
+                      status="SINGLE_RESULT">8981551fad00e923a52ef4099f2b81e6</md5checksum>
+      </fileinfo>
+   </fits>
+</combined-fits>

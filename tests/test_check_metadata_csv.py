@@ -11,7 +11,7 @@ from aip_functions import check_metadata_csv
 
 def run_function(csv_name):
     """Reads the CSV, runs the function with the read data, and returns the function output"""
-    aip_dir = os.path.join(os.getcwd(), 'tests', 'check_metadata_csv')
+    aip_dir = os.path.join(os.getcwd(), 'check_metadata_csv')
     with open(os.path.join(aip_dir, csv_name)) as open_metadata:
         read_metadata = csv.reader(open_metadata)
         output = check_metadata_csv(read_metadata, aip_dir)

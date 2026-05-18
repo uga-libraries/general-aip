@@ -2,7 +2,7 @@
 Testing for the entire script, with input that represents the different workflows that use the script.
 It does not currently include tests for error handling.
 
-BEFORE RUNNING THIS TEST: in configuration.py, make aip_staging the path to staging in the GitHub repo
+BEFORE RUNNING THIS TEST: in configuration.py, make aip_staging the path to staging_for_tests in the GitHub repo
 """
 
 import datetime
@@ -80,7 +80,7 @@ class TestFullScript(unittest.TestCase):
         # Deletes everything but placeholder.txt from the output folders in staging.
         output_dirs = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
         for output_dir in output_dirs:
-            output_path = os.path.join(os.getcwd(), 'staging', output_dir)
+            output_path = os.path.join(os.getcwd(), 'staging_for_tests', output_dir)
             for file in os.listdir(output_path):
                 if not file == 'placeholder.txt':
                     os.remove(os.path.join(output_path, file))
@@ -122,7 +122,8 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_one, 'data', 'metadata', f'test-001-er-000001_files-deleted_{today}_del.csv'),
                     os.path.join(bag_one, 'data', 'metadata', 'test-001-er-000001_preservation.xml'),
                     os.path.join(bag_one, 'data', 'objects'),
-                    os.path.join(bag_one, 'data', 'objects', 'Flower2.JPG'),
+                    os.path.join(bag_one, 'data', 'objects', 'CD001_Images'),
+                    os.path.join(bag_one, 'data', 'objects', 'CD001_Images', 'Flower2.JPG'),
                     os.path.join(bag_one, 'manifest-md5.txt'),
                     os.path.join(bag_one, 'manifest-sha256.txt'),
                     os.path.join(bag_one, 'tagmanifest-md5.txt'),
@@ -136,8 +137,9 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_two, 'data', 'metadata', 'overview-tree.html_fits.xml'),
                     os.path.join(bag_two, 'data', 'metadata', 'test-001-er-000002_preservation.xml'),
                     os.path.join(bag_two, 'data', 'objects'),
-                    os.path.join(bag_two, 'data', 'objects', 'New Text Document.txt'),
-                    os.path.join(bag_two, 'data', 'objects', 'overview-tree.html'),
+                    os.path.join(bag_two, 'data', 'objects', 'CD002_Random'),
+                    os.path.join(bag_two, 'data', 'objects', 'CD002_Random', 'New Text Document.txt'),
+                    os.path.join(bag_two, 'data', 'objects', 'CD002_Random', 'overview-tree.html'),
                     os.path.join(bag_two, 'manifest-md5.txt'),
                     os.path.join(bag_two, 'manifest-sha256.txt'),
                     os.path.join(bag_two, 'tagmanifest-md5.txt'),
@@ -152,9 +154,10 @@ class TestFullScript(unittest.TestCase):
                     os.path.join(bag_three, 'data', 'metadata', 'test-001-er-000003_preservation.xml'),
                     os.path.join(bag_three, 'data', 'metadata', 'Worksheet.csv_fits.xml'),
                     os.path.join(bag_three, 'data', 'objects'),
-                    os.path.join(bag_three, 'data', 'objects', 'Spreadsheet'),
-                    os.path.join(bag_three, 'data', 'objects', 'Spreadsheet', 'Worksheet.csv'),
-                    os.path.join(bag_three, 'data', 'objects', 'Test PDF.pdf'),
+                    os.path.join(bag_three, 'data', 'objects', 'FD001_Text'),
+                    os.path.join(bag_three, 'data', 'objects', 'FD001_Text', 'Spreadsheet'),
+                    os.path.join(bag_three, 'data', 'objects', 'FD001_Text', 'Spreadsheet', 'Worksheet.csv'),
+                    os.path.join(bag_three, 'data', 'objects', 'FD001_Text', 'Test PDF.pdf'),
                     os.path.join(bag_three, 'manifest-md5.txt'),
                     os.path.join(bag_three, 'manifest-sha256.txt'),
                     os.path.join(bag_three, 'tagmanifest-md5.txt'),
@@ -162,7 +165,7 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for general, aip directory")
 
         # Test for the contents of the staging directory.
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         result = make_directory_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-already-on-ingest-server'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest'),
@@ -208,15 +211,15 @@ class TestFullScript(unittest.TestCase):
         log_path = os.path.join(bag_one, 'data', 'metadata', f'test-001-er-000001_files-deleted_{today}_del.csv')
         result = make_deletion_log_list(log_path)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
-                    [os.path.join(aip_dir, 'test-001-er-000001', 'Thumbs.db'), 'Thumbs.db', 25, '2025-9-15']]
+                    [os.path.join(aip_dir, 'test-001-er-000001', 'CD001_Images', 'Thumbs.db'), 'Thumbs.db', 25, '2026-5-18']]
         self.assertEqual(expected, result, "Problem with test for general, first aip deletion log")
 
         # Test for the contents of the third AIP's deletion log.
         log_path = os.path.join(bag_three, 'data', 'metadata', f'test-001-er-000003_files-deleted_{today}_del.csv')
         result = make_deletion_log_list(log_path)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
-                    [os.path.join(aip_dir, 'test-001-er-000003', '.Test PDF.pdf'), '.Test PDF.pdf', 187972, '2025-9-15'],
-                    [os.path.join(aip_dir, 'test-001-er-000003', 'Spreadsheet', '.Worksheet.csv'), '.Worksheet.csv', 178, '2025-9-15']]
+                    [os.path.join(aip_dir, 'test-001-er-000003', 'FD001_Text', '.Test PDF.pdf'), '.Test PDF.pdf', 187972, '2026-5-18'],
+                    [os.path.join(aip_dir, 'test-001-er-000003', 'FD001_Text', 'Spreadsheet', '.Worksheet.csv'), '.Worksheet.csv', 178, '2026-5-18']]
         self.assertEqual(expected, result, "Problem with test for general, third aip deletion log")
 
     def test_web(self):
@@ -288,7 +291,7 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with test for web, aip directory")
 
         # Test for the contents of the staging directory.
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         today = datetime.date.today().strftime('%Y-%m-%d')
         result = make_directory_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-already-on-ingest-server'),

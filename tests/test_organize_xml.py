@@ -16,7 +16,7 @@ class TestOrganizeXML(unittest.TestCase):
         if os.path.exists(aip_path):
             shutil.rmtree(aip_path)
 
-        aips_staging = os.path.join(os.getcwd(), 'staging')
+        aips_staging = os.path.join(os.getcwd(), 'staging_for_tests')
         xml_paths = [os.path.join(aips_staging, 'fits-xmls', 'test_coll2_001_combined-fits.xml'),
                      os.path.join(aips_staging, 'preservation-xmls', 'test_coll2_001_preservation.xml')]
         for xml_path in xml_paths:
@@ -28,7 +28,7 @@ class TestOrganizeXML(unittest.TestCase):
         # Makes the test input and runs the function.
         # A copy of the AIP is made since this test should alter the contents of the AIP metadata folder.
         aips_dir = os.path.join(os.getcwd(), 'organize_xml')
-        aips_staging = os.path.join(os.getcwd(), 'staging')
+        aips_staging = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'test', None, 'coll-1', 'aip-folder', 'general', 'test_coll2_001', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'test_coll2_001_copy'), os.path.join(aips_dir, 'test_coll2_001'))
         organize_xml(aip, aips_staging)

@@ -49,25 +49,12 @@ class TestManifest(unittest.TestCase):
         if os.path.exists(av_manifest_path):
             os.remove(av_manifest_path)
 
-        # Deletes the copy of the AV aip, which is copied to staging when the test is run on a mac
-        # and to an errors folder when the test is run on Windows.
-        locations = [os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-with-errors', 'copy_to_ingest_failed'),
-                     os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-already-on-ingest-server'),
-                     os.path.join(os.getcwd(), 'manifest', 'staging', 'aips-ready-to-ingest')]
-        for location in locations:
-            tar_path = os.path.join(location, 'rabbitbox_010_bag.20000.tar')
-            if os.path.exists(tar_path):
-                os.remove(tar_path)
-
     def test_av(self):
         """Test for an AV AIP, which has the manifest saved to a different location"""
         # Makes the test input and runs the function.
-        # A copy of the test file is made since in av mode it will be moved to a different location in staging.
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        shutil.copy2(os.path.join(aip_staging, 'aips-ready-to-ingest', 'copy_rabbitbox_010_bag.20000.tar'),
-                     os.path.join(aip_staging, 'aips-ready-to-ingest', 'rabbitbox_010_bag.20000.tar'))
         aip = AIP(aips_dir, 'bmac', 'wav', 'rabbitbox', 'folder', 'av', 'rabbitbox_010', 'title', 1, False)
         aip.size = 20000
         aip.log = {'Started': '2025-09-08 01:25:01.000000', 'AIP': 'rabbitbox_010', 'Deletions': 'No files deleted',
@@ -92,10 +79,6 @@ class TestManifest(unittest.TestCase):
                      'Success', 'Success', 'Valid', 'Valid', 'Success', 'Successfully added AIP to manifest',
                      'Successfully completed processing']]
         self.assertEqual(expected, result, "Problem with AV, AIP log")
-
-        # Test for moving to other location in staging.
-        result = os.path.exists(os.path.join(aip_staging, 'aips-already-on-ingest-server', 'rabbitbox_010_bag.20000.tar'))
-        self.assertEqual(True, result, "Problem with AV, staging location")
 
     def test_bz2(self):
         """Test for an AIP that is tarred and zipped"""

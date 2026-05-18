@@ -18,7 +18,7 @@ class TestStructureDirectory(unittest.TestCase):
     def tearDown(self):
         """Delete the aip log, errors folder, and test AIPs folders, if present."""
         # Deletes error folder from staging.
-        error_folder = os.path.join(os.getcwd(), 'staging', 'aips-with-errors')
+        error_folder = os.path.join(os.getcwd(), 'staging_for_tests', 'aips-with-errors')
         if os.path.exists(error_folder):
             shutil.rmtree(error_folder)
 
@@ -36,7 +36,7 @@ class TestStructureDirectory(unittest.TestCase):
                 shutil.rmtree(aip_folder_path)
 
         # Deletes files copied to movs-to-bag:
-        mov_folder = os.path.join(os.getcwd(), 'staging', 'movs-to-bag')
+        mov_folder = os.path.join(os.getcwd(), 'staging_for_tests', 'movs-to-bag')
         for file in os.listdir(mov_folder):
             if file.endswith('.mov'):
                 os.remove(os.path.join(mov_folder, file))
@@ -45,7 +45,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for error handling when the AIP folder already contains a folder named objects"""
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-1', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'error-aip-1_copy'), os.path.join(aips_dir, 'error-aip-1'))
         structure_directory(aip, staging_dir)
@@ -80,7 +80,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for error handling when the AIP folder already contains folders named metadata and objects"""
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-2', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'error-aip-2_copy'), os.path.join(aips_dir, 'error-aip-2'))
         structure_directory(aip, staging_dir)
@@ -117,7 +117,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for error handling when the AIP folder already contains a folder named metadata"""
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'dept', None, 'coll-error', 'folder', 'general', 'error-aip-3', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'error-aip-3_copy'), os.path.join(aips_dir, 'error-aip-3'))
         structure_directory(aip, staging_dir)
@@ -154,7 +154,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for an AV AIP with no metadata files"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'bmac', 'wav', 'coll-bmac', 'folder', 'av', 'av-aip-1', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'av-aip-1_copy'), os.path.join(aips_dir, 'av-aip-1'))
         structure_directory(aip, staging_dir)
@@ -182,7 +182,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for an AV AIP from workflow dpx, which starts in a bag and has multiple sort and renaming patterns"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'bmac', 'dpx', 'coll-bmac', 'folder', 'av', 'av-aip-2', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'av-aip-2_copy'), os.path.join(aips_dir, 'av-aip-2'))
         structure_directory(aip, staging_dir)
@@ -223,7 +223,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for an AV AIP which contains files that go in the metadata subfolder"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'bmac', 'wav', 'coll-bmac', 'folder', 'av', 'av-aip-3', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'av-aip-3_copy'), os.path.join(aips_dir, 'av-aip-3'))
         structure_directory(aip, staging_dir)
@@ -255,7 +255,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for an AV AIP from workflow mxf, which has a different renaming pattern"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'bmac', 'mxf', 'coll-bmac', 'folder', 'av', 'av-aip-4', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'av-aip-4_copy'), os.path.join(aips_dir, 'av-aip-4'))
         structure_directory(aip, staging_dir)
@@ -282,7 +282,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for an AIP which contains an Emory metadata file, which goes in the metadata subfolder"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'emory', None, 'coll-emory', 'folder', 'general', 'emory-aip-1', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'emory-aip-1_copy'), os.path.join(aips_dir, 'emory-aip-1'))
         structure_directory(aip, staging_dir)
@@ -313,7 +313,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for an AIP which contains a deletion log, which goes in the metadata subfolder"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'dept', None, 'coll-delete', 'folder', 'general', 'deletion-aip-1', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'deletion-aip-1_copy'), os.path.join(aips_dir, 'deletion-aip-1'))
         structure_directory(aip, staging_dir)
@@ -344,7 +344,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for an AIP with no metadata files (some would be metadata if AIP metadata was different)"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'dept', None, 'coll', 'folder', 'general', 'none-aip-1', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'none-aip-1_copy'), os.path.join(aips_dir, 'none-aip-1'))
         structure_directory(aip, staging_dir)
@@ -376,7 +376,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for a web AIP (not MAGIL) with all the six Archive-It reports, which go in the metadata subfolder"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'magil', None, 'coll-web', 'folder', 'web', 'web-aip-1', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'web-aip-1_copy'), os.path.join(aips_dir, 'web-aip-1'))
         structure_directory(aip, staging_dir)
@@ -409,7 +409,7 @@ class TestStructureDirectory(unittest.TestCase):
         """Test for a MAGIL web AIP with four six Archive-It reports, which go in the metadata subfolder"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging')
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
         aip = AIP(aips_dir, 'magil', None, 'coll-web', 'folder', 'web', 'web-aip-2', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'web-aip-2_copy'), os.path.join(aips_dir, 'web-aip-2'))
         structure_directory(aip, staging_dir)

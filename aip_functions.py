@@ -330,10 +330,11 @@ def delete_temp(aip, aip_path, logging):
     for root, directories, files in os.walk(aip.id):
         for item in files:
             if item in delete_list or item.endswith(".tmp") or item.startswith("."):
-                path = os.path.join(root, item)
-                date = time.gmtime(os.path.getmtime(path))
-                date_reformatted = f"{date.tm_year}-{date.tm_mon}-{date.tm_mday} {date.tm_hour}:{date.tm_hour}:{date.tm_min}"
-                deleted_files.append([path, item, os.path.getsize(path), date_reformatted])
+                if logging:
+                    path = os.path.join(root, item)
+                    date = time.gmtime(os.path.getmtime(path))
+                    date_reformatted = f"{date.tm_year}-{date.tm_mon}-{date.tm_mday} {date.tm_hour}:{date.tm_hour}:{date.tm_min}"
+                    deleted_files.append([path, item, os.path.getsize(path), date_reformatted])
                 os.remove(os.path.join(root, item))
 
     # Creates the log in the AIP folder if any files were deleted.

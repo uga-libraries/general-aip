@@ -337,19 +337,20 @@ def delete_temp(aip, aip_path, logging):
                     deleted_files.append([path, item, os.path.getsize(path), date_reformatted])
                 os.remove(os.path.join(root, item))
 
-    # Creates the log in the AIP folder if any files were deleted.
-    # The log contains the path, filename, size in bytes and date/time last modified of every deleted file.
-    # Also adds event information for deletion to the script log.
-    if len(deleted_files) > 0:
-        filename = f"{aip.id}_files-deleted_{datetime.today().date()}_del.csv"
-        with open(os.path.join(aip.id, filename), "w", newline="") as deleted_log:
-            deleted_log_writer = csv.writer(deleted_log)
-            deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
-            for file_data in deleted_files:
-                deleted_log_writer.writerow(file_data)
-        aip.log["Deletions"] = "File(s) deleted"
-    else:
-        aip.log["Deletions"] = "No files deleted"
+    # If there is logging, creates the deletion log and updates the AIP log.
+    # The deletion log contains the path, filename, size in bytes and date/time last modified of every deleted file.
+    # If there is no logging, the function is running to delete temp files generated during AIP creation.
+    if logging:
+        if len(deleted_files) > 0:
+            filename = f"{aip.id}_files-deleted_{datetime.today().strftime('%Y-%m-%d')}_del.csv"
+            with open(os.path.join(aip.directory, aip.id, filename), "w", newline="") as deleted_log:
+                deleted_log_writer = csv.writer(deleted_log)
+                deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
+                for file_data in deleted_files:
+                    deleted_log_writer.writerow(file_data)
+            aip.log["Deletions"] = "File(s) deleted (see log)"
+        else:
+            aip.log["Deletions"] = "No files deleted"
 
 
 def extract_metadata(aip):

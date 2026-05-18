@@ -294,7 +294,7 @@ def combine_metadata(aip, staging):
             except et.ParseError as error:
                 aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
                 aip.log["Complete"] = "Error during processing"
-                log(aip.log)
+                log(aip.log, aip.directory)
                 move_error("combining_fits", os.path.join(aip.directory, aip.id), staging)
                 return
 

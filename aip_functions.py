@@ -691,7 +691,8 @@ def package(aip, staging):
         subprocess.run(f'tar -C "{bag_path}" -cf "{tar_path}" .', shell=True)
 
     # Renames the file to include the size.
-    os.replace(f"{aip_bag}.tar", f"{aip_bag}.{bag_size}.tar")
+    tar_size_path = os.path.join(staging, "aips-ready-to-ingest", f"{aip_bag}.{bag_size}.tar")
+    os.replace(tar_path, tar_size_path)
 
     # Updates the size in the AIP object so it can be used by the manifest() function later.
     aip.size = bag_size

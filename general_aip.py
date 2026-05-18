@@ -110,13 +110,13 @@ for aip_row in read_metadata:
 
     # Converts the technical metadata into Dublin Core and PREMIS using xslt stylesheets.
     if aip.id in os.listdir(AIPS_DIRECTORY):
-        a.make_cleaned_fits_xml(aip)
+        a.make_cleaned_fits_xml(aip, configuration.AIP_STAGING)
     if aip.id in os.listdir(AIPS_DIRECTORY):
-        a.make_preservation_xml(aip)
+        a.make_preservation_xml(aip, configuration.AIP_STAGING)
     if aip.id in os.listdir(AIPS_DIRECTORY):
-        a.validate_preservation_xml(aip)
+        a.validate_preservation_xml(aip, configuration.AIP_STAGING)
     if aip.id in os.listdir(AIPS_DIRECTORY):
-        a.organize_xml(aip)
+        a.organize_xml(aip, configuration.AIP_STAGING)
 
     # Bags the AIP using bagit.
     if aip.id in os.listdir(AIPS_DIRECTORY):

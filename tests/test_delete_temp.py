@@ -31,7 +31,7 @@ class TestDeleteTemp(unittest.TestCase):
     def test_no_log(self):
         """Test for an AIP with temporary files to delete but deletion should not be logged"""
         # Makes the input needed for the function and runs the function being tested.
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'delete_temp')
+        aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_no-log_copy'), os.path.join(aips_dir, 'aip-id_no-log'))
         aip = AIP(aips_dir, 'dept', 'None', 'coll-1', 'folder', 'general', 'aip-id_no-log', 'title', 1, True)
         aip.log['Deletions'] = 'Deletions note (for testing)'
@@ -61,7 +61,7 @@ class TestDeleteTemp(unittest.TestCase):
     def test_no_temp(self):
         """Test for an AIP with no temporary files to delete"""
         # Makes the input needed for the function and runs the function being tested.
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'delete_temp')
+        aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id', 'title', 1, True)
         delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)
 
@@ -86,7 +86,7 @@ class TestDeleteTemp(unittest.TestCase):
     def test_ds_store(self):
         """Test for an AIP with .DS_Store files to delete"""
         # Makes the input needed for the function and runs the function being tested.
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'delete_temp')
+        aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_ds-store_copy'), os.path.join(aips_dir, 'aip-id_ds-store'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_ds-store', 'title', 1, True)
         delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)
@@ -119,7 +119,7 @@ class TestDeleteTemp(unittest.TestCase):
     def test_ds_store_2(self):
         """Test for an AIP with ._.DS_Store files to delete"""
         # Makes the input needed for the function and runs the function being tested.
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'delete_temp')
+        aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_ds-store-2_copy'), os.path.join(aips_dir, 'aip-id_ds-store-2'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_ds-store-2', 'title', 1, True)
         delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)
@@ -153,7 +153,7 @@ class TestDeleteTemp(unittest.TestCase):
     def test_thumbs_db(self):
         """Test for an AIP with Thumbs.db files to delete"""
         # Makes the input needed for the function and runs the function being tested.
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'delete_temp')
+        aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_thumbs_copy'), os.path.join(aips_dir, 'aip-id_thumbs'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_thumbs', 'title', 1, True)
         delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)
@@ -192,7 +192,7 @@ class TestDeleteTemp(unittest.TestCase):
     def test_dot_prefix(self):
         """Test for an AIP with .filename files to delete"""
         # Makes the input needed for the function and runs the function being tested.
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'delete_temp')
+        aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_dot_copy'), os.path.join(aips_dir, 'aip-id_dot'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_dot', 'title', 1, True)
         delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)
@@ -225,7 +225,7 @@ class TestDeleteTemp(unittest.TestCase):
     def test_tmp_extension(self):
         """Test for an AIP with filename.tmp files to delete"""
         # Makes the input needed for the function and runs the function being tested.
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'delete_temp')
+        aips_dir = os.path.join(os.getcwd(), 'delete_temp')
         shutil.copytree(os.path.join(aips_dir, 'aip-id_tmp_copy'), os.path.join(aips_dir, 'aip-id_tmp'))
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder', 'general', 'aip-id_tmp', 'title', 1, True)
         delete_temp(aip, os.path.join(aips_dir, aip.id), logging=True)

@@ -42,7 +42,7 @@ class TestCombineMetadata(unittest.TestCase):
         Test for an AIP with one file (Plain text).
         """
         # Makes the AIP instance and runs the function.
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'combine_metadata')
+        aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-1', 'general', 'aip-1', 'title', 1, True)
         combine_metadata(aip, os.getcwd())
 
@@ -61,7 +61,7 @@ class TestCombineMetadata(unittest.TestCase):
         Test for an AIP with multiple files of different formats (CSV, JSON, Plain text).
         """
         # Makes the AIP instance and runs the function.
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'combine_metadata')
+        aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-2', 'general', 'aip-2', 'title', 1, True)
         combine_metadata(aip, os.getcwd())
 
@@ -208,7 +208,7 @@ class TestCombineMetadata(unittest.TestCase):
         The metadata folder has a file with the correct name but not the expected contents.
         """
         # Makes the AIP instance, a copy of the aip folder (moved by test) and runs the function.
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'combine_metadata')
+        aips_dir = os.path.join(os.getcwd(), 'combine_metadata')
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'folder-error', 'general', 'aip-0', 'title', 1, True)
         shutil.copytree(os.path.join(aips_dir, 'aip-0_copy'), os.path.join(aips_dir, 'aip-0'))
         combine_metadata(aip, os.getcwd())

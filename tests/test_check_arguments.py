@@ -14,21 +14,21 @@ class TestCheckArguments(unittest.TestCase):
 
     def test_correct(self):
         """Test for when all required arguments are correct and the metadata.csv is present"""
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'check_arguments', 'aips_dir')
+        aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
         result = check_arguments(['general-aip.py', aips_dir, 'general', 'zip'])
         expected = (aips_dir, 'general', True, None, os.path.join(aips_dir, 'metadata.csv'), [])
         self.assertEqual(expected, result, "Problem with test for correct")
 
     def test_correct_optional(self):
         """Test for when all required arguments and optional argument are correct and the metadata.csv is present"""
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'check_arguments', 'aips_dir')
+        aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
         result = check_arguments(['general-aip.py', aips_dir, 'av', 'no-zip', 'dpx'])
         expected = (aips_dir, 'av', False, 'dpx', os.path.join(aips_dir, 'metadata.csv'), [])
         self.assertEqual(expected, result, "Problem with test for required argument only, correct")
 
     def test_metadata_missing(self):
         """Test for when the arguments are correct but the metadata.csv is not in the expected location"""
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'check_arguments', 'no_metadata_csv')
+        aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'no_metadata_csv')
         result = check_arguments(['general-aip.py', aips_dir, 'web', 'zip'])
         errors = ['Missing the required file metadata.csv in the AIPs directory.']
         expected = (aips_dir, 'web', True, None, None, errors)
@@ -52,7 +52,7 @@ class TestCheckArguments(unittest.TestCase):
 
     def test_second_error(self):
         """Test for when the second argument (aip_type) is not one of the expected values"""
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'check_arguments', 'aips_dir')
+        aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
         result = check_arguments(['general-aip.py', aips_dir, 'type-error', 'no-zip', 'mov'])
         errors = ['Provided aip_type "type-error" is not an expected value (av, general, web).']
         expected = (aips_dir, None, False, 'mov', os.path.join(aips_dir, 'metadata.csv'), errors)
@@ -60,7 +60,7 @@ class TestCheckArguments(unittest.TestCase):
 
     def test_third_error(self):
         """Test for when the third argument (to_zip) is not one of the expected values"""
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'check_arguments', 'aips_dir')
+        aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
         result = check_arguments(['general-aip.py', aips_dir, 'av', 'zip-error', 'mp4'])
         errors = [f'Provided to_zip "zip-error" is not an expected value (no-zip, zip).']
         expected = (aips_dir, 'av', None, 'mp4', os.path.join(aips_dir, 'metadata.csv'), errors)
@@ -68,7 +68,7 @@ class TestCheckArguments(unittest.TestCase):
 
     def test_fourth_error(self):
         """Test for when the fourth argument (workflow) is not one of the expected values"""
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'check_arguments', 'aips_dir')
+        aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
         result = check_arguments(['general-aip.py', aips_dir, 'general', 'zip', 'wf-error'])
         errors = ['Provided workflow "wf-error" is not an expected value (dpx, mkv, mkv-filmscan, mov, mp4, mxf, wav)']
         expected = (aips_dir, 'general', True, None, os.path.join(aips_dir, 'metadata.csv'), errors)
@@ -87,7 +87,7 @@ class TestCheckArguments(unittest.TestCase):
 
     def test_extra(self):
         """Test for when there are more arguments than expected (more than 4)"""
-        aips_dir = os.path.join(os.getcwd(), 'tests', 'check_arguments', 'aips_dir')
+        aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
         result = check_arguments(['general-aip.py', aips_dir, 'av', 'no-zip', 'mxf', 'extra', 'extra2'])
         errors = ['Too many script arguments. The maximum expected is 4.']
         expected = (aips_dir, 'av', False, 'mxf', os.path.join(aips_dir, 'metadata.csv'), errors)

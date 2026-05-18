@@ -303,14 +303,19 @@ def combine_metadata(aip, staging):
     combo_tree.write(fits_path, xml_declaration=True, encoding="UTF-8")
 
 
-def delete_temp(aip):
-    """Delete temporary files of various types from the AIP folder and make a log of deleted files
+def delete_temp(aip, aip_path, logging):
+    """Delete temporary files of various types from the AIP folder and optionally make a log of the deleted files
 
     Temporary files are deleted because they cause errors later in the workflow, especially with bag validation.
     Types of files deleted: DS_Store, Thumbs.db, ends with .tmp, and starts with '.'
 
+    A log is made the first time temporary files are deleted, since they likely came with the accession.
+    Later deletions are for temporary files made by the AIP creation process in a Mac and do not need a log.
+
     Parameters:
-         aip : instance of the AIP class, used for id and log
+         aip : instance of the AIP class, used for directory, id and log
+         aip_path : path to the aip folder, either named with the aip_id or aip_id_bag
+         logging : True or False, indicating if a deletion log should be made
 
     Returns: none
     """

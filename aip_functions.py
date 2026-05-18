@@ -1,7 +1,7 @@
 """Functions used to make AIPs from folders of digital objects"""
 
 import csv
-import datetime
+from datetime import datetime
 import os
 import platform
 import shutil

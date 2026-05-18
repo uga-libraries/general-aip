@@ -776,6 +776,7 @@ def structure_directory(aip, staging):
 
     # Moves any metadata files to the metadata folder and then the rest to the objects folder, with renaming as needed.
     # Metadata files are matched as specifically as possible to reduce the risk of incorrect identifications.
+    web_metadata = ("_coll.csv", "_collscope.csv", "_crawldef.csv", "_crawljob.csv", "_seed.csv", "_seedscope.csv")
     for item in os.listdir(aip_path):
         if item in ('metadata', 'objects'):
             continue
@@ -792,7 +793,6 @@ def structure_directory(aip, staging):
             os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # Website metadata files from downloading WARCs from Archive-It.
         # Hargrett and Russell both have -web- in the AIP ID, but MAGIL does not and can only check for the department.
-        web_metadata = ("_coll.csv", "_collscope.csv", "_crawldef.csv", "_crawljob.csv", "_seed.csv", "_seedscope.csv")
         if "-web-" in aip.id and item.endswith(web_metadata):
             os.replace(item_path, os.path.join(aip_path, "metadata", item))
         if aip.department == "magil" and item.endswith(web_metadata):

@@ -276,7 +276,8 @@ def combine_metadata(aip, staging):
     combo_root = combo_tree.getroot()
 
     # Gets each of the FITS documents in the AIP's metadata folder.
-    for doc in os.listdir(os.path.join(aip.id, "metadata")):
+    metadata_path = os.path.join(aip.directory, aip.id, "metadata")
+    for doc in os.listdir(metadata_path):
         if doc.endswith("_fits.xml"):
 
             # Makes Python aware of the FITS namespace (it is the default and has no prefix).
@@ -284,7 +285,7 @@ def combine_metadata(aip, staging):
 
             # Gets the FITS element and its children and makes it a child of the root, combined-fits.
             try:
-                tree = et.parse(os.path.join(aip.id, "metadata", doc))
+                tree = et.parse(os.path.join(metadata_path, doc))
                 root = tree.getroot()
                 combo_root.append(root)
                 aip.log["FITSError"] = "Successfully created combined-fits.xml"
@@ -298,7 +299,7 @@ def combine_metadata(aip, staging):
                 return
 
     # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.
-    fits_path = os.path.join(aip.id, "metadata", f"{aip.id}_combined-fits.xml")
+    fits_path = os.path.join(metadata_path, f"{aip.id}_combined-fits.xml")
     combo_tree.write(fits_path, xml_declaration=True, encoding="UTF-8")
 
 

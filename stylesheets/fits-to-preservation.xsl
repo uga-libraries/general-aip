@@ -40,12 +40,9 @@
 					</xsl:if>
                 </premis:object>
             </aip>
-            <!--filelist is only included if there is more than one file.-->
-            <xsl:if test="$file-count > 1">
-                <filelist>
-                    <xsl:apply-templates select="combined-fits/fits" />
-                </filelist>
-            </xsl:if>
+            <filelist>
+                <xsl:apply-templates select="combined-fits/fits" />
+            </filelist>
         </preservation>
     </xsl:template>
     

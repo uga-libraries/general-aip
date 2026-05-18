@@ -549,7 +549,7 @@ def manifest(aip, staging):
     if not os.path.exists(aip_path):
         aip.log["Manifest"] = f"Tar/zip file '{aip_path}' not in aips-ready-for-ingest folder"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         return
 
     # Calculates the MD5 of the packaged AIP.
@@ -561,7 +561,7 @@ def manifest(aip, staging):
         error_msg = md5deep_output.stderr.decode("utf-8")
         aip.log["Manifest"] = f"Issue when generating MD5. md5deep error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
+        log(aip.log, aip.directory)
         return
 
     # Adds the md5 and AIP filename to the department's manifest in the aips-to-ingest folder.

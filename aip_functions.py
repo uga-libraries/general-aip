@@ -649,6 +649,9 @@ def package(aip, staging):
     aip_bag = f"{aip.id}_bag"
     bag_path = os.path.join(aip.directory, aip_bag)
 
+    # Deletes temporary files. These can be re-generated during the AIP creation process.
+    delete_temp(aip, bag_path, logging=False)
+
     # Gets the total size of the bag:
     # sum of the bag payload (data folder) from bag-info.txt and the size of the bag metadata files.
     # It saves time to use the bag payload instead of recalculating the size of a large data folder.

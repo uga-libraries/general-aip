@@ -258,7 +258,7 @@ def check_metadata_csv(read_metadata, aips_dir):
     return errors_list
 
 
-def combine_metadata(aip):
+def combine_metadata(aip, staging):
     """Make the combined-fits.xml file in the metadata folder, which contains the FITS output for every file in the AIP
 
     It is moved out of the AIP folder and into the fits-xml folder after the preservation.xml is made.
@@ -266,6 +266,7 @@ def combine_metadata(aip):
 
     Parameters:
         aip : instance of the AIP class, used for id and log
+        staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -293,7 +294,7 @@ def combine_metadata(aip):
                 aip.log["FITSError"] = f"Issue when creating combined-fits.xml: {error.msg}"
                 aip.log["Complete"] = "Error during processing"
                 log(aip.log)
-                move_error("combining_fits", aip.id)
+                move_error("combining_fits", os.path.join(aip.directory, aip.id), staging)
                 return
 
     # Saves the combined-fits XML to a file named aip-id_combined-fits.xml in the AIP's metadata folder.

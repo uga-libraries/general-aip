@@ -304,7 +304,7 @@ def delete_temp(aip):
     # The log contains the path, filename, size in bytes and date/time last modified of every deleted file.
     # Also adds event information for deletion to the script log.
     if len(deleted_files) > 0:
-        filename = f"{aip.id}_files-deleted_{datetime.datetime.today().date()}_del.csv"
+        filename = f"{aip.id}_files-deleted_{datetime.today().date()}_del.csv"
         with open(os.path.join(aip.id, filename), "w", newline="") as deleted_log:
             deleted_log_writer = csv.writer(deleted_log)
             deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
@@ -730,7 +730,7 @@ def validate_bag(aip):
     new_bag = bagit.Bag(f"{aip.id}_bag")
     try:
         new_bag.validate()
-        aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
+        aip.log["BagValid"] = f"Bag valid on {datetime.now()}"
     except bagit.BagValidationError as errors:
         aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
         aip.log["Complete"] = "Error during processing"
@@ -788,4 +788,4 @@ def validate_preservation_xml(aip):
                 validation_log.write(line + "\n")
         return
     else:
-        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.datetime.now()}"
+        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.now()}"

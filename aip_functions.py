@@ -496,19 +496,20 @@ def make_output_directories(staging, aip_type):
             os.makedirs(directory_path)
 
 
-def make_preservation_xml(aip):
+def make_preservation_xml(aip, staging):
     """Make the preservation.xml from the cleaned FITS XML in the metadata folder
 
     Parameters:
-         aip : instance of the AIP class, used for collection_id, department, id, log, title, and version
+        aip : instance of the AIP class, used for collection_id, department, directory, id, log, title, and version
+        staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
 
     # Uses saxon and a stylesheet to make the preservation.xml file from the cleaned-fits.xml.
-    input_file = os.path.join(aip.id, "metadata", f"{aip.id}_cleaned-fits.xml")
+    input_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_cleaned-fits.xml")
     stylesheet = os.path.join(c.STYLESHEETS, "fits-to-preservation.xsl")
-    output_file = os.path.join(aip.id, "metadata", f"{aip.id}_preservation.xml")
+    output_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_preservation.xml")
     args = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
            f'department="{aip.department}" version={aip.version} ns={c.NAMESPACE}'
     saxon_output = subprocess.run(f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{input_file}" '
@@ -520,8 +521,8 @@ def make_preservation_xml(aip):
         error_msg = saxon_output.stderr.decode("utf-8")
         aip.log["PresXML"] = f"Issue when creating preservation.xml. Saxon error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("pres_xml_saxon_error", aip.id)
+        log(aip.log, aip.directory)
+        move_error("pres_xml_saxon_error", os.path.join(aip.directory, aip.id), staging)
         return
 
 

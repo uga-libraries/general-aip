@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <preservation xmlns:dc="http://purl.org/dc/terms/"
               xmlns:premis="http://www.loc.gov/premis/v3">
-   <dc:title>Hargrett Web Title: No Related Collection</dc:title>
+   <dc:title>Hargrett Web without Collection</dc:title>
    <dc:rights>http://rightsstatements.org/vocab/InC/1.0/</dc:rights>
    <aip>
       <premis:object>
@@ -15,10 +15,10 @@
          </premis:objectIdentifier>
          <premis:objectCategory>file</premis:objectCategory>
          <premis:objectCharacteristics>
-            <premis:size>27</premis:size>
+            <premis:size>57500000</premis:size>
             <premis:format>
                <premis:formatDesignation>
-                  <premis:formatName>Unknown Binary</premis:formatName>
+                  <premis:formatName>WARC</premis:formatName>
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Tika version 1.21</premis:formatNote>
             </premis:format>

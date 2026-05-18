@@ -438,7 +438,7 @@ def make_bag(aip):
         bagit.make_bag(aip_path, checksums=["md5", "sha256"])
 
     # Renames the AIP folder to add _bag (common naming convention for the standard).
-    os.replace(aip.id, f"{aip.id}_bag")
+    os.replace(aip_path, os.path.join(aip.directory, f"{aip.id}_bag"))
 
 
 def make_cleaned_fits_xml(aip):

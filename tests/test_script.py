@@ -2,7 +2,7 @@
 Testing for the entire script, with input that represents the different workflows that use the script.
 It does not currently include tests for error handling.
 
-BEFORE RUNNING THIS TEST: in configuration.py, make aip_staging the path to staging in the GitHub repo
+BEFORE RUNNING THIS TEST: in configuration.py, make aip_staging the path to staging_for_tests in the GitHub repo
 """
 
 import datetime

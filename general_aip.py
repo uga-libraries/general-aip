@@ -34,9 +34,6 @@ if len(argument_errors) > 0:
         print("   * " + error)
     sys.exit()
 
-# Makes the current directory the AIPs directory.
-os.chdir(AIPS_DIRECTORY)
-
 # Verifies all the variables from the configuration file are present, all the paths are valid,
 # and the FITS path is in the same letter directory as AIPS_DIRECTORY.
 # If not, ends the script.

@@ -6,7 +6,9 @@ Hargrett, MAGIL and Russell web IDs, and Emory disk image IDs.
 
 Parameters:
     aips_directory : required,  folder that contains the folders to be made into AIPs
-    no-zip : optional, use if AIP should only be tarred and not zipped
+    aip_type : required, either av, general, or web
+    to_zip : required, either no-zip (tar only) or zip (tar and bz2)
+    workflow : optional, one of the AV workflows
 
 Returns:
     The aips_directory folder with the AIP bags, which are complete AIPs except for zipping

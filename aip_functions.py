@@ -840,11 +840,12 @@ def validate_bag(aip, staging):
                 log_path.write(str(errors))
 
 
-def validate_preservation_xml(aip):
+def validate_preservation_xml(aip, staging):
     """Validate the preservation.xml file against UGA's requirements
 
     Parameters:
          aip : instance of the AIP class, used for id and log
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -862,7 +863,7 @@ def validate_preservation_xml(aip):
         aip.log["PresXML"] = f"Preservation.xml was not created. xmllint error: {validation_result}"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("preservationxml_not_found", aip.id)
+        move_error("preservationxml_not_found", os.path.join(aip.directory, aip.id), staging)
         return
     else:
         aip.log["PresXML"] = "Successfully created preservation.xml"
@@ -874,7 +875,7 @@ def validate_preservation_xml(aip):
         aip.log["PresValid"] = "Preservation.xml is not valid (see log in error folder)"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("preservationxml_not_valid", aip.id)
+        move_error("preservationxml_not_valid", os.path.join(aip.directory, aip.id), staging)
         log_path = os.path.join("..", "errors", "preservationxml_not_valid", f"{aip.id}_presxml_validation.txt")
         with open(log_path, "w") as validation_log:
             for line in validation_result.split("\r"):

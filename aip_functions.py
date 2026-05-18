@@ -1,7 +1,7 @@
 """Functions used to make AIPs from folders of digital objects"""
 
 import csv
-import datetime
+from datetime import datetime
 import os
 import platform
 import shutil
@@ -15,17 +15,20 @@ import configuration as c
 class AIP:
     """Characteristics of each AIP and log data used by multiple functions"""
 
-    def __init__(self, directory, department, collection_id, folder_name, aip_id, title, version, to_zip):
+    def __init__(self, directory, department, workflow, collection_id, folder_name, aip_type, aip_id, title, version,
+                 to_zip):
         self.directory = directory
         self.department = department
+        self.workflow = workflow
         self.collection_id = collection_id
         self.folder_name = folder_name
+        self.type = aip_type
         self.id = aip_id
         self.title = title
         self.version = version
         self.to_zip = to_zip
         self.size = None
-        self.log = {"Started": datetime.datetime.now(), "AIP": self.id, "Deletions": "n/a",
+        self.log = {"Started": datetime.now(), "AIP": self.id, "Deletions": "n/a",
                     "ObjectsError": "n/a", "MetadataError": "n/a", "FITSTool": "n/a", "FITSError": "n/a",
                     "PresXML": "n/a", "PresValid": "n/a", "BagValid": "n/a", "Package": "n/a", "Manifest": "n/a",
                     "Complete": "n/a"}
@@ -301,7 +304,7 @@ def delete_temp(aip):
     # The log contains the path, filename, size in bytes and date/time last modified of every deleted file.
     # Also adds event information for deletion to the script log.
     if len(deleted_files) > 0:
-        filename = f"{aip.id}_files-deleted_{datetime.datetime.today().date()}_del.csv"
+        filename = f"{aip.id}_files-deleted_{datetime.today().date()}_del.csv"
         with open(os.path.join(aip.id, filename), "w", newline="") as deleted_log:
             deleted_log_writer = csv.writer(deleted_log)
             deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
@@ -727,7 +730,7 @@ def validate_bag(aip):
     new_bag = bagit.Bag(f"{aip.id}_bag")
     try:
         new_bag.validate()
-        aip.log["BagValid"] = f"Bag valid on {datetime.datetime.now()}"
+        aip.log["BagValid"] = f"Bag valid on {datetime.now()}"
     except bagit.BagValidationError as errors:
         aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
         aip.log["Complete"] = "Error during processing"
@@ -785,4 +788,4 @@ def validate_preservation_xml(aip):
                 validation_log.write(line + "\n")
         return
     else:
-        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.datetime.now()}"
+        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.now()}"

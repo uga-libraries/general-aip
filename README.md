@@ -78,10 +78,12 @@ The element value is the objectIdentifierType/objectIdentifierValue from our pre
 
 ### Script Arguments
 
-To run the script via the command line: python /path/general_aip.py aips_directory [no-zip]
+To run the script via the command line: python /path/general_aip.py aips_directory aip_type to_zip [workflow]
 
-* aips_directory (required) is the folder which contains all the folders to make into AIPs and the metadata.csv file
-* no-zip (optional) is included to only tar and not zip the AIP (for big formats like disk images).
+* aips_directory (required): folder that contains the folders to be made into AIPs
+* aip_type (required): either av, general, or web
+* to_zip (required): either no-zip (tar only) or zip (tar and bz2)
+* workflow (optional): one of the AV workflows
 
 ### Testing
 

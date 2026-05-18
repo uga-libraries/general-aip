@@ -716,7 +716,7 @@ def package(aip, staging):
     aip.log["Package"] = "Successfully made package"
 
 
-def structure_directory(aip):
+def structure_directory(aip, staging):
     """Make the AIP directory structure (objects and metadata folders) and move the digital objects into those folders
 
     Anything not recognized as metadata is moved into the objects folder.
@@ -724,62 +724,89 @@ def structure_directory(aip):
     that directory structure is maintained within the objects folder.
 
     Parameters:
-         aip : instance of the AIP class, used for department, id, and log
+         aip : instance of the AIP class, used for directory, workflow, department, id, and log
+         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
 
     # Makes the objects folder within the AIP folder, if it doesn't exist.
     # If it does, moves the AIP to an error folder so the original directory structure is not altered.
+    aip_path = os.path.join(aip.directory, aip.id)
     try:
-        os.mkdir(os.path.join(aip.id, "objects"))
+        os.mkdir(os.path.join(aip_path, "objects"))
         aip.log["ObjectsError"] = "Successfully created objects folder"
     except FileExistsError:
         aip.log["ObjectsError"] = "Objects folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("objects_folder_exists", aip.id)
+        log(aip.log, aip.directory)
+        move_error("objects_folder_exists", aip_path, staging)
         return
 
     # Makes the metadata folders within the AIP folder, if it doesn't exist.
     # If it does, moves the AIP to an error folder so the original directory structure is not altered.
     try:
-        os.mkdir(os.path.join(aip.id, "metadata"))
+        os.mkdir(os.path.join(aip_path, "metadata"))
         aip.log["MetadataError"] = "Successfully created metadata folder"
     except FileExistsError:
         aip.log["MetadataError"] = "Metadata folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
-        log(aip.log)
-        move_error("metadata_folder_exists", aip.id)
+        log(aip.log, aip.directory)
+        move_error("metadata_folder_exists", aip_path, staging)
         return
 
-    # Moves any metadata files to the metadata folder.
-    # Departments or other details, in addition to the filenames, are used when possible.
-    # The more specific the match, the less likely a file will be incorrectly identified as a metadata file.
-    for item in os.listdir(aip.id):
-        item_path = os.path.join(aip.id, item)
-        metadata_path = os.path.join(aip.id, "metadata", item)
+    # Moves DPX files to the objects folder.
+    # DPX files are already in bags, so have to navigate to the data folder to find the content to move into objects.
+    if aip.workflow == 'dpx':
+        for item in os.listdir(os.path.join(aip_path, 'data')):
+            if os.path.isdir(os.path.join(aip_path, 'data', item)):
+                shutil.copytree(os.path.join(aip_path, 'data', item), os.path.join(aip_path, 'objects', f'{item}-dpx'))
+            elif item.endswith('.cue'):
+                os.replace(os.path.join(aip_path, 'data', item), os.path.join(aip_path, 'objects', item))
+            elif item.endswith('.mov'):
+                shutil.copy2(os.path.join(aip_path, 'data', item), os.path.join(staging, 'movs-to-bag'))
+                os.replace(os.path.join(aip_path, 'data', item), os.path.join(aip_path, 'objects', item))
+            elif item.endswith('.wav'):
+                os.replace(os.path.join(aip_path, 'data', item),
+                           os.path.join(aip_path, 'objects', f'{pathlib.Path(item).stem}-dpx.wav'))
+        # Deletes the bag metadata files and data folder, now that the rest is organized into the AIP directory.
+        for bag_metadata_file in ('bag-info.txt', 'bagit.txt', 'manifest-md5.txt', 'tagmanifest-md5.txt'):
+            os.remove(os.path.join(aip_path, bag_metadata_file))
+        shutil.rmtree(os.path.join(aip_path, 'data'))
+
+    # Moves any metadata files to the metadata folder and then the rest to the objects folder, with renaming as needed.
+    # Metadata files are matched as specifically as possible to reduce the risk of incorrect identifications.
+    web_metadata = ("_coll.csv", "_collscope.csv", "_crawldef.csv", "_crawljob.csv", "_seed.csv", "_seedscope.csv")
+    for item in os.listdir(aip_path):
+        if item in ('metadata', 'objects'):
+            continue
+        item_path = os.path.join(aip_path, item)
+        # AV metadata files.
+        av_metadata = (".qctools.mkv", ".qctools.xml.gz", ".framemd5", ".srt")
+        if aip.type == "av" and item.endswith(av_metadata):
+            os.replace(item_path, os.path.join(aip_path, "metadata", f"bmac_{item}"))
         # Deletion log, created by the script when deleting temp files.
-        if item.startswith(f"{aip.id}_files-deleted_"):
-            os.replace(item_path, metadata_path)
+        elif item.startswith(f"{aip.id}_files-deleted_"):
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # Metadata file used by Emory with disk images.
-        if aip.department == "emory" and item.startswith("EmoryMD"):
-            os.replace(item_path, metadata_path)
+        elif aip.department == "emory" and item.startswith("EmoryMD"):
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # Website metadata files from downloading WARCs from Archive-It.
         # Hargrett and Russell both have -web- in the AIP ID, but MAGIL does not and can only check for the department.
-        web_metadata = ("_coll.csv", "_collscope.csv", "_crawldef.csv", "_crawljob.csv", "_seed.csv", "_seedscope.csv")
-        if "-web-" in aip.id and item.endswith(web_metadata):
-            os.replace(item_path, metadata_path)
-        if aip.department == "magil" and item.endswith(web_metadata):
-            os.replace(item_path, metadata_path)
-
-    # Moves all remaining files and folders to the objects folder.
-    # The first level within the AIPs folder is now just the metadata folder and objects folder.
-    for item in os.listdir(aip.id):
-        if item in ("metadata", "objects"):
-            continue
-        os.replace(os.path.join(aip.id, item), os.path.join(aip.id, "objects", item))
-
+        elif "-web-" in aip.id and item.endswith(web_metadata):
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
+        elif aip.department == "magil" and item.endswith(web_metadata):
+            os.replace(item_path, os.path.join(aip_path, "metadata", item))
+        # MXF files (renaming required, different from other AV)
+        elif aip.department == "bmac" and aip.workflow == "mxf":
+            os.replace(item_path, os.path.join(aip_path, "objects", f"bmac_wsb-video_{item.lower()}"))
+        # Moves all other BMA files to the objects folder, with renaming.
+        elif aip.department == "bmac":
+            os.replace(item_path, os.path.join(aip_path, "objects", f"bmac_{item}"))
+        # Moves all remaining files and folders to the objects folder.
+        else:
+            os.replace(item_path, os.path.join(aip_path, "objects", item))
+    
 
 def validate_bag(aip):
     """Validate the AIP's bag

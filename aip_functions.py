@@ -129,8 +129,13 @@ def check_configuration(aips_dir):
     # Starts a list for all encountered errors, so all errors can be checked before returning a result.
     errors_list = []
 
-    # For the four variables with a value that is a path,
-    # checks if the variable exists and if the path is valid.
+    # For the variables with a value that is a path, checks if the variable exists and if the path is valid.
+    try:
+        if not os.path.exists(c.AIP_STAGING):
+            errors_list.append(f"AIP_STAGING path '{c.AIP_STAGING}' is not correct.")
+    except AttributeError:
+        errors_list.append("AIP_STAGING variable is missing from the configuration file.")
+
     try:
         if not os.path.exists(c.FITS):
             errors_list.append(f"FITS path '{c.FITS}' is not correct.")
@@ -146,11 +151,13 @@ def check_configuration(aips_dir):
     except AttributeError:
         errors_list.append("SAXON variable is missing from the configuration file.")
 
-    try:
-        if not os.path.exists(c.MD5DEEP):
-            errors_list.append(f"MD5DEEP path '{c.MD5DEEP}' is not correct.")
-    except AttributeError:
-        errors_list.append("MD5DEEP variable is missing from the configuration file.")
+    # MD5DEEP is a path in Windows but just "md5deep" in Mac.
+    if not c.MD5DEEP == 'md5deep':
+        try:
+            if not os.path.exists(c.MD5DEEP):
+                errors_list.append(f"MD5DEEP path '{c.MD5DEEP}' is not correct.")
+        except AttributeError:
+            errors_list.append("MD5DEEP variable is missing from the configuration file.")
 
     try:
         if not os.path.exists(c.STYLESHEETS):

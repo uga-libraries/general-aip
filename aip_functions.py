@@ -496,11 +496,12 @@ def make_output_directories(staging, aip_type):
             os.makedirs(directory_path)
 
 
-def make_preservation_xml(aip):
+def make_preservation_xml(aip, staging):
     """Make the preservation.xml from the cleaned FITS XML in the metadata folder
 
     Parameters:
-         aip : instance of the AIP class, used for collection_id, department, id, log, title, and version
+        aip : instance of the AIP class, used for collection_id, department, directory, id, log, title, and version
+        staging : path to the aip_staging folder from configuration.py
 
     Returns: none
     """
@@ -521,7 +522,7 @@ def make_preservation_xml(aip):
         aip.log["PresXML"] = f"Issue when creating preservation.xml. Saxon error: {error_msg}"
         aip.log["Complete"] = "Error during processing"
         log(aip.log)
-        move_error("pres_xml_saxon_error", aip.id)
+        move_error("pres_xml_saxon_error", os.path.join(aip.directory, aip.id), staging)
         return
 
 

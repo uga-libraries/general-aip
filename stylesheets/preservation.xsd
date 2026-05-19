@@ -20,10 +20,9 @@
                         <xs:sequence><xs:element ref="premis:object" /></xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <!--if an aip only has one file, there is no filelist section-->
-                <xs:element name="filelist" minOccurs="0">
+                <xs:element name="filelist">
                     <xs:complexType>
-                        <xs:sequence><xs:element ref="premis:object" minOccurs="2" maxOccurs="unbounded" /></xs:sequence>
+                        <xs:sequence><xs:element ref="premis:object" maxOccurs="unbounded" /></xs:sequence>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>

@@ -11,7 +11,6 @@ We plan to stop using md5deep fairly soon, so leaving that without a test.
 from datetime import datetime
 import os
 import pandas as pd
-import shutil
 import unittest
 from aip_functions import AIP, log, manifest
 from test_script import make_aip_log_list
@@ -55,7 +54,7 @@ class TestManifest(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        aip = AIP(aips_dir, 'bmac', 'wav', 'rabbitbox', 'folder', 'av', 'rabbitbox_010', 'title', 1, False)
+        aip = AIP(aips_dir, 'bmac', 'wav', 'rabbitbox', 'folder', 'av', 'rabbitbox_010', 'title', 'InC', 1, False)
         aip.size = 20000
         aip.log = {'Started': '2025-09-08 01:25:01.000000', 'AIP': 'rabbitbox_010', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -86,7 +85,7 @@ class TestManifest(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'har-ua01-001-001', 'title', 1, True)
+        aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'har-ua01-001-001', 'title', 'InC', 1, True)
         aip.size = 1000
         aip.log = {'Started': '2025-08-14 11:45:01.000000', 'AIP': 'har-ua01-001-001', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -117,7 +116,7 @@ class TestManifest(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'harg-missing-001', 'title', 1, True)
+        aip = AIP(aips_dir, 'hargrett', None, 'har-ua01', 'folder', 'general', 'harg-missing-001', 'title', 'InC', 1, True)
         aip.size = 999
         aip.log = {'Started': '2025-08-14 02:30:01.000000', 'AIP': 'harg-missing-001', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -149,7 +148,7 @@ class TestManifest(unittest.TestCase):
         # The manifest is made by the test instead of being in the GitHub repo already so the date matches.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        aip = AIP(aips_dir, 'russell', None, 'rbrl-123', 'folder', 'general', 'rbrl-123-er-123456', 'title', 1, True)
+        aip = AIP(aips_dir, 'russell', None, 'rbrl-123', 'folder', 'general', 'rbrl-123-er-123456', 'title', 'InC', 1, True)
         aip.size = 300
         aip.log = {'Started': '2025-08-14 02:40:01.000000', 'AIP': 'rbrl-123-er-123456', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
@@ -183,7 +182,7 @@ class TestManifest(unittest.TestCase):
         # The AIP log is updated as if previous steps have run correctly.
         aips_dir = os.getcwd()
         aip_staging = os.path.join(os.getcwd(), 'manifest', 'staging')
-        aip = AIP(aips_dir, 'magil', None, 'magil-0000', 'folder', 'web', 'magil-seed-2025', 'title', 1, False)
+        aip = AIP(aips_dir, 'magil', None, 'magil-0000', 'folder', 'web', 'magil-seed-2025', 'title', 'InC', 1, False)
         aip.size = 4400
         aip.log = {'Started': '2025-09-08 01:15:01.000000', 'AIP': 'magil-seed-2025', 'Deletions': 'No files deleted',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',

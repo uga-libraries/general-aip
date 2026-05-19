@@ -26,7 +26,7 @@ class TestExtractMetadata(unittest.TestCase):
         """Test for an AIP with one file"""
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'extract_metadata')
-        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'one_folder', 'general', 'aip-id-one', 'title', 1, True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'one_folder', 'general', 'aip-id-one', 'title', 'InC', 1, True)
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.
@@ -45,7 +45,7 @@ class TestExtractMetadata(unittest.TestCase):
         """Test for an AIP with multiple files of different formats (CSV, JSON, Plain text)"""
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'extract_metadata')
-        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'multi_folder', 'general', 'aip-id-multi', 'title', 1, True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'multi_folder', 'general', 'aip-id-multi', 'title', 'InC', 1, True)
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.
@@ -63,10 +63,12 @@ class TestExtractMetadata(unittest.TestCase):
         self.assertEqual(expected, result, "Problem with multiple files, log")
 
     def test_error_fits_tool(self):
-        """Test for an AIP with a format that causes FITS to generate an error (text file with XML extension)"""
+        """Test for an AIP with a format that causes FITS to generate an error (text file with XML extension)
+        NOTE: this test stopped reliably producing the FITS tool error
+        """
         # Makes test input and runs the function being tested.
         aips_dir = os.path.join(os.getcwd(), 'extract_metadata')
-        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'tool_error_folder', 'general', 'aip-id-error', 'title', 1, True)
+        aip = AIP(aips_dir, 'dept', None, 'coll-1', 'tool_error_folder', 'general', 'aip-id-error', 'title', 'InC', 1, True)
         extract_metadata(aip)
 
         # Test for the contents of the metadata folder.

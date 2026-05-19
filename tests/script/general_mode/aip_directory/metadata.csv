@@ -1,4 +1,4 @@
-Department,Collection,Folder,AIP_ID,Title,Version
-test,test-001,CD001_Images,test-001-er-000001,Images,1
-test,test-001,CD002_Random,test-001-er-000002,Random,1
-test,test-001,FD001_Text,test-001-er-000003,Text,1
+Department,Collection,Folder,AIP_ID,Title,Rights,Version
+test,test-001,CD001_Images,test-001-er-000001,Images,http://rightsstatements.org/vocab/InC/1.0/,1
+test,test-001,CD002_Random,test-001-er-000002,Random,http://rightsstatements.org/vocab/InC/1.0/,1
+test,test-001,FD001_Text,test-001-er-000003,Text,http://rightsstatements.org/vocab/InC/1.0/,1

@@ -16,8 +16,8 @@ import configuration as c
 class AIP:
     """Characteristics of each AIP and log data used by multiple functions"""
 
-    def __init__(self, directory, department, workflow, collection_id, folder_name, aip_type, aip_id, title, version,
-                 to_zip):
+    def __init__(self, directory, department, workflow, collection_id, folder_name, aip_type, aip_id, title, rights,
+                 version, to_zip):
         self.directory = directory
         self.department = department
         self.workflow = workflow
@@ -26,6 +26,7 @@ class AIP:
         self.type = aip_type
         self.id = aip_id
         self.title = title
+        self.rights = rights
         self.version = version
         self.to_zip = to_zip
         self.size = None
@@ -204,19 +205,21 @@ def check_metadata_csv(read_metadata, aips_dir):
     # If the header is not correct, returns the error and does not test the column values.
     header = next(read_metadata)
     header_lowercase = [name.lower() for name in header]
-    if header_lowercase != ["department", "collection", "folder", "aip_id", "title", "version"]:
+    if header_lowercase != ["department", "collection", "folder", "aip_id", "title", "rights", "version"]:
         errors_list.append("The columns in the metadata.csv do not match the required values or order.")
-        errors_list.append("Required: Department, Collection, Folder, AIP_ID, Title, Version")
+        errors_list.append("Required: Department, Collection, Folder, AIP_ID, Title, Rights, Version")
         errors_list.append(f"Current:  {', '.join(header)}")
         errors_list.append("Since the columns are not correct, did not check the column values.")
         return errors_list
 
-    # Makes a list of all values in the department and folder columns to use for testing.
+    # Makes a list of all values in the department, folder, and rights columns to use for testing.
     csv_dept_list = []
     csv_folder_list = []
+    csv_rights_list = []
     for row in read_metadata:
         csv_dept_list.append(row[0])
         csv_folder_list.append(row[2])
+        csv_rights_list.append(row[5])
 
     # Checks that the values in the department column match the expected ARCHive groups from the configuration file.
     unique_departments = list(set(csv_dept_list))
@@ -224,6 +227,13 @@ def check_metadata_csv(read_metadata, aips_dir):
     for department in unique_departments:
         if department not in c.GROUPS:
             errors_list.append(f"{department} is not an ARCHive group.")
+
+    # Checks that the values in the rights column are either Creative Commons or RightsStatements.org.
+    unique_rights = list(set(csv_rights_list))
+    unique_rights.sort()
+    for right in unique_rights:
+        if not(right.startswith('https://creativecommons.org') or right.startswith('http://rightsstatements.org')):
+            errors_list.append(f"{right} is not Creative Commons or RightsStatement.org.")
 
     # The rest of the function tests the folder names.
 
@@ -375,8 +385,8 @@ def extract_metadata(aip):
     # If there were any tool error messages from FITS, saves those to a log in the AIP's metadata folder.
     # Processing on the AIP continues, since typically other tools still work.
     if fits_output.stderr:
-        with open(os.path.join(metadata, f"{aip.id}_fits-tool-errors_fitserr.txt"), "w") as fits_errors:
-            fits_errors.write(fits_output.stderr.decode("utf-8"))
+        with open(os.path.join(metadata, f"{aip.id}_fits-tool-errors_fitserr.txt"), "w", errors="ignore") as fits_errors:
+            fits_errors.write(fits_output.stderr.decode("utf-8", errors="replace"))
         aip.log["FITSTool"] = "FITS tools generated errors (saved to metadata folder)"
     else:
         aip.log["FITSTool"] = "No FITS tools errors"
@@ -512,7 +522,7 @@ def make_preservation_xml(aip, staging):
     stylesheet = os.path.join(c.STYLESHEETS, "fits-to-preservation.xsl")
     output_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_preservation.xml")
     args = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
-           f'department="{aip.department}" version={aip.version} ns={c.NAMESPACE}'
+           f'department="{aip.department}" rights="{aip.rights}" version={aip.version} ns={c.NAMESPACE}'
     saxon_output = subprocess.run(f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{input_file}" '
                                   f'-xsl:"{stylesheet}" -o:"{output_file}" {args}',
                                   stderr=subprocess.PIPE, shell=True)

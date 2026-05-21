@@ -796,6 +796,7 @@ multiple possible formats or multiple possible created dates) all possible infor
             <xsl:otherwise>
                 <premis:dateCreatedByApplication>
 					<xsl:text>New Date Format Identified: Update Stylesheet</xsl:text>
+                    <xsl:value-of select="$apdate" />
                 </premis:dateCreatedByApplication>
             </xsl:otherwise>
             

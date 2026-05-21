@@ -533,10 +533,11 @@ multiple possible formats or multiple possible created dates) all possible infor
         <xsl:variable name="apdate" select="." />
         <xsl:choose>
         
-            <!--Does not include a date element if value is 0. -->
+            <!--Does not include a date element if value is 0 or some other value that is actually a date. -->
             <xsl:when test="$apdate='0'" />
             <xsl:when test="$apdate='0000:00:00 00:00:00'" />
             <xsl:when test="matches($apdate, '0-00-00T')" />
+            <xsl:when test="matches($apdate, '^:')" />
 
             <!--Pattern: Year:Month:Day Time and Year-Month-Day Time-->
             <!--Examples: 2018:01:02 01:02:33; 2000-10-05 9:15 PM-->

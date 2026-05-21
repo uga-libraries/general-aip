@@ -112,6 +112,8 @@ a new folder is made with the AIP ID and the original folder is moved into it,
 so the name of the original folder is retained. It is the first folder within the objects folder of the AIP.
 
 It is recommended to keep AIPs to under 10,000 files and 100 GB where possible for ease of ongoing validation and other maintenance tasks.
+Use [check_file_count.py](https://github.com/uga-libraries/bags/blob/main/check_file_count.py) before making AIPs or
+[check_bag_size.py](https://github.com/uga-libraries/bags/blob/main/check_bag_size.py) after to find ones that are too big and need to be split.
 See the [aip_prep.py script](https://github.com/uga-libraries/congressional-mail/blob/main/aip_prep.py) developed for congressional mail
 for an example of how to automatically split a large folder into multiple aips.
 

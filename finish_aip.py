@@ -17,6 +17,23 @@ import bagit
 import os
 import subprocess
 import sys
+from configuration import MD5DEEP
+
+
+def manifest(zip_path):
+    """Save the MD5 and filename of the zipped bag to manifest.txt
+    Parameter: zip_path (string) - path to the zipped bag
+    Returns: None
+    """
+    # Calculates the MD5 of the zip.
+    # Initial output of md5deep is b'md5_value  filename.ext\r\n'
+    output = subprocess.run(f'"{MD5DEEP}" -br "{zip_path}"', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+    # Saves the md5deep output to the manifest,
+    # with a little reformatting to match the requirements of our preservation system.
+    manifest_path = os.path.join(os.path.dirname(zip_path), 'manifest.txt')
+    with open(manifest_path, 'a', newline='') as manifest_file:
+        manifest_file.write(output.stdout.decode("UTF-8").replace("\r", ""))
 
 
 def package_bag(bag_path, bag):
@@ -57,7 +74,8 @@ def package_bag(bag_path, bag):
 def validate_bag(bag):
     """Validate the bag and print the result for the log
     Parameter: bag (bagit Bag) - bag to be validated
-    Returns: is_valid (Boolean)"""
+    Returns: is_valid (Boolean)
+    """
     try:
         bag.validate()
         return True
@@ -83,3 +101,7 @@ if __name__ == '__main__':
 
     # Package (tar and zip) the bag, including add the unzipped size to the filename.
     zip_path = package_bag(bag_path, bag_instance)
+
+    # Save the MD5 of the zipped AIP to the manifest.txt in the parent folder of bag_path,
+    # adding to an existing manifest.txt if one is already present.
+    manifest(zip_path)

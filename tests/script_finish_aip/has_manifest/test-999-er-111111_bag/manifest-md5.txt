@@ -1,0 +1,3 @@
+f997813c4716409c69057be5c4bd9262  data/metadata/Plain Text Example.txt_fits.xml
+07ff3e8afa2cc0339acef04730806115  data/metadata/test-999-er-111111_preservation.xml
+c9aa213a38d3423a7c7def9d2df35518  data/objects/Plain Text Example.txt

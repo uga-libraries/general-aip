@@ -1,0 +1,3 @@
+55121b44d10354d7a5dc636e5bc8b81a58b04592dae0cca5f843f420ff77c34c  data/metadata/Plain Text Example.txt_fits.xml
+42c4569a004f9c459158b31b515dfb84e1fd4f5800035112b21f23cc86a2b16c  data/metadata/test-999-er-111111_preservation.xml
+2470ee5bed4e5d9d3a23ef932340f329c808fcbc7ee3b271b1f85a8977ec82d1  data/objects/Plain Text Example.txt

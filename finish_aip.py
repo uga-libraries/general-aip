@@ -17,6 +17,19 @@ import bagit
 import sys
 
 
+def validate_bag(bag):
+    """Validate the bag and print the result for the log
+    Parameter: bag (bagit Bag) - bag to be validated
+    Returns: is_valid (Boolean)"""
+    try:
+        bag.validate()
+        return True
+    except (bagit.BagValidationError, bagit.BagError) as error_msg:
+        print("Bag is not valid - cannot complete rest of the script")
+        print(error_msg)
+        return False
+
+
 if __name__ == '__main__':
 
     # Get path to the bag to be made into a finished AIP (script argument) and read as a Bag.
@@ -27,6 +40,9 @@ if __name__ == '__main__':
     bag_instance.save(manifests=True)
 
     # Validate the bag. If the bag is not valid, exit the script.
+    bag_valid = validate_bag(bag_instance)
+    if not bag_valid:
+        sys.exit(1)
 
     # Package (tar and zip) the bag, including add the unzipped size to the filename.
 

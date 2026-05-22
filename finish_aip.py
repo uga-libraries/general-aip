@@ -88,8 +88,8 @@ def validate_bag(bag):
 if __name__ == '__main__':
 
     # Get path to the bag to be made into a finished AIP (script argument) and read as a Bag.
-    bag_path = sys.argv[1]
-    bag_instance = bagit.Bag(bag_path)
+    aip_bag_path = sys.argv[1]
+    bag_instance = bagit.Bag(aip_bag_path)
 
     # Update the bag.
     bag_instance.save(manifests=True)
@@ -100,8 +100,8 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Package (tar and zip) the bag, including add the unzipped size to the filename.
-    zip_path = package_bag(bag_path, bag_instance)
+    aip_zip_path = package_bag(aip_bag_path, bag_instance)
 
     # Save the MD5 of the zipped AIP to the manifest.txt in the parent folder of bag_path,
     # adding to an existing manifest.txt if one is already present.
-    manifest(zip_path)
+    manifest(aip_zip_path)

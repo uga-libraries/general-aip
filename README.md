@@ -117,6 +117,9 @@ Use [check_file_count.py](https://github.com/uga-libraries/bags/blob/main/check_
 See the [aip_prep.py script](https://github.com/uga-libraries/congressional-mail/blob/main/aip_prep.py) developed for congressional mail
 for an example of how to automatically split a large folder into multiple aips.
 
+If an AIP must be manually edited, use the script [finish_aip.py](finish_aip.py) 
+to update the bag, package, and make the manifest.
+
 ## Author
 
 Adriane Hanson, Head of Digital Stewardship, December 2019.

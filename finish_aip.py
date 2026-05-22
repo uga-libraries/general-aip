@@ -79,6 +79,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Package (tar and zip) the bag, including add the unzipped size to the filename.
+    package_bag(bag_path, bag_instance)
 
     # Save the MD5 to the manifest.txt in the parent folder of bag_path,
     # adding to an existing manifest.txt if one is already present.

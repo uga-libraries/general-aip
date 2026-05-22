@@ -24,7 +24,7 @@ def package_bag(bag_path, bag):
     Parameters:
         bag_path (string) - path to bag
         bag (bagit Bag) - bag instance for extracting bag payload
-    Returns: None
+    Returns: zip_path (string) - path to the zipped bag
     """
 
     # Gets the total size in bytes of the bag: bag payload (data folder) from bag-info.txt plus bag metadata files.
@@ -49,6 +49,9 @@ def package_bag(bag_path, bag):
 
     # Deletes the tar version. Just want the tarred and zipped version.
     os.remove(tar_size_path)
+
+    # Returns the path to the zip for adding it to the manifest.
+    return f"{tar_size_path}.bz2"
 
 
 def validate_bag(bag):
@@ -79,7 +82,4 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Package (tar and zip) the bag, including add the unzipped size to the filename.
-    package_bag(bag_path, bag_instance)
-
-    # Save the MD5 to the manifest.txt in the parent folder of bag_path,
-    # adding to an existing manifest.txt if one is already present.
+    zip_path = package_bag(bag_path, bag_instance)

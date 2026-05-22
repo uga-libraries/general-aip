@@ -13,15 +13,18 @@ Returns:
     .tar.bz2 version of the AIP ready to ingest into the preservation system
     manifest.txt with the md5 of the AIP needed for ingest
 """
+import bagit
 import sys
 
 
 if __name__ == '__main__':
 
-    # Get path to the bag to be made into a finished AIP (script argument)
+    # Get path to the bag to be made into a finished AIP (script argument) and read as a Bag.
     bag_path = sys.argv[1]
+    bag_instance = bagit.Bag(bag_path)
 
     # Update the bag.
+    bag_instance.save(manifests=True)
 
     # Validate the bag. If the bag is not valid, exit the script.
 

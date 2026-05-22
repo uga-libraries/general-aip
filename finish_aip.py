@@ -46,7 +46,7 @@ def package_bag(bag_path, bag):
 
     # Gets the total size in bytes of the bag: bag payload (data folder) from bag-info.txt plus bag metadata files.
     bag_payload = bag.info['Payload-Oxum']
-    bag_size = bag_payload.load.split('.')[0]
+    bag_size = bag_payload.split('.')[0]
     for file in os.listdir(bag_path):
         if file.endswith(".txt"):
             bag_size += os.path.getsize(os.path.join(bag_path, file))

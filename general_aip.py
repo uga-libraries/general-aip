@@ -1,8 +1,6 @@
 """Creates AIPs from folders of digital objects that are ready for ingest into our digital preservation system (ARCHive)
 
 The AIPs may contain one or multiple files of any format.
-The script works with Hargrett and Russell library born-digital IDs,
-Hargrett, MAGIL and Russell web IDs, and Emory disk image IDs.
 
 Parameters:
     aips_directory : required,  folder that contains the folders to be made into AIPs

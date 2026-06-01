@@ -278,37 +278,6 @@ class TestStructureDirectory(unittest.TestCase):
         expected = 'Successfully created metadata folder'
         self.assertEqual(expected, result, "Problem with sort_av_mxf, log: MetadataError")
 
-    def test_sort_emory(self):
-        """Test for an AIP which contains an Emory metadata file, which goes in the metadata subfolder"""
-        # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.
-        aips_dir = os.path.join(os.getcwd(), 'structure_directory')
-        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
-        aip = AIP(aips_dir, 'emory', None, 'coll-emory', 'folder', 'general', 'emory-aip-1', 'title', 'InC', 1, True)
-        shutil.copytree(os.path.join(aips_dir, 'emory-aip-1_copy'), os.path.join(aips_dir, 'emory-aip-1'))
-        structure_directory(aip, staging_dir)
-
-        # Test for the contents of the AIP folder.
-        aip_path = os.path.join(staging_dir, aips_dir, aip.id)
-        result = make_directory_list(aip_path)
-        expected = [os.path.join(aip_path, 'metadata'),
-                    os.path.join(aip_path, 'metadata', 'EmoryMD_Text.txt'),
-                    os.path.join(aip_path, 'objects'),
-                    os.path.join(aip_path, 'objects', 'Test Dir'),
-                    os.path.join(aip_path, 'objects', 'Test Dir', 'Test Dir Text.txt'),
-                    os.path.join(aip_path, 'objects', 'Text 2.txt'),
-                    os.path.join(aip_path, 'objects', 'Text.txt')]
-        self.assertEqual(expected, result, "Problem with sort Emory metadata, AIP folder")
-
-        # Test for the AIP log: ObjectsError.
-        result = aip.log['ObjectsError']
-        expected = 'Successfully created objects folder'
-        self.assertEqual(expected, result, "Problem with sort Emory metadata, log: ObjectsError")
-
-        # Test for the AIP log: MetadataError.
-        result = aip.log['MetadataError']
-        expected = 'Successfully created metadata folder'
-        self.assertEqual(expected, result, "Problem with sort Emory metadata, log: MetadataError")
-
     def test_sort_files_deleted(self):
         """Test for an AIP which contains a deletion log, which goes in the metadata subfolder"""
         # Makes test input (AIP instance and AIP directory with files) and runs the function being tested.

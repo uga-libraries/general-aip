@@ -76,11 +76,11 @@ Add one <dc:rights> element per rights statement with the URI of the right from 
 
 ### Script Arguments
 
-To run the script via the command line: python /path/general_aip.py aips_directory aip_type to_zip [workflow]
+To run the script via the command line: python /path/general_aip.py aips_directory aip_type zip_method [workflow]
 
 * aips_directory (required): folder that contains the folders to be made into AIPs
 * aip_type (required): either av, general, or web
-* to_zip (required): either no-zip (tar only) or zip (tar and bz2)
+* zip_method (required): tar or tar-bz2
 * workflow (optional): one of the AV workflows
 
 ### Testing

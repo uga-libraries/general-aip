@@ -7,7 +7,7 @@ Hargrett, MAGIL and Russell web IDs, and Emory disk image IDs.
 Parameters:
     aips_directory : required,  folder that contains the folders to be made into AIPs
     aip_type : required, either av, general, or web
-    to_zip : required, either no-zip (tar only) or zip (tar and bz2)
+    zip_method : required, either tar or tar-bz2
     workflow : optional, one of the AV workflows
 
 Returns:
@@ -124,7 +124,7 @@ for aip_row in read_metadata:
         a.make_bag(aip)
         a.validate_bag(aip, configuration.AIP_STAGING)
 
-    # Tars the AIP and also zips (bz2) the AIP if ZIP (optional script argument) is True.
+    # Tars the AIP and may also zip (bz2) depending on the script argument zip_method.
     if f'{aip.id}_bag' in os.listdir(AIPS_DIRECTORY):
         a.package(aip, configuration.AIP_STAGING)
 

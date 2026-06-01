@@ -80,12 +80,12 @@ def check_arguments(arguments):
 
     # Checks if the third required argument (zip_method) is present, and if so, if it is the expected value.
     if len(arguments) > 3:
-        if arguments[3] == "no-zip":
+        if arguments[3] == "tar":
             to_zip = False
-        elif arguments[3] == "zip":
+        elif arguments[3] == "tar-bz2":
             to_zip = True
         else:
-            errors_list.append(f'Provided zip_method "{arguments[3]}" is not an expected value (no-zip, zip).')
+            errors_list.append(f'Provided zip_method "{arguments[3]}" is not an expected value (tar or tar-bz2).')
 
     # Checks if the optional argument (workflow) is present, and if so, if it is the expected value.
     if len(arguments) > 4:

@@ -799,9 +799,6 @@ def structure_directory(aip, staging):
         # Deletion log, created by the script when deleting temp files.
         elif item.startswith(f"{aip.id}_files-deleted_"):
             os.replace(item_path, os.path.join(aip_path, "metadata", item))
-        # Metadata file used by Emory with disk images.
-        elif aip.department == "emory" and item.startswith("EmoryMD"):
-            os.replace(item_path, os.path.join(aip_path, "metadata", item))
         # Website metadata files from downloading WARCs from Archive-It.
         # Hargrett and Russell both have -web- in the AIP ID, but MAGIL does not and can only check for the department.
         elif "-web-" in aip.id and item.endswith(web_metadata):

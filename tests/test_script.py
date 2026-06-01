@@ -94,7 +94,7 @@ class TestFullScript(unittest.TestCase):
         # Runs the script.
         script_path = os.path.join('..', 'general_aip.py')
         aip_dir = os.path.join(os.getcwd(), 'script', 'general', 'aip_directory')
-        printed = subprocess.run(f'python "{script_path}" "{aip_dir}" general zip',
+        printed = subprocess.run(f'python "{script_path}" "{aip_dir}" general tar-bz2',
                                  shell=True, capture_output=True, text=True)
 
         # Test for the script print statements.
@@ -231,7 +231,7 @@ class TestFullScript(unittest.TestCase):
         # Runs the script.
         script_path = os.path.join('..', 'general_aip.py')
         aip_dir = os.path.join(os.getcwd(), 'script', 'web', 'preservation_download')
-        printed = subprocess.run(f'python "{script_path}" "{aip_dir}" web zip',
+        printed = subprocess.run(f'python "{script_path}" "{aip_dir}" web tar-bz2',
                                  shell=True, capture_output=True, text=True)
 
         # Test for the script print statements.
@@ -331,7 +331,7 @@ class TestFullScript(unittest.TestCase):
         # Runs the script.
         script_path = os.path.join('..', 'general_aip.py')
         aip_dir = os.path.join(os.getcwd(), 'script', 'error')
-        printed = subprocess.run(f'python "{script_path}" "{aip_dir}" type_error zip',
+        printed = subprocess.run(f'python "{script_path}" "{aip_dir}" type_error tar',
                                  shell=True, capture_output=True, text=True)
 
         # Test for the script print statements.

@@ -62,7 +62,7 @@ def check_arguments(arguments):
 
     # Checks if arguments were given, besides the default of script name.
     if len(arguments) == 1:
-        errors_list.append('Required arguments are missing: aips_directory, aip_type, and to_zip.')
+        errors_list.append('Required arguments are missing: aips_directory, aip_type, and zip_method.')
 
     # Checks if the first required argument (aips_directory) is present and a valid path.
     if len(arguments) > 1:
@@ -78,14 +78,14 @@ def check_arguments(arguments):
         else:
             errors_list.append(f'Provided aip_type "{arguments[2]}" is not an expected value (av, general, web).')
 
-    # Checks if the third required argument (to_zip) is present, and if so, if it is the expected value.
+    # Checks if the third required argument (zip_method) is present, and if so, if it is the expected value.
     if len(arguments) > 3:
-        if arguments[3] == "no-zip":
+        if arguments[3] == "tar":
             to_zip = False
-        elif arguments[3] == "zip":
+        elif arguments[3] == "tar-bz2":
             to_zip = True
         else:
-            errors_list.append(f'Provided to_zip "{arguments[3]}" is not an expected value (no-zip, zip).')
+            errors_list.append(f'Provided zip_method "{arguments[3]}" is not an expected value (tar or tar-bz2).')
 
     # Checks if the optional argument (workflow) is present, and if so, if it is the expected value.
     if len(arguments) > 4:

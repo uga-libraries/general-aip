@@ -1,0 +1,2 @@
+account,brozzler,collection,crawl_definition,doc_rate,downloaded_count,duplicate_bytes,duplicate_count,elapsed_ms,end_date,id,novel_bytes,novel_count,original_start_date,status,test_crawl_save_date,test_crawl_state,test_crawl_state_changed_by,total_data_in_kbs,type,warc_content_bytes,warc_url_count
+1468,False,12265,31104250630,1.25,313,258029,16,251381,2019-07-09 14:47:05.750000,943048,9461096,297,2019-07-09 14:42:30.426000,FINISHED,2019-07-12 19:00:42.393776,SAVED,bpieczko,9491,TEST_SAVED,9461097,312

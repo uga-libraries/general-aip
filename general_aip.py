@@ -88,12 +88,15 @@ for aip_row in read_metadata:
     CURRENT_AIP += 1
     print(f'\n>>>Processing {aip.id} ({CURRENT_AIP} of {TOTAL_AIPS}).')
 
-    # If the folder is not already named with the AIP ID,
-    # make a new folder named with the AIP ID and move the entire folder into it.
-    aip_path = aip_path = os.path.join(aip.directory, aip.id)
-    if aip.folder_name != aip.id:
+    # Make the top level folder the AIP ID, if it isn't already.
+    # For the web AIP type, this renames the top level folder (initially named with seed id).
+    # For the other types, it makes a new folder named with the AIP ID and moves the entire folder into it.
+    aip_path = os.path.join(aip.directory, aip.id)
+    if aip.type == 'web':
+        os.rename(os.path.join(AIPS_DIRECTORY, aip.folder_name), aip_path)
+    elif aip.folder_name != aip.id:
         os.mkdir(os.path.join(AIPS_DIRECTORY, aip.id))
-        shutil.move(os.path.join(AIPS_DIRECTORY, aip.folder_name), os.path.join(AIPS_DIRECTORY, aip.id))
+        shutil.move(os.path.join(AIPS_DIRECTORY, aip.folder_name), aip_path)
 
     # Deletes any temporary files and makes a log of each deleted file.
     a.delete_temp(aip, aip_path, logging=True)

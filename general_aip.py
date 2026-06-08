@@ -65,10 +65,6 @@ a.make_output_directories(configuration.AIP_STAGING, AIP_TYPE)
 CURRENT_AIP = 0
 TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY)) - 2
 
-# Returns to the beginning of the CSV (the script is at the end because of checking it for errors) and skips the header.
-open_metadata.seek(0)
-next(read_metadata)
-
 # Uses the AIP functions to create an AIP for each folder in the metadata CSV.
 # Checks if the AIP folder is still present before calling the function for the next step
 # in case it was moved due to an error in the previous step.

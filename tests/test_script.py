@@ -166,7 +166,7 @@ class TestFullScript(unittest.TestCase):
         result = make_directory_list(staging_dir)
         expected = [os.path.join(staging_dir, 'aips-already-on-ingest-server'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest'),
-                    os.path.join(staging_dir, 'aips-ready-to-ingest', f'manifest_aip_directory_test_{today}.txt'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest', f'manifest_aips_dir_test_{today}.txt'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000001_bag.1000.tar.bz2'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000002_bag.1000.tar.bz2'),
                     os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000003_bag.1000.tar.bz2'),
@@ -182,7 +182,7 @@ class TestFullScript(unittest.TestCase):
         self.assertEqual(expected, result, 'Problem with test for general, staging directory')
 
         # Test for the contents of the aip_log.csv file.
-        result = make_aip_log_list(os.path.join(aip_dir, 'aip_log.csv'))
+        result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
         expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
                      'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
@@ -208,21 +208,21 @@ class TestFullScript(unittest.TestCase):
         log_path = os.path.join(bag_one, 'data', 'metadata', f'test-001-er-000001_files-deleted_{today}_del.csv')
         result = make_deletion_log_list(log_path)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
-                    [os.path.join(aip_dir, 'test-001-er-000001', 'CD001_Images', 'Thumbs.db'), 'Thumbs.db', 25, '2026-5-14']]
+                    [os.path.join(aips_dir, 'test-001-er-000001', 'CD001_Images', 'Thumbs.db'), 'Thumbs.db', 25, '2026-6-8']]
         self.assertEqual(expected, result, "Problem with test for general, first aip deletion log")
 
         # Test for the contents of the third AIP's deletion log.
         log_path = os.path.join(bag_three, 'data', 'metadata', f'test-001-er-000003_files-deleted_{today}_del.csv')
         result = make_deletion_log_list(log_path)
         expected = [['Path', 'File Name', 'Size (Bytes)', 'Date Last Modified'],
-                    [os.path.join(aip_dir, 'test-001-er-000003', 'FD001_Text', '.Test PDF.pdf'), '.Test PDF.pdf', 187972, '2026-5-14'],
-                    [os.path.join(aip_dir, 'test-001-er-000003', 'FD001_Text', 'Spreadsheet', '.Worksheet.csv'), '.Worksheet.csv', 178, '2026-5-14']]
+                    [os.path.join(aips_dir, 'test-001-er-000003', 'FD001_Text', '.Test PDF.pdf'), '.Test PDF.pdf', 187972, '2026-6-8'],
+                    [os.path.join(aips_dir, 'test-001-er-000003', 'FD001_Text', 'Spreadsheet', '.Worksheet.csv'), '.Worksheet.csv', 178, '2026-6-8']]
         self.assertEqual(expected, result, "Problem with test for general, third aip deletion log")
 
     def test_web_hargrett(self):
         """Test for the web AIP type and Hargrett department (one with related collection, all optional metadata)"""
         # Makes a copy of the test files stored in the script repo, since the test will alter the files.
-        aips_dir = os.path.join(os.getcwd(), 'script', 'aips_dir')
+        aips_dir, = os.path.join(os.getcwd(), 'script', 'aips_dir')
         shutil.copytree(os.path.join(os.getcwd(), 'script', 'web_hargrett'), aips_dir)
 
         # Runs the script.
@@ -433,14 +433,14 @@ class TestFullScript(unittest.TestCase):
         """Test for there is an error with the initial checks and the script quits without running"""
         # Runs the script.
         script_path = os.path.join('..', 'general_aip.py')
-        aip_dir = os.path.join(os.getcwd(), 'script', 'error')
-        printed = subprocess.run(f'python "{script_path}" "{aip_dir}" type_error tar',
+        aips_dir = os.path.join(os.getcwd(), 'script', 'error')
+        printed = subprocess.run(f'python "{script_path}" "{aips_dir}" type_error tar',
                                  shell=True, capture_output=True, text=True)
 
         # Test for the script print statements.
         result = printed.stdout
         expected = ('\nProblems detected with the provided script arguments:\n'
-                    f'   * Provided aips_directory "{aip_dir}" is not a valid directory.\n'
+                    f'   * Provided aips_directory "{aips_dir}" is not a valid directory.\n'
                     '   * Provided aip_type "type_error" is not an expected value (av, general, web).\n'
                     '   * Cannot check for the metadata.csv because the AIPs directory has an error.\n')
         self.assertEqual(expected, result, "Problem with test for error")

@@ -247,7 +247,7 @@
     <!--aip relationship to collection: PREMIS 1.13 (required if applicable).-->
     <xsl:template name="relationship-collection">
         <!--Does not include the default id numbers for web archives aips without a related collection.-->
-        <xsl:if test="(not($collection-id='harg-0000')) or (not($collection-id='magil-0000'))">
+        <xsl:if test="not(($collection-id='harg-0000') or ($collection-id='magil-0000'))">
             <premis:relationship>
                 <premis:relationshipType>structural</premis:relationshipType>
                 <premis:relationshipSubType>Is Member Of</premis:relationshipSubType>

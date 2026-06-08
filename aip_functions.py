@@ -208,7 +208,7 @@ def check_metadata_csv(md_csv, aips_dir):
 
     # Checks that the CSV header row has the required values (case-insensitive).
     # If the header is not correct, returns the error and does not test the column values.
-    header = next(md_csv)
+    header = md_df.columns.values.tolist()
     header_lowercase = [name.lower() for name in header]
     if header_lowercase != ["department", "collection", "folder", "aip_id", "title", "rights", "version"]:
         errors_list.append("The columns in the metadata.csv do not match the required values or order.")

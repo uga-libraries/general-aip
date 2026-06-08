@@ -197,6 +197,7 @@ def check_metadata_csv(md_csv, aips_dir):
         aips_dir : the path to the folder which contains the folders to be made into AIPs
 
     Returns:
+        md_df : pandas.DataFrame with the contents of the metadata csv
         errors_list : a list of errors, or an empty list if there were no errors
     """
 
@@ -249,7 +250,7 @@ def check_metadata_csv(md_csv, aips_dir):
         errors_list.append(f"Folder(s) in aips_directory but not in metadata_csv: {', '.join(dir_only)}.")
 
     # The errors list is empty if there were no errors.
-    return errors_list
+    return md_df, errors_list
 
 
 def combine_metadata(aip, staging):

@@ -43,8 +43,9 @@ if len(configuration_errors) > 0:
         print("   * " + error)
     sys.exit()
 
-# Verifies the metadata csv has the expected values. If there are an errors, ends the script.
-metadata_errors = a.check_metadata_csv(aip_metadata_csv, AIPS_DIRECTORY)
+# Verifies the metadata csv has the expected values and returns them in a dataframe.
+# If there are an errors, ends the script.
+metadata_df, metadata_errors = a.check_metadata_csv(aip_metadata_csv, AIPS_DIRECTORY)
 if len(metadata_errors) > 0:
     print('\nProblems detected with metadata.csv:')
     for error in metadata_errors:

@@ -229,22 +229,16 @@ def check_metadata_csv(md_csv, aips_dir):
         if not(right.startswith('https://creativecommons.org') or right.startswith('http://rightsstatements.org')):
             errors_list.append(f"{right} is not Creative Commons or RightsStatement.org.")
 
-    # The rest of the function tests the folder names.
-    csv_folder_list = md_df['Folder']
+    # Checks if there are any duplicate folder names.
+    duplicate_folders = md_df.loc[md_df['Folder'].duplicated(), 'Folder'].unique()
+    if len(duplicate_folders) > 0:
+        errors_list.append(f"Duplicate folder(s): {', '.join(duplicate_folders)}.")
 
     # Makes a list of every folder name in the AIPs directory.
     aips_directory_list = []
     for item in os.listdir(aips_dir):
         if os.path.isdir(os.path.join(aips_dir, item)):
             aips_directory_list.append(item)
-
-    # Checks for any folder names that are in the CSV more than once.
-    duplicates = [folder for folder in csv_folder_list if csv_folder_list.count(folder) > 1]
-    if len(duplicates) > 0:
-        unique_duplicates = list(set(duplicates))
-        unique_duplicates.sort()
-        for duplicate in unique_duplicates:
-            errors_list.append(f"{duplicate} is in the metadata.csv folder column more than once.")
 
     # Checks for any folders that are only in the CSV.
     just_csv = list(set(csv_folder_list) - set(aips_directory_list))

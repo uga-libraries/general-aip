@@ -43,13 +43,8 @@ if len(configuration_errors) > 0:
         print("   * " + error)
     sys.exit()
 
-# Reads the CSV with the AIP metadata.
-open_metadata = open(aip_metadata_csv)
-read_metadata = csv.reader(open_metadata)
-
-# Verifies the metadata header row has the expected values, departments are all ARCHive groups, and the folders match
-# what is in the AIPs directory. If there are an errors, ends the script.
-metadata_errors = a.check_metadata_csv(read_metadata, AIPS_DIRECTORY)
+# Verifies the metadata csv has the expected values. If there are an errors, ends the script.
+metadata_errors = a.check_metadata_csv(aip_metadata_csv, AIPS_DIRECTORY)
 if len(metadata_errors) > 0:
     print('\nProblems detected with metadata.csv:')
     for error in metadata_errors:

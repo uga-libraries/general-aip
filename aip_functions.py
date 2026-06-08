@@ -10,6 +10,8 @@ import subprocess
 import time
 import xml.etree.ElementTree as et
 import bagit
+import pandas as pd
+
 import configuration as c
 
 
@@ -182,7 +184,7 @@ def check_configuration(aips_dir):
     return errors_list
 
 
-def check_metadata_csv(read_metadata, aips_dir):
+def check_metadata_csv(md_csv, aips_dir):
     """Verify the content of the metadata.csv is correct
 
     - Columns are in the required order
@@ -191,7 +193,7 @@ def check_metadata_csv(read_metadata, aips_dir):
     - The AIPs in the CSV match the folders in the AIPs directory
 
     Parameters:
-        read_metadata : contents of the metadata.csv file, read with the csv library
+        md_csv : path to the metadata.csv file
         aips_dir : the path to the folder which contains the folders to be made into AIPs
 
     Returns:
@@ -203,7 +205,7 @@ def check_metadata_csv(read_metadata, aips_dir):
 
     # Checks that the CSV header row has the required values (case-insensitive).
     # If the header is not correct, returns the error and does not test the column values.
-    header = next(read_metadata)
+    header = next(md_csv)
     header_lowercase = [name.lower() for name in header]
     if header_lowercase != ["department", "collection", "folder", "aip_id", "title", "rights", "version"]:
         errors_list.append("The columns in the metadata.csv do not match the required values or order.")
@@ -216,7 +218,7 @@ def check_metadata_csv(read_metadata, aips_dir):
     csv_dept_list = []
     csv_folder_list = []
     csv_rights_list = []
-    for row in read_metadata:
+    for row in md_csv:
         csv_dept_list.append(row[0])
         csv_folder_list.append(row[2])
         csv_rights_list.append(row[5])

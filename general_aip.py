@@ -17,7 +17,6 @@ Returns:
     preservation-xml folder with preservation.xml for each AIP, for reference (a copy is in the AIP)
 """
 
-import csv
 import os
 import shutil
 import sys

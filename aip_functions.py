@@ -217,30 +217,20 @@ def check_metadata_csv(md_csv, aips_dir):
         errors_list.append("Since the columns are not correct, did not check the column values.")
         return errors_list
 
-    # Makes a list of all values in the department, folder, and rights columns to use for testing.
-    csv_dept_list = []
-    csv_folder_list = []
-    csv_rights_list = []
-    for row in md_csv:
-        csv_dept_list.append(row[0])
-        csv_folder_list.append(row[2])
-        csv_rights_list.append(row[5])
-
     # Checks that the values in the department column match the expected ARCHive groups from the configuration file.
-    unique_departments = list(set(csv_dept_list))
-    unique_departments.sort()
+    unique_departments = md_df['Department'].unique()
     for department in unique_departments:
         if department not in c.GROUPS:
             errors_list.append(f"{department} is not an ARCHive group.")
 
     # Checks that the values in the rights column are either Creative Commons or RightsStatements.org.
-    unique_rights = list(set(csv_rights_list))
-    unique_rights.sort()
+    unique_rights = md_df['Rights'].unique()
     for right in unique_rights:
         if not(right.startswith('https://creativecommons.org') or right.startswith('http://rightsstatements.org')):
             errors_list.append(f"{right} is not Creative Commons or RightsStatement.org.")
 
     # The rest of the function tests the folder names.
+    csv_folder_list = md_df['Folder']
 
     # Makes a list of every folder name in the AIPs directory.
     aips_directory_list = []

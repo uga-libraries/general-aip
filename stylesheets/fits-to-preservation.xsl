@@ -32,9 +32,7 @@
                         <xsl:call-template name="aip-unique-creating-application-list" />
                         <xsl:call-template name="aip-unique-inhibitors-list" />
                     </premis:objectCharacteristics>
-                    <xsl:if test="not($department='magil')">
-                        <xsl:call-template name="relationship-collection" />
-                    </xsl:if>
+                    <xsl:call-template name="relationship-collection" />
                 </premis:object>
             </aip>
             <filelist>

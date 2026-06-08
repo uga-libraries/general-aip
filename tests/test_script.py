@@ -84,7 +84,7 @@ class TestFullScript(unittest.TestCase):
                     os.remove(os.path.join(output_path, file))
 
     def test_general(self):
-        """Test for the general mode (born-digital archives)"""
+        """Test for the general AIP type (born-digital archives)"""
         # Makes a copy of the test files stored in the script repo, since the test will alter the files.
         aips_dir = os.path.join(os.getcwd(), 'script', 'aips_dir')
         shutil.copytree(os.path.join(os.getcwd(), 'script', 'general'), aips_dir)

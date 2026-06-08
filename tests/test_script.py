@@ -222,7 +222,7 @@ class TestFullScript(unittest.TestCase):
     def test_web_hargrett(self):
         """Test for the web AIP type and Hargrett department (one with related collection, all optional metadata)"""
         # Makes a copy of the test files stored in the script repo, since the test will alter the files.
-        aips_dir, = os.path.join(os.getcwd(), 'script', 'aips_dir')
+        aips_dir = os.path.join(os.getcwd(), 'script', 'aips_dir')
         shutil.copytree(os.path.join(os.getcwd(), 'script', 'web_hargrett'), aips_dir)
 
         # Runs the script.

@@ -71,11 +71,9 @@ class TestFullScript(unittest.TestCase):
     def tearDown(self):
         """Deletes the copy of files used for testing and the script outputs for the test"""
         # Test files
-        modes = ['av', 'general', 'aips_dir']
-        for mode in modes:
-            mode_path = os.path.join(os.getcwd(), 'script', mode)
-            if os.path.exists(mode_path):
-                shutil.rmtree(mode_path)
+        aips_dir = os.path.join(os.getcwd(), 'script', 'aips_dir')
+        if os.path.exists(aips_dir):
+            shutil.rmtree(aips_dir)
 
         # Deletes everything but placeholder.txt from the output folders in staging.
         output_dirs = ['aips-ready-to-ingest', 'fits-xmls', 'preservation-xmls']
@@ -88,13 +86,12 @@ class TestFullScript(unittest.TestCase):
     def test_general(self):
         """Test for the general mode (born-digital archives)"""
         # Makes a copy of the test files stored in the script repo, since the test will alter the files.
-        shutil.copytree(os.path.join(os.getcwd(), 'script', 'general_mode'),
-                        os.path.join(os.getcwd(), 'script', 'general'))
+        aips_dir = os.path.join(os.getcwd(), 'script', 'aips_dir')
+        shutil.copytree(os.path.join(os.getcwd(), 'script', 'general'), aips_dir)
 
         # Runs the script.
         script_path = os.path.join('..', 'general_aip.py')
-        aip_dir = os.path.join(os.getcwd(), 'script', 'general', 'aip_directory')
-        printed = subprocess.run(f'python "{script_path}" "{aip_dir}" general tar-bz2',
+        printed = subprocess.run(f'python "{script_path}" "{aips_dir}" general tar-bz2',
                                  shell=True, capture_output=True, text=True)
 
         # Test for the script print statements.
@@ -107,12 +104,12 @@ class TestFullScript(unittest.TestCase):
 
         # Test for the contents of the AIP directory.
         today = datetime.date.today().strftime('%Y-%m-%d')
-        result = make_directory_list(aip_dir)
-        bag_one = os.path.join(aip_dir, 'test-001-er-000001_bag')
-        bag_two = os.path.join(aip_dir, 'test-001-er-000002_bag')
-        bag_three = os.path.join(aip_dir, 'test-001-er-000003_bag')
-        expected = [os.path.join(aip_dir, 'aip_log.csv'),
-                    os.path.join(aip_dir, 'metadata.csv'),
+        result = make_directory_list(aips_dir)
+        bag_one = os.path.join(aips_dir, 'test-001-er-000001_bag')
+        bag_two = os.path.join(aips_dir, 'test-001-er-000002_bag')
+        bag_three = os.path.join(aips_dir, 'test-001-er-000003_bag')
+        expected = [os.path.join(aips_dir, 'aip_log.csv'),
+                    os.path.join(aips_dir, 'metadata.csv'),
                     bag_one,
                     os.path.join(bag_one, 'bag-info.txt'),
                     os.path.join(bag_one, 'bagit.txt'),

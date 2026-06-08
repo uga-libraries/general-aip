@@ -229,30 +229,24 @@ def check_metadata_csv(md_csv, aips_dir):
         if not(right.startswith('https://creativecommons.org') or right.startswith('http://rightsstatements.org')):
             errors_list.append(f"{right} is not Creative Commons or RightsStatement.org.")
 
-    # Checks if there are any duplicate folder names.
+    # Checks if there are any duplicate folder names, which is not permitted.
     duplicate_folders = md_df.loc[md_df['Folder'].duplicated(), 'Folder'].unique()
     if len(duplicate_folders) > 0:
         errors_list.append(f"Duplicate folder(s): {', '.join(duplicate_folders)}.")
 
-    # Makes a list of every folder name in the AIPs directory.
+    # Compares the folders in the metadata csv to the folders in the aips_directory, which should match.
     aips_directory_list = []
     for item in os.listdir(aips_dir):
         if os.path.isdir(os.path.join(aips_dir, item)):
             aips_directory_list.append(item)
-
-    # Checks for any folders that are only in the CSV.
-    just_csv = list(set(csv_folder_list) - set(aips_directory_list))
-    if len(just_csv) > 0:
-        just_csv.sort()
-        for aip_folder in just_csv:
-            errors_list.append(f"{aip_folder} is in metadata.csv and missing from the AIPs directory.")
-
-    # Checks for any folders that are only in the AIPs directory.
-    just_aip_dir = list(set(aips_directory_list) - set(csv_folder_list))
-    if len(just_aip_dir) > 0:
-        just_aip_dir.sort()
-        for aip_folder in just_aip_dir:
-            errors_list.append(f"{aip_folder} is in the AIPs directory and missing from metadata.csv.")
+    aips_df = pd.DataFrame(aips_directory_list, columns=['AIP'])
+    compare_df = md_df.merge(aips_df, left_on='Folder', right_on='AIP', how='outer', indicator=True)
+    md_only = compare_df.loc[compare_df['_merge'] == 'left_only', 'Folder'].tolist()
+    if len(md_only) > 0:
+        errors_list.append(f"Folder(s) in metadata csv but not in aips_directory: {', '.join(md_only)}.")
+    dir_only = compare_df.loc[compare_df['_merge'] == 'right_only', 'AIP'].tolist()
+    if len(dir_only) > 0:
+        errors_list.append(f"Folder(s) in aips_directory but not in metadata_csv: {', '.join(dir_only)}.")
 
     # The errors list is empty if there were no errors.
     return errors_list

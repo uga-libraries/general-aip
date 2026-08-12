@@ -49,7 +49,7 @@ class TestValidateBag(unittest.TestCase):
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_001', 'title', 'InC', 1, True)
         aip.log = {'Started': '2025-08-14 09:30:01.000000', 'AIP': 'test_not_001', 'Deletions': 'No',
-                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'No', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid on 2025-08-14 09:30:01.000000', 'Bag': 'Success',
                    'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
@@ -85,7 +85,7 @@ class TestValidateBag(unittest.TestCase):
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_002', 'title', 'InC', 1, True)
         aip.log = {'Started': '2025-08-14 09:50:01.000000', 'AIP': 'test_not_002', 'Deletions': 'No',
-                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'No', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid on 2025-08-14 09:50:01.000000', 'Bag': 'Success',
                    'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
@@ -121,7 +121,7 @@ class TestValidateBag(unittest.TestCase):
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_003', 'title', 'InC', 1, True)
         aip.log = {'Started': '2025-08-14 09:55:01.000000', 'AIP': 'test_not_003', 'Deletions': 'No',
-                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'No', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid on 2025-08-14 09:55:01.000000', 'Bag': 'Success',
                    'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
@@ -157,7 +157,7 @@ class TestValidateBag(unittest.TestCase):
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_004', 'title', 'InC', 1, True)
         aip.log = {'Started': '2025-08-14 10:00:01.000000', 'AIP': 'test_not_004', 'Deletions': 'No',
-                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'No', 'FITSError': 'Success',
                    'PresXML': 'Success', 'PresValid': 'Valid on 2025-08-14 10:00:01.000000', 'Bag': 'Success',
                    'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)

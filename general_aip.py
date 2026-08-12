@@ -61,9 +61,8 @@ a.make_output_directories(configuration.AIP_STAGING, AIP_TYPE)
 
 # Starts counters for tracking the script progress.
 # Some steps are time-consuming, so this shows the script is not stuck.
-# Subtracts one from the total AIPs count for the aip_log.csv and metadata.csv files.
 CURRENT_AIP = 0
-TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY)) - 2
+TOTAL_AIPS = len(metadata_df.index)
 
 # Uses the AIP functions to create an AIP for each folder in the metadata CSV.
 # Checks if the AIP folder is still present before calling the function for the next step

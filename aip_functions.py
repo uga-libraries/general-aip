@@ -343,9 +343,9 @@ def delete_temp(aip, aip_path, logging):
                 deleted_log_writer.writerow(["Path", "File Name", "Size (Bytes)", "Date Last Modified"])
                 for file_data in deleted_files:
                     deleted_log_writer.writerow(file_data)
-            aip.log["Deletions"] = "File(s) deleted (see log)"
+            aip.log["Deletions"] = "Yes (see log)"
         else:
-            aip.log["Deletions"] = "No files deleted"
+            aip.log["Deletions"] = "No"
 
 
 def extract_metadata(aip):
@@ -371,9 +371,9 @@ def extract_metadata(aip):
     if fits_output.stderr:
         with open(os.path.join(metadata, f"{aip.id}_fits-tool-errors_fitserr.txt"), "w", errors="ignore") as fits_errors:
             fits_errors.write(fits_output.stderr.decode("utf-8", errors="replace"))
-        aip.log["FITSTool"] = "FITS tools generated errors (saved to metadata folder)"
+        aip.log["FITSTool"] = "Yes (see log in metadata folder)"
     else:
-        aip.log["FITSTool"] = "No FITS tools errors"
+        aip.log["FITSTool"] = "No"
 
     # Renames the FITS output to the UGA Libraries' metadata naming convention (filename_fits.xml).
     for item in os.listdir(metadata):

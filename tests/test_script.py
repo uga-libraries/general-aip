@@ -21,15 +21,15 @@ def make_aip_log_list(log_path):
 
     # Remove time stamps, which are the last 16 characters, and leaves just the day to allow comparison,
     # as long as the column is from a correct validation (may also be blank or a validation error).
-    df['Time Started'] = df['Time Started'].str[:-16]
-    df.loc[df['Preservation.xml Valid'].str.startswith('Preservation.xml valid on', na=False), 'Preservation.xml Valid'] = df['Preservation.xml Valid'].str[:-16]
-    df.loc[df['Bag Valid'].str.startswith('Bag valid on', na=False), 'Bag Valid'] = df['Bag Valid'].str[:-16]
+    df['Time_Started'] = df['Time_Started'].str[:-16]
+    df.loc[df['PreservationXML_Valid'].str.startswith('Valid on', na=False), 'PreservationXML_Valid'] = df['PreservationXML_Valid'].str[:-16]
+    df.loc[df['Bag_Valid'].str.startswith('Valid on', na=False), 'Bag_Valid'] = df['Bag_Valid'].str[:-16]
 
     # Make FITS tool error value consistent, since the same files don't always generate an error.
-    df.loc[df['FITS Tool Errors'] == 'FITS tools generated errors (saved to metadata folder)', 'FITS Tool Errors'] = 'No FITS tools errors'
+    df.loc[df['FITS_Tool_Errors'] == 'Yes (see log in metadata folder)', 'FITS_Tool_Errors'] = 'No'
 
     # Normalize direction of slash from xmllint to match other text.
-    df['Preservation.xml Made'] = df['Preservation.xml Made'].str.replace('/', '\\')
+    df['PreservationXML_Made'] = df['PreservationXML_Made'].str.replace('/', '\\')
 
     # Convert the dataframe to a list of rows.
     df = df.fillna('BLANK')

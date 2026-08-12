@@ -400,12 +400,12 @@ def log(log_data, aips_dir):
     if log_data == "header":
         log_row = ["Time Started", "AIP ID", "Files Deleted", "Objects Folder",
                    "Metadata Folder", "FITS Tool Errors", "FITS Combination Errors", "Preservation.xml Made",
-                   "Preservation.xml Valid", "Bag Valid", "Package Errors", "Manifest Errors", "Processing Complete"]
+                   "Preservation.xml Valid", "Bag Made", "Bag Valid", "Package Errors", "Manifest Errors", "Processing Complete"]
     else:
         log_row = [log_data["Started"], log_data["AIP"], log_data["Deletions"],
                    log_data["ObjectsError"], log_data["MetadataError"], log_data["FITSTool"], log_data["FITSError"],
-                   log_data["PresXML"], log_data["PresValid"], log_data["BagValid"], log_data["Package"],
-                   log_data["Manifest"], log_data["Complete"]]
+                   log_data["PresXML"], log_data["PresValid"], log_data['Bag'], log_data["BagValid"],
+                   log_data["Package"], log_data["Manifest"], log_data["Complete"]]
 
     # Saves the data for the row to the log CSV.
     with open(os.path.join(aips_dir, "aip_log.csv"), "a", newline="") as log_file:

@@ -183,25 +183,15 @@ class TestFullScript(unittest.TestCase):
 
         # Test for the contents of the aip_log.csv file.
         result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
-                     'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
-                     'Processing Complete'],
-                    [today, 'test-001-er-000001', 'File(s) deleted (see log)', 'Successfully created objects folder',
-                     'Successfully created metadata folder', 'No FITS tools errors',
-                     'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
-                     f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
-                     'Successfully added AIP to manifest', 'Successfully completed processing'],
-                    [today, 'test-001-er-000002', 'No files deleted', 'Successfully created objects folder',
-                    'Successfully created metadata folder', 'No FITS tools errors',
-                     'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
-                     f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
-                     'Successfully added AIP to manifest', 'Successfully completed processing'],
-                    [today, 'test-001-er-000003', 'File(s) deleted (see log)', 'Successfully created objects folder',
-                     'Successfully created metadata folder', 'No FITS tools errors',
-                     'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
-                     f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
-                     'Successfully added AIP to manifest', 'Successfully completed processing']]
+        expected = [['Time_Started', 'AIP_ID', 'Files_Deleted', 'Objects_Folder_Made', 'Metadata_Folder_Made',
+                     'FITS_Tool_Errors', 'FITS_Combination_Errors', 'PreservationXML_Made', 'PreservationXML_Valid',
+                     'Bag_Made', 'Bag_Valid', 'Package_Errors', 'Manifest_Errors', 'Processing_Complete'],
+                    [today, 'test-001-er-000001', 'Yes (see log)', 'Success', 'Success', 'No', 'Success', 'Success',
+                     f'Valid on {today}', 'Success', f'Valid on {today}', 'Success', 'Success', 'Success'],
+                    [today, 'test-001-er-000002', 'No', 'Success', 'Success', 'No', 'Success', 'Success',
+                     f'Valid on {today}', 'Success', f'Valid on {today}', 'Success', 'Success', 'Success'],
+                    [today, 'test-001-er-000003', 'Yes (see log)', 'Success', 'Success', 'No', 'Success', 'Success',
+                     f'Valid on {today}', 'Success', f'Valid on {today}', 'Success', 'Success', 'Success']]
         self.assertEqual(expected, result, "Problem with test for general, aip log")
 
         # Test for the contents of the first AIP's deletion log.
@@ -310,19 +300,13 @@ class TestFullScript(unittest.TestCase):
 
         # Test for the contents of the aip_log.csv file.
         result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
-                     'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    [today, 'harg-0000-web-202605-0001', 'No files deleted', 'Successfully created objects folder',
-                     'Successfully created metadata folder', 'No FITS tools errors',
-                     'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
-                     f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
-                     'Successfully added AIP to manifest', 'Successfully completed processing'],
-                    [today, 'harg-ms1234-web-202605-0003', 'No files deleted', 'Successfully created objects folder',
-                     'Successfully created metadata folder', 'No FITS tools errors',
-                     'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
-                     f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
-                     'Successfully added AIP to manifest', 'Successfully completed processing']]
+        expected = [['Time_Started', 'AIP_ID', 'Files_Deleted', 'Objects_Folder_Made', 'Metadata_Folder_Made',
+                     'FITS_Tool_Errors', 'FITS_Combination_Errors', 'PreservationXML_Made', 'PreservationXML_Valid',
+                     'Bag_Made', 'Bag_Valid', 'Package_Errors', 'Manifest_Errors', 'Processing_Complete'],
+                    [today, 'harg-0000-web-202605-0001', 'No', 'Success', 'Success', 'No', 'Success', 'Success',
+                     f'Valid on {today}', 'Success', f'Valid on {today}', 'Success', 'Success', 'Success'],
+                    [today, 'harg-ms1234-web-202605-0003', 'No', 'Success', 'Success', 'No', 'Success', 'Success',
+                     f'Valid on {today}', 'Success', f'Valid on {today}', 'Success', 'Success', 'Success']]
         self.assertEqual(expected, result, "Problem with test for web_hargrett, aip log")
 
     def test_web_magil(self):
@@ -414,19 +398,13 @@ class TestFullScript(unittest.TestCase):
 
         # Test for the contents of the aip_log.csv file.
         result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
-                     'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    [today, 'magil-ggp-2472041-2026-05', 'No files deleted', 'Successfully created objects folder',
-                     'Successfully created metadata folder', 'No FITS tools errors',
-                     'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
-                     f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
-                     'Successfully added AIP to manifest', 'Successfully completed processing'],
-                    [today, 'magil-ggp-4607530-2026-05', 'No files deleted', 'Successfully created objects folder',
-                     'Successfully created metadata folder', 'No FITS tools errors',
-                     'Successfully created combined-fits.xml', 'Successfully created preservation.xml',
-                     f'Preservation.xml valid on {today}', f'Bag valid on {today}', 'Successfully made package',
-                     'Successfully added AIP to manifest', 'Successfully completed processing']]
+        expected = [['Time_Started', 'AIP_ID', 'Files_Deleted', 'Objects_Folder_Made', 'Metadata_Folder_Made',
+                     'FITS_Tool_Errors', 'FITS_Combination_Errors', 'PreservationXML_Made', 'PreservationXML_Valid',
+                     'Bag_Made', 'Bag_Valid', 'Package_Errors', 'Manifest_Errors', 'Processing_Complete'],
+                    [today, 'magil-ggp-2472041-2026-05', 'No', 'Success', 'Success', 'No', 'Success', 'Success',
+                     f'Valid on {today}', 'Success', f'Valid on {today}', 'Success', 'Success', 'Success'],
+                    [today, 'magil-ggp-4607530-2026-05', 'No', 'Success', 'Success', 'No', 'Success', 'Success',
+                     f'Valid on {today}', 'Success', f'Valid on {today}', 'Success', 'Success', 'Success']]
         self.assertEqual(expected, result, "Problem with test for web_magil, aip log")
 
     def test_error(self):

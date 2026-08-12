@@ -70,8 +70,8 @@ TOTAL_AIPS = len(metadata_df.index)
 for aip_row in metadata_df.itertuples():
 
     # Makes an instance of the AIP class using metadata from the CSV and global variables.
-    aip = a.AIP(AIPS_DIRECTORY, aip_row.department, WORKFLOW, aip_row.collection_id, aip_row.aip_folder, AIP_TYPE,
-                aip_row.aip_id, aip_row.title, aip_row.rights, aip_row.version, ZIP)
+    aip = a.AIP(AIPS_DIRECTORY, aip_row.Department, WORKFLOW, aip_row.Collection, aip_row.Folder, AIP_TYPE,
+                aip_row.AIP_ID, aip_row.Title, aip_row.Rights, aip_row.Version, ZIP)
 
     # Updates the current AIP number and prints the script progress in the terminal.
     CURRENT_AIP += 1

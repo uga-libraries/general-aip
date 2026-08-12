@@ -48,9 +48,9 @@ class TestValidateBag(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_001', 'title', 'InC', 1, True)
-        aip.log = {'Started': '2025-08-14 09:30:01.000000', 'AIP': 'test_not_001', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-08-14 09:30:01.000000', 'AIP': 'test_not_001', 'Deletions': 'No',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
-                   'PresXML': 'Success', 'PresValid': 'Preservation.xml valid on 2025-08-14 09:30:01.000000',
+                   'PresXML': 'Success', 'PresValid': 'Valid on 2025-08-14 09:30:01.000000', 'Bag': 'Success',
                    'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
         shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
@@ -58,11 +58,11 @@ class TestValidateBag(unittest.TestCase):
 
         # Test that the AIP log has the expected contents.
         result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
-                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-14', 'test_not_001', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
-                     'Success', 'Preservation.xml valid on 2025-08-14',
+        expected = [['Time_Started', 'AIP_ID', 'Files_Deleted', 'Objects_Folder_Made', 'Metadata_Folder_Made',
+                     'FITS_Tool_Errors', 'FITS_Combination_Errors', 'PreservationXML_Made', 'PreservationXML_Valid',
+                     'Bag_Made', 'Bag_Valid', 'Package_Errors', 'Manifest_Errors', 'Processing_Complete'],
+                    ['2025-08-14', 'test_not_001', 'No', 'Success', 'Success', 'No', 'Success',
+                     'Success', 'Valid on 2025-08-14', 'Success',
                      'Bag not valid (see log in bag_not_valid error folder)', 'BLANK', 'BLANK',
                      'Error during processing']]
         self.assertEqual(expected, result, "Problem with test for not_valid_added, AIP log")
@@ -84,9 +84,9 @@ class TestValidateBag(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_002', 'title', 'InC', 1, True)
-        aip.log = {'Started': '2025-08-14 09:50:01.000000', 'AIP': 'test_not_002', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-08-14 09:50:01.000000', 'AIP': 'test_not_002', 'Deletions': 'No',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
-                   'PresXML': 'Success', 'PresValid': 'Preservation.xml valid on 2025-08-14 09:50:01.000000',
+                   'PresXML': 'Success', 'PresValid': 'Valid on 2025-08-14 09:50:01.000000', 'Bag': 'Success',
                    'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
         shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
@@ -94,11 +94,11 @@ class TestValidateBag(unittest.TestCase):
 
         # Test that the AIP log has the expected contents.
         result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
-                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-14', 'test_not_002', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
-                     'Success', 'Preservation.xml valid on 2025-08-14',
+        expected = [['Time_Started', 'AIP_ID', 'Files_Deleted', 'Objects_Folder_Made', 'Metadata_Folder_Made',
+                     'FITS_Tool_Errors', 'FITS_Combination_Errors', 'PreservationXML_Made', 'PreservationXML_Valid',
+                     'Bag_Made', 'Bag_Valid', 'Package_Errors', 'Manifest_Errors', 'Processing_Complete'],
+                    ['2025-08-14', 'test_not_002', 'No', 'Success', 'Success', 'No', 'Success',
+                     'Success', 'Valid on 2025-08-14', 'Success',
                      'Bag not valid (see log in bag_not_valid error folder)',
                      'BLANK', 'BLANK', 'Error during processing']]
         self.assertEqual(expected, result, "Problem with test for not_valid_deleted, AIP log")
@@ -120,9 +120,9 @@ class TestValidateBag(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_003', 'title', 'InC', 1, True)
-        aip.log = {'Started': '2025-08-14 09:55:01.000000', 'AIP': 'test_not_003', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-08-14 09:55:01.000000', 'AIP': 'test_not_003', 'Deletions': 'No',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
-                   'PresXML': 'Success', 'PresValid': 'Preservation.xml valid on 2025-08-14 09:55:01.000000',
+                   'PresXML': 'Success', 'PresValid': 'Valid on 2025-08-14 09:55:01.000000', 'Bag': 'Success',
                    'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
         shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
@@ -130,11 +130,11 @@ class TestValidateBag(unittest.TestCase):
 
         # Test that the AIP log has the expected contents.
         result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
-                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-14', 'test_not_003', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
-                     'Success', 'Preservation.xml valid on 2025-08-14',
+        expected = [['Time_Started', 'AIP_ID', 'Files_Deleted', 'Objects_Folder_Made', 'Metadata_Folder_Made',
+                     'FITS_Tool_Errors', 'FITS_Combination_Errors', 'PreservationXML_Made', 'PreservationXML_Valid',
+                     'Bag_Made', 'Bag_Valid', 'Package_Errors', 'Manifest_Errors', 'Processing_Complete'],
+                    ['2025-08-14', 'test_not_003', 'No', 'Success', 'Success', 'No', 'Success',
+                     'Success', 'Valid on 2025-08-14', 'Success',
                      'Bag not valid (see log in bag_not_valid error folder)',
                      'BLANK', 'BLANK', 'Error during processing']]
         self.assertEqual(expected, result, "Problem with test for not_valid_edited, AIP log")
@@ -156,9 +156,9 @@ class TestValidateBag(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'validate_bag')
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'not_valid', 'folder', 'general', 'test_not_004', 'title', 'InC', 1, True)
-        aip.log = {'Started': '2025-08-14 10:00:01.000000', 'AIP': 'test_not_004', 'Deletions': 'No files deleted',
+        aip.log = {'Started': '2025-08-14 10:00:01.000000', 'AIP': 'test_not_004', 'Deletions': 'No',
                    'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
-                   'PresXML': 'Success', 'PresValid': 'Preservation.xml valid on 2025-08-14 10:00:01.000000',
+                   'PresXML': 'Success', 'PresValid': 'Valid on 2025-08-14 10:00:01.000000', 'Bag': 'Success',
                    'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
         shutil.copytree(os.path.join(aips_dir, f'{aip.id}_bag_copy'), os.path.join(aips_dir, f'{aip.id}_bag'))
@@ -166,11 +166,11 @@ class TestValidateBag(unittest.TestCase):
 
         # Test that the AIP log has the expected contents.
         result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
-                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-14', 'test_not_004', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
-                     'Success', 'Preservation.xml valid on 2025-08-14',
+        expected = [['Time_Started', 'AIP_ID', 'Files_Deleted', 'Objects_Folder_Made', 'Metadata_Folder_Made',
+                     'FITS_Tool_Errors', 'FITS_Combination_Errors', 'PreservationXML_Made', 'PreservationXML_Valid',
+                     'Bag_Made', 'Bag_Valid', 'Package_Errors', 'Manifest_Errors', 'Processing_Complete'],
+                    ['2025-08-14', 'test_not_004', 'No', 'Success', 'Success', 'No', 'Success',
+                     'Success', 'Valid on 2025-08-14', 'Success',
                      'Bag not valid (see log in bag_not_valid error folder)',
                      'BLANK', 'BLANK', 'Error during processing']]
         self.assertEqual(expected, result, "Problem with test for not_valid_md5, AIP log")
@@ -204,7 +204,7 @@ class TestValidateBag(unittest.TestCase):
         # Test for the AIP log.
         # Since the log for bagging includes a timestamp, assert cannot require an exact match.
         result = aip.log['BagValid']
-        expected = f'Bag valid on {datetime.date.today()}'
+        expected = f'Valid on {datetime.date.today()}'
         self.assertIn(expected, result, "Problem with valid")
 
 

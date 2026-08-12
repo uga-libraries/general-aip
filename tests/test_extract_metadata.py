@@ -38,7 +38,7 @@ class TestExtractMetadata(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['FITSTool']
-        expected = 'No FITS tools errors'
+        expected = 'No'
         self.assertEqual(expected, result, "Problem with one file, log")
 
     def test_multiple_files(self):
@@ -59,7 +59,7 @@ class TestExtractMetadata(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['FITSTool']
-        expected = 'No FITS tools errors'
+        expected = 'No'
         self.assertEqual(expected, result, "Problem with multiple files, log")
 
     def test_error_fits_tool(self):
@@ -91,7 +91,7 @@ class TestExtractMetadata(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['FITSTool']
-        expected = 'FITS tools generated errors (saved to metadata folder)'
+        expected = 'Yes (see log in metadata folder)'
         self.assertEqual(expected, result, "Problem with error, AIP log")
 
 

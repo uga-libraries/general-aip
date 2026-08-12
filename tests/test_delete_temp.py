@@ -75,7 +75,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'No files deleted'
+        expected = 'No'
         self.assertEqual(expected, result, "Problem with test for no temporary files, AIP log")
 
         # Test the deletion log was not made, since no files were deleted.
@@ -106,7 +106,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted (see log)'
+        expected = 'Yes (see log)'
         self.assertEqual(expected, result, "Problem with test for .DS_Store, AIP log")
 
         # Test for the deletion log.
@@ -139,7 +139,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted (see log)'
+        expected = 'Yes (see log)'
         self.assertEqual(expected, result, "Problem with test for ._.DS_Store, AIP log")
 
         # Test for the deletion log.
@@ -173,7 +173,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted (see log)'
+        expected = 'Yes (see log)'
         self.assertEqual(expected, result, "Problem with test for Thumbs.db, AIP log")
 
         # Test for the deletion log.
@@ -212,7 +212,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted (see log)'
+        expected = 'Yes (see log)'
         self.assertEqual(expected, result, "Problem with test for dot prefix, AIP log")
 
         # Test for the deletion log.
@@ -245,7 +245,7 @@ class TestDeleteTemp(unittest.TestCase):
 
         # Test for the AIP log.
         result = aip.log['Deletions']
-        expected = 'File(s) deleted (see log)'
+        expected = 'Yes (see log)'
         self.assertEqual(expected, result, "Problem with test for .tmp extension, AIP log")
 
         # Test for the deletion log.

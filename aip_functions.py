@@ -435,6 +435,9 @@ def make_bag(aip):
     # Renames the AIP folder to add _bag (common naming convention for the standard).
     os.replace(aip_path, os.path.join(aip.directory, f"{aip.id}_bag"))
 
+    # Logs success of bagging (since script hasn't broken - validating of bag is checked in the next step.
+    aip.log["Bag"] = "Success"
+
 
 def make_cleaned_fits_xml(aip, staging):
     """Make a simplified version of the combined-fits.xml in the metadata folder

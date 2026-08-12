@@ -815,7 +815,7 @@ def validate_bag(aip, staging):
     new_bag = bagit.Bag(bag_path)
     try:
         new_bag.validate()
-        aip.log["BagValid"] = f"Bag valid on {datetime.now()}"
+        aip.log["BagValid"] = f"Valid on {datetime.now()}"
     except bagit.BagValidationError as errors:
         aip.log["BagValid"] = "Bag not valid (see log in bag_not_valid error folder)"
         aip.log["Complete"] = "Error during processing"
@@ -875,4 +875,4 @@ def validate_preservation_xml(aip, staging):
                 validation_log.write(line + "\n")
         return
     else:
-        aip.log["PresValid"] = f"Preservation.xml valid on {datetime.now()}"
+        aip.log["PresValid"] = f"Valid on {datetime.now()}"

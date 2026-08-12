@@ -398,9 +398,9 @@ def log(log_data, aips_dir):
     # For the header, uses default values.
     # In all other cases, log_data is a dictionary, with one key per column in the log.
     if log_data == "header":
-        log_row = ["Time_Started", "AIP_ID", "Files_Deleted", "Objects_Folder",
-                   "Metadata_Folder", "FITS_Tool_Errors", "FITS_Combination_Errors", "PreservationXML_Made",
-                   "PreservationXML_Valid", "Bag_Made", "Bag_Valid", "Package_Errors", "Manifest_Errors", "Processing_Complete"]
+        log_row = ["Time_Started", "AIP_ID", "Files_Deleted", "Objects_Folder_Made", "Metadata_Folder_Made",
+                   "FITS_Tool_Errors", "FITS_Combination_Errors", "PreservationXML_Made", "PreservationXML_Valid",
+                   "Bag_Made", "Bag_Valid", "Package_Errors", "Manifest_Errors", "Processing_Complete"]
     else:
         log_row = [log_data["Started"], log_data["AIP"], log_data["Deletions"],
                    log_data["ObjectsError"], log_data["MetadataError"], log_data["FITSTool"], log_data["FITSError"],

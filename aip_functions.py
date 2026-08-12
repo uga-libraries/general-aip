@@ -216,7 +216,7 @@ def check_metadata_csv(md_csv, aips_dir):
         errors_list.append("Required: Department, Collection, Folder, AIP_ID, Title, Rights, Version")
         errors_list.append(f"Current:  {', '.join(header)}")
         errors_list.append("Since the columns are not correct, did not check the column values.")
-        return errors_list
+        return md_df, errors_list
 
     # Checks that the values in the department column match the expected ARCHive groups from the configuration file.
     unique_departments = md_df['Department'].unique()

@@ -57,7 +57,7 @@ class TestCombineMetadata(unittest.TestCase):
 
         # Test for AIP log.
         result = aip.log['FITSError']
-        expected = 'Successfully created combined-fits.xml'
+        expected = 'Success'
         self.assertEqual(expected, result, "Problem with one file, log")
 
     def test_multiple_files(self):
@@ -203,7 +203,7 @@ class TestCombineMetadata(unittest.TestCase):
 
         # Test for AIP log.
         result = aip.log['FITSError']
-        expected = 'Successfully created combined-fits.xml'
+        expected = 'Success'
         self.assertEqual(expected, result, "Problem with multiple files, log")
 
     def test_error_et_parse(self):

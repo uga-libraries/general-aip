@@ -39,7 +39,10 @@ class TestMakeBag(unittest.TestCase):
                     os.path.join(aips_dir, f'{aip.id}_bag', 'data', 'Placeholder for AIP content.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-md5.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt')]
-        self.assertEqual(expected, result, "Problem with av_bmac")
+        self.assertEqual(expected, result, "Problem with av_bmac, bag")
+
+        # Verifies the log is updated for the bagging step.
+        self.assertEqual('Success', aip.log['Bag'], "Problem with av_bmac, log")
 
     def test_av_russell(self):
         """Test for making a bag out of an AIP folder that is AV from Russell"""
@@ -60,7 +63,10 @@ class TestMakeBag(unittest.TestCase):
                     os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-sha256.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-sha256.txt')]
-        self.assertEqual(expected, result, "Problem with av_russell")
+        self.assertEqual(expected, result, "Problem with av_russell, bag")
+
+        # Verifies the log is updated for the bagging step.
+        self.assertEqual('Success', aip.log['Bag'], "Problem with av_russell, log")
 
     def test_general(self):
         """Test for making a bag out of an AIP folder that is the general type"""
@@ -81,7 +87,10 @@ class TestMakeBag(unittest.TestCase):
                     os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-sha256.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-sha256.txt')]
-        self.assertEqual(expected, result, "Problem with general")
+        self.assertEqual(expected, result, "Problem with general, bag")
+
+        # Verifies the log is updated for the bagging step.
+        self.assertEqual('Success', aip.log['Bag'], "Problem with general, log")
 
     def test_temp(self):
         """Test for making a bag out of an AIP folder that has temp files that should be deleted"""
@@ -102,7 +111,10 @@ class TestMakeBag(unittest.TestCase):
                     os.path.join(aips_dir, f'{aip.id}_bag', 'manifest-sha256.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-md5.txt'),
                     os.path.join(aips_dir, f'{aip.id}_bag', 'tagmanifest-sha256.txt')]
-        self.assertEqual(expected, result, "Problem with temp")
+        self.assertEqual(expected, result, "Problem with temp, bag")
+
+        # Verifies the log is updated for the bagging step.
+        self.assertEqual('Success', aip.log['Bag'], "Problem with temp, log")
 
 
 if __name__ == "__main__":

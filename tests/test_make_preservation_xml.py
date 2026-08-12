@@ -82,10 +82,10 @@ class TestMakePreservationXML(unittest.TestCase):
         staging_dir = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'test', 'folder', 'general', 'test-er-01', 'title',
                   'http://rightsstatements.org/vocab/InC/1.0/', 1, True)
-        aip.log = {'Started': '2025-08-13 2:15PM', 'AIP': 'test-er-01', 'Deletions': 'No files deleted',
-                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
-                   'PresXML': 'n/a', 'PresValid': 'n/a', 'BagValid': 'n/a', 'Package': 'n/a', 'Manifest': 'n/a',
-                   'Complete': 'n/a'}
+        aip.log = {'Started': '2025-08-13 2:15PM', 'AIP': 'test-er-01', 'Deletions': 'No',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'No', 'FITSError': 'Success',
+                   'PresXML': 'n/a', 'PresValid': 'n/a', 'Bag': 'n/a', 'BagValid': 'n/a', 'Package': 'n/a',
+                   'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
         shutil.copytree(os.path.join(aips_dir, 'test-er-01_copy'), os.path.join(aips_dir, 'test-er-01'))
         make_preservation_xml(aip, staging_dir)
@@ -95,20 +95,20 @@ class TestMakePreservationXML(unittest.TestCase):
         log_df = pd.read_csv(os.path.join(aips_dir, 'aip_log.csv'))
         log_df = log_df.fillna('BLANK')
         result = [log_df.columns.tolist()] + log_df.values.tolist()
-        expected = [[['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
-                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                     ['2025-08-13 2:15PM', 'test-er-01', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
+        expected = [[["Time_Started", "AIP_ID", "Files_Deleted", "Objects_Folder_Made", "Metadata_Folder_Made",
+                      "FITS_Tool_Errors", "FITS_Combination_Errors", "PreservationXML_Made", "PreservationXML_Valid",
+                      "Bag_Made", "Bag_Valid", "Package_Errors", "Manifest_Errors", "Processing_Complete"],
+                     ['2025-08-13 2:15PM', 'test-er-01', 'No', 'Success', 'Success', 'No', 'Success',
                       f'Issue when creating preservation.xml. Saxon error: Source file '
                       f'{os.path.join(aips_dir, "test-er-01", "metadata", "test-er-01_cleaned-fits.xml")} '
-                      f'does not exist\r\n', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']],
-                    [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                      'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
-                      'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                     ['2025-08-13 2:15PM', 'test-er-01', 'No files deleted', 'Success', 'Success', 'BLANK', 'Success',
+                      f'does not exist\r\n', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']],
+                    [["Time_Started", "AIP_ID", "Files_Deleted", "Objects_Folder_Made", "Metadata_Folder_Made",
+                      "FITS_Tool_Errors", "FITS_Combination_Errors", "PreservationXML_Made", "PreservationXML_Valid",
+                      "Bag_Made", "Bag_Valid", "Package_Errors", "Manifest_Errors", "Processing_Complete"],
+                     ['2025-08-13 2:15PM', 'test-er-01', 'No', 'Success', 'Success', 'No', 'Success',
                       f'Issue when creating preservation.xml. Saxon error: Source file '
                       f'{os.path.join(aips_dir, "test-er-01", "metadata", "test-er-01_cleaned-fits.xml")} '
-                      f'does not exist\n', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]]
+                      f'does not exist\n', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]]
         self.assertIn(result, expected, "Problem with test for error, log")
 
         # Verifies the AIP folder was moved to the error folder.

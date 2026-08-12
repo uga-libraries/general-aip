@@ -52,7 +52,7 @@ class TestPackage(unittest.TestCase):
 
         # Test that the AIP log is updated.
         result = aip.log['Package']
-        expected = 'Successfully made package'
+        expected = 'Success'
         self.assertEqual(expected, result, "Problem with tar_zip, AIP log")
 
     def test_tar(self):
@@ -99,7 +99,7 @@ class TestPackage(unittest.TestCase):
 
         # Test that the AIP log is updated.
         result = aip.log['Package']
-        expected = 'Successfully made package'
+        expected = 'Success'
         self.assertEqual(expected, result, "Problem with tar, AIP log")
 
     def test_temp(self):
@@ -153,7 +153,7 @@ class TestPackage(unittest.TestCase):
 
         # Test that the AIP log package is updated.
         result = aip.log['Package']
-        expected = 'Successfully made package'
+        expected = 'Success'
         self.assertEqual(expected, result, "Problem with temp, AIP log - Package")
 
     def test_error(self):
@@ -163,20 +163,20 @@ class TestPackage(unittest.TestCase):
         aips_dir = os.path.join(os.getcwd(), 'package')
         aip_staging = os.path.join(os.getcwd(), 'staging')
         aip = AIP(aips_dir, 'test', None, 'collection', 'folder', 'general', 'test-missing-1', 'title', 'InC', 1, False)
-        aip.log = {'Started': '2025-08-14 10:55:01.000000', 'AIP': 'test-missing-1', 'Deletions': 'No files deleted',
-                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'None', 'FITSError': 'Success',
-                   'PresXML': 'Success', 'PresValid': 'Valid', 'BagValid': 'Valid', 'Package': 'n/a',
+        aip.log = {'Started': '2025-08-14 10:55:01.000000', 'AIP': 'test-missing-1', 'Deletions': 'No',
+                   'ObjectsError': 'Success', 'MetadataError': 'Success', 'FITSTool': 'No', 'FITSError': 'Success',
+                   'PresXML': 'Success', 'PresValid': 'Valid', 'Bag': 'Success', 'BagValid': 'Valid', 'Package': 'n/a',
                    'Manifest': 'n/a', 'Complete': 'n/a'}
         log('header', aips_dir)
         package(aip, aip_staging)
 
         # Test for the AIP log.
         result = make_aip_log_list(os.path.join(os.getcwd(), 'package', 'aip_log.csv'))
-        expected = [['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                     'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made', 'Preservation.xml Valid',
-                     'Bag Valid', 'Package Errors', 'Manifest Errors', 'Processing Complete'],
-                    ['2025-08-14', 'test-missing-1', 'No files deleted', 'Success', 'Success', 'BLANK',
-                     'Success', 'Success', 'Valid', 'Valid',
+        expected = [['Time_Started', 'AIP_ID', 'Files_Deleted', 'Objects_Folder_Made', 'Metadata_Folder_Made',
+                     'FITS_Tool_Errors', 'FITS_Combination_Errors', 'PreservationXML_Made', 'PreservationXML_Valid',
+                     'Bag_Made', 'Bag_Valid', 'Package_Errors', 'Manifest_Errors', 'Processing_Complete'],
+                    ['2025-08-14', 'test-missing-1', 'No', 'Success', 'Success', 'No', 'Success', 'Success',
+                     'Valid', 'Success', 'Valid',
                      f'Could not tar. Bag not in expected location: {os.path.join(aips_dir, "test-missing-1_bag")}',
                      'BLANK', 'Error during processing']]
         self.assertEqual(expected, result, "Problem with error")

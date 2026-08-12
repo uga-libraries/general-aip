@@ -15,10 +15,9 @@ class TestLog(unittest.TestCase):
 
     def setUp(self):
         """Variable with the header row value, which is used in each test"""
-        self.header = ['Time Started', 'AIP ID', 'Files Deleted', 'Objects Folder', 'Metadata Folder',
-                       'FITS Tool Errors', 'FITS Combination Errors', 'Preservation.xml Made',
-                       'Preservation.xml Valid', 'Bag Valid', 'Package Errors', 'Manifest Errors',
-                       'Processing Complete']
+        self.header = ['Time_Started', 'AIP_ID', 'Files_Deleted', 'Objects_Folder_Made', 'Metadata_Folder_Made',
+                       'FITS_Tool_Errors', 'FITS_Combination_Errors', 'PreservationXML_Made', 'PreservationXML_Valid',
+                       'Bag_Made', 'Bag_Valid', 'Package_Errors', 'Manifest_Errors', 'Processing_Complete']
 
     def tearDown(self):
         """Deletes the log, if present"""
@@ -41,7 +40,7 @@ class TestLog(unittest.TestCase):
         aips_dir = os.getcwd()
         log('header', aips_dir)
         aip = AIP(aips_dir, 'dept', None, 'coll-1', 'aip-folder', 'general', 'aip-1', 'title', 'InC', 1, to_zip=False)
-        aip.log['Deletions'] = 'No files deleted'
+        aip.log['Deletions'] = 'No'
         aip.log['ObjectsError'] = 'Objects folder already exists in original files'
         aip.log['Complete'] = 'Error during processing'
         log(aip.log, aips_dir)
@@ -49,9 +48,9 @@ class TestLog(unittest.TestCase):
         # Test for the log contents.
         result = make_aip_log_list(os.path.join(os.getcwd(), 'aip_log.csv'))
         expected = [self.header,
-                    [date.today().strftime('%Y-%m-%d'), 'aip-1', 'No files deleted',
+                    [date.today().strftime('%Y-%m-%d'), 'aip-1', 'No',
                      'Objects folder already exists in original files', 'BLANK', 'BLANK', 'BLANK', 'BLANK',
-                     'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
+                     'BLANK', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing']]
         self.assertEqual(expected, result, "Problem with one aip")
 
     def test_multiple_aips(self):
@@ -60,38 +59,36 @@ class TestLog(unittest.TestCase):
         aips_dir = os.getcwd()
         log('header', aips_dir)
         aip1 = AIP(aips_dir, 'dept', None, 'coll-1', 'aip-1-folder', 'general', 'aip-1', 'title-1', 'InC', 1, to_zip=False)
-        aip1.log['Deletions'] = 'No files deleted'
+        aip1.log['Deletions'] = 'No'
         aip1.log['ObjectsError'] = 'Objects folder already exists in original files'
         aip1.log['Complete'] = 'Error during processing'
         log(aip1.log, aips_dir)
 
         # Adds values for the second AIP to the log.
         aip2 = AIP(os.getcwd(), 'dept', None, 'coll-1', 'aip-2-folder', 'general', 'aip-2', 'title-2', 'InC', 1, to_zip=False)
-        aip2.log['Deletions'] = 'No files deleted'
-        aip2.log['ObjectsError'] = 'Successfully created objects folder'
-        aip2.log['MetadataError'] = 'Successfully created metadata folder'
-        aip2.log['FITSTool'] = 'No FITS tool errors'
-        aip2.log['FITSError'] = 'Successfully created combined-fits.xml'
-        aip2.log['PresXML'] = 'Successfully created preservation.xml'
-        aip2.log['PresValid'] = 'Preservation.xml valid on 2022-10-31 13:14:15.123456'
-        aip2.log['BagValid'] = 'Bag valid on 2022-10-13 14:15:16.789123'
-        aip2.log['Package'] = 'Successfully made package'
-        aip2.log['Manifest'] = 'Successfully added AIP to manifest.'
-        aip2.log['Complete'] = 'Successfully completed processing'
+        aip2.log['Deletions'] = 'No'
+        aip2.log['ObjectsError'] = 'Success'
+        aip2.log['MetadataError'] = 'Success'
+        aip2.log['FITSTool'] = 'No'
+        aip2.log['FITSError'] = 'Success'
+        aip2.log['PresXML'] = 'Success'
+        aip2.log['PresValid'] = 'Valid on 2022-10-31 13:14:15.123456'
+        aip2.log['Bag'] = 'Success'
+        aip2.log['BagValid'] = 'Valid on 2022-10-13 14:15:16.789123'
+        aip2.log['Package'] = 'Success'
+        aip2.log['Manifest'] = 'Success'
+        aip2.log['Complete'] = 'Success'
         log(aip2.log, aips_dir)
 
         # Test for the log contents.
         result = make_aip_log_list(os.path.join(os.getcwd(), 'aip_log.csv'))
         expected = [self.header,
-                    [date.today().strftime('%Y-%m-%d'), 'aip-1', 'No files deleted',
+                    [date.today().strftime('%Y-%m-%d'), 'aip-1', 'No',
                      'Objects folder already exists in original files', 'BLANK', 'BLANK', 'BLANK', 'BLANK',
-                     'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing'],
-                    [date.today().strftime('%Y-%m-%d'), 'aip-2', 'No files deleted',
-                     'Successfully created objects folder', 'Successfully created metadata folder',
-                     'No FITS tool errors', 'Successfully created combined-fits.xml',
-                     'Successfully created preservation.xml', 'Preservation.xml valid on 2022-10-31',
-                     'Bag valid on 2022-10-13', 'Successfully made package', 'Successfully added AIP to manifest.',
-                     'Successfully completed processing']]
+                     'BLANK', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing'],
+                    [date.today().strftime('%Y-%m-%d'), 'aip-2', 'No', 'Success', 'Success', 'No', 'Success',
+                     'Success', 'Valid on 2022-10-31', 'Success', 'Valid on 2022-10-13', 'Success', 'Success',
+                     'Success']]
         self.assertEqual(expected, result, "Problem with multiple aips")
 
 

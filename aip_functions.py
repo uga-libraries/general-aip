@@ -10,6 +10,8 @@ import subprocess
 import time
 import xml.etree.ElementTree as et
 import bagit
+import pandas as pd
+
 import configuration as c
 
 
@@ -182,7 +184,7 @@ def check_configuration(aips_dir):
     return errors_list
 
 
-def check_metadata_csv(read_metadata, aips_dir):
+def check_metadata_csv(md_csv, aips_dir):
     """Verify the content of the metadata.csv is correct
 
     - Columns are in the required order
@@ -191,82 +193,64 @@ def check_metadata_csv(read_metadata, aips_dir):
     - The AIPs in the CSV match the folders in the AIPs directory
 
     Parameters:
-        read_metadata : contents of the metadata.csv file, read with the csv library
+        md_csv : path to the metadata.csv file
         aips_dir : the path to the folder which contains the folders to be made into AIPs
 
     Returns:
+        md_df : pandas.DataFrame with the contents of the metadata csv
         errors_list : a list of errors, or an empty list if there were no errors
     """
 
     # Starts a list for all encountered errors, so all errors can be checked before returning a result.
     errors_list = []
 
-    # Checks that the CSV header row has the required values (case-insensitive).
+    # Reads the metadata csv into a df.
+    md_df = pd.read_csv(md_csv, dtype=str)
+    md_df = md_df.fillna('BLANK')
+
+    # Checks that the CSV header row has the required values (case-sensitive).
     # If the header is not correct, returns the error and does not test the column values.
-    header = next(read_metadata)
-    header_lowercase = [name.lower() for name in header]
-    if header_lowercase != ["department", "collection", "folder", "aip_id", "title", "rights", "version"]:
+    header = md_df.columns.values.tolist()
+    if header != ["Department", "Collection", "Folder", "AIP_ID", "Title", "Rights", "Version"]:
         errors_list.append("The columns in the metadata.csv do not match the required values or order.")
         errors_list.append("Required: Department, Collection, Folder, AIP_ID, Title, Rights, Version")
         errors_list.append(f"Current:  {', '.join(header)}")
         errors_list.append("Since the columns are not correct, did not check the column values.")
-        return errors_list
-
-    # Makes a list of all values in the department, folder, and rights columns to use for testing.
-    csv_dept_list = []
-    csv_folder_list = []
-    csv_rights_list = []
-    for row in read_metadata:
-        csv_dept_list.append(row[0])
-        csv_folder_list.append(row[2])
-        csv_rights_list.append(row[5])
+        return md_df, errors_list
 
     # Checks that the values in the department column match the expected ARCHive groups from the configuration file.
-    unique_departments = list(set(csv_dept_list))
-    unique_departments.sort()
+    unique_departments = md_df['Department'].unique()
     for department in unique_departments:
         if department not in c.GROUPS:
             errors_list.append(f"{department} is not an ARCHive group.")
 
     # Checks that the values in the rights column are either Creative Commons or RightsStatements.org.
-    unique_rights = list(set(csv_rights_list))
-    unique_rights.sort()
+    unique_rights = md_df['Rights'].unique()
     for right in unique_rights:
         if not(right.startswith('https://creativecommons.org') or right.startswith('http://rightsstatements.org')):
             errors_list.append(f"{right} is not Creative Commons or RightsStatement.org.")
 
-    # The rest of the function tests the folder names.
+    # Checks if there are any duplicate folder names, which is not permitted.
+    duplicate_folders = md_df.loc[md_df['Folder'].duplicated(), 'Folder'].unique()
+    if len(duplicate_folders) > 0:
+        errors_list.append(f"Duplicate folder(s): {', '.join(duplicate_folders)}.")
 
-    # Makes a list of every folder name in the AIPs directory.
+    # Compares the folders in the metadata csv to the folders in the aips_directory, which should match.
     aips_directory_list = []
     for item in os.listdir(aips_dir):
         if os.path.isdir(os.path.join(aips_dir, item)):
             aips_directory_list.append(item)
-
-    # Checks for any folder names that are in the CSV more than once.
-    duplicates = [folder for folder in csv_folder_list if csv_folder_list.count(folder) > 1]
-    if len(duplicates) > 0:
-        unique_duplicates = list(set(duplicates))
-        unique_duplicates.sort()
-        for duplicate in unique_duplicates:
-            errors_list.append(f"{duplicate} is in the metadata.csv folder column more than once.")
-
-    # Checks for any folders that are only in the CSV.
-    just_csv = list(set(csv_folder_list) - set(aips_directory_list))
-    if len(just_csv) > 0:
-        just_csv.sort()
-        for aip_folder in just_csv:
-            errors_list.append(f"{aip_folder} is in metadata.csv and missing from the AIPs directory.")
-
-    # Checks for any folders that are only in the AIPs directory.
-    just_aip_dir = list(set(aips_directory_list) - set(csv_folder_list))
-    if len(just_aip_dir) > 0:
-        just_aip_dir.sort()
-        for aip_folder in just_aip_dir:
-            errors_list.append(f"{aip_folder} is in the AIPs directory and missing from metadata.csv.")
+    aips_df = pd.DataFrame(aips_directory_list, columns=['AIP'])
+    compare_df = md_df.merge(aips_df, left_on='Folder', right_on='AIP', how='outer', indicator=True)
+    md_only = compare_df.loc[compare_df['_merge'] == 'left_only', 'Folder'].tolist()
+    if len(md_only) > 0:
+        errors_list.append(f"Folder(s) in metadata csv but not in aips_directory: {', '.join(md_only)}.")
+    dir_only = compare_df.loc[compare_df['_merge'] == 'right_only', 'AIP'].tolist()
+    if len(dir_only) > 0:
+        errors_list.append(f"Folder(s) in aips_directory but not in metadata_csv: {', '.join(dir_only)}.")
 
     # The errors list is empty if there were no errors.
-    return errors_list
+    return md_df, errors_list
 
 
 def combine_metadata(aip, staging):

@@ -17,7 +17,6 @@ Returns:
     preservation-xml folder with preservation.xml for each AIP, for reference (a copy is in the AIP)
 """
 
-import csv
 import os
 import shutil
 import sys
@@ -43,13 +42,9 @@ if len(configuration_errors) > 0:
         print("   * " + error)
     sys.exit()
 
-# Reads the CSV with the AIP metadata.
-open_metadata = open(aip_metadata_csv)
-read_metadata = csv.reader(open_metadata)
-
-# Verifies the metadata header row has the expected values, departments are all ARCHive groups, and the folders match
-# what is in the AIPs directory. If there are an errors, ends the script.
-metadata_errors = a.check_metadata_csv(read_metadata, AIPS_DIRECTORY)
+# Verifies the metadata csv has the expected values and returns them in a dataframe.
+# If there are an errors, ends the script.
+metadata_df, metadata_errors = a.check_metadata_csv(aip_metadata_csv, AIPS_DIRECTORY)
 if len(metadata_errors) > 0:
     print('\nProblems detected with metadata.csv:')
     for error in metadata_errors:
@@ -66,23 +61,17 @@ a.make_output_directories(configuration.AIP_STAGING, AIP_TYPE)
 
 # Starts counters for tracking the script progress.
 # Some steps are time-consuming, so this shows the script is not stuck.
-# Subtracts one from the total AIPs count for the aip_log.csv and metadata.csv files.
 CURRENT_AIP = 0
-TOTAL_AIPS = len(os.listdir(AIPS_DIRECTORY)) - 2
-
-# Returns to the beginning of the CSV (the script is at the end because of checking it for errors) and skips the header.
-open_metadata.seek(0)
-next(read_metadata)
+TOTAL_AIPS = len(metadata_df.index)
 
 # Uses the AIP functions to create an AIP for each folder in the metadata CSV.
 # Checks if the AIP folder is still present before calling the function for the next step
 # in case it was moved due to an error in the previous step.
-for aip_row in read_metadata:
+for aip_row in metadata_df.itertuples():
 
     # Makes an instance of the AIP class using metadata from the CSV and global variables.
-    department, collection_id, aip_folder, aip_id, title, rights, version = aip_row
-    aip = a.AIP(AIPS_DIRECTORY, department, WORKFLOW, collection_id, aip_folder, AIP_TYPE, aip_id, title, rights,
-                version, ZIP)
+    aip = a.AIP(AIPS_DIRECTORY, aip_row.Department, WORKFLOW, aip_row.Collection, aip_row.Folder, AIP_TYPE,
+                aip_row.AIP_ID, aip_row.Title, aip_row.Rights, aip_row.Version, ZIP)
 
     # Updates the current AIP number and prints the script progress in the terminal.
     CURRENT_AIP += 1
@@ -132,8 +121,5 @@ for aip_row in read_metadata:
     # Adds the packaged AIP to the MD5 manifest in the aips-to-ingest folder.
     if f'{aip.id}_bag' in os.listdir(AIPS_DIRECTORY):
         a.manifest(aip, configuration.AIP_STAGING)
-
-# Closes the metadata CSV.
-open_metadata.close()
 
 print("\nScript is finished running.")

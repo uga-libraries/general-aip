@@ -521,7 +521,6 @@ def make_preservation_xml(aip, staging):
         aip.log["Complete"] = "Error during processing"
         log(aip.log, aip.directory)
         move_error("pres_xml_saxon_error", os.path.join(aip.directory, aip.id), staging)
-        return
 
 
 def manifest(aip, staging):

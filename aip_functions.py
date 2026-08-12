@@ -205,7 +205,7 @@ def check_metadata_csv(md_csv, aips_dir):
     errors_list = []
 
     # Reads the metadata csv into a df.
-    md_df = pd.read_csv(md_csv)
+    md_df = pd.read_csv(md_csv, dtype=str)
 
     # Checks that the CSV header row has the required values (case-insensitive).
     # If the header is not correct, returns the error and does not test the column values.

@@ -34,8 +34,8 @@ class AIP:
         self.size = None
         self.log = {"Started": datetime.now(), "AIP": self.id, "Deletions": "n/a",
                     "ObjectsError": "n/a", "MetadataError": "n/a", "FITSTool": "n/a", "FITSError": "n/a",
-                    "PresXML": "n/a", "PresValid": "n/a", "BagValid": "n/a", "Package": "n/a", "Manifest": "n/a",
-                    "Complete": "n/a"}
+                    "PresXML": "n/a", "PresValid": "n/a", "Bag": "n/a", "BagValid": "n/a", "Package": "n/a",
+                    "Manifest": "n/a", "Complete": "n/a"}
 
 
 def check_arguments(arguments):

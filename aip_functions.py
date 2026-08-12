@@ -283,7 +283,7 @@ def combine_metadata(aip, staging):
                 tree = et.parse(os.path.join(metadata_path, doc))
                 root = tree.getroot()
                 combo_root.append(root)
-                aip.log["FITSError"] = "Successfully created combined-fits.xml"
+                aip.log["FITSError"] = "Success"
             # Errors: the file is empty, is not XML, or has invalid XML.
             # Moves the AIP to an error folder and does not execute the rest of this function.
             except et.ParseError as error:
@@ -574,8 +574,8 @@ def manifest(aip, staging):
         manifest_file.write(md5deep_result.stdout.decode("UTF-8").replace("\r", ""))
 
     # Logs the success of adding the AIP to the manifest and of AIP creation (this is the last step).
-    aip.log["Manifest"] = "Successfully added AIP to manifest"
-    aip.log["Complete"] = "Successfully completed processing"
+    aip.log["Manifest"] = "Success"
+    aip.log["Complete"] = "Success"
     log(aip.log, aip.directory)
 
 
@@ -711,7 +711,7 @@ def package(aip, staging):
             os.remove(tar_size_path)
 
     # Updates the log with success.
-    aip.log["Package"] = "Successfully made package"
+    aip.log["Package"] = "Success"
 
 
 def structure_directory(aip, staging):
@@ -733,7 +733,7 @@ def structure_directory(aip, staging):
     aip_path = os.path.join(aip.directory, aip.id)
     try:
         os.mkdir(os.path.join(aip_path, "objects"))
-        aip.log["ObjectsError"] = "Successfully created objects folder"
+        aip.log["ObjectsError"] = "Success"
     except FileExistsError:
         aip.log["ObjectsError"] = "Objects folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
@@ -745,7 +745,7 @@ def structure_directory(aip, staging):
     # If it does, moves the AIP to an error folder so the original directory structure is not altered.
     try:
         os.mkdir(os.path.join(aip_path, "metadata"))
-        aip.log["MetadataError"] = "Successfully created metadata folder"
+        aip.log["MetadataError"] = "Success"
     except FileExistsError:
         aip.log["MetadataError"] = "Metadata folder already exists in original files"
         aip.log["Complete"] = "Error during processing"
@@ -858,7 +858,7 @@ def validate_preservation_xml(aip, staging):
         move_error("preservationxml_not_found", os.path.join(aip.directory, aip.id), staging)
         return
     else:
-        aip.log["PresXML"] = "Successfully created preservation.xml"
+        aip.log["PresXML"] = "Success"
 
     # If the preservation.xml does not meet the requirements, moves the AIP to an error folder.
     # The validation output is saved to a file in the error folder for review.

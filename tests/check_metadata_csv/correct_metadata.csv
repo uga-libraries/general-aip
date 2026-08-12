@@ -1,0 +1,4 @@
+Department,Collection,Folder,AIP_ID,Title,Rights,Version
+test,t-coll,aip1,aip-01,title-1,http://rightsstatements.org/vocab/InC/1.0/,1
+test,t-coll,aip2,aip-02,title-2,http://rightsstatements.org/vocab/InC/1.0/,1
+test,t-coll,aip3,aip-03,title-3,http://rightsstatements.org/vocab/InC/1.0/,1

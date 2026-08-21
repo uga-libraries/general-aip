@@ -291,6 +291,19 @@
          <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
       </identification>
       <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/W.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">Monday, 01 January, 2025 09:33</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
          <filepath>C:/GitHub/tests/test-dates-er-1/objects/ZZ.txt</filepath>
          <size toolname="Jhove" toolversion="1.20.1">10</size>
          <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>

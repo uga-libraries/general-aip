@@ -778,6 +778,49 @@ multiple possible formats or multiple possible created dates) all possible infor
                 </premis:dateCreatedByApplication>
             </xsl:when>
             
+            <!--Pattern: day of week, Day month Year time with month spelled out-->
+            <!--Example: Monday, 05 June, 2000 09:33-->
+            <xsl:when test="matches($apdate, '[a-zA-Z]+day, \d{2} [a-zA-Z]+, \d{4} ')">
+                <premis:dateCreatedByApplication>
+                    <!--Gets the day, month, and year as separate regex groups. -->
+                    <xsl:analyze-string select="$apdate" regex=", (\d{{2}}) ([a-zA-Z]+), (\d{{4}}) ">
+                        <!--Reformats month and recombines to make YYYY-MM-DD format. -->
+                        <xsl:matching-substring>
+
+                            <!--Year: already formatted correctly. -->
+                            <xsl:variable name="year">
+                                <xsl:value-of select="regex-group(3)" />
+                            </xsl:variable>
+
+                            <!--Month: converts from month as word to two-digit number. -->
+                            <xsl:variable name="month">
+                                <xsl:if test="matches(regex-group(2), '^Jan')">01</xsl:if>
+                                <xsl:if test="matches(regex-group(2), '^Feb')">02</xsl:if>
+                                <xsl:if test="matches(regex-group(2), '^Mar')">03</xsl:if>
+                                <xsl:if test="matches(regex-group(2), '^Apr')">04</xsl:if>
+                                <xsl:if test="matches(regex-group(2), '^May')">05</xsl:if>
+                                <xsl:if test="matches(regex-group(2), '^Jun')">06</xsl:if>
+                                <xsl:if test="matches(regex-group(2), '^Jul')">07</xsl:if>
+                                <xsl:if test="matches(regex-group(2), '^Aug')">08</xsl:if>
+                                <xsl:if test="matches(regex-group(2), '^Sep')">09</xsl:if>
+                                <xsl:if test="matches(regex-group(2), '^Oct')">10</xsl:if>
+                                <xsl:if test="matches(regex-group(2), '^Nov')">11</xsl:if>
+                                <xsl:if test="matches(regex-group(2), '^Dec')">12</xsl:if>
+                            </xsl:variable>
+
+                            <!--Day: already formatted correctly. -->
+                            <xsl:variable name="day">
+                                <xsl:value-of select="regex-group(1)" />
+                            </xsl:variable>
+
+                            <!--Combines the date components in the correct order -->
+                            <xsl:value-of select="$year, $month, $day" separator="-" />
+
+                        </xsl:matching-substring>
+                    </xsl:analyze-string>
+                </premis:dateCreatedByApplication>
+            </xsl:when>
+
             <!--Makes an invalid element to catch new date formats during validation.-->
             <xsl:otherwise>
                 <premis:dateCreatedByApplication>

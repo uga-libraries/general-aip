@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<combined-fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/A.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">0</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/B.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">0000:00:00 00:00:00</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/C.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">0-00-00T</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/D.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">:0001</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/E.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025:12:02 01:02:33</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/F.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025-12-02 9:15 PM</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/G.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025-12-02T13:09:10-08:00</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/H.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025:12:02T13:09:10-08:00</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/I.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">D:20251202142347-04'00</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/J.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025:12:02</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/K.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025-12-02</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/L.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">02.12.98, 2:28 AM</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/M.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">1.1.25 11:42 PM</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/N.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">1 January 2025 11:26:49 AM</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/O.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025 December 02 - Monday11:10:03 AM</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/P.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">2025 January 1 - Tuesday9:01:19 PM</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/Q.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">12/02/98 12:01 PM</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/R.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">1/1/2025 1:11:55</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/S.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">January 1, 2025</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/T.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">Monday, January 1, 2025 11:22:33 PM</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/U.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">Wed Jan 01 11:22:33 EST 2025</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/V.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">Thu Jan  1 20:05:01 2025</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd" version="1.5.0" timestamp="7/21/25 4:17 PM">
+      <identification>
+         <identity format="Plain text"><tool toolname="Droid" toolversion="6.4"/></identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/test-dates-er-1/objects/ZZ.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">10</size>
+         <md5checksum toolname="OIS File Information" toolversion="1.0" status="SINGLE_RESULT">77a99c5e3231aa1835595396b448611a</md5checksum>
+		 <creatingApplication tool="Exiftool">
+            <created toolname="Exiftool" toolversion="11.54" status="SINGLE_RESULT">NEW:YYYYDDM</created>
+         </creatingApplication>
+      </fileinfo>
+   </fits>
+</combined-fits>

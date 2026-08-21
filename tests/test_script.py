@@ -83,6 +83,11 @@ class TestFullScript(unittest.TestCase):
                 if not file == 'placeholder.txt':
                     os.remove(os.path.join(output_path, file))
 
+        # Deletes the aips-with-errors folder and its contents, if made.
+        errors_dir = os.path.join(os.getcwd(), 'staging_for_tests', 'aips-with-errors')
+        if os.path.exists(errors_dir):
+            shutil.rmtree(errors_dir)
+
     def test_general(self):
         """Test for the general AIP type (born-digital archives)"""
         # Makes a copy of the test files stored in the script repo, since the test will alter the files.
@@ -422,6 +427,80 @@ class TestFullScript(unittest.TestCase):
                     '   * Provided aip_type "type_error" is not an expected value (av, general, web).\n'
                     '   * Cannot check for the metadata.csv because the AIPs directory has an error.\n')
         self.assertEqual(expected, result, "Problem with test for error_check")
+
+    def test_error_move(self):
+        """Test for there is an error during one AIP's creation and the script skips the rest of the steps for it"""
+        # Makes a copy of the test files stored in the script repo, since the test will alter the files.
+        aips_dir = os.path.join(os.getcwd(), 'script', 'aips_dir')
+        shutil.copytree(os.path.join(os.getcwd(), 'script', 'error_move'), aips_dir)
+
+        # Runs the script.
+        script_path = os.path.join('..', 'general_aip.py')
+        printed = subprocess.run(f'python "{script_path}" "{aips_dir}" general tar-bz2',
+                                 shell=True, capture_output=True, text=True)
+
+        # Test for the script print statements.
+        result = printed.stdout
+        expected = ('\n>>>Processing test-001-er-000001 (1 of 2).\n'
+                    'Moved to error folder objects_folder_exists\n'
+                    '\n>>>Processing test-001-er-000002 (2 of 2).\n'
+                    '\nScript is finished running.\n')
+        self.assertEqual(expected, result, "Problem with test for error_move, print statements")
+
+        # Test for the contents of the AIP directory.
+        today = datetime.date.today().strftime('%Y-%m-%d')
+        result = make_directory_list(aips_dir)
+        bag_two = os.path.join(aips_dir, 'test-001-er-000002_bag')
+        expected = [os.path.join(aips_dir, 'aip_log.csv'),
+                    os.path.join(aips_dir, 'metadata.csv'),
+                    bag_two,
+                    os.path.join(bag_two, 'bag-info.txt'),
+                    os.path.join(bag_two, 'bagit.txt'),
+                    os.path.join(bag_two, 'data'),
+                    os.path.join(bag_two, 'data', 'metadata'),
+                    os.path.join(bag_two, 'data', 'metadata', 'Test PDF.pdf_fits.xml'),
+                    os.path.join(bag_two, 'data', 'metadata', 'test-001-er-000002_preservation.xml'),
+                    os.path.join(bag_two, 'data', 'metadata', 'Worksheet.csv_fits.xml'),
+                    os.path.join(bag_two, 'data', 'objects'),
+                    os.path.join(bag_two, 'data', 'objects', 'FD001_Text'),
+                    os.path.join(bag_two, 'data', 'objects', 'FD001_Text', 'Test PDF.pdf'),
+                    os.path.join(bag_two, 'data', 'objects', 'FD001_Text', 'Worksheet.csv'),
+                    os.path.join(bag_two, 'manifest-md5.txt'),
+                    os.path.join(bag_two, 'manifest-sha256.txt'),
+                    os.path.join(bag_two, 'tagmanifest-md5.txt'),
+                    os.path.join(bag_two, 'tagmanifest-sha256.txt')]
+        self.assertEqual(expected, result, "Problem with test for error_move, aip directory")
+
+        # Test for the contents of the staging directory.
+        staging_dir = os.path.join(os.getcwd(), 'staging_for_tests')
+        result = make_directory_list(staging_dir)
+        objects_folder_exists = os.path.join(staging_dir, 'aips-with-errors', 'objects_folder_exists')
+        expected = [os.path.join(staging_dir, 'aips-already-on-ingest-server'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest', f'manifest_aips_dir_test_{today}.txt'),
+                    os.path.join(staging_dir, 'aips-ready-to-ingest', 'test-001-er-000002_bag.1000.tar.bz2'),
+                    os.path.join(staging_dir, 'aips-with-errors'),
+                    objects_folder_exists,
+                    os.path.join(objects_folder_exists, 'test-001-er-000001'),
+                    os.path.join(objects_folder_exists, 'test-001-er-000001', 'objects'),
+                    os.path.join(objects_folder_exists, 'test-001-er-000001', 'objects', 'Flower2.JPG'),
+                    os.path.join(staging_dir, 'fits-xmls'),
+                    os.path.join(staging_dir, 'fits-xmls', 'test-001-er-000002_combined-fits.xml'),
+                    os.path.join(staging_dir, 'movs-to-bag'),
+                    os.path.join(staging_dir, 'preservation-xmls'),
+                    os.path.join(staging_dir, 'preservation-xmls', 'test-001-er-000002_preservation.xml')]
+        self.assertEqual(expected, result, 'Problem with test for move_error, staging directory')
+
+        # Test for the contents of the aip_log.csv file.
+        result = make_aip_log_list(os.path.join(aips_dir, 'aip_log.csv'))
+        expected = [['Time_Started', 'AIP_ID', 'Files_Deleted', 'Objects_Folder_Made', 'Metadata_Folder_Made',
+                     'FITS_Tool_Errors', 'FITS_Combination_Errors', 'PreservationXML_Made', 'PreservationXML_Valid',
+                     'Bag_Made', 'Bag_Valid', 'Package_Errors', 'Manifest_Errors', 'Processing_Complete'],
+                    [today, 'test-001-er-000001', 'No', 'Objects folder already exists in original files', 'BLANK',
+                     'BLANK', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'BLANK', 'Error during processing'],
+                    [today, 'test-001-er-000002', 'No', 'Success', 'Success', 'No', 'Success', 'Success',
+                     f'Valid on {today}', 'Success', f'Valid on {today}', 'Success', 'Success', 'Success']]
+        self.assertEqual(expected, result, "Problem with test for move_error, aip log")
 
 
 if __name__ == "__main__":

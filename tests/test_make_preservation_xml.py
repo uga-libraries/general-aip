@@ -42,7 +42,8 @@ class TestMakePreservationXML(unittest.TestCase):
 
         # Deletes any preservation.xml files.
         aip_ids = ('harg-0000-web-202108-0001', 'magil-ggp-2529686-2025-08', 'rabbitbox_0003',
-                   'rbrl-025-er-000001', 'rbrl-025-er-000002', 'rbrl-025-er-000003', 'test-er-01')
+                   'rbrl-025-er-000001', 'rbrl-025-er-000002', 'rbrl-025-er-000003',
+                   'test-dates-er-1', 'test-er-01')
         for aip_id in aip_ids:
             xml_path = os.path.join(os.getcwd(), 'make_preservation_xml', aip_id, 'metadata',
                                     f'{aip_id}_preservation.xml')
@@ -72,6 +73,20 @@ class TestMakePreservationXML(unittest.TestCase):
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
         self.assertEqual(expected, result, "Problem with test for bmac")
+
+    def test_dates(self):
+        """Test for every date format encountered so far, as well as a new date format"""
+        # Makes the test input and runs the function.
+        aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
+        aip = AIP(aips_dir, 'test', None, 'dates', 'folder', 'general', 'test-dates-er-1', 'All Date Formats',
+                  'http://rightsstatements.org/vocab/InC/1.0/', 1, True)
+        make_preservation_xml(aip, staging_dir)
+
+        # Compares the preservation.xml created by the function to a xml file with the expected values.
+        result = read_preservation_xml(aip)
+        expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
+        self.assertEqual(expected, result, "Problem with test for dates")
 
     def test_error(self):
         """Test for an AIP without the cleaned FITS XML, which causes a Saxon error"""

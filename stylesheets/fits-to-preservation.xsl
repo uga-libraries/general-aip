@@ -535,6 +535,21 @@ multiple possible formats or multiple possible created dates) all possible infor
                     <xsl:value-of select="replace($dateString, ':', '-')" />
                 </premis:dateCreatedByApplication>
             </xsl:when>
+
+            <!--Pattern: D:YYYYMMDDtime-->
+			<!--Examples: D:20070614142347-04'00 and D:20100618121727-04'00'-->
+			<xsl:when test="matches($apdate, '^D:\d{8}')">
+                <premis:dateCreatedByApplication>
+                    <!--Gets the day, month, and year as separate regex groups and recombines to YYYY-MM-DD.-->
+                    <xsl:analyze-string select="$apdate" regex="D:(\d{{4}})(\d{{2}})(\d{{2}})">
+                        <xsl:matching-substring>
+                            <xsl:value-of select="regex-group(1)" /><xsl:text>-</xsl:text>
+                            <xsl:value-of select="regex-group(2)" /><xsl:text>-</xsl:text>
+                            <xsl:value-of select="regex-group(3)" />
+                        </xsl:matching-substring>
+                    </xsl:analyze-string>
+                </premis:dateCreatedByApplication>
+            </xsl:when>
 			
 			<!--Pattern: Year:Month:Day-->
             <!--Examples: 2018:01:02-->

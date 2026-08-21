@@ -602,6 +602,9 @@ def move_error(error_name, aip_path, staging):
     # Moves the AIP to the error folder.
     os.replace(aip_path, os.path.join(error_path, os.path.basename(aip_path)))
 
+    # Prints the error, so if all AIPs are failing for the same reason, the script can be stopped to address it.
+    print("Moved to error folder", error_name)
+
 
 def organize_xml(aip, staging):
     """Organize the XML files after the preservation.xml is successfully made
@@ -686,6 +689,7 @@ def package(aip, staging):
             aip.log["Package"] = f"Could not tar. 7zip error: {error_msg}"
             aip.log["Complete"] = "Error during processing"
             log(aip.log, aip.directory)
+            move_error('tar-bag', bag_path, staging)
             return
     else:
         subprocess.run(f'tar -C "{bag_path}" -cf "{tar_path}" .', shell=True)

@@ -689,6 +689,7 @@ def package(aip, staging):
             aip.log["Package"] = f"Could not tar. 7zip error: {error_msg}"
             aip.log["Complete"] = "Error during processing"
             log(aip.log, aip.directory)
+            move_error('tar-bag', bag_path, staging)
             return
     else:
         subprocess.run(f'tar -C "{bag_path}" -cf "{tar_path}" .', shell=True)

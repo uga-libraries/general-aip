@@ -407,7 +407,7 @@ class TestFullScript(unittest.TestCase):
                      f'Valid on {today}', 'Success', f'Valid on {today}', 'Success', 'Success', 'Success']]
         self.assertEqual(expected, result, "Problem with test for web_magil, aip log")
 
-    def test_error(self):
+    def test_error_check(self):
         """Test for there is an error with the initial checks and the script quits without running"""
         # Runs the script.
         script_path = os.path.join('..', 'general_aip.py')
@@ -421,7 +421,7 @@ class TestFullScript(unittest.TestCase):
                     f'   * Provided aips_directory "{aips_dir}" is not a valid directory.\n'
                     '   * Provided aip_type "type_error" is not an expected value (av, general, web).\n'
                     '   * Cannot check for the metadata.csv because the AIPs directory has an error.\n')
-        self.assertEqual(expected, result, "Problem with test for error")
+        self.assertEqual(expected, result, "Problem with test for error_check")
 
 
 if __name__ == "__main__":

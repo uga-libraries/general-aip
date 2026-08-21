@@ -602,6 +602,9 @@ def move_error(error_name, aip_path, staging):
     # Moves the AIP to the error folder.
     os.replace(aip_path, os.path.join(error_path, os.path.basename(aip_path)))
 
+    # Prints the error, so if all AIPs are failing for the same reason, the script can be stopped to address it.
+    print("Moved to error folder", error_name)
+
 
 def organize_xml(aip, staging):
     """Organize the XML files after the preservation.xml is successfully made

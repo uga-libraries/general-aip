@@ -173,7 +173,9 @@
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
             </premis:format>
-            <premis:creatingApplication/>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-12-02</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
          </premis:objectCharacteristics>
          <premis:relationship>
             <premis:relationshipType>structural</premis:relationshipType>
@@ -235,7 +237,9 @@
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
             </premis:format>
-            <premis:creatingApplication/>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-12-02</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
          </premis:objectCharacteristics>
          <premis:relationship>
             <premis:relationshipType>structural</premis:relationshipType>
@@ -265,7 +269,9 @@
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
             </premis:format>
-            <premis:creatingApplication/>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-12-02</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
          </premis:objectCharacteristics>
          <premis:relationship>
             <premis:relationshipType>structural</premis:relationshipType>
@@ -327,7 +333,9 @@
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
             </premis:format>
-            <premis:creatingApplication/>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-12-02</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
          </premis:objectCharacteristics>
          <premis:relationship>
             <premis:relationshipType>structural</premis:relationshipType>
@@ -453,7 +461,9 @@
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
             </premis:format>
-            <premis:creatingApplication/>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-01-01</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
          </premis:objectCharacteristics>
          <premis:relationship>
             <premis:relationshipType>structural</premis:relationshipType>
@@ -483,7 +493,9 @@
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
             </premis:format>
-            <premis:creatingApplication/>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-12-02</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
          </premis:objectCharacteristics>
          <premis:relationship>
             <premis:relationshipType>structural</premis:relationshipType>
@@ -513,7 +525,9 @@
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
             </premis:format>
-            <premis:creatingApplication/>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-01-01</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
          </premis:objectCharacteristics>
          <premis:relationship>
             <premis:relationshipType>structural</premis:relationshipType>
@@ -575,7 +589,9 @@
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
             </premis:format>
-            <premis:creatingApplication/>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-01-01</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
          </premis:objectCharacteristics>
          <premis:relationship>
             <premis:relationshipType>structural</premis:relationshipType>
@@ -637,7 +653,9 @@
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
             </premis:format>
-            <premis:creatingApplication/>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-01-01</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
          </premis:objectCharacteristics>
          <premis:relationship>
             <premis:relationshipType>structural</premis:relationshipType>
@@ -667,7 +685,9 @@
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
             </premis:format>
-            <premis:creatingApplication/>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-01-01</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
          </premis:objectCharacteristics>
          <premis:relationship>
             <premis:relationshipType>structural</premis:relationshipType>
@@ -697,7 +717,9 @@
                </premis:formatDesignation>
                <premis:formatNote>Format identified by Droid version 6.4</premis:formatNote>
             </premis:format>
-            <premis:creatingApplication/>
+            <premis:creatingApplication>
+               <premis:dateCreatedByApplication>2025-01-01</premis:dateCreatedByApplication>
+            </premis:creatingApplication>
          </premis:objectCharacteristics>
          <premis:relationship>
             <premis:relationshipType>structural</premis:relationshipType>

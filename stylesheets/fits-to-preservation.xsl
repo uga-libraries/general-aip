@@ -509,7 +509,7 @@ multiple possible formats or multiple possible created dates) all possible infor
             <xsl:when test="$apdate='0000:00:00 00:00:00'" />
             <xsl:when test="matches($apdate, '0-00-00T')" />
             <xsl:when test="matches($apdate, '^:')" />
-            <xsl:when test="matches($apdate, '\d{1,2}:\d{1,2}:\d{1,2}')" />
+            <xsl:when test="matches($apdate, '^\d{1,2}:\d{1,2}:\d{1,2}$')" />
             <xsl:when test="contains($apdate, '@')" />
 
             <!--Pattern: Year:Month:Day Time and Year-Month-Day Time-->

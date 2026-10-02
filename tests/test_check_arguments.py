@@ -88,9 +88,9 @@ class TestCheckArguments(unittest.TestCase):
     def test_extra(self):
         """Test for when there are more arguments than expected (more than 4)"""
         aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
-        result = check_arguments(['general-aip.py', aips_dir, 'av', 'tar', 'mxf', 'extra', 'extra2'])
+        result = check_arguments(['general-aip.py', aips_dir, 'av', 'tar', 'no-file-info', 'extra', 'extra2'])
         errors = ['Too many script arguments. The maximum expected is 4.']
-        expected = (aips_dir, 'av', False, 'mxf', os.path.join(aips_dir, 'metadata.csv'), errors)
+        expected = (aips_dir, 'av', False, 'no-file-info', os.path.join(aips_dir, 'metadata.csv'), errors)
         self.assertEqual(expected, result, "Problem with test for extra arguments")
 
 

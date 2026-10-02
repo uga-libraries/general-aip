@@ -76,11 +76,12 @@ class TestCheckArguments(unittest.TestCase):
 
     def test_all_error(self):
         """Test for when all arguments are not expected values"""
-        result = check_arguments(['general-aip.py', 'path-error', 'type-error', 'zip-error', 'wf-error'])
+        result = check_arguments(['general-aip.py', 'path-error', 'type-error', 'zip-error', 'workflow-error'])
         errors = ['Provided aips_directory "path-error" is not a valid directory.',
                   'Provided aip_type "type-error" is not an expected value (av, general, web).',
                   'Provided zip_method "zip-error" is not an expected value (tar or tar-bz2).',
-                  'Provided workflow "wf-error" is not an expected value (dpx, mkv, mkv-filmscan, mov, mp4, mxf, wav)',
+                  'Provided workflow "workflow-error" is not an expected value '
+                  "('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mp4', 'mxf', 'wav', 'no-file-info')",
                   'Cannot check for the metadata.csv because the AIPs directory has an error.']
         expected = (None, None, None, None, None, errors)
         self.assertEqual(expected, result, "Problem with test for all error")

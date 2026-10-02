@@ -69,8 +69,9 @@ class TestCheckArguments(unittest.TestCase):
     def test_fourth_error(self):
         """Test for when the fourth argument (workflow) is not one of the expected values"""
         aips_dir = os.path.join(os.getcwd(), 'check_arguments', 'aips_dir')
-        result = check_arguments(['general-aip.py', aips_dir, 'general', 'tar-bz2', 'wf-error'])
-        errors = ['Provided workflow "wf-error" is not an expected value (dpx, mkv, mkv-filmscan, mov, mp4, mxf, wav)']
+        result = check_arguments(['general-aip.py', aips_dir, 'general', 'tar-bz2', 'workflow-error'])
+        errors = ['Provided workflow "workflow-error" is not an expected value '
+                  "('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mp4', 'mxf', 'wav', 'no-file-info')"]
         expected = (aips_dir, 'general', True, None, os.path.join(aips_dir, 'metadata.csv'), errors)
         self.assertEqual(expected, result, "Problem with test for fourth argument error")
 

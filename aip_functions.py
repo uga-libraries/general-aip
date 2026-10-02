@@ -513,6 +513,8 @@ def make_preservation_xml(aip, staging):
     output_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_preservation.xml")
     args = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
            f'department="{aip.department}" rights="{aip.rights}" version={aip.version} ns={c.NAMESPACE}'
+    if aip.workflow == 'no-file-info':
+        args = args + ' file-info="no"'
     saxon_output = subprocess.run(f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{input_file}" '
                                   f'-xsl:"{stylesheet}" -o:"{output_file}" {args}',
                                   stderr=subprocess.PIPE, shell=True)

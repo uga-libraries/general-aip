@@ -90,12 +90,12 @@ def check_arguments(arguments):
             errors_list.append(f'Provided zip_method "{arguments[3]}" is not an expected value (tar or tar-bz2).')
 
     # Checks if the optional argument (workflow) is present, and if so, if it is the expected value.
+    workflows = ('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mp4', 'mxf', 'wav', 'no-file-info')
     if len(arguments) > 4:
-        if arguments[4] in ('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mp4', 'mxf', 'wav'):
+        if arguments[4] in workflows:
             workflow = arguments[4]
         else:
-            errors_list.append(f'Provided workflow "{arguments[4]}" is not an expected value '
-                               f'(dpx, mkv, mkv-filmscan, mov, mp4, mxf, wav)')
+            errors_list.append(f'Provided workflow "{arguments[4]}" is not an expected value {workflows}')
 
     # Checks if there are too many arguments.
     if len(arguments) > 5:

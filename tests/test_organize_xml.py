@@ -23,6 +23,31 @@ class TestOrganizeXML(unittest.TestCase):
             if os.path.exists(xml_path):
                 os.remove(xml_path)
 
+    def test_no_file_info(self):
+        """Test for the function with the no-file-info workflow, where FITS are deleted from the metadata folder"""
+        # Makes the test input and runs the function.
+        # A copy of the AIP is made since this test should alter the contents of the AIP metadata folder.
+        aips_dir = os.path.join(os.getcwd(), 'organize_xml')
+        aips_staging = os.path.join(os.getcwd(), 'staging_for_tests')
+        aip = AIP(aips_dir, 'test', 'no-file-info', 'coll-2', 'aip-folder', 'general', 'test_coll2_001', 'title', 'InC', 1, True)
+        shutil.copytree(os.path.join(aips_dir, 'no-file-info', 'test_coll2_001_copy'),
+                        os.path.join(aips_dir, 'test_coll2_001'))
+        organize_xml(aip, aips_staging)
+
+        # Tests the metadata folder contains only the expected file.
+        metadata_path = os.path.join(os.getcwd(), 'organize_xml', 'test_coll2_001', 'metadata')
+        result = make_directory_list(metadata_path)
+        expected = [os.path.join(metadata_path, 'test_coll2_001_preservation.xml')]
+        self.assertEqual(expected, result, "Problem with no-file-info, metadata")
+
+        # Tests the FITS folder on staging has the expected file.
+        result = os.path.exists(os.path.join(aips_staging, 'fits-xmls', 'test_coll2_001_combined-fits.xml'))
+        self.assertEqual(True, result, "Problem with no-file-info, fits-xmls")
+
+        # Tests the preservation xml folder on staging has the expected file.
+        result = os.path.exists(os.path.join(aips_staging, 'preservation-xmls', 'test_coll2_001_preservation.xml'))
+        self.assertEqual(True, result, "Problem with no-file-info, preservation-xmls")
+
     def test_typical(self):
         """Test for the function as it is typically used (not no-file-info workflow)"""
         # Makes the test input and runs the function.

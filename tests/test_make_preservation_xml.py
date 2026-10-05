@@ -158,6 +158,20 @@ class TestMakePreservationXML(unittest.TestCase):
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
         self.assertEqual(expected, result, "Problem with test for multiple files")
 
+    def test_no_file_info(self):
+        """Test for an AIP that does not have a filelist section in the preservation.xml"""
+        # Makes the test input and runs the function.
+        aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
+        aip = AIP(aips_dir, 'russell', 'no-file-info', 'rbrl-190', 'folder', 'general', 'rbrl-190-er-000001',
+                  'constituent mail documents/indivletters', 'http://rightsstatements.org/vocab/InC/1.0/', 1, True)
+        make_preservation_xml(aip, staging_dir)
+
+        # Compares the preservation.xml created by the function to a xml file with the expected values.
+        result = read_preservation_xml(aip)
+        expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
+        self.assertEqual(expected, result, "Problem with test for no_file_info")
+
     def test_single_file(self):
         """Test for an AIP with a single file"""
         # Makes the test input and runs the function.

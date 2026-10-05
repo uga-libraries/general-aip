@@ -42,7 +42,7 @@ class TestMakePreservationXML(unittest.TestCase):
 
         # Deletes any preservation.xml files.
         aip_ids = ('harg-0000-web-202108-0001', 'magil-ggp-2529686-2025-08', 'rabbitbox_0003',
-                   'rbrl-025-er-000001', 'rbrl-025-er-000002', 'rbrl-025-er-000003',
+                   'rbrl-025-er-000001', 'rbrl-025-er-000002', 'rbrl-025-er-000003', 'rbrl-190-er-000001',
                    'test-dates-er-1', 'test-er-01')
         for aip_id in aip_ids:
             xml_path = os.path.join(os.getcwd(), 'make_preservation_xml', aip_id, 'metadata',

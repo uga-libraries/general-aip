@@ -6,7 +6,7 @@ Parameters:
     aips_directory : required,  folder that contains the folders to be made into AIPs
     aip_type : required, either av, general, or web
     zip_method : required, either tar or tar-bz2
-    workflow : optional, one of the AV workflows
+    workflow : optional, the variation of the AIP type, mostly used for AV (see README for permitted values)
 
 Returns:
     The aips_directory folder with the AIP bags, which are complete AIPs except for zipping

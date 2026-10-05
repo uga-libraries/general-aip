@@ -20,7 +20,7 @@
                         <xs:sequence><xs:element ref="premis:object" /></xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="filelist">
+                <xs:element name="filelist" minOccurs="0">
                     <xs:complexType>
                         <xs:sequence><xs:element ref="premis:object" maxOccurs="unbounded" /></xs:sequence>
                     </xs:complexType>

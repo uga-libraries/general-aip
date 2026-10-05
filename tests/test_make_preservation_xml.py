@@ -42,7 +42,7 @@ class TestMakePreservationXML(unittest.TestCase):
 
         # Deletes any preservation.xml files.
         aip_ids = ('harg-0000-web-202108-0001', 'magil-ggp-2529686-2025-08', 'rabbitbox_0003',
-                   'rbrl-025-er-000001', 'rbrl-025-er-000002', 'rbrl-025-er-000003',
+                   'rbrl-025-er-000001', 'rbrl-025-er-000002', 'rbrl-025-er-000003', 'rbrl-190-er-000001',
                    'test-dates-er-1', 'test-er-01')
         for aip_id in aip_ids:
             xml_path = os.path.join(os.getcwd(), 'make_preservation_xml', aip_id, 'metadata',
@@ -157,6 +157,20 @@ class TestMakePreservationXML(unittest.TestCase):
         result = read_preservation_xml(aip)
         expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
         self.assertEqual(expected, result, "Problem with test for multiple files")
+
+    def test_no_file_info(self):
+        """Test for an AIP that does not have a filelist section in the preservation.xml"""
+        # Makes the test input and runs the function.
+        aips_dir = os.path.join(os.getcwd(), 'make_preservation_xml')
+        staging_dir = os.path.join(os.getcwd(), 'staging')
+        aip = AIP(aips_dir, 'russell', 'no-file-info', 'rbrl-190', 'folder', 'general', 'rbrl-190-er-000001',
+                  'constituent mail documents/indivletters', 'http://rightsstatements.org/vocab/InC/1.0/', 1, True)
+        make_preservation_xml(aip, staging_dir)
+
+        # Compares the preservation.xml created by the function to a xml file with the expected values.
+        result = read_preservation_xml(aip)
+        expected = read_xml(os.path.join(aips_dir, 'expected_preservation_xml', f'{aip.id}_preservation.xml'))
+        self.assertEqual(expected, result, "Problem with test for no_file_info")
 
     def test_single_file(self):
         """Test for an AIP with a single file"""

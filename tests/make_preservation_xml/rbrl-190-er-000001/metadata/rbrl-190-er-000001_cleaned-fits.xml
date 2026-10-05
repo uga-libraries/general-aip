@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<combined-fits xmlns="http://hul.harvard.edu/ois/xml/ns/fits/fits_output"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd"
+         version="1.5.0"
+         timestamp="7/21/25 4:16 PM">
+      <identification status="SINGLE_RESULT">
+         <identity format="Plain text">
+            <tool toolname="Droid" toolversion="6.4"/>
+            <externalIdentifier type="puid">x-fmt/111</externalIdentifier>
+         </identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/rbrl-190-er-000001/objects/export/documents/indivletters/000001.txt</filepath>
+         <size toolname="OIS File Information"
+               toolversion="1.0"
+               status="SINGLE_RESULT">52</size>
+         <md5checksum toolname="OIS File Information"
+                      toolversion="1.0"
+                      status="SINGLE_RESULT">ccb180a0df1578edbc073dda4e4dd597</md5checksum>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd"
+         version="1.5.0"
+         timestamp="7/21/25 4:16 PM">
+      <identification status="SINGLE_RESULT">
+         <identity format="Plain text">
+            <tool toolname="Droid" toolversion="6.4"/>
+            <externalIdentifier type="puid">x-fmt/111</externalIdentifier>
+         </identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/rbrl-190-er-000001/objects/export/documents/indivletters/000002.txt</filepath>
+         <size toolname="OIS File Information"
+               toolversion="1.0"
+               status="SINGLE_RESULT">17011</size>
+         <md5checksum toolname="OIS File Information"
+                      toolversion="1.0"
+                      status="SINGLE_RESULT">5f24cb9f277aa92ebad909f648acb6fd</md5checksum>
+      </fileinfo>
+   </fits>
+   <fits xsi:schemaLocation="http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd"
+         version="1.5.0"
+         timestamp="7/21/25 4:16 PM">
+      <identification status="SINGLE_RESULT">
+         <identity format="Plain text">
+            <tool toolname="Droid" toolversion="6.4"/>
+            <externalIdentifier type="puid">x-fmt/111</externalIdentifier>
+         </identity>
+      </identification>
+      <fileinfo>
+         <filepath>C:/GitHub/tests/rbrl-190-er-000001/objects/export/documents/indivletters/000003.txt</filepath>
+         <size toolname="Jhove" toolversion="1.20.1">33061</size>
+         <md5checksum toolname="OIS File Information"
+                      toolversion="1.0"
+                      status="SINGLE_RESULT">b31d8b32acb497c725201d1ccbff2163</md5checksum>
+      </fileinfo>
+   </fits>
+</combined-fits>

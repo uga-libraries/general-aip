@@ -81,7 +81,14 @@ To run the script via the command line: python /path/general_aip.py aips_directo
 * aips_directory (required): folder that contains the folders to be made into AIPs
 * aip_type (required): either av, general, or web
 * zip_method (required): tar or tar-bz2
-* workflow (optional): one of the AV workflows
+* workflow (optional): the AIP subtype, mostly used for AV workflows
+
+Workflows are slight variations of an AIP type.
+Most are AV workflows, with the primary differences being how files are sorted into metadata and objects folders: 
+dpx, mkv, mkv-filmscan, mov, mp4, mxf and wav.
+There is also a workflow no-file-info for AIPs with a large number (100,000+) of files and one or few formats,
+which does not include a filelist section in the preservation.xml or individual FITS files in the metadata folder,
+to cut down on the amount of data stored in the ARCHive application.
 
 ### Testing
 

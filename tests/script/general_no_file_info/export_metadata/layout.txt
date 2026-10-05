@@ -1,0 +1,1 @@
+Common file in an export, explaining all the columns.

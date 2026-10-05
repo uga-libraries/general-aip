@@ -47,7 +47,7 @@ def check_arguments(arguments):
     Returns:
         aips_directory : the path to the folder which contains the folders to be made into AIPs
         aip_type : the type of AIP, which influences a few steps
-        workflow : for AV type, the type of AV workflow, which influences a few steps
+        workflow : the variation of the AIP type, mostly used for AV, which influences a few steps
         to_zip : a boolean for if the AIPs should be zipped as well as tarred (True) or only tarred (False)
         aip_metadata_csv : the path to the metadata.csv file in the aips_directory
         errors_list : a list of errors, or an empty list if there were no errors
@@ -90,12 +90,12 @@ def check_arguments(arguments):
             errors_list.append(f'Provided zip_method "{arguments[3]}" is not an expected value (tar or tar-bz2).')
 
     # Checks if the optional argument (workflow) is present, and if so, if it is the expected value.
+    workflows = ('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mp4', 'mxf', 'wav', 'no-file-info')
     if len(arguments) > 4:
-        if arguments[4] in ('dpx', 'mkv', 'mkv-filmscan', 'mov', 'mp4', 'mxf', 'wav'):
+        if arguments[4] in workflows:
             workflow = arguments[4]
         else:
-            errors_list.append(f'Provided workflow "{arguments[4]}" is not an expected value '
-                               f'(dpx, mkv, mkv-filmscan, mov, mp4, mxf, wav)')
+            errors_list.append(f'Provided workflow "{arguments[4]}" is not an expected value {workflows}')
 
     # Checks if there are too many arguments.
     if len(arguments) > 5:
@@ -501,7 +501,7 @@ def make_preservation_xml(aip, staging):
     """Make the preservation.xml from the cleaned FITS XML in the metadata folder
 
     Parameters:
-        aip : instance of the AIP class, used for collection_id, department, directory, id, log, title, and version
+        aip : instance of the AIP class, used for values of most arguments for saxon
         staging : path to the aip_staging folder from configuration.py
 
     Returns: none
@@ -513,6 +513,8 @@ def make_preservation_xml(aip, staging):
     output_file = os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_preservation.xml")
     args = f'collection-id="{aip.collection_id}" aip-id="{aip.id}" aip-title="{aip.title}" ' \
            f'department="{aip.department}" rights="{aip.rights}" version={aip.version} ns={c.NAMESPACE}'
+    if aip.workflow == 'no-file-info':
+        args = args + ' file-info="no"'
     saxon_output = subprocess.run(f'java -cp "{c.SAXON}" net.sf.saxon.Transform -s:"{input_file}" '
                                   f'-xsl:"{stylesheet}" -o:"{output_file}" {args}',
                                   stderr=subprocess.PIPE, shell=True)
@@ -630,6 +632,14 @@ def organize_xml(aip, staging):
 
     # Deletes the cleaned-fits.xml file because it is a temporary file.
     os.remove(os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_cleaned-fits.xml"))
+
+    # For the no-file-info workflow, deletes the individual FITS XML from the metadata folder,
+    # to cut down on the amount of information being stored in the ARCHive application.
+    if aip.workflow == 'no-file-info':
+        metadata_path = os.path.join(aip.directory, aip.id, "metadata")
+        for file in os.listdir(metadata_path):
+            if file.endswith("_fits.xml"):
+                os.remove(os.path.join(metadata_path, file))
 
 
 def package(aip, staging):

@@ -35,9 +35,12 @@
                     <xsl:call-template name="relationship-collection" />
                 </premis:object>
             </aip>
-            <filelist>
-                <xsl:apply-templates select="combined-fits/fits" />
-            </filelist>
+            <!--There are cases where an AIP has so many files and consistent formats that the filelist is skipped-->
+            <xsl:if test="$file-info='yes'">
+                <filelist>
+                    <xsl:apply-templates select="combined-fits/fits" />
+                </filelist>
+            </xsl:if>
         </preservation>
     </xsl:template>
     
@@ -55,7 +58,8 @@
     <xsl:param name="rights" required="yes" />
     <xsl:param name="version" required="yes" />
     <xsl:param name="ns" required="yes" />
-    
+    <xsl:param name="file-info" select="'yes'" />
+
     <!--$uri: the unique identifier for the group in the ARCHive (digital preservation system).-->
     <xsl:variable name="uri"><xsl:value-of select="$ns" />/<xsl:value-of select="$department" /></xsl:variable>
          

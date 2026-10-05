@@ -633,6 +633,14 @@ def organize_xml(aip, staging):
     # Deletes the cleaned-fits.xml file because it is a temporary file.
     os.remove(os.path.join(aip.directory, aip.id, "metadata", f"{aip.id}_cleaned-fits.xml"))
 
+    # For the no-file-info workflow, deletes the individual FITS XML from the metadata folder,
+    # to cut down on the amount of information being stored in the ARCHive application.
+    if aip.workflow == 'no-file-info':
+        metadata_path = os.path.join(aip.directory, aip.id, "metadata")
+        for file in os.listdir(metadata_path):
+            if file.endswith("_fits.xml"):
+                os.remove(os.path.join(metadata_path, file))
+
 
 def package(aip, staging):
     """Tar and zip (optional) the AIP, rename it to include the size, and save it to the aips-ready-to-ingest folder
